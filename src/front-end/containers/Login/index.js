@@ -12,9 +12,6 @@ import formatMessage from '~/utils/formatMessage';
 import {
   withRouter,
 } from 'react-router-dom';
-import {
-  login,
-} from '../App/actions';
 import { messages } from '../App/translation';
 import {
   Redirect,
@@ -30,6 +27,17 @@ import IconButton from 'material-ui/IconButton';
 import Visibility from 'material-ui-icons/Visibility';
 import VisibilityOff from 'material-ui-icons/VisibilityOff';
 import Button from 'material-ui/Button';
+
+import { createStructuredSelector } from 'reselect';
+import modelMap from '~/containers/App/modelMap';
+import {
+  makeUserSessionSelector,
+} from '~/containers/App/selectors';
+
+const {
+  createSession,
+  createSessionCancel,
+} = modelMap.actions;
 
 function TabContainer(props) {
   return <div style={{ padding: 8 * 3 }}>{props.children}</div>;
@@ -96,12 +104,12 @@ class Login extends React.Component {
   };
 
   render(){
-    let { location, intl, isAuthenticated, login, classes } = this.props;
+    let { location, intl, createSession, session, classes } = this.props;
     let fromPath = location.state && location.state.from.pathname;
     let usernameText = formatMessage(intl, messages.username, {});
     let passwordText = formatMessage(intl, messages.password, {});
 
-    if(isAuthenticated){
+    if(session){
       fromPath = fromPath || '/';
       return (
         <Redirect to={{
@@ -166,7 +174,13 @@ class Login extends React.Component {
           <div className={classes.flexContainer}>
             <div className={classes.flex} />
             <div className={classes.mainArea}>
-              <Button className={classes.loginBtn} onTouchTap={login}>
+              <Button className={classes.loginBtn} onTouchTap={() => {
+                createSession({
+                  auth_type: 'basic',
+                  username: 'admin',
+                  password: 'admin',
+                });
+              }}>
                 {formatMessage(intl, messages.login, {})}
               </Button>
             </div>
@@ -179,10 +193,17 @@ class Login extends React.Component {
   }
 }
 
+const mapStateToProps = createStructuredSelector({
+  session: makeUserSessionSelector(),
+});
+
 export default compose(
   connect(
-    state => ({ isAuthenticated: state.get('global').isAuthenticated }),
-    { login }
+    mapStateToProps,
+    {
+      createSession,
+      createSessionCancel,
+    }
   ),
   injectIntl,
   withStyles(styles),

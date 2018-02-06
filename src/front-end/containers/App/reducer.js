@@ -1,30 +1,15 @@
-import {
-  GREET,
-  LOGIN,
-  LOGOUT,
-} from './constants';
+import { combineReducers } from 'redux'
+import modelMap from './modelMap';
 
-export default (state = { greetName: '', isAuthenticated: false }, action) => {
-  switch (action.type) {
-  case GREET:
-    return {
-      ...state,
-      greetName: action.name
-    };
+const {
+  SESSION_READ_COLL_SUCCESS,
+  SESSION_READ_COLL_ERROR,
+} = modelMap.types;
 
-  case LOGIN:
-    return {
-      ...state,
-      isAuthenticated: true,
-    };
+const {
+  sessionReducer,
+} = modelMap.reducers;
 
-  case LOGOUT:
-    return {
-      ...state,
-      isAuthenticated: false,
-    };
-
-  default:
-    return state;
-  }
-};
+export default combineReducers({
+  sessions: sessionReducer,
+});

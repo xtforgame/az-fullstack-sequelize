@@ -1,25 +1,11 @@
-import 'rxjs';
-import { push } from 'react-router-redux';
+import modelMap from './modelMap';
 
-import {
-  PING,
-} from '~/containers/InjectorTest/constants';
+const {
+  createSessionEpic,
+  readSessionCollEpic,
+} = modelMap.epics;
 
-import {
-  ping,
-  pong,
-} from '~/containers/InjectorTest/actions';
-
-export default (action$, store) => {
-  return action$.ofType(PING)
-    .delay(1000) // Asynchronously wait 1000ms then continue
-    .mergeMap(action =>
-      new Promise(resolve => {
-        console.log('App action :', action);
-        // setTimeout(() => {
-        //   store.dispatch(ping());
-        // }, 2000);
-        resolve(pong());
-      })
-    );
-};
+export default [
+  createSessionEpic,
+  readSessionCollEpic,
+];

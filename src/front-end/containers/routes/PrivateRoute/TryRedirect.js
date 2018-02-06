@@ -2,6 +2,12 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
+import { createStructuredSelector } from 'reselect';
+import modelMap from '~/containers/App/modelMap';
+import {
+  makeUserSessionSelector,
+} from '~/containers/App/selectors';
+
 /*
   Assuming props containing:
     history  
@@ -27,7 +33,11 @@ const TryRedirect = (props) => {
   )
 };
 
+const mapStateToProps = createStructuredSelector({
+  isAuthenticated: state => !!makeUserSessionSelector()(state),
+});
+
 export default connect(
-  state => ({ isAuthenticated: state.get('global').isAuthenticated }),
+  mapStateToProps,
   {},
 )(TryRedirect);

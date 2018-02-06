@@ -115,9 +115,7 @@ class MainFrame extends React.Component {
 
 export default compose(
   connect(
-    state => ({
-      isAuthenticated: state.get('global').isAuthenticated,
-    }),
+    state => ({}),
     { push }
   ),
   injectIntl,

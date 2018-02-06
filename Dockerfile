@@ -1,4 +1,4 @@
-FROM node:7-onbuild
+FROM node:8-onbuild
 
 RUN mkdir -p /usr/volumes/src /usr/volumes/share /usr/volumes/output
 VOLUME ["/usr/volumes/src", "/usr/volumes/share", "/usr/volumes/output"]

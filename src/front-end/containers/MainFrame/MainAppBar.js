@@ -14,14 +14,16 @@ import LocaleDropdown from '~/containers/LocaleDropdown'
 
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import {
-  logout,
-} from '../App/actions';
 import { injectIntl } from 'react-intl';
 import { FormattedMessage } from 'react-intl';
 import formatMessage from '~/utils/formatMessage';
-import { push } from 'react-router-redux';
 import { messages } from '../App/translation';
+
+import modelMap from '~/containers/App/modelMap';
+
+const {
+  clearSession,
+} = modelMap.actions;
 
 const styles = theme => ({
   root: {
@@ -39,7 +41,7 @@ const styles = theme => ({
 
 class MainAppBar extends React.Component {
   render(){
-    const { logout, classes, intl, onToggleMenu = () => {} } = this.props;
+    const { logout, clearSession, classes, intl, onToggleMenu = () => {} } = this.props;
     return (
       <div className={classes.root}>
         <AppBar position="fixed">
@@ -51,7 +53,7 @@ class MainAppBar extends React.Component {
               <FormattedMessage {...messages.appTitle} />
             </Typography>
             <LocaleDropdown />
-            <Button color="contrast" onTouchTap={logout}>
+            <Button color="contrast" onTouchTap={clearSession}>
               <FormattedMessage {...messages.logout} />
             </Button>
           </Toolbar>
@@ -65,7 +67,7 @@ class MainAppBar extends React.Component {
 export default compose(
   connect(
     state => ({}),
-    { logout, push }
+    { clearSession }
   ),
   injectIntl,
   withStyles(styles),
