@@ -39,6 +39,8 @@ import {
   makeRememberUserSelector,
 } from '~/containers/App/selectors';
 
+import popup from './popup';
+
 const {
   createSession,
   createSessionCancel,
@@ -74,7 +76,7 @@ const styles = theme => ({
   toolBar: {
     // minHeight: 48,
     // height: 48,
-  }
+  },
 });
 
 const LinkInternal = ({text, url, classes}) => (
@@ -146,8 +148,8 @@ class Login extends React.Component {
     }
 
     let login = () => {
-      // popup('/auth-popup.html');
-      // return ;
+      popup('/auth-popup.html');
+      return ;
       createSession({
         auth_type: 'basic',
         username: 'admin',

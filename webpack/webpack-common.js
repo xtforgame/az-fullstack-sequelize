@@ -35,6 +35,9 @@ module.exports = function(env) {
       app: [
         path.resolve(projRoot, frontEndJsEntryFilename),
       ],
+      authEntry: [
+        path.resolve(projRoot, frontEndJsEntryFolder, 'authEntry.js'),
+      ],
     },
     output: {
       // path: path.resolve(projRoot, frontEndJsPublicFolder),
@@ -115,6 +118,11 @@ module.exports = function(env) {
         chunks: ['app'],
         template: path.resolve(projRoot, frontEndJsEntryFolder, 'index.html'),
         filename: 'index.html',
+      }),
+      new HtmlWebpackPlugin({
+        chunks: ['authEntry'],
+        template: path.resolve(projRoot, frontEndJsEntryFolder, 'auth-popup.html'),
+        filename: 'auth-popup.html',
       }),
     ],
   };

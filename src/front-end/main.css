@@ -9,6 +9,10 @@ body * {
   margin: 0px;
 }
 
+html, body, #page_main {
+  height: 100%;
+}
+
 #loading-page,
 #loading-page * {
   font-family: '';

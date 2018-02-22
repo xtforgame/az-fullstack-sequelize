@@ -19,7 +19,7 @@ import Button from 'material-ui/Button';
 import Divider from 'material-ui/Divider';
 import Icon from 'material-ui/Icon';
 
-const styles = {
+const styles = theme => ({
   list: {
     width: 250,
   },
@@ -27,11 +27,18 @@ const styles = {
     width: 'auto',
   },
   mainContent: {
-    margin: 40,
-    width: 1200,
+    margin: 24,
+    [theme.breakpoints.up('sm')]: {
+      margin: 40,
+      width: 1200,
+    },
+    width: '100%',
   },
   appBarPlaceholder: {
-    height: 48,
+    height: 56,
+    [theme.breakpoints.up('sm')]: {
+      height: 64,
+    },
   },
   verticalFlexContainer: {
     flexDirection: 'column',
@@ -45,7 +52,7 @@ const styles = {
   spacing: {
     flex: 1,
   },
-};
+});
 
 class MainFrame extends React.Component {
   constructor(props){

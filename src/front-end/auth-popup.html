@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Auth</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+  </head>
+  <body>
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <div class = "mdl-layout mdl-js-layout mdl-layout--fixed-header">
+      <header class = "mdl-layout__header">
+        <div class = "mdl-layout__header-row">      
+          <span class = "mdl-layout-title">Material Design Tabs</span>
+        </div>
+      </header>
+      
+      <main class = "mdl-layout__content">    
+        <div class = "mdl-tabs mdl-js-tabs">
+          <div class = "mdl-tabs__tab-bar">
+            <a href = "#tab1-panel" class = "mdl-tabs__tab is-active">Tab 1</a>
+            <a href = "#tab2-panel" class = "mdl-tabs__tab">Tab 2</a>
+            <a href = "#tab3-panel" class = "mdl-tabs__tab">Tab 3</a>
+          </div>
+        
+          <div class = "mdl-tabs__panel is-active" id = "tab1-panel">
+            <p>Tab 1 Content</p>
+          </div>
+        
+          <div class = "mdl-tabs__panel" id = "tab2-panel">
+            <p>Tab 2 Content</p>
+          </div>
+        
+          <div class = "mdl-tabs__panel" id = "tab3-panel">
+            <p>Tab 3 Content</p>
+          </div>
+        </div>
+      </main>
+    </div>
+    <div id="page_main" class="wrapper" />
+    <!-- The following scripts will be generared by webpack -->
+  </body>
+</html>
