@@ -67,7 +67,6 @@ class LocaleDropdown extends React.Component {
     return (
       <div>
         <Button
-          color="contrast"
           aria-owns={this.state.open ? 'simple-menu' : null}
           aria-haspopup="true"
           {...props}
@@ -79,7 +78,7 @@ class LocaleDropdown extends React.Component {
           id="simple-menu"
           anchorEl={this.state.anchorEl}
           open={this.state.open}
-          onRequestClose={this.handleRequestClose}
+          onClose={this.handleRequestClose}
         >
           {this.getMenuItmes()}
         </Menu>

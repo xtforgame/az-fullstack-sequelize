@@ -98,7 +98,13 @@ class MainFrame extends React.Component {
             <div className={classes.spacing} />
           </div>
         </div>
-        <Drawer open={this.state.drawerOpened} onRequestClose={this.toggleDrawer(false)}>
+        <Drawer
+          open={this.state.drawerOpened}
+          onClose={this.toggleDrawer(false)}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+        >
           <div
             tabIndex={0}
             role="button"

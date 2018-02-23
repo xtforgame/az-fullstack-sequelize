@@ -43,16 +43,16 @@ class Home extends React.Component {
 
     return (
       <div>
-        <Typography type="display3">
+        <Typography variant="display3">
           Home
         </Typography>
         <Divider />
         <div className={classes.placeholder} />
         { routeView }
-        <Typography type="title">
+        <Typography variant="title">
           {formatMessage(intl, messages.greetText, {user: greetName || 'user0001'})}
         </Typography>
-        <Typography type="title">
+        <Typography variant="title">
           <ruby>
             <rb>圖</rb><rt>ㄊㄨˊ</rt>
             <rb>書</rb><rt>ㄕㄨ</rt>
@@ -72,7 +72,7 @@ class Home extends React.Component {
             ㄊㄨˊㄕㄨㄍㄨㄢˇ
           </ruby>
         </Typography>
-        <Typography type="title">
+        <Typography variant="title">
           <ruby>
             <rb>図</rb><rt>と</rt>
             <rb>書</rb><rt>しょ</rt>
@@ -97,7 +97,7 @@ class Home extends React.Component {
         <Icon color="primary" className={classes.icon}>
           <i className="fa fa-calculator" aria-hidden="true"></i>
         </Icon>
-        <Icon color="contrast" className={classes.icon}>
+        <Icon className={classes.icon}>
           <i className="fa fa-calculator" aria-hidden="true"></i>
         </Icon>
         <Icon className={classes.icon}>

@@ -125,7 +125,7 @@ class Login extends React.Component {
         <Paper className={classes.paper} elevation={4}>
           <AppBar position="static">
             <Toolbar className={classes.toolBar}>
-              <Typography type="title" color="inherit" className={classes.flex}>
+              <Typography variant="title" color="inherit" className={classes.flex}>
                 <FormattedMessage {...messages.login} />
               </Typography>
               <LocaleDropdown />

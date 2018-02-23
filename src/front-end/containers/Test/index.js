@@ -39,7 +39,7 @@ class Test extends React.Component {
 
     return (
       <div>
-        <Typography type="display3">
+        <Typography variant="display3">
           Test
         </Typography>
         <Divider />
