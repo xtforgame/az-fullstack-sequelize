@@ -43,6 +43,7 @@ const {
   createSession,
   createSessionCancel,
 } = modelMap.actions;
+
 const styles = theme => ({
   ...createFormStyle(theme),
   flexContainer: {

@@ -11,6 +11,7 @@ const {
 
 const {
   sessionReducer,
+  userReducer,
 } = modelMap.reducers;
 
 const persistence = (state = { rememberUser: false }, action) => {
@@ -29,5 +30,6 @@ const persistence = (state = { rememberUser: false }, action) => {
 
 export default combineReducers({
   sessions: sessionReducer,
+  users: userReducer,
   persistence,
 });

@@ -8,9 +8,13 @@ import UrlInfo from '../UrlInfo';
 export default class EpicCreator {
   static $name = 'epics';
 
-  create({ ns, names, url, getShared, methodConfigs }){
+  create({ ns, names, url, getShared, methodConfigs }, config){
     let shared = {};
     let exposed = {};
+
+    const {
+      getHeaders = () => ({}),
+    } = config;
 
     methodConfigs.forEach(methodConfig => {
       if(methodConfig.name === 'clear'){
@@ -45,6 +49,7 @@ export default class EpicCreator {
                 let result = axios({
                   method: methodConfig.method,
                   url,
+                  headers: getHeaders(),
                   data: action.data,
                   cancelToken: source.token,
                 });
@@ -80,7 +85,11 @@ export default class EpicCreator {
                 })
                 .take(1)
             )
-          });
+          })/*
+          .mergeMap(action => {
+            console.log('action :', action);
+            return [action];
+          })*/;
       };
       exposed[epicName] = shared[methodConfig.name];
     });
