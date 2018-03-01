@@ -46,7 +46,7 @@ class MainAppBar extends React.Component {
       <div className={classes.root}>
         <AppBar position="fixed">
           <Toolbar>
-            <IconButton className={classes.menuButton} onTouchTap={onToggleMenu} aria-label="Menu">
+            <IconButton color="inherit" className={classes.menuButton} onTouchTap={onToggleMenu} aria-label="Menu">
               <MenuIcon />
             </IconButton>
             <Typography variant="title" color="inherit" className={classes.flex}>

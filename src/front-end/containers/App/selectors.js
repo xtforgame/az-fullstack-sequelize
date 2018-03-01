@@ -19,6 +19,12 @@ const makeUserSessionSelector = () => createSelector(
   }
 );
 
+const persistenceSelector = state => state.get('global').persistence;
+const makeRememberUserSelector = () => createSelector(
+  persistenceSelector,
+  (persistence) => persistence.rememberUser
+);
+
 export {
   sessionSelector,
   makeSessionHierarchySelector,
@@ -27,4 +33,6 @@ export {
   makeSelectedSessionCollectionSelector,
   makeSelectedSessionSelector,
   makeUserSessionSelector,
+  persistenceSelector,
+  makeRememberUserSelector,
 };

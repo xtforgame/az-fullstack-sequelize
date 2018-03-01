@@ -1,4 +1,11 @@
 import throttle from 'lodash/throttle';
+import {
+  makeUserSessionSelector,
+  makeRememberUserSelector,
+} from '~/containers/App/selectors';
+
+const userSessionSelector = makeUserSessionSelector();
+const rememberUserSelector = makeRememberUserSelector();
 
 export const loadState = () => {
   try {
@@ -35,8 +42,10 @@ export const clearState = () => {
 };
 
 const delaySave = throttle(store => {
-  let persistedData = store.getState().get('global');
-  if(persistedData.rememberUser){
+  let state = store.getState();
+  let persistedData = state.get('global');
+
+  if(rememberUserSelector(state) && userSessionSelector(state)){
     saveState(persistedData);
   }else{
     // removeState();

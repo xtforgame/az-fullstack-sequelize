@@ -3,8 +3,8 @@
 import { create } from 'jss';
 import { SheetsRegistry } from 'react-jss';
 import preset from 'jss-preset-default';
-import { createMuiTheme, createTypography, createPalette } from 'material-ui/styles';
-import { purple, green, blue, black, pink } from 'material-ui/colors';
+import { createMuiTheme, createTypography } from 'material-ui/styles';
+import { purple, green, blue, black, pink, grey, common } from 'material-ui/colors';
 import createGenerateClassName from 'material-ui/styles/createGenerateClassName';
 
 // const theme = createMuiTheme({
@@ -15,15 +15,56 @@ import createGenerateClassName from 'material-ui/styles/createGenerateClassName'
 // });
 
 export function getTheme(theme) {
+  let paletteType = theme.paletteType;
+  let primary = blue;
+  let secondary = pink;
+  let background = {
+    paper: common.white,
+    default: grey[50],
+  };
+  if(theme.paletteType === 'dark'){
+    primary = black;
+    background = {
+      paper: grey[800],
+      default: '#303030',
+    };
+  }else if(theme.paletteType === 'vaxal'){
+    primary = {
+      light: '#765cb7',
+      main: '#463287',
+      dark: '#120b59',
+      contrastText: common.white,
+    };
+    secondary = {
+      light: '#78deff',
+      main: '#3dacd3',
+      dark: '#007da2',
+      contrastText: common.white,
+    };
+    background = {
+      paper: grey[100],
+      default: grey[200],
+    };
+    paletteType = 'light';
+  }
+
   return createMuiTheme({
     direction: theme.direction,
     typography: {
       fontFamily: `"Noto Sans TC", "Noto Sans SC", "Noto Sans JP", "Roboto", sans-serif`,
     },
     palette: {
-      primary: theme.paletteType === 'dark' ? black : blue,
-      secondary: pink,
-      type: theme.paletteType,
+      primary,
+      secondary,
+      type: paletteType,
+      background,
+    },
+    status: {
+      success: {
+        light: green[300],
+        main: green[500],
+        dark: green[700],
+      },
     },
   });
 }
@@ -32,6 +73,7 @@ const theme = getTheme({
   direction: 'ltr',
   // paletteType: 'light',
   paletteType: 'dark',
+  // paletteType: 'vaxal',
 });
 
 // Configure JSS

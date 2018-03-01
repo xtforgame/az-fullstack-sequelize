@@ -56,9 +56,12 @@ class MainFrame extends React.Component {
   }
 
   toggleDrawer = (open) => () => {
-    this.setState({
-      drawerOpened: open,
-    });
+    setTimeout(() => {
+      // [TODO] Work-around delay for mobile device
+      this.setState({
+        drawerOpened: open,
+      });
+    }, 10);
   };
 
   closeDrawer = () => {
