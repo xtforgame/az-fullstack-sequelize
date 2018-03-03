@@ -13,11 +13,12 @@ const FormTextInput = (props) => {
     id,
     label,
     helperText,
+    formProps,
     classes,
     ...rest,
   } = props;
   return (
-    <FormControl>
+    <FormControl {...formProps}>
       {!!label && <InputLabel htmlFor={id}>{label}</InputLabel>}
       <Input
         id={id}

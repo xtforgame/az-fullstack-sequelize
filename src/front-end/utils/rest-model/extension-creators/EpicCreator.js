@@ -14,6 +14,7 @@ export default class EpicCreator {
 
     const {
       getHeaders = () => ({}),
+      responseMiddleware = (response, info, error) => ({}),
     } = config;
 
     methodConfigs.forEach(methodConfig => {
@@ -42,19 +43,36 @@ export default class EpicCreator {
           .mergeMap(action => {
             const url = urlInfo.compile(action.urlParams);
             const source = axios.CancelToken.source();
+            const request = {
+              method: methodConfig.method,
+              url,
+              headers: getHeaders(),
+              data: action.data,
+              cancelToken: source.token,
+            };
             return Observable.fromPromise(
               //promiseWait(1000)
               promiseWait(0)
               .then(() => {
-                let result = axios({
-                  method: methodConfig.method,
-                  url,
-                  headers: getHeaders(),
-                  data: action.data,
-                  cancelToken: source.token,
-                });
+                let result = axios(request);
                 // source.cancel('Operation canceled by the user.');
                 return result;
+              })
+              .then(response => {
+                let result = responseMiddleware(response, { request });
+                if(result){
+                  return Promise.resolve(result);
+                }
+                return Promise.resolve(response);
+              })
+              .catch((error) => {
+                if(error.response){
+                  let result = responseMiddleware(error.response, { request }, error);
+                  if(result){
+                    return Promise.resolve(result);
+                  }
+                }
+                return Promise.reject(error);
               })
             )
             .map(response => {
@@ -72,7 +90,7 @@ export default class EpicCreator {
             })
             .catch(error => {
               console.log('error :', error);
-              return Observable.of(actions.error())
+              return Observable.of(actions.error({ error }))
             })
             .race(
               action$.filter(action => {
