@@ -27,7 +27,7 @@ const fetchMyUserDataAfterPostedSession = (action$, store) =>
       HeaderManager.set('Authorization', `${action.data.token_type} ${action.data.token}`);
       return [
         readUser({}, {
-          userId: action.data.userid,
+          userId: action.data.user_id,
         }),
       ];
     });

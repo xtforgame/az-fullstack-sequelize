@@ -32,7 +32,7 @@ const modelsDefine = {
         baseSelector: state => state.get('global').sessions,
       },
       reducers: {
-        getId: action => 'me', // action.data.userid,
+        getId: action => 'me', // action.data.user_id,
       },
     },
   },
