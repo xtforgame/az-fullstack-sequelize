@@ -37,6 +37,7 @@ import modelMap from '~/containers/App/modelMap';
 import {
   makeUserSessionSelector,
   makeRememberUserSelector,
+  makeUserSessionCreateError,
 } from '~/containers/App/selectors';
 
 const {
@@ -65,7 +66,6 @@ const styles = theme => ({
     [theme.breakpoints.up('sm')]: {
       width: 500,
       margin: 80,
-      height: 470,
     },
   },
   menuButton: {
@@ -78,38 +78,13 @@ const styles = theme => ({
   }
 });
 
-const LinkInternal = ({text, url, classes}) => (
-  <a
-    className={classes.link}
-    onTouchTap={event => {
-      event.stopPropagation();
-      event.preventDefault();
-    }}
-  >{text}</a>
-);
-
-const Link = compose(
-  withStyles(styles),
-)(LinkInternal)
-
 class Login extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      username: '',
-      password: '',
       tabIndex: 0,
     };
   }
-
-  handleChange = prop => event => {
-    this.setState({ [prop]: event.target.value });
-  };
-
-  handleRememberUserChange = (event, checked) => {
-    let { rememberUser, rememberMe } = this.props;
-    rememberMe(!rememberUser);
-  };
 
   componentWillMount(){
     let { location, session } = this.props;
@@ -124,18 +99,8 @@ class Login extends React.Component {
   };
 
   render(){
-    let { location, intl, createSession, session, rememberUser, classes } = this.props;
+    let { location, intl, createSession, session, rememberUser, error, classes } = this.props;
     let fromPath = location.state && location.state.from.pathname;
-    let usernameText = formatMessage(intl, messages.username, {});
-    let passwordText = formatMessage(intl, messages.password, {});
-    let loginText = formatMessage(intl, messages.login, {});
-    let rememberMeText = formatMessage(intl, messages.rememberMe, {});
-    let forgotPasswordText = formatMessage(intl, messages.forgotPasswordQuestion, {});
-    let createAccountText = formatMessage(intl, messages.createAccount, {});
-
-    let createAccountV = formatMessage(intl, messages.createAccountV, {});
-    let terms = formatMessage(intl, messages.terms, {});
-    let privacyPolicy = formatMessage(intl, messages.privacyPolicy, {});
 
     if(session){
       fromPath = fromPath || '/';
@@ -146,49 +111,17 @@ class Login extends React.Component {
       );
     }
 
-    let login = () => {
+    let login = (username, password, rememberUser) => {
+      let { rememberMe } = this.props;
+      rememberMe(rememberUser);
       // popup('/auth-popup.html');
       // return ;
       createSession({
         auth_type: 'basic',
-        username: 'admin',
-        password: 'admin',
+        username,
+        password,
       });
     };
-
-    let userAgreementLable = (
-      <FormattedMessage
-        {...messages.userAgreement}
-        values={{
-          createAccountV,
-          terms: (<Link key="terms" text={terms} />),
-          privacyPolicy: (<Link key="privacyPolicy" text={privacyPolicy} />),
-        }}
-      >
-        {(...parts) => {
-          return (
-            <Typography
-              variant="body1"
-              className={classes.textContainer}
-              onClick={event => {
-                event.stopPropagation();
-                event.preventDefault();
-              }}
-              onMouseDown={event => {
-                event.stopPropagation();
-                event.preventDefault();
-              }}
-              onTouchTap={event => {
-                event.stopPropagation();
-                event.preventDefault();
-              }}
-            >
-              {parts}
-            </Typography>
-          );
-        }}
-      </FormattedMessage>
-    );
 
     return (
       <div className={classes.flexContainer}>
@@ -214,31 +147,17 @@ class Login extends React.Component {
             disabled={true}
           >
             <LoginForm
-              usernameText={usernameText}
-              passwordText={passwordText}
-              rememberMeText={rememberMeText}
-              rememberUser={rememberUser}
-              loginText={loginText}
-              forgotPasswordText={forgotPasswordText}
-              createAccountText={createAccountText}
-              onRememberUserChange={this.handleRememberUserChange}
-              onUsernameChange={this.handleChange('username')}
-              onPasswordChange={this.handleChange('password')}
+              usernameError={!this.state.tabIndex && !!error}
+              passwordError={!this.state.tabIndex && error && 'Wrong username or password'}
+              defaultRememberMe={rememberUser}
               onSubmit={login}
               handleForgotPassword={() => this.swipeTo(1)}
               handleCreateAccount={() => this.swipeTo(1)}
             />
             <RegistrationForm
-              usernameText={usernameText}
-              passwordText={passwordText}
-              createAccountText={createAccountV}
-              onUsernameChange={this.handleChange('username')}
-              onPasswordChange={this.handleChange('password')}
               onSubmit={login}
               comfirmUserAgreement={true}
-              userAgreementLable={userAgreementLable}
             />
-            <div>slide n°3</div>
           </SwipeableViews>
         </Paper>
         <div className={classes.spacing} />
@@ -250,6 +169,7 @@ class Login extends React.Component {
 const mapStateToProps = createStructuredSelector({
   session: makeUserSessionSelector(),
   rememberUser: makeRememberUserSelector(),
+  error: makeUserSessionCreateError(),
 });
 
 export default compose(

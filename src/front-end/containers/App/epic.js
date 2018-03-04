@@ -5,6 +5,7 @@ const {
   createSessionEpic,
   readSessionCollEpic,
   readUserEpic,
+  createUserEpic,
 } = modelMap.epics;
 
 const {
@@ -14,6 +15,7 @@ const {
 
 const {
   readUser,
+  createUser,
 } = modelMap.actions;
 
 const fetchMyUserDataAfterPostedSession = (action$, store) =>
@@ -22,9 +24,16 @@ const fetchMyUserDataAfterPostedSession = (action$, store) =>
       // console.log('action :', action);
       HeaderManager.set('Authorization', `${action.data.token_type} ${action.data.token}`);
       return [
-        readUser({}, {
-          userId: action.data.userid,
-        }),
+        createUser({
+          name: 'Test User',
+          privilege: 'admin',
+          accountLinks: [{
+            auth_type: 'basic',
+            username: 'testuser',
+            password: 'testuser',
+          }],
+        },
+        {}),
       ];
     });
 
@@ -40,5 +49,6 @@ export default [
   clearAuthorizationHeaderAfterClearSession,
   createSessionEpic,
   readSessionCollEpic,
+  createUserEpic,
   readUserEpic,
 ];

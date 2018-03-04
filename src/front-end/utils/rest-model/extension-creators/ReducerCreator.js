@@ -120,7 +120,7 @@ const genErrorFunc = (method, options) => (state = {}, action) => {
     },
     error: {
       ...partialState.error,
-      [method]: action.error,
+      [method]: action.data && action.data.error,
     },
   }));
 };

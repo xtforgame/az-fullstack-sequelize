@@ -1,10 +1,14 @@
 import React from 'react';
 import { compose } from 'recompose';
+import { injectIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Typography from 'material-ui/Typography';
 import Button from 'material-ui/Button';
 import Divider from 'material-ui/Divider';
+
+import { messages } from '~/containers/App/translation';
+import formatMessage from '~/utils/formatMessage';
 import {
   createFormStyle,
   FormSpace,
@@ -14,35 +18,78 @@ import {
   FormCheckbox,
 } from '~/components/SignInSignUp';
 
+import TextFieldHelper from './TextFieldHelper';
+
 class LoginForm extends React.Component {
   constructor(props){
     super(props);
+    this.textFieldHelper = new TextFieldHelper(this);
+    this.textFieldHelper.add({
+      name: 'username',
+      onChangePropName: 'onUsernameChange',
+      errorPropName: 'usernameError',
+      validate: value => value != null && value != '',
+    }, {
+      name: 'password',
+      type: 'password',
+      onChangePropName: 'onPasswordChange',
+      errorPropName: 'passwordError',
+      validate: value => value != null && value != '',
+    });
+
     this.state = {
+      ...this.textFieldHelper.getInitState(),
       showPassword: false,
+      rememberMe: false,
     };
   }
 
-  handleClickShowPasssword = () => {
-    this.setState({ showPassword: !this.state.showPassword });
+  handleSubmit = () => {
+    const {
+      onSubmit = () => {},
+    } = this.props;
+
+    if(this.textFieldHelper.validate()){
+      onSubmit(this.state.username, this.state.password, this.state.rememberMe);
+    }
+  }
+
+  handleEnterForTextField = (event) => {
+    if (event.key === 'Enter') {
+      this.handleSubmit();
+      event.preventDefault();
+    }
   };
 
+  handleRememberMeChange = (event, checked) => {
+    const {
+      onRememberMeChange = () => {},
+    } = this.props;
+    onRememberMeChange(checked);
+    this.setState({ rememberMe: checked });
+  };
+
+  componentWillMount(){
+    const {
+      defaultRememberMe = false,
+    } = this.props;
+    this.setState({ rememberMe: defaultRememberMe });
+  }
+
   render(){
-    let {
-      rememberUser,
-      onRememberUserChange,
-      usernameText,
-      onUsernameChange,
-      passwordText,
-      onPasswordChange,
-      rememberMeText,
-      loginText,
-      forgotPasswordText,
-      createAccountText,
-      onSubmit,
-      handleForgotPassword,
-      handleCreateAccount,
+    const {
+      intl,
+      handleForgotPassword = () => {},
+      handleCreateAccount = () => {},
       classes,
     } = this.props;
+
+    const usernameText = formatMessage(intl, messages.username, {});
+    const passwordText = formatMessage(intl, messages.password, {});
+    const loginText = formatMessage(intl, messages.login, {});
+    const rememberMeText = formatMessage(intl, messages.rememberMe, {});
+    const forgotPasswordText = formatMessage(intl, messages.forgotPasswordQuestion, {});
+    const createAccountText = formatMessage(intl, messages.createAccount, {});
 
     return (
       <div>
@@ -51,27 +98,33 @@ class LoginForm extends React.Component {
           <FormTextInput
             id="username"
             label={usernameText}
-            value={this.state.username}
-            onChange={onUsernameChange}
+            onKeyPress={this.handleEnterForTextField}
+            {...this.textFieldHelper.
+              getPropsForInputField('username', formatMessage(intl, messages.usernameEmptyError, {}))}
           />
           <FormSpace variant="content1" />
           <FormPasswordInput
             id="password"
             label={passwordText}
-            type={this.state.showPassword ? 'text' : 'password'}
-            value={this.state.password}
-            onShowPassswordClick={this.handleClickShowPasssword}
-            onChange={onPasswordChange}
+            onKeyPress={this.handleEnterForTextField}
+            {...this.textFieldHelper
+              .getPropsForInputField('password', formatMessage(intl, messages.passwordEmptyError, {}))}
           />
           <FormCheckbox
             dense="true"
             color="primary"
-            checked={rememberUser}
-            onChange={onRememberUserChange}
+            checked={this.state.rememberMe}
+            onChange={this.handleRememberMeChange}
             label={rememberMeText}
+            onKeyPress={this.handleEnterForTextField}
           />
           <FormSpace variant="content1" />
-          <Button variant="raised" fullWidth={true} color="primary" className={classes.loginBtn} onTouchTap={onSubmit}>
+          <Button
+            variant="raised"
+            fullWidth={true}
+            color="primary"
+            className={classes.loginBtn}
+            onTouchTap={this.handleSubmit}>
             {loginText}
           </Button>
           <FormSpace variant="content1" />
@@ -98,5 +151,6 @@ class LoginForm extends React.Component {
 }
 
 export default compose(
+  injectIntl,
   withStyles(createFormStyle),
 )(LoginForm);

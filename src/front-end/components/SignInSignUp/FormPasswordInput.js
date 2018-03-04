@@ -22,6 +22,7 @@ const FormPasswordInput = (props) => {
   let endAdornment = (
     <InputAdornment position="end">
       <IconButton
+        tabIndex="-1"
         onClick={onShowPassswordClick}
         onMouseDown={event => {
           event.preventDefault();

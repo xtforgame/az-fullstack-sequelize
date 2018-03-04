@@ -1,6 +1,13 @@
 import { getHeaders } from '~/utils/HeaderManager';
 import ModelMap from '~/utils/rest-model/ModelMap';
 
+const responseMiddleware = (response, info, error) => {
+  if(response.status === 200 && response.data.error){
+    // for some error carried by a 200 response
+    return Promise.reject(response.data.error);
+  }
+};
+
 const modelsDefine = {
   api: {
     url: '/api',
@@ -9,6 +16,7 @@ const modelsDefine = {
     extensionConfigs: {
       epics: {
         getHeaders,
+        responseMiddleware,
       },
     },
   },
@@ -18,6 +26,7 @@ const modelsDefine = {
     extensionConfigs: {
       epics: {
         getHeaders,
+        responseMiddleware,
       },
       selectors: {
         baseSelector: state => state.get('global').sessions,
@@ -33,6 +42,7 @@ const modelsDefine = {
     extensionConfigs: {
       epics: {
         getHeaders,
+        responseMiddleware,
       },
       selectors: {
         baseSelector: state => state.get('global').users,
