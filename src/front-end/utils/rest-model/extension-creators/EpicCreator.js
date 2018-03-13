@@ -1,8 +1,7 @@
-import { Observable } from 'rxjs';
-import { promiseWait } from 'common/utils';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import ActionTypesCreator from './ActionTypesCreator';
 import ActionsCreator from './ActionsCreator';
+import AxiosObservable from '../AxiosObservable';
 import UrlInfo from '../UrlInfo';
 
 export default class EpicCreator {
@@ -14,7 +13,8 @@ export default class EpicCreator {
 
     const {
       getHeaders = () => ({}),
-      responseMiddleware = (response, info, error) => ({}),
+      responseMiddleware,
+      errorMiddleware,
     } = config;
 
     methodConfigs.forEach(methodConfig => {
@@ -42,72 +42,36 @@ export default class EpicCreator {
         return action$.ofType(actionTypes.start)
           .mergeMap(action => {
             const url = urlInfo.compile(action.urlParams);
+            const query = action.urlParams.query;
             const source = axios.CancelToken.source();
-            const request = {
+
+            return AxiosObservable({
               method: methodConfig.method,
               url,
               headers: getHeaders(),
               data: action.data,
               cancelToken: source.token,
-            };
-            return Observable.fromPromise(
-              //promiseWait(1000)
-              promiseWait(0)
-              .then(() => {
-                let result = axios(request);
-                // source.cancel('Operation canceled by the user.');
-                return result;
-              })
-              .then(response => {
-                let result = responseMiddleware(response, { request });
-                if(result){
-                  return Promise.resolve(result);
-                }
-                return Promise.resolve(response);
-              })
-              .catch((error) => {
-                if(error.response){
-                  let result = responseMiddleware(error.response, { request }, error);
-                  if(result){
-                    return Promise.resolve(result);
-                  }
-                }
-                return Promise.reject(error);
-              })
-            )
-            .map(response => {
-              // console.log('response :', response);
-              // const pathArray = urlInfo.urlParamsToArray(action.urlParams);
-              const timestamp = new Date().getTime();
-              return actions.success(
+              params: query,
+            }, {
+              success: (response) => actions.success(
                 response.data,
                 action.urlParams,
-                {
-                  // pathArray,
-                  timestamp,
-                }
-              );
-            })
-            .catch(error => {
-              console.log('error :', error);
-              return Observable.of(actions.error({ error }))
-            })
-            .race(
-              action$.filter(action => {
+                { timestamp: new Date().getTime() },
+              ),
+              error: (error) => {
+                console.log('error :', error);
+                return actions.error({ error })
+              },
+              cancel: actions.clearError,
+            }, {
+              responseMiddleware,
+              errorMiddleware,
+              cancelStream$: action$.filter(action => {
                 // TODO checking more conditions for avoiding canceling all action with the same action type
                 return action.type === actionTypes.cancel;
-              })
-                .map(() => {
-                  source.cancel('Operation canceled by the user.');
-                  return actions.clearError();
-                })
-                .take(1)
-            )
-          })/*
-          .mergeMap(action => {
-            console.log('action :', action);
-            return [action];
-          })*/;
+              }),
+            });
+          });
       };
       exposed[epicName] = shared[methodConfig.name];
     });

@@ -1,11 +1,12 @@
 import { getHeaders } from '~/utils/HeaderManager';
 import ModelMap from '~/utils/rest-model/ModelMap';
 
-const responseMiddleware = (response, info, error) => {
+const responseMiddleware = (response, info) => {
   if(response.status === 200 && response.data.error){
     // for some error carried by a 200 response
     return Promise.reject(response.data.error);
   }
+  return Promise.resolve(response);
 };
 
 const modelsDefine = {
