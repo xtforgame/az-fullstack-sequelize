@@ -21,10 +21,14 @@ export default (axiosOptions, {
     errorMiddleware = (error) => Promise.reject(error),
     debugDelay = 0,
     cancelStream$,
+    axiosCancelTokenSource = axios.CancelToken.source(),
   } = options;
   let observable = Observable.fromPromise(
     promiseWait(debugDelay)
-    .then(() => axios(axiosOptions))
+    .then(() => axios({
+      ...axiosOptions,
+      cancelToken: axiosCancelTokenSource.token,
+    }))
     .then(response => {
       return Promise.resolve()
       .then(() => responseMiddleware(response, { request: axiosOptions, options }))
@@ -47,7 +51,7 @@ export default (axiosOptions, {
     observable = observable.race(
       cancelStream$
         .map(() => {
-          source.cancel('Operation canceled by the user.');
+          axiosCancelTokenSource.cancel('Operation canceled by the user.');
           return cancelAction();
         })
         .take(1)

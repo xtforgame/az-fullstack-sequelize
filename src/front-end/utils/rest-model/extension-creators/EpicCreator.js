@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import ActionTypesCreator from './ActionTypesCreator';
 import ActionsCreator from './ActionsCreator';
-import AxiosObservable from '../AxiosObservable';
+import AxiosObservable from '../../AxiosObservable';
 import UrlInfo from '../UrlInfo';
 
 export default class EpicCreator {
@@ -50,7 +50,6 @@ export default class EpicCreator {
               url,
               headers: getHeaders(),
               data: action.data,
-              cancelToken: source.token,
               params: query,
             }, {
               success: (response) => actions.success(
@@ -60,12 +59,13 @@ export default class EpicCreator {
               ),
               error: (error) => {
                 console.log('error :', error);
-                return actions.error({ error })
+                return actions.error({ error });
               },
               cancel: actions.clearError,
             }, {
               responseMiddleware,
               errorMiddleware,
+              axiosCancelTokenSource: source,
               cancelStream$: action$.filter(action => {
                 // TODO checking more conditions for avoiding canceling all action with the same action type
                 return action.type === actionTypes.cancel;
