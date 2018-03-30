@@ -2,7 +2,7 @@ import Sequelize from 'sequelize';
 import ServiceBase from '../ServiceBase';
 import pg_utils, { removeRoleAndDb, createRoleAndDb } from './pg-utils';
 
-import { promiseWait } from '../../common/utils'
+import { promiseWait } from 'common/utils'
 
 import {
   postgresHost,
@@ -10,7 +10,7 @@ import {
   postgresUser,
   postgresDbName,
   postgresPassword,
-} from '../../core/config';
+} from 'config';
 import write from './write-file'; // eslint-disable-line no-unused-vars
 
 function databaseLogger(...args) { // eslint-disable-line no-unused-vars
