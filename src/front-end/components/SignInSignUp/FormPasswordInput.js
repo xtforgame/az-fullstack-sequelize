@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import { InputAdornment } from 'material-ui/Input';
 import IconButton from 'material-ui/IconButton';
-import Visibility from 'material-ui-icons/Visibility';
-import VisibilityOff from 'material-ui-icons/VisibilityOff';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 import FormTextInput from './FormTextInput';
 

@@ -23,7 +23,7 @@ import Typography from 'material-ui/Typography';
 import LocaleDropdown from '~/containers/LocaleDropdown'
 
 import IconButton from 'material-ui/IconButton';
-import ArrowBack from 'material-ui-icons/ArrowBack';
+import ArrowBack from '@material-ui/icons/ArrowBack';
 
 import SwipeableViews from 'react-swipeable-views';
 import LoginForm from './LoginForm';
