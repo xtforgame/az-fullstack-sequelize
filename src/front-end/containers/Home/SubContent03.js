@@ -9,6 +9,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
+import EnhancedTableHead from './EnhancedTableHead';
 import SimpleTabs from './SimpleTabs';
 
 const styles = theme => ({
@@ -28,31 +29,46 @@ const styles = theme => ({
   },
 });
 
+const columnData = [
+  { id: 'name', numeric: false, disablePadding: true, label: 'Dessert (100g serving)' },
+  { id: 'calories', numeric: true, disablePadding: false, label: 'Calories' },
+  { id: 'fat', numeric: true, disablePadding: false, label: 'Fat (g)' },
+  { id: 'carbs', numeric: true, disablePadding: false, label: 'Carbs (g)' },
+  { id: 'protein', numeric: true, disablePadding: false, label: 'Protein (g)' },
+];
+
 function createData(id, name, calories, fat, carbs, protein) {
   return { id, name, calories, fat, carbs, protein, expanded: false };
 }
 
 const createList = () => [
-  createData(0, 'Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData(1, 'Ice cream sandwich', 237, 9.0, 37, 4.3),
+  createData(0, 'Cupcake', 305, 3.7, 67, 4.3),
+  createData(1, 'Donut', 452, 25.0, 51, 4.9),
   createData(2, 'Eclair', 262, 16.0, 24, 6.0),
-  createData(3, 'Cupcake', 305, 3.7, 67, 4.3),
+  createData(3, 'Frozen yoghurt', 159, 6.0, 24, 4.0),
   createData(4, 'Gingerbread', 356, 16.0, 49, 3.9),
-  createData(5, 'Frozen yoghurt', 159, 6.0, 24, 4.0),
+  createData(5, 'Honeycomb', 408, 3.2, 87, 6.5),
   createData(6, 'Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData(7, 'Eclair', 262, 16.0, 24, 6.0),
-  createData(8, 'Cupcake', 305, 3.7, 67, 4.3),
-  createData(9, 'Gingerbread', 356, 16.0, 49, 3.9),
-  createData(10, 'Frozen yoghurt', 159, 6.0, 24, 4.0),
+  createData(7, 'Jelly Bean', 375, 0.0, 94, 0.0),
+  createData(8, 'KitKat', 518, 26.0, 65, 7.0),
+  createData(9, 'Lollipop', 392, 0.2, 98, 0.0),
+  createData(10, 'Marshmallow', 318, 0, 81, 2.0),
+  createData(11, 'Nougat', 360, 19.0, 9, 37.0),
+  createData(12, 'Oreo', 437, 18.0, 63, 4.0),
 ];
+
+const defaultSortBy = 'id';
 
 class SimpleTable extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   constructor(...args){
     super(...args);
     this.state = {
-      list: createList(),
+      list: createList()
+        .sort((a, b) => (a[defaultSortBy] < b[defaultSortBy] ? -1 : 1)),
       page: 0,
       rowsPerPage: 5,
+      order: 'asc',
+      orderBy: defaultSortBy,
     };
   }
 
@@ -64,35 +80,55 @@ class SimpleTable extends React.PureComponent { // eslint-disable-line react/pre
     this.setState({ rowsPerPage: event.target.value });
   };
 
-  toggleDetail(index) {
-    this.state.list.filter(d => d.id !== index).map(d => d.expanded = false);
-    this.state.list.splice(index, 1, {
-      ...this.state.list[index],
-      expanded: !this.state.list[index].expanded,
+  handleRequestSort = (_, property) => {
+    let orderBy = property || defaultSortBy;
+    let order = 'desc';
+
+    if (this.state.orderBy === property) {
+      if(this.state.order === 'desc'){
+        order = 'asc';
+      }else{
+        orderBy = defaultSortBy;
+      }
+    }
+
+    const list = order === 'desc'
+      ? this.state.list.sort((a, b) => (b[orderBy] < a[orderBy] ? -1 : 1))
+      : this.state.list.sort((a, b) => (a[orderBy] < b[orderBy] ? -1 : 1));
+
+    this.setState({ list, order, orderBy });
+  };
+
+  toggleDetail(data) {
+    const list = this.state.list.map(d => {
+      let expanded = false;
+      if(d.id === data.id){
+        expanded = !d.expanded;
+      }
+      return {
+        ...d,
+        expanded,
+      };
     });
     this.setState({
-      list: [...this.state.list],
+      list,
     });
   }
 
   render() {
     const { classes } = this.props;
-    const { data, rowsPerPage, page } = this.state;
+    const { order, orderBy, rowsPerPage, page } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, this.state.list.length - page * rowsPerPage);
 
     return (
       <Paper className={classes.root}>
         <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <TableCell padding="checkbox"></TableCell>
-              <TableCell>Dessert (100g serving)</TableCell>
-              <TableCell numeric>Calories</TableCell>
-              <TableCell numeric>Fat (g)</TableCell>
-              <TableCell numeric>Carbs (g)</TableCell>
-              <TableCell numeric>Protein (g)</TableCell>
-            </TableRow>
-          </TableHead>
+          <EnhancedTableHead
+            columnData={columnData}
+            order={order}
+            orderBy={orderBy}
+            onRequestSort={this.handleRequestSort}
+          />
           <TableBody>
             {this.state.list.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((n) => {
               return (
@@ -100,7 +136,7 @@ class SimpleTable extends React.PureComponent { // eslint-disable-line react/pre
                   <TableRow>
                     <TableCell padding="checkbox">
                       <IconButton
-                        onClick={() => { this.toggleDetail(n.id); }}>
+                        onClick={() => { this.toggleDetail(n); }}>
                         {n.expanded ? <ExpandMoreIcon /> : <ChevronRightIcon />}
                       </IconButton>
                     </TableCell>
