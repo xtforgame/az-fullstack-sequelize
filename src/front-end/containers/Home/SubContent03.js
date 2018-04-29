@@ -1,15 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import Table, { TableBody, TableCell, TableHead, TableRow, TablePagination } from 'material-ui/Table';
 import Paper from 'material-ui/Paper';
-import IconButton from 'material-ui/IconButton';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
-
-import EnhancedTableHead from './EnhancedTableHead';
+import EnhancedTable from '~/components/Tables/EnhancedTable';
 import SimpleTabs from './SimpleTabs';
 
 const styles = theme => ({
@@ -30,11 +23,11 @@ const styles = theme => ({
 });
 
 const columnData = [
-  { id: 'name', numeric: false, disablePadding: true, label: 'Dessert (100g serving)' },
-  { id: 'calories', numeric: true, disablePadding: false, label: 'Calories' },
-  { id: 'fat', numeric: true, disablePadding: false, label: 'Fat (g)' },
-  { id: 'carbs', numeric: true, disablePadding: false, label: 'Carbs (g)' },
-  { id: 'protein', numeric: true, disablePadding: false, label: 'Protein (g)' },
+  { id: 'name', numeric: false, padding: 'none', label: 'Dessert (100g serving)' },
+  { id: 'calories', numeric: true, label: 'Calories' },
+  { id: 'fat', numeric: true, label: 'Fat (g)' },
+  { id: 'carbs', numeric: true, label: 'Carbs (g)' },
+  { id: 'protein', numeric: true, label: 'Protein (g)' },
 ];
 
 function createData(id, name, calories, fat, carbs, protein) {
@@ -57,133 +50,33 @@ const createList = () => [
   createData(12, 'Oreo', 437, 18.0, 63, 4.0),
 ];
 
-const defaultSortBy = 'id';
+const rows = createList();
 
-class SimpleTable extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
-  constructor(...args){
-    super(...args);
-    this.state = {
-      list: createList()
-        .sort((a, b) => (a[defaultSortBy] < b[defaultSortBy] ? -1 : 1)),
-      page: 0,
-      rowsPerPage: 5,
-      order: 'asc',
-      orderBy: defaultSortBy,
-    };
-  }
-
-  handleChangePage = (event, page) => {
-    this.setState({ page });
-  };
-
-  handleChangeRowsPerPage = event => {
-    this.setState({ rowsPerPage: event.target.value });
-  };
-
-  handleRequestSort = (_, property) => {
-    let orderBy = property || defaultSortBy;
-    let order = 'desc';
-
-    if (this.state.orderBy === property) {
-      if(this.state.order === 'desc'){
-        order = 'asc';
-      }else{
-        orderBy = defaultSortBy;
-      }
-    }
-
-    const list = order === 'desc'
-      ? this.state.list.sort((a, b) => (b[orderBy] < a[orderBy] ? -1 : 1))
-      : this.state.list.sort((a, b) => (a[orderBy] < b[orderBy] ? -1 : 1));
-
-    this.setState({ list, order, orderBy });
-  };
-
-  toggleDetail(data) {
-    const list = this.state.list.map(d => {
-      let expanded = false;
-      if(d.id === data.id){
-        expanded = !d.expanded;
-      }
-      return {
-        ...d,
-        expanded,
-      };
-    });
-    this.setState({
-      list,
-    });
-  }
-
+class SubContent03 extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   render() {
-    const { classes } = this.props;
-    const { order, orderBy, rowsPerPage, page } = this.state;
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, this.state.list.length - page * rowsPerPage);
-
+    const {
+      classes,
+    } = this.props;
     return (
       <Paper className={classes.root}>
-        <Table className={classes.table}>
-          <EnhancedTableHead
-            columnData={columnData}
-            order={order}
-            orderBy={orderBy}
-            onRequestSort={this.handleRequestSort}
-          />
-          <TableBody>
-            {this.state.list.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((n) => {
-              return (
-                <React.Fragment key={n.id}>
-                  <TableRow>
-                    <TableCell padding="checkbox">
-                      <IconButton
-                        onClick={() => { this.toggleDetail(n); }}>
-                        {n.expanded ? <ExpandMoreIcon /> : <ChevronRightIcon />}
-                      </IconButton>
-                    </TableCell>
-                    <TableCell>{n.name}</TableCell>
-                    <TableCell numeric>{n.calories}</TableCell>
-                    <TableCell numeric>{n.fat}</TableCell>
-                    <TableCell numeric>{n.carbs}</TableCell>
-                    <TableCell numeric>{n.protein}</TableCell>
-                  </TableRow>
-                  {n.expanded && <TableRow>
-                    <TableCell colSpan="6" className={classes.detailCell}>
-                      <Paper className={classes.paper}>
-                        <SimpleTabs />
-                      </Paper>
-                    </TableCell>
-                  </TableRow>}
-                </React.Fragment>
-              );
-            })}
-            {emptyRows > 0 && (
-              <TableRow style={{ height: 49 * emptyRows }}>
-                <TableCell colSpan={6} />
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-        <TablePagination
-          component="div"
-          count={this.state.list.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          backIconButtonProps={{
-            'aria-label': 'Previous Page',
-          }}
-          nextIconButtonProps={{
-            'aria-label': 'Next Page',
-          }}
-          onChangePage={this.handleChangePage}
-          onChangeRowsPerPage={this.handleChangeRowsPerPage}
+        <EnhancedTable
+          withDetail
+          defaultSortBy="id"
+          columns={columnData}
+          rows={rows}
+          renderRowDetail={
+            (row, { columns }) => <Paper className={classes.paper}>
+              <SimpleTabs row={row} columns={columns} />
+            </Paper>
+          }
         />
       </Paper>
     );
   }
 }
 
-SimpleTable.propTypes = {
+SubContent03.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(SimpleTable);
+export default withStyles(styles)(SubContent03);

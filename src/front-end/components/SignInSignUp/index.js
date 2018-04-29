@@ -4,6 +4,8 @@ import FormContent from './FormContent';
 import FormTextInput from './FormTextInput';
 import FormPasswordInput from './FormPasswordInput';
 import FormCheckbox from './FormCheckbox';
+import FormSelect from './FormSelect';
+import FormAutocomplete from './FormAutocomplete';
 
 export {
   createFormStyle,
@@ -12,4 +14,6 @@ export {
   FormTextInput,
   FormPasswordInput,
   FormCheckbox,
+  FormSelect,
+  FormAutocomplete,
 };
