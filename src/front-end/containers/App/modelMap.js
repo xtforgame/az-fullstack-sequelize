@@ -25,7 +25,9 @@ const epics = {
   axios,
   Observable,
   getHeaders,
-  responseMiddleware,
+  middlewares: {
+    response: [responseMiddleware],
+  },
 }
 
 const modelsDefine = {
