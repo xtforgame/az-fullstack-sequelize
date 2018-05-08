@@ -6,15 +6,10 @@ import {
 
 export default class UserRouter extends RouterBase {
   findUser(userId) {
-    const users = this.resourceManager.getModel('users');
-    return users.findOne({
-      options: {
-        submodels: [],
-      },
-      originalOptions: {
-        where: {
-          id: userId,
-        },
+    const User = this.resourceManager.getSqlzModel('user');
+    return User.findOne({
+      where: {
+        id: userId,
       },
     });
   }
@@ -29,15 +24,13 @@ export default class UserRouter extends RouterBase {
         return RestfulError.koaThrowWith(ctx, 404, 'User not found');
       }
       return this.findUser(ctx.local.userSession.user_id)
-      .then(queryResult => {
-        const result = queryResult.toPublic();
-        // console.log('result :', result);
+      .then(result => {
         ctx.body = result;
       });
     });
 
     router.post('/api/users', (ctx) => {
-      const users = this.resourceManager.getModel('users');
+      const User = this.resourceManager.getSqlzModel('user');
       const jsonBody = ctx.request.body;
       const alParamsArray = jsonBody.accountLinks || []; // alParamsArray
 
@@ -54,39 +47,24 @@ export default class UserRouter extends RouterBase {
         )
         .then((paramsArrayForCreate) => {
           accountLinkDataArray = paramsArrayForCreate;
-          return this.resourceManager.db.transaction().then(t => users.createEx({
-            value: {
+          return this.resourceManager.db.transaction()
+          .then(t =>
+            User.create({
               name: jsonBody.name,
               privilege: jsonBody.privilege || 'user',
-            },
-            originalOptions: {
+              accountLinks: accountLinkDataArray,
+            }, {
               transaction: t,
-            },
-            callbackPromise: ({ result: user, error }) => {
-              if (error) {
-                // console.log('error');
-                return Promise.reject(error);
-              }
-              newUser = user;
-              return Promise.resolve(null);
-            },
-            submodels: accountLinkDataArray.map(accountLinkData => ({
-              model: 'accountLinks',
-              value: accountLinkData,
-              originalOptions: {
-                transaction: t,
-              },
-            })),
-          })
-            .then(() => t.commit()
-              .then(() => {
-                const returnData = newUser.get();
-                delete returnData.updated_at;
-                delete returnData.created_at;
-                delete returnData.deleted_at;
-                delete returnData.accountLinks;
-                return RestfulResponse.koaResponseWith(ctx, 200, returnData);
-              }))
+            })
+            .then(user => {
+              t.commit();
+              const returnData = user.get();
+              delete returnData.updated_at;
+              delete returnData.created_at;
+              delete returnData.deleted_at;
+              delete returnData.accountLinks;
+              return RestfulResponse.koaResponseWith(ctx, 200, returnData);
+            })
             .catch(error =>
               t.rollback()
                 .then(() => {
@@ -95,7 +73,8 @@ export default class UserRouter extends RouterBase {
                   }
                   // console.log('error :', error);
                   return RestfulError.koaThrowWith(ctx, 500, 'Failed to create user.');
-                })));
+                }))
+          );
         });
     });
   }

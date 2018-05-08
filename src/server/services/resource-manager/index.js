@@ -1,6 +1,6 @@
 import ServiceBase from '../ServiceBase';
 // ========================================
-import AzRdbmsOrm from 'az-rdbms-orm';
+import AsuOrm from 'az-sequelize-utils';
 import Azldi from 'azldi';
 import {
   AuthCore,
@@ -8,9 +8,9 @@ import {
   AuthProviderManager,
   KoaHelper,
   BasicProvider,
-} from 'aro-auth-kit';
+} from 'az-authn-kit';
 
-import createAroModelDefs from '../../aro-model';
+import createAsuModelDefs from '../../asu-model';
 // ========================================
 
 export default class ResourceManager extends ServiceBase {
@@ -20,7 +20,7 @@ export default class ResourceManager extends ServiceBase {
 
   constructor(envCfg, sequelizeDb) {
     super();
-    this.credentials = envCfg.credentials;
+    this.jwtSecrets = envCfg.jwtSecrets;
     this.database = sequelizeDb.database;
 
     this.authKit = new Azldi();
@@ -36,7 +36,7 @@ export default class ResourceManager extends ServiceBase {
     let results = this.authKit.digest({
       onCreate: (obj) => {},
       appendArgs: {
-        authCore: [this.credentials.key, {}],
+        authCore: [this.jwtSecrets, { algorithm: 'RS256' }],
         sequelizeStore: [{}],
         authProviderManager: [
           {
@@ -54,7 +54,7 @@ export default class ResourceManager extends ServiceBase {
     // });
 
     let sequelizeStore = this.authKit.get('sequelizeStore');
-    this.resourceManager = new AzRdbmsOrm(this.database, createAroModelDefs(sequelizeStore));
+    this.resourceManager = new AsuOrm(this.database, createAsuModelDefs(sequelizeStore));
   }
 
   onStart() {

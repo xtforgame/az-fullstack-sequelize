@@ -6,6 +6,12 @@ let credentialFiles = {
   cert: 'certificate.pem',
 };
 
+let jwtSecretFiles = {
+  basePath: path.join(__dirname, '..', 'ssl/production/jwt-secret'),
+  private: 'privatekey.pem',
+  public: 'publickey.pem',
+};
+
 let httpPort = 80;
 let httpsPort = 443;
 
@@ -17,6 +23,7 @@ let postgresHost = 'localhost';
 
 export {
   credentialFiles,
+  jwtSecretFiles,
   httpPort,
   httpsPort,
 

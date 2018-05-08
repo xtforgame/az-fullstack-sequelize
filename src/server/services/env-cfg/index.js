@@ -1,5 +1,6 @@
 import ServiceBase from '../ServiceBase';
 import credentials from './credentials';
+import jwtSecrets from './jwtSecrets';
 
 export default class EnvCfg extends ServiceBase {
   static $name = 'envCfg';
@@ -8,5 +9,6 @@ export default class EnvCfg extends ServiceBase {
   constructor(){
     super();
     this.credentials = credentials;
+    this.jwtSecrets = jwtSecrets;
   }
 }
