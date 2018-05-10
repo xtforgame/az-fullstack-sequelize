@@ -35,7 +35,7 @@ class Test extends React.Component {
   }
 
   render(){
-    let { routeView, intl, greetName, logout, classes } = this.props;
+    let { routeView, intl, greetName, classes } = this.props;
 
     return (
       <div>

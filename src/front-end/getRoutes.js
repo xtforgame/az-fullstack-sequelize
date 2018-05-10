@@ -9,6 +9,8 @@ import SubContent01 from '~/containers/Home/SubContent01';
 import SubContent02 from '~/containers/Home/SubContent02';
 import SubContent03 from '~/containers/Home/SubContent03';
 
+import UserProfile from '~/containers/UserProfile';
+
 import Test from '~/containers/Test';
 import TestContent from '~/containers/Test/TestContent';
 import testCase00 from '~/test-cases/test-case-00';
@@ -129,6 +131,11 @@ const globalRouteConfig = {
             ...getTestCaseRoutes(),
             ],
           }],
+        },
+        {
+          name: 'user-profile',
+          path: '/user-profile',
+          component: UserProfile,
         },
         {
           name: 'async-in-main',

@@ -3,9 +3,6 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import formatMessage from '~/utils/formatMessage';
-import {
-  logout,
-} from '../App/actions';
 import { messages } from '../App/translation';
 import { withStyles } from 'material-ui/styles';
 import Icon from 'material-ui/Icon';
@@ -39,7 +36,7 @@ class Home extends React.Component {
   }
 
   render(){
-    let { routeView, intl, greetName, logout, classes } = this.props;
+    let { routeView, intl, greetName, classes } = this.props;
 
     return (
       <div>
@@ -113,9 +110,6 @@ class Home extends React.Component {
           <div className={classes.cardWrapper}><SimpleMediaCard /></div>
           <div className={classes.cardWrapper}><SimpleMediaCard /></div>
         </div>
-        
-        <br />
-        {/*<button onClick={logout}>Logout</button>*/}
       </div>
     );
   }
@@ -126,7 +120,6 @@ export default compose(
     state => ({
       greetName: state.get('global').greetName,
     }),
-    { logout }
   ),
   injectIntl,
   withStyles(styles),

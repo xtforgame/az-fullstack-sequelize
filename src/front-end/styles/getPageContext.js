@@ -69,26 +69,53 @@ export function getTheme(theme) {
   });
 }
 
-const theme = getTheme({
+export const defaultUiTheme = {
   direction: 'ltr',
   // paletteType: 'light',
   paletteType: 'dark',
   // paletteType: 'vaxal',
-});
+}
 
 // Configure JSS
 const jss = create(preset());
 jss.options.createGenerateClassName = createGenerateClassName;
+jss.options.insertionPoint = 'insertion-point-jss';
 
-export const sheetsManager = new Map();
-
-export default function createContext() {
+function createPageContext(uiTheme) {
   return {
     jss,
-    theme,
+    theme: getTheme(uiTheme || defaultUiTheme),
     // This is needed in order to deduplicate the injection of CSS in the page.
-    sheetsManager,
+    sheetsManager: new Map(),
     // This is needed in order to inject the critical CSS.
     sheetsRegistry: new SheetsRegistry(),
+    generateClassName: createGenerateClassName({
+      productionPrefix: 'j', // Reduce the bandwidth usage.
+    }),
   };
+}
+
+export function updatePageContext(uiTheme) {
+  const pageContext = {
+    ...global.__MUI_PAGE_CONTEXT__,
+    theme: getTheme(uiTheme),
+  };
+  global.__MUI_PAGE_CONTEXT__ = pageContext;
+
+  return pageContext;
+}
+
+export default function getPageContext(uiTheme) {
+  // Make sure to create a new store for every server-side request so that data
+  // isn't shared between connections (which would be bad)
+  if (!process.browser) {
+    return createPageContext(uiTheme);
+  }
+
+  // Reuse context on the client-side
+  if (!global.__MUI_PAGE_CONTEXT__) {
+    global.__MUI_PAGE_CONTEXT__ = createPageContext(uiTheme);
+  }
+
+  return global.__MUI_PAGE_CONTEXT__;
 }

@@ -1,10 +1,10 @@
 import React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
+import { createStructuredSelector } from 'reselect';
 import { injectIntl } from 'react-intl';
 import {
-  greet,
+  changeTheme,
 } from './actions';
 import {
   withRouter,
@@ -18,6 +18,10 @@ import { makeSelectLocale } from '~/containers/LanguageProvider/selectors';
 
 import { withStyles } from 'material-ui/styles';
 import withRoot from '../../components/withRoot';
+
+import {
+  makeUiThemeSelector,
+} from './selectors';
 
 // Apply some reset
 const styles = theme => ({
@@ -33,29 +37,68 @@ const styles = theme => ({
   },
 });
 
-let App = ({ history, pathname, routes, locale, intl, changeLocale, greetName }) => (
+const AppInternal = ({ history, routes }) => (
   <ConnectedRouter history={history}>
     {routes}
   </ConnectedRouter>
 );
 
-const mapStateToProps = createSelector(
-  makeSelectLocale(),
-  state => state.get('global').greetName,
-  state => state.get('router').location && state.get('router').location.pathname,
-  (locale, greetName, pathname) => ({ locale, greetName, pathname })
-);
+const AppWithTheme = compose(
+  withRoot,
+  withStyles(styles),
+)(AppInternal);
 
-export function mapDispatchToProps(dispatch) {
-  return {
-    changeLocale: (event) => dispatch(changeLocale(event.target.value)),
-    dispatch,
-  };
+class App extends React.Component {
+  componentDidMount(){
+    // setInterval(() => {
+    //   if(this.props.uiTheme.paletteType === 'dark'){
+    //     this.toLight();
+    //   }else if(this.props.uiTheme.paletteType === 'light'){
+    //     this.toVaxal();
+    //   }else{
+    //     this.toDark();
+    //   }
+    // }, 1000);
+  }
+
+  toDark(){
+    this.props.changeTheme({
+      direction: 'ltr',
+      paletteType: 'dark',
+    });
+  }
+
+  toLight(){
+    this.props.changeTheme({
+      direction: 'ltr',
+      paletteType: 'light',
+    });
+  }
+
+  toVaxal(){
+    this.props.changeTheme({
+      direction: 'ltr',
+      paletteType: 'vaxal',
+    });
+  }
+
+  render(){
+    return (
+      <AppWithTheme
+        {...this.props}
+        uiTheme={this.props.uiTheme}
+      />
+    );
+  }
 }
 
+const mapStateToProps = createStructuredSelector({
+  uiTheme: makeUiThemeSelector(),
+});
+
 export default compose(
-  withRoot,
-  connect(mapStateToProps, mapDispatchToProps),
-  injectIntl,
-  withStyles(styles),
+  connect(mapStateToProps, {
+    changeTheme,
+  }),
 )(App);
+

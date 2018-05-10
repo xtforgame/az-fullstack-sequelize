@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux'
 import {
   REMEMBER_ME,
+  CHANGE_THEME,
 } from './constants';
 import modelMap from './modelMap';
 
@@ -16,6 +17,12 @@ const persistence = (state = { rememberUser: false }, action) => {
     return {
       ...state,
       rememberUser: action.rememberUser,
+    };
+
+  case CHANGE_THEME:
+    return {
+      ...state,
+      uiTheme: action.uiTheme,
     };
 
   default:

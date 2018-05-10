@@ -3,7 +3,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import Button from 'material-ui/Button';
+import IconButton from 'material-ui/IconButton';
+import Translate from '@material-ui/icons/Translate';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
@@ -66,15 +67,16 @@ class LocaleDropdown extends React.Component {
     const { classes, locale, dispatch, changeLocale, ...props } = this.props;
     return (
       <div>
-        <Button
+        <IconButton
           color="inherit"
-          aria-owns={this.state.open ? 'simple-menu' : null}
+          aria-owns={this.state.open ? 'language-menu' : null}
           aria-haspopup="true"
           {...props}
           onClick={this.handleClick}
         >
-          {appLocaleNames[localeIndex[locale]]}
-        </Button>
+          <Translate />
+          {/*appLocaleNames[localeIndex[locale]]*/}
+        </IconButton>
         <Menu
           id="simple-menu"
           anchorEl={this.state.anchorEl}

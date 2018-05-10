@@ -11,6 +11,7 @@ import IconButton from 'material-ui/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import LocaleDropdown from '~/containers/LocaleDropdown'
+import UserInfoDropdown from '~/containers/UserInfoDropdown'
 
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
@@ -18,12 +19,6 @@ import { injectIntl } from 'react-intl';
 import { FormattedMessage } from 'react-intl';
 import formatMessage from '~/utils/formatMessage';
 import { messages } from '../App/translation';
-
-import modelMap from '~/containers/App/modelMap';
-
-const {
-  clearSessionCache,
-} = modelMap.actions;
 
 const styles = theme => ({
   root: {
@@ -41,7 +36,7 @@ const styles = theme => ({
 
 class MainAppBar extends React.Component {
   render(){
-    const { logout, clearSessionCache, classes, intl, onToggleMenu = () => {} } = this.props;
+    const { clearSessionCache, classes, intl, onToggleMenu = () => {} } = this.props;
     return (
       <div className={classes.root}>
         <AppBar position="fixed">
@@ -53,9 +48,10 @@ class MainAppBar extends React.Component {
               <FormattedMessage {...messages.appTitle} />
             </Typography>
             <LocaleDropdown />
-            <Button color="inherit" onClick={() => clearSessionCache('me')}>
+            {/* <Button color="inherit" onClick={() => clearSessionCache('me')}>
               <FormattedMessage {...messages.logout} />
-            </Button>
+            </Button> */}
+            <UserInfoDropdown />
           </Toolbar>
         </AppBar>
       </div>
@@ -67,7 +63,7 @@ class MainAppBar extends React.Component {
 export default compose(
   connect(
     state => ({}),
-    { clearSessionCache }
+    {}
   ),
   injectIntl,
   withStyles(styles),

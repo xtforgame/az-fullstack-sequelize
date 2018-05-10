@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { capitalizeFirstLetter } from 'common/utils';
+import { defaultUiTheme } from '~/styles/getPageContext';
 
 import modelMap from './modelMap';
 
@@ -26,6 +27,11 @@ const makeRememberUserSelector = () => createSelector(
   (persistence) => persistence.rememberUser
 );
 
+const makeUiThemeSelector = () => createSelector(
+  persistenceSelector,
+  (persistence) => persistence.uiTheme || defaultUiTheme,
+);
+
 export {
   sessionSelector,
   makeSessionHierarchySelector,
@@ -36,4 +42,5 @@ export {
   makeUserSessionSelector,
   persistenceSelector,
   makeRememberUserSelector,
+  makeUiThemeSelector,
 };

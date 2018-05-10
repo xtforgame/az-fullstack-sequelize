@@ -1,11 +1,9 @@
 import {
   GREET,
-  LOGIN,
-  LOGOUT,
   REMEMBER_ME,
+  CHANGE_THEME,
 } from './constants';
 
 export const greet = (name) => ({ type: GREET, name });
-export const login = () => ({ type: LOGIN });
-export const logout = () => ({ type: LOGOUT });
 export const rememberMe = (rememberUser) => ({ type: REMEMBER_ME, rememberUser });
+export const changeTheme = (uiTheme) => ({ type: CHANGE_THEME, uiTheme });
