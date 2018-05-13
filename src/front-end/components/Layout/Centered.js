@@ -25,7 +25,6 @@ const styles = theme => ({
 
   alignerItemFixed: {
     flex: 'none',
-    maxWidth: '50%',
   },
 });
 

@@ -13,12 +13,12 @@ import axios from 'axios';
 import { Observable } from 'rxjs';
 import { createSelector } from 'reselect';
 
-const responseMiddleware = (response, info) => {
+const responseMiddleware = (response, info, next) => {
   if(response.status === 200 && response.data.error){
     // for some error carried by a 200 response
     return Promise.reject(response.data.error);
   }
-  return Promise.resolve(response);
+  return next();
 };
 
 const epics = {

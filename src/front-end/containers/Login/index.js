@@ -66,7 +66,7 @@ const styles = theme => ({
     width: '100%',
     paddingRight: 0,
     paddingLeft: 0,
-    height: '100%',
+    height: 500,
     [theme.breakpoints.up('sm')]: {
       width: 500,
       margin: 80,

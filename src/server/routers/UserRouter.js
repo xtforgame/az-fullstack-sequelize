@@ -3,6 +3,7 @@ import {
   RestfulResponse,
   RestfulError,
 } from 'az-restful-helpers';
+import drawIcon from '~/utils/drawIcon';
 
 export default class UserRouter extends RouterBase {
   findUser(userId) {
@@ -51,6 +52,11 @@ export default class UserRouter extends RouterBase {
           .then(t =>
             User.create({
               name: jsonBody.name,
+              picture: `data:png;base64,${drawIcon(jsonBody.name).toString('base64')}`,
+              data: jsonBody.data || {
+                bio: `I'm ${jsonBody.name}`,
+                email: null,
+              },
               privilege: jsonBody.privilege || 'user',
               accountLinks: accountLinkDataArray,
             }, {
@@ -76,6 +82,22 @@ export default class UserRouter extends RouterBase {
                 }))
           );
         });
+    });
+
+    router.patch('/api/users/:userId', (ctx, next) => {
+      if(!ctx.local.userSession || !ctx.local.userSession.user_id){
+        return RestfulError.koaThrowWith(ctx, 404, 'User not found');
+      }
+      const User = this.resourceManager.getSqlzModel('user');
+      return User.update(ctx.request.body, {
+        where: {
+          id: ctx.local.userSession.user_id, 
+        },
+        returning: true,
+      })
+      .then(([_, [result]]) => {
+        ctx.body = result;
+      });
     });
   }
 }

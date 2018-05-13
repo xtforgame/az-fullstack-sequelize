@@ -8,9 +8,16 @@ import configureStore from './configureStore';
 import getRoutes from './getRoutes';
 import fontLoader from './fontLoader';
 import { loadState } from './localStorage';
+import HeaderManager from '~/utils/HeaderManager';
+import {
+  makeUserSessionSelector,
+} from '~/containers/App/selectors';
 
 import { getTranslationMessages } from './i18n';
 import App from '~/containers/App';
+import {
+  sessionVerified,
+} from '~/containers/App/actions';
 import './main.css';
 
 // Create a history of your choosing (we're using a browser history in this case)
@@ -21,6 +28,12 @@ const initialState = {
 };
 // console.log('initialState :', initialState);
 const store = configureStore(initialState, history);
+const userSessionSelector = makeUserSessionSelector();
+const session = userSessionSelector(store.getState());
+
+if(session){
+  store.dispatch(sessionVerified(session));
+}
 
 class AppWrapper extends React.Component {
   constructor(props){

@@ -12,6 +12,11 @@ export default (sequelizeStore) => {
         ...authModels.models.user,
         columns: {
           ...authModels.models.user.columns,
+          picture: Sequelize.TEXT,
+          data: {
+            type: Sequelize.JSONB,
+            defaultValue: {},
+          },
           userGroups: {
             type: AsuOrm.BELONGS_TO_MANY('userGroup', {
               through: {

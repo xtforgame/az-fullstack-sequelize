@@ -19,19 +19,32 @@ import Button from 'material-ui/Button';
 import Divider from 'material-ui/Divider';
 import Icon from 'material-ui/Icon';
 
-const styles = {
+const styles = theme => ({
   list: {
     width: 250,
   },
   listFull: {
     width: 'auto',
   },
+  container: {
+    // margin: 5,
+    width: '100%',
+    height: '100%',
+  },
   mainContent: {
-    margin: 40,
-    width: 1200,
+    // margin: 5,
+    width: '100%',
+    flex: 1,
+    [theme.breakpoints.up('sm')]: {
+      // margin: 40,
+      // width: 1200,
+    },
   },
   appBarPlaceholder: {
-    height: 48,
+    height: 56,
+    [theme.breakpoints.up('sm')]: {
+      height: 64,
+    },
   },
   verticalFlexContainer: {
     flexDirection: 'column',
@@ -45,7 +58,7 @@ const styles = {
   spacing: {
     flex: 1,
   },
-};
+});
 
 class MainFrame extends React.Component {
   constructor(props){
@@ -84,18 +97,14 @@ class MainFrame extends React.Component {
     );
 
     return (
-      <div>
+      <div className={classes.container}>
         <MainAppBar
           onToggleMenu={this.toggleDrawer(true)}
         />
+        <div className={classes.appBarPlaceholder} />
         <div className={classes.verticalFlexContainer}>
-          <div className={classes.appBarPlaceholder} />
-          <div className={classes.flexContainer}>
-            <div className={classes.spacing} />
-            <div className={classes.mainContent}>
-              {routeView}
-            </div>
-            <div className={classes.spacing} />
+          <div className={classes.mainContent}>
+            {routeView}
           </div>
         </div>
         <Drawer

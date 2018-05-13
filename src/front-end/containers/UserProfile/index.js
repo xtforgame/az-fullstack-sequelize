@@ -18,14 +18,7 @@ class UserProfile extends React.Component {
       classes,
     } = this.props;
     return (
-      <div>
-        <Typography variant="display3">
-          User Profile
-        </Typography>
-        <Divider />
-        <div className={classes.placeholder} />
-        <Profile />
-      </div>
+      <Profile />
     );
   }
 }

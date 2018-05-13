@@ -11,13 +11,34 @@ const {
   makeSelectedSessionNodeSelector,
   makeSelectedSessionCollectionSelector,
   makeSelectedSessionSelector,
+
+  userSelector,
   makeUserHierarchySelector,
+  makeUserSelectionSelector,
+  makeSelectedUserNodeSelector,
+  makeSelectedUserCollectionSelector,
+  makeSelectedUserSelector,
 } = modelMap.selectors;
 
 const makeUserSessionSelector = () => createSelector(
   makeSessionHierarchySelector(),
   (hierarchy) => {
     return hierarchy && hierarchy.byId && hierarchy.byId.me;
+  }
+);
+
+const makeMyUserSelector = () => createSelector(
+  makeUserSessionSelector(),
+  makeUserHierarchySelector(),
+  (mySession, userHierarchy) => {
+    if(!mySession
+      || !userHierarchy
+      || (mySession.user_id === undefined)
+      || !userHierarchy.byId
+    ){
+      return undefined;
+    }
+    return userHierarchy.byId[mySession.user_id];
   }
 );
 
@@ -39,7 +60,16 @@ export {
   makeSelectedSessionNodeSelector,
   makeSelectedSessionCollectionSelector,
   makeSelectedSessionSelector,
+
+  userSelector,
+  makeUserHierarchySelector,
+  makeUserSelectionSelector,
+  makeSelectedUserNodeSelector,
+  makeSelectedUserCollectionSelector,
+  makeSelectedUserSelector,
+
   makeUserSessionSelector,
+  makeMyUserSelector,
   persistenceSelector,
   makeRememberUserSelector,
   makeUiThemeSelector,

@@ -14,6 +14,9 @@ const styles = {
   placeholder: {
     height: 40,
   },
+  mainContainer: {
+    margin: 40,
+  },
   cardContainer: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -39,7 +42,7 @@ class Home extends React.Component {
     let { routeView, intl, greetName, classes } = this.props;
 
     return (
-      <div>
+      <div className={classes.mainContainer}>
         <Typography variant="display3">
           Home
         </Typography>

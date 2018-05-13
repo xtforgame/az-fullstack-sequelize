@@ -1,5 +1,6 @@
 import Sequelize from 'sequelize';
 import {sha512gen_salt, crypt} from 'az-authn-kit';
+import drawIcon from '~/utils/drawIcon';
 
 let getAccountLinks = (username) => ([{
   provider_id: 'basic',
@@ -18,13 +19,23 @@ function createTestUser(resourceManager){
   .then((users) => {
     if(users[0].dataValues.usercount == 0){
       return User.create({
-        name: 'admin',
+        name: 'Admin',
         privilege: 'admin',
+        picture: `data:png;base64,${drawIcon('Admin').toString('base64')}`,
+        data: {
+          bio: `I'm ${'Admin'}`,
+          email: null,
+        },
         accountLinks: getAccountLinks('admin'),
       })
       .then(() => User.create({
-        name: 'world',
+        name: 'World',
         privilege: 'world',
+        picture: `data:png;base64,${drawIcon('World').toString('base64')}`,
+        data: {
+          bio: `I'm ${'World'}`,
+          email: null,
+        },
         accountLinks: getAccountLinks('world'),
       }));
     }

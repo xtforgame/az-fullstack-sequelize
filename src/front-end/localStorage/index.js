@@ -46,7 +46,14 @@ const delaySave = throttle(store => {
   let persistedData = state.get('global');
 
   if(rememberUserSelector(state) && userSessionSelector(state)){
-    saveState(persistedData);
+    const {
+      sessions,
+      persistence,
+    } = persistedData;
+    saveState({
+      sessions,
+      persistence,
+    });
   }else{
     // removeState();
     localStorage.clear();
