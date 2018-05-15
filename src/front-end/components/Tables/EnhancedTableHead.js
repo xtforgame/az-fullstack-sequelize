@@ -19,36 +19,47 @@ export default class EnhancedTableHead extends React.Component {
   };
 
   render() {
-    const { withDetail, columns, order, orderBy, sortTip } = this.props;
+    const { withDetail, withActions, columns, order, orderBy, sortTip } = this.props;
 
     return (
       <TableHead>
         <TableRow>
           {withDetail && <TableCell padding="checkbox"></TableCell>}
           {columns.map(column => {
+            const sortProps = {};
+            let lable = column.label;
+            if(column.sortable !== false){
+              sortProps.sortDirection = orderBy === column.id ? order : false;
+              lable = (
+                <TableSortLabel
+                  active={orderBy === column.id}
+                  direction={order}
+                  onClick={this.createSortHandler(column.id)}
+                >
+                  {column.label}
+                </TableSortLabel>
+              );
+            }
+
             return (
               <TableCell
                 key={column.id}
                 numeric={column.numeric}
                 padding={column.padding || 'default'}
-                sortDirection={orderBy === column.id ? order : false}
+                className={column.cellClassName}
+                {...sortProps}
               >
-                <Tooltip
+                {column.label && <Tooltip
                   title={sortTip}
                   placement={column.numeric ? 'bottom-end' : 'bottom-start'}
                   enterDelay={300}
                 >
-                  <TableSortLabel
-                    active={orderBy === column.id}
-                    direction={order}
-                    onClick={this.createSortHandler(column.id)}
-                  >
-                    {column.label}
-                  </TableSortLabel>
-                </Tooltip>
+                  {lable}
+                </Tooltip>}
               </TableCell>
             );
           }, this)}
+          {withActions && <TableCell padding="checkbox"></TableCell>}
         </TableRow>
       </TableHead>
     );

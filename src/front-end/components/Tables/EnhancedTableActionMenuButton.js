@@ -1,0 +1,52 @@
+import React from 'react';
+import IconButton from 'material-ui/IconButton';
+import Menu from 'material-ui/Menu';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+
+class EnhancedTableActionMenuButton extends React.Component {
+  state = {
+    anchorEl: null,
+    open: false,
+  };
+
+  handleClick = event => {
+    this.setState({
+      anchorEl: event.currentTarget,
+      open: true,
+    });
+  };
+
+  handleClose = () => {
+    this.setState({
+      anchorEl: null,
+      open: false,
+    });
+  };
+
+  render() {
+    const { parentId, getActionMenuItems = () => null, ...props } = this.props;
+    const { anchorEl, open } = this.state;
+
+    return (
+      <div>
+        <IconButton
+          aria-label="More"
+          aria-haspopup="true"
+          onClick={this.handleClick}
+        >
+          <MoreVertIcon />
+        </IconButton>
+        <Menu
+          anchorEl={this.state.anchorEl}
+          open={this.state.open}
+          onClose={this.handleClose}
+          {...props}
+        >
+          {getActionMenuItems(this.handleClose)}
+        </Menu>
+      </div>
+    );
+  }
+}
+
+export default EnhancedTableActionMenuButton;

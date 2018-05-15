@@ -10,12 +10,12 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
 import EnhancedTableHead from './EnhancedTableHead';
+import EnhancedTableActionMenuButton from './EnhancedTableActionMenuButton';
 import ProgressWithMask from '~/components/Progress/ProgressWithMask';
 
 const styles = theme => ({
   root: {
     width: '100%',
-    marginTop: theme.spacing.unit * 3,
     overflowX: 'auto',
   },
   table: {
@@ -23,6 +23,15 @@ const styles = theme => ({
   },
   paper: {
     width: '100%',
+  },
+  iconCell: {
+    width: 48 + (12 * 2),
+  },
+  actionsCell: {
+    width: 48 + (12 * 2),
+    '&:last-child': {
+      paddingRight: theme.spacing.unit * 1.5,
+    },
   },
   detailCell: {
     backgroundColor: theme.palette.background.default,
@@ -136,7 +145,7 @@ class EnhancedTable extends React.PureComponent { // eslint-disable-line react/p
   }
 
   render() {
-    const { classes, withDetail, columns, loading, loadingRows } = this.props;
+    const { classes, withDetail, getActionMenuItems, columns, loading, loadingRows } = this.props;
     const { order, orderBy, rowsPerPage, page } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, this.state.rows.length - page * rowsPerPage);
 
@@ -145,6 +154,7 @@ class EnhancedTable extends React.PureComponent { // eslint-disable-line react/p
         <Table className={classes.table}>
           <EnhancedTableHead
             withDetail={withDetail}
+            withActions={!!getActionMenuItems}
             columns={columns}
             sortTip="Sort"
             order={order}
@@ -161,7 +171,7 @@ class EnhancedTable extends React.PureComponent { // eslint-disable-line react/p
                 <React.Fragment key={row.id}>
                   <TableRow>
                     { withDetail &&
-                      <TableCell padding="checkbox">
+                      <TableCell padding="checkbox" className={classes.iconCell}>
                         <IconButton
                           onClick={() => { this.toggleDetail(row); }}>
                           {expanded ? <ExpandMoreIcon /> : <ChevronRightIcon />}
@@ -171,12 +181,27 @@ class EnhancedTable extends React.PureComponent { // eslint-disable-line react/p
                     {columns.map(column => {
                       const renderFunction = row.renderCell || column.renderRowCell || ((columnId, row) => row[columnId]);
                       return (
-                        <TableCell key={column.id} numeric={column.numeric} padding={column.padding || 'default'} >{renderFunction(column.id, row, options)}</TableCell>
+                        <TableCell
+                          key={column.id}
+                          numeric={column.numeric}
+                          padding={column.padding || 'default'}
+                          className={column.cellClassName}
+                        >{renderFunction(column.id, row, options)}</TableCell>
                       );
                     })}
+                    { getActionMenuItems &&
+                      <TableCell padding="checkbox" className={classes.actionsCell}>
+                        <EnhancedTableActionMenuButton
+                          getActionMenuItems={getActionMenuItems}
+                        />
+                      </TableCell>
+                    }
                   </TableRow>
                   {withDetail && expanded && <TableRow>
-                    <TableCell colSpan={columns.length + (+withDetail)} className={classes.detailCell}>
+                    <TableCell
+                      colSpan={columns.length + (+withDetail) + (+!!getActionMenuItems)}
+                      className={classes.detailCell}
+                    >
                       {this.props.renderRowDetail && this.props.renderRowDetail(row, options)}
                     </TableCell>
                   </TableRow>}

@@ -2,13 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
+import IconButton from 'material-ui/IconButton';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { MenuItem } from 'material-ui/Menu';
 import EnhancedTable from '~/components/Tables/EnhancedTable';
 import SimpleTabs from './SimpleTabs';
 
 const styles = theme => ({
   root: {
     width: '100%',
-    marginTop: theme.spacing.unit * 3,
     overflowX: 'auto',
   },
   table: {
@@ -21,14 +23,6 @@ const styles = theme => ({
     backgroundColor: theme.palette.background.default,
   },
 });
-
-const columnData = [
-  { id: 'name', numeric: false, padding: 'none', label: 'Dessert (100g serving)' },
-  { id: 'calories', numeric: true, label: 'Calories' },
-  { id: 'fat', numeric: true, label: 'Fat (g)' },
-  { id: 'carbs', numeric: true, label: 'Carbs (g)' },
-  { id: 'protein', numeric: true, label: 'Protein (g)' },
-];
 
 function createData(id, name, calories, fat, carbs, protein) {
   return { id, name, calories, fat, carbs, protein, expanded: false };
@@ -53,6 +47,19 @@ const createList = () => [
 const rows = createList();
 
 class SubContent03 extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
+  getColumnData(){
+    const {
+      classes,
+    } = this.props;
+    return [
+      { id: 'name', numeric: false, padding: 'none', label: 'Dessert (100g serving)' },
+      { id: 'calories', numeric: true, label: 'Calories' },
+      { id: 'fat', numeric: true, label: 'Fat (g)' },
+      { id: 'carbs', numeric: true, label: 'Carbs (g)' },
+      { id: 'protein', numeric: true, label: 'Protein (g)' },
+    ];
+  }
+  
   render() {
     const {
       classes,
@@ -61,8 +68,28 @@ class SubContent03 extends React.PureComponent { // eslint-disable-line react/pr
       <Paper className={classes.root}>
         <EnhancedTable
           withDetail
+          getActionMenuItems={(closeMenu) => ([
+            <MenuItem
+              key={'edit'} 
+              onClick={() => {
+                console.log('Edit');
+                closeMenu();
+              }}
+            >
+              Edit
+            </MenuItem>,
+            <MenuItem
+              key={'delete'} 
+              onClick={() => {
+                console.log('Delete');
+                closeMenu();
+              }}
+            >
+              Delete
+            </MenuItem>,
+          ])}
           defaultSortBy="id"
-          columns={columnData}
+          columns={this.getColumnData()}
           rows={rows}
           renderRowDetail={
             (row, { columns }) => <Paper className={classes.paper}>
