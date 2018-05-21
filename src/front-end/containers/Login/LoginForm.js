@@ -2,10 +2,10 @@ import React from 'react';
 import { compose } from 'recompose';
 import { injectIntl } from 'react-intl';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
-import Typography from 'material-ui/Typography';
-import Button from 'material-ui/Button';
-import Divider from 'material-ui/Divider';
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import Divider from '@material-ui/core/Divider';
 
 import { messages } from '~/containers/App/translation';
 import formatMessage from '~/utils/formatMessage';

@@ -16,7 +16,7 @@ import { ConnectedRouter } from 'react-router-redux';
 import { changeLocale } from '~/containers/LanguageProvider/actions';
 import { makeSelectLocale } from '~/containers/LanguageProvider/selectors';
 
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import withRoot from '../../components/withRoot';
 
 import {

@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import { compose } from 'recompose';
-import Typography from 'material-ui/Typography';
-import Divider from 'material-ui/Divider';
+import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
 import Profile from './Profile';
 
 const styles = {

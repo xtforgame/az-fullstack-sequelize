@@ -3,10 +3,10 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { injectIntl } from 'react-intl';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import Paper from 'material-ui/Paper';
+import { withStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Paper from '@material-ui/core/Paper';
 import { FormattedMessage } from 'react-intl';
 import formatMessage from '~/utils/formatMessage';
 import {
@@ -19,10 +19,10 @@ import { messages } from '../App/translation';
 import {
   Redirect,
 } from 'react-router-dom';
-import Typography from 'material-ui/Typography';
+import Typography from '@material-ui/core/Typography';
 import LocaleDropdown from '~/containers/LocaleDropdown'
 
-import IconButton from 'material-ui/IconButton';
+import IconButton from '@material-ui/core/IconButton';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 
 import SwipeableViews from 'react-swipeable-views';

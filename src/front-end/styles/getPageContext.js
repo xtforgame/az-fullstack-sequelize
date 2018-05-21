@@ -3,9 +3,9 @@
 import { create } from 'jss';
 import { SheetsRegistry } from 'react-jss';
 import preset from 'jss-preset-default';
-import { createMuiTheme, createTypography } from 'material-ui/styles';
-import { purple, green, blue, black, pink, grey, common } from 'material-ui/colors';
-import createGenerateClassName from 'material-ui/styles/createGenerateClassName';
+import { createMuiTheme, createTypography } from '@material-ui/core/styles';
+import { purple, green, blue, black, pink, grey, common } from '@material-ui/core/colors';
+import createGenerateClassName from '@material-ui/core/styles/createGenerateClassName';
 
 // const theme = createMuiTheme({
 //   palette: {

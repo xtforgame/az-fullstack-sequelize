@@ -1,10 +1,10 @@
 /* eslint-disable flowtype/require-valid-file-annotation */
 
 import React, { Component } from 'react';
-import CssBaseline from 'material-ui/CssBaseline';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import JssProvider from 'react-jss/lib/JssProvider';
 import LanguageProvider from '~/containers/LanguageProvider';
-import { MuiThemeProvider } from 'material-ui/styles';
+import { MuiThemeProvider } from '@material-ui/core/styles';
 import getPageContext, { updatePageContext } from '../styles/getPageContext';
 
 // Inject the insertion-point-jss after docssearch

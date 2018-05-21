@@ -1,9 +1,9 @@
 import React from 'react';
 import { compose } from 'recompose';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
-import { InputAdornment } from 'material-ui/Input';
-import IconButton from 'material-ui/IconButton';
+import { withStyles } from '@material-ui/core/styles';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 

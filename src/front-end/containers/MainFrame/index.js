@@ -12,12 +12,12 @@ import {
 } from './tileData';
 
 import RouteList from './RouteList';
-import { withStyles } from 'material-ui/styles';
-import Drawer from 'material-ui/Drawer';
-import Button from 'material-ui/Button';
+import { withStyles } from '@material-ui/core/styles';
+import Drawer from '@material-ui/core/Drawer';
+import Button from '@material-ui/core/Button';
 
-import Divider from 'material-ui/Divider';
-import Icon from 'material-ui/Icon';
+import Divider from '@material-ui/core/Divider';
+import Icon from '@material-ui/core/Icon';
 
 const styles = theme => ({
   list: {
