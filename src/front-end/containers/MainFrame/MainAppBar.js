@@ -20,19 +20,14 @@ import { injectIntl } from 'react-intl';
 import { FormattedMessage } from 'react-intl';
 import formatMessage from '~/utils/formatMessage';
 import { messages } from '../App/translation';
+import createCommonStyles from '~/styles/common';
 
 const styles = theme => ({
   root: {
     // marginTop: theme.spacing.unit * 3,
     width: '100%',
   },
-  flex: {
-    flex: 1,
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
+  ...createCommonStyles(theme, ['flex', 'appBar']),
 });
 
 class MainAppBar extends React.Component {
@@ -45,7 +40,7 @@ class MainAppBar extends React.Component {
             <IconButton color="inherit" className={classes.menuButton} onClick={onToggleMenu} aria-label="Menu">
               <MenuIcon />
             </IconButton>
-            <Typography variant="title" color="inherit" className={classes.flex}>
+            <Typography variant="title" color="inherit" className={classes.flex1}>
               <FormattedMessage {...messages.appTitle} />
             </Typography>
             <LocaleDropdown />

@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import purple from '@material-ui/core/colors/purple';
+import createCommonStyles from '~/styles/common';
 
 const styles = theme => ({
+  ...createCommonStyles(theme, 'flex'),
   maskedContainer: {
     position: 'absolute',
     top: 0,
@@ -29,12 +31,6 @@ const styles = theme => ({
     flexDirection: 'column',
     display: 'flex',
     // height: '100%',
-  },
-  flexContainer: {
-    display: 'flex',
-  },
-  spacing: {
-    flex: 1,
   },
   progress: {
     // margin: `0 ${theme.spacing.unit * 2}px`,
@@ -88,13 +84,13 @@ class ProgressWithMask extends React.Component {
 
     return (
       <div className={show ? classes.maskedContainer : classes.container}>
-        <div className={classes.spacing} />
+        <div className={classes.flex1} />
         <div className={classes.flexContainer}>
-          <div className={classes.spacing} />
+          <div className={classes.flex1} />
           {show && <CircularProgress className={classes.progress} size={50} color="primary" thickness={7} />}
-          <div className={classes.spacing} />
+          <div className={classes.flex1} />
         </div>
-        <div className={classes.spacing} />
+        <div className={classes.flex1} />
       </div>
     );
   }

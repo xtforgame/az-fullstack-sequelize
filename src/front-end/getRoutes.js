@@ -16,9 +16,7 @@ import TestContent from '~/containers/Test/TestContent';
 import testCase00 from '~/test-cases/test-case-00';
 import testCase01 from '~/test-cases/test-case-01';
 
-import AsyncPage from '~/containers/AsyncPage';
 import Login from '~/containers/Login';
-import InjectorTest from '~/containers/InjectorTest';
 
 import getListHierarchy from '~/containers/MainFrame/getListHierarchy';
 
@@ -48,17 +46,6 @@ const globalRouteConfig = {
       path: '/',
       component: () => <Redirect to={{ pathname: '/home' }}/>,
       exact: true,
-    },
-    {
-      name: 'async',
-      path: '/async',
-      component: AsyncPage,
-    },
-    {
-      name: 'injector-test',
-      path: '/injector-test',
-      routeClass: PrivateRoute,
-      component: InjectorTest,
     },
     {
       name: 'login',
@@ -136,21 +123,6 @@ const globalRouteConfig = {
           name: 'user-profile',
           path: '/user-profile',
           component: UserProfile,
-        },
-        {
-          name: 'async-in-main',
-          path: '/async-in-main',
-          component: AsyncPage,
-        },
-        {
-          // Basically, the `name` should be unique in the same level,
-          // but if you want to treat routes(with the same component) are the same in a `Switch` component
-          // (it means that react will not re-mount the component while switching between those reoutes),
-          // you can provide the same key like this.
-          // (While naviagting from `/async-in-main2` to `/async-in-main`(and vice versa), `AsyncPage` will not re-mount)
-          name: 'async-in-main',
-          path: '/async-in-main2',
-          component: AsyncPage,
         }],
       }],
     }],

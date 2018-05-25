@@ -10,7 +10,6 @@ import Divider from '@material-ui/core/Divider';
 import { messages } from '~/containers/App/translation';
 import formatMessage from '~/utils/formatMessage';
 import {
-  createFormStyle,
   FormSpace,
   FormContent,
   FormTextInput,
@@ -19,6 +18,14 @@ import {
 } from '~/components/SignInSignUp';
 
 import TextFieldHelper from './TextFieldHelper';
+
+import createCommonStyles from '~/styles/common';
+import createFormPaperStyle from '~/styles/FormPaper';
+
+const styles = theme => ({
+  ...createFormPaperStyle(theme),
+  ...createCommonStyles(theme, 'flex'),
+});
 
 class LoginForm extends React.Component {
   constructor(props){
@@ -152,5 +159,5 @@ class LoginForm extends React.Component {
 
 export default compose(
   injectIntl,
-  withStyles(createFormStyle),
+  withStyles(styles),
 )(LoginForm);

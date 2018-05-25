@@ -18,6 +18,7 @@ import Button from '@material-ui/core/Button';
 
 import Divider from '@material-ui/core/Divider';
 import Icon from '@material-ui/core/Icon';
+import createCommonStyles from '~/styles/common';
 
 const styles = theme => ({
   list: {
@@ -40,24 +41,7 @@ const styles = theme => ({
       // width: 1200,
     },
   },
-  appBarPlaceholder: {
-    height: 56,
-    [theme.breakpoints.up('sm')]: {
-      height: 64,
-    },
-  },
-  verticalFlexContainer: {
-    flexDirection: 'column',
-    display: 'flex',
-    height: '100%',
-  },
-  flexContainer: {
-    flex: 1,
-    display: 'flex',
-  },
-  spacing: {
-    flex: 1,
-  },
+  ...createCommonStyles(theme, ['flex', 'appBar']),
 });
 
 class MainFrame extends React.Component {
@@ -102,7 +86,7 @@ class MainFrame extends React.Component {
           onToggleMenu={this.toggleDrawer(true)}
         />
         <div className={classes.appBarPlaceholder} />
-        <div className={classes.verticalFlexContainer}>
+        <div className={classes.verticalFlexContainerFH}>
           <div className={classes.mainContent}>
             {routeView}
           </div>

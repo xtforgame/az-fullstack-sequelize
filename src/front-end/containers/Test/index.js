@@ -16,20 +16,6 @@ const styles = {
   mainContainer: {
     margin: 40,
   },
-  cardContainer: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-
-  cardWrapper: {
-    margin: 8,
-  },
-  icon: {
-    fontSize: 24,
-  },
-  listFull: {
-    width: 'auto',
-  },
 };
 
 class Test extends React.Component {

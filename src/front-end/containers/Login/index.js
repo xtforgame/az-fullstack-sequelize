@@ -24,14 +24,13 @@ import LocaleDropdown from '~/containers/LocaleDropdown'
 
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBack from '@material-ui/icons/ArrowBack';
+import createCommonStyles from '~/styles/common';
+import createFormPaperStyle from '~/styles/FormPaper';
 
 import SwipeableViews from 'react-swipeable-views';
 import LoginForm from './LoginForm';
 import RegistrationForm from './RegistrationForm';
 
-import {
-  createFormStyle,
-} from '~/components/SignInSignUp';
 import { createStructuredSelector } from 'reselect';
 import modelMap from '~/containers/App/modelMap';
 import {
@@ -50,36 +49,8 @@ const {
 } = modelMap.actions;
 
 const styles = theme => ({
-  ...createFormStyle(theme),
-  flexContainer: {
-    display: 'flex',
-    height: '100%',
-  },
-  spacing: {
-    flex: 1,
-  },
-  flex: {
-    flex: 1,
-  },
-  paper: {
-    margin: 0,
-    width: '100%',
-    paddingRight: 0,
-    paddingLeft: 0,
-    height: 500,
-    [theme.breakpoints.up('sm')]: {
-      width: 500,
-      margin: 80,
-    },
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
-  toolBar: {
-    // minHeight: 48,
-    // height: 48,
-  },
+  ...createFormPaperStyle(theme),
+  ...createCommonStyles(theme, ['flex', 'appBar']),
 });
 
 class Login extends React.Component {
@@ -154,15 +125,15 @@ class Login extends React.Component {
     };
 
     return (
-      <div className={classes.flexContainer}>
-        <div className={classes.spacing} />
+      <div className={classes.flexContainerFH}>
+        <div className={classes.flex1} />
         <Paper className={classes.paper} elevation={4}>
           <AppBar position="static">
-            <Toolbar className={classes.toolBar}>
+            <Toolbar>
               {!!this.state.tabIndex && <IconButton className={classes.menuButton} color="inherit" aria-label="Back" onClick={() => { this.swipeTo(0); }}>
                 <ArrowBack/>
               </IconButton>}
-              <Typography variant="title" color="inherit" className={classes.flex}>
+              <Typography variant="title" color="inherit" className={classes.flex1}>
                 {
                   this.state.tabIndex ? <FormattedMessage {...messages.createAccount} />
                   : <FormattedMessage {...messages.login} />
@@ -191,7 +162,7 @@ class Login extends React.Component {
             />
           </SwipeableViews>
         </Paper>
-        <div className={classes.spacing} />
+        <div className={classes.flex1} />
       </div>
     );
   }

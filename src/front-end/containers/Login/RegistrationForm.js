@@ -11,7 +11,6 @@ import { FormattedMessage } from 'react-intl';
 import { messages } from '~/containers/App/translation';
 import formatMessage from '~/utils/formatMessage';
 import {
-  createFormStyle,
   FormSpace,
   FormContent,
   FormTextInput,
@@ -22,6 +21,9 @@ import {
 import TextFieldHelper from './TextFieldHelper';
 
 import SuccessButton from '~/components/Buttons/SuccessButton';
+
+import createCommonStyles from '~/styles/common';
+import createFormPaperStyle from '~/styles/FormPaper';
 
 const LinkInternal = ({text, url, classes}) => (
   <a
@@ -34,8 +36,13 @@ const LinkInternal = ({text, url, classes}) => (
 );
 
 const Link = compose(
-  withStyles(createFormStyle),
+  withStyles(createFormPaperStyle),
 )(LinkInternal);
+
+const styles = theme => ({
+  ...createFormPaperStyle(theme),
+  ...createCommonStyles(theme, 'flex'),
+});
 
 class LoginForm extends React.Component {
   constructor(props){
@@ -183,5 +190,5 @@ class LoginForm extends React.Component {
 
 export default compose(
   injectIntl,
-  withStyles(createFormStyle),
+  withStyles(styles),
 )(LoginForm);
