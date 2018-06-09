@@ -85,4 +85,8 @@ export default class SequelizeDb extends ServiceBase {
           .sync({ force: this.forceSync });
       });
   }
+
+  onDestroy(){
+    return this.database.close();
+  }
 }

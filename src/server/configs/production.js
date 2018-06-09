@@ -15,6 +15,9 @@ let jwtSecretFiles = {
 let httpPort = 80;
 let httpsPort = 443;
 
+let sendRecoveryTokenInterval = 2 * 60 * 1000;
+let externalUrl = 'https://localhost:8443';
+
 let postgresPort = 5432;
 let postgresUser = 'rick';
 let postgresDbName = 'db_rick_data';
@@ -26,6 +29,9 @@ export {
   jwtSecretFiles,
   httpPort,
   httpsPort,
+
+  sendRecoveryTokenInterval,
+  externalUrl,
 
   postgresPort,
   postgresUser,

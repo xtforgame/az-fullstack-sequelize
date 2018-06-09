@@ -8,6 +8,10 @@ import modelMap from './modelMap';
 const {
   sessionReducer,
   userReducer,
+  recoveryTokenReducer,
+
+  challengeRecoveryTokenReducer,
+  resetPasswordRequestReducer,
 } = modelMap.reducers;
 
 const persistence = (state = { rememberUser: false }, action) => {
@@ -33,5 +37,8 @@ const persistence = (state = { rememberUser: false }, action) => {
 export default combineReducers({
   sessions: sessionReducer,
   users: userReducer,
+  recoveryTokens: recoveryTokenReducer,
+  challengeRecoveryTokens: challengeRecoveryTokenReducer,
+  resetPasswordRequests: resetPasswordRequestReducer,
   persistence,
 });

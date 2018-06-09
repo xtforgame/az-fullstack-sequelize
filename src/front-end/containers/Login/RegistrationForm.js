@@ -10,20 +10,28 @@ import Divider from '@material-ui/core/Divider';
 import { FormattedMessage } from 'react-intl';
 import { messages } from '~/containers/App/translation';
 import formatMessage from '~/utils/formatMessage';
+import translateMessages from '~/utils/translateMessages';
 import {
   FormSpace,
   FormContent,
-  FormTextInput,
+  FormPhoneOrEmailInput,
   FormPasswordInput,
   FormCheckbox,
 } from '~/components/SignInSignUp';
 
-import TextFieldHelper from './TextFieldHelper';
+import FormInputLinker, {
+  FromTextInputGetProps,
+  FromPasswordVisibilityGetProps,
+  assert,
+} from '~/utils/FormInputLinker';
 
 import SuccessButton from '~/components/Buttons/SuccessButton';
 
 import createCommonStyles from '~/styles/common';
 import createFormPaperStyle from '~/styles/FormPaper';
+import {
+  isValidPassword,
+} from 'common/utils/validators';
 
 const LinkInternal = ({text, url, classes}) => (
   <a
@@ -44,28 +52,67 @@ const styles = theme => ({
   ...createCommonStyles(theme, 'flex'),
 });
 
-class LoginForm extends React.Component {
+class RegistrationForm extends React.Component {
+  static getDerivedStateFromProps(props, state) {
+    if(state.fil){
+      return state.fil.derivedFromProps(props, state);
+    }
+
+    // No state update necessary
+    return null;
+  }
+
   constructor(props){
     super(props);
-    this.textFieldHelper = new TextFieldHelper(this);
-    this.textFieldHelper.add({
+    this.fil = new FormInputLinker(this, {
+      namespace: 'register',
+    });
+    this.fil.add({
       name: 'username',
-      onChangePropName: 'onUsernameChange',
-      errorPropName: 'usernameError',
-      validate: value => value != null && value != '',
+      exposed: {
+        onChange: 'onUsernameChange',
+        value: 'username',
+        error: 'usernameError',
+      },
+      converter: {
+        toView: (valueInState => (valueInState && valueInState.rawInput) || ''),
+        fromView: ((_, value) => value),
+        toOutput: (value => value && value.value),
+      },
+      getProps: (__, _) => ({
+        ...FromTextInputGetProps(__, _),
+        placeholder: _.translate('usernameEmptyError', {
+          emailAddress: { key: 'emailAddress' },
+          phoneNumber: { key: 'phoneNumber' },
+        }),
+      }),
+      validate: value => assert(value && value.type, null, { key: 'usernameEmptyError', values: {
+        emailAddress: { key: 'emailAddress' },
+        phoneNumber: { key: 'phoneNumber' },
+      }}),
     }, {
       name: 'password',
-      type: 'password',
-      onChangePropName: 'onPasswordChange',
-      errorPropName: 'passwordError',
-      validate: value => value != null && value != '',
+      exposed: {
+        onChange: 'onPasswordChange',
+        error: 'passwordError',
+      },
+      getProps: FromTextInputGetProps,
+      validate: value => assert(isValidPassword(value), null, { key: 'wrongPasswordFormatError' }),
+    }, {
+      name: 'password-visibility',
+      defaultValue: false,
+      getProps: FromPasswordVisibilityGetProps,
+      converter: {
+        fromView: (({ valueInState }) => {
+          return !valueInState;
+        }),
+      },
     });
 
-    this.state = {
-      ...this.textFieldHelper.getInitState(),
-      showPassword: false,
+    this.state = this.fil.mergeInitState({
+      fil: this.fil,
       agreed: false,
-    };
+    });
   }
 
   handleSubmit = () => {
@@ -74,8 +121,13 @@ class LoginForm extends React.Component {
       onSubmit = () => {},
     } = this.props;
 
-    if((!comfirmUserAgreement || this.state.agreed) && this.textFieldHelper.validate()){
-      onSubmit(this.state.username, this.state.password);
+    const {
+      username,
+      password,
+    } = this.fil.getOutputs();
+
+    if((!comfirmUserAgreement || this.state.agreed) && this.fil.validate()){
+      onSubmit(username, password);
     }
   }
 
@@ -96,20 +148,23 @@ class LoginForm extends React.Component {
       comfirmUserAgreement = false,
       classes,
     } = this.props;
-
-    let usernameText = formatMessage(intl, messages.username, {});
-    let passwordText = formatMessage(intl, messages.password, {});
-    let createAccountText = formatMessage(intl, messages.createAccountV, {});
-    let terms = formatMessage(intl, messages.terms, {});
-    let privacyPolicy = formatMessage(intl, messages.privacyPolicy, {});
+    const translate = translateMessages.bind(null, intl, messages);
+    const translated = translateMessages(intl, messages, [
+      'username',
+      'password',
+      'createAccount',
+      'createAccountV',
+      'terms',
+      'privacyPolicy',
+    ]);
 
     const userAgreementLable = (
       <FormattedMessage
         {...messages.userAgreement}
         values={{
-          createAccountV: createAccountText,
-          terms: (<Link key="terms" text={terms} />),
-          privacyPolicy: (<Link key="privacyPolicy" text={privacyPolicy} />),
+          createAccountV: translated.createAccountV,
+          terms: (<Link key="terms" text={translated.terms} />),
+          privacyPolicy: (<Link key="privacyPolicy" text={translated.privacyPolicy} />),
         }}
       >
         {(...parts) => {
@@ -141,20 +196,21 @@ class LoginForm extends React.Component {
       <div>
         <FormSpace variant="top" />
         <FormContent>
-        <FormTextInput
-            id="register-username"
-            label={usernameText}
+          <FormPhoneOrEmailInput
+            enablePhone={false}
+            label={translated.username}
             onKeyPress={this.handleEnterForTextField}
-            {...this.textFieldHelper.
-              getPropsForInputField('username', formatMessage(intl, messages.usernameEmptyError, {}))}
+            {...this.fil
+              .getPropsForInputField('username', { translate })}
           />
           <FormSpace variant="content1" />
           <FormPasswordInput
-            id="register-password"
-            label={passwordText}
+            label={translated.password}
             onKeyPress={this.handleEnterForTextField}
-            {...this.textFieldHelper
-              .getPropsForInputField('password', formatMessage(intl, messages.passwordEmptyError, {}))}
+            {...this.fil
+              .getPropsForInputField('password', { translate })}
+            {...this.fil
+              .getPropsForInputField('password-visibility', { translate })}
           />
           <FormSpace variant="content2" />
           {
@@ -179,7 +235,7 @@ class LoginForm extends React.Component {
             className={classes.loginBtn}
             onClick={this.handleSubmit}
           >
-            {createAccountText}
+            {translated.createAccount}
           </SuccessButton>
           <FormSpace variant="content1" />
         </FormContent>
@@ -190,5 +246,5 @@ class LoginForm extends React.Component {
 
 export default compose(
   injectIntl,
-  withStyles(styles),
-)(LoginForm);
+  withStyles(createFormPaperStyle),
+)(RegistrationForm);

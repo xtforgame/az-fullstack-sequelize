@@ -8,16 +8,20 @@ import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 
 import { messages } from '~/containers/App/translation';
-import formatMessage from '~/utils/formatMessage';
+import translateMessages from '~/utils/translateMessages';
 import {
   FormSpace,
   FormContent,
-  FormTextInput,
+  FormPhoneOrEmailInput,
   FormPasswordInput,
   FormCheckbox,
 } from '~/components/SignInSignUp';
 
-import TextFieldHelper from './TextFieldHelper';
+import FormInputLinker, {
+  FromTextInputGetProps,
+  FromPasswordVisibilityGetProps,
+  assert,
+} from '~/utils/FormInputLinker';
 
 import createCommonStyles from '~/styles/common';
 import createFormPaperStyle from '~/styles/FormPaper';
@@ -28,27 +32,66 @@ const styles = theme => ({
 });
 
 class LoginForm extends React.Component {
+  static getDerivedStateFromProps(props, state) {
+    if(state.fil){
+      return state.fil.derivedFromProps(props, state);
+    }
+
+    // No state update necessary
+    return null;
+  }
+
   constructor(props){
     super(props);
-    this.textFieldHelper = new TextFieldHelper(this);
-    this.textFieldHelper.add({
+    this.fil = new FormInputLinker(this, {
+      namespace: 'login',
+    });
+    this.fil.add({
       name: 'username',
-      onChangePropName: 'onUsernameChange',
-      errorPropName: 'usernameError',
-      validate: value => value != null && value != '',
+      exposed: {
+        onChange: 'onUsernameChange',
+        value: 'username',
+        error: 'usernameError',
+      },
+      converter: {
+        toView: (valueInState => (valueInState && valueInState.rawInput) || ''),
+        fromView: ((_, value) => value),
+        toOutput: (value => value && value.value),
+      },
+      getProps: (__, _) => ({
+        ...FromTextInputGetProps(__, _),
+        placeholder: _.translate('usernameEmptyError', {
+          emailAddress: { key: 'emailAddress' },
+          phoneNumber: { key: 'phoneNumber' },
+        }),
+      }),
+      validate: value => assert(value && value.type, null, { key: 'usernameEmptyError', values: {
+        emailAddress: { key: 'emailAddress' },
+        phoneNumber: { key: 'phoneNumber' },
+      }}),
     }, {
       name: 'password',
-      type: 'password',
-      onChangePropName: 'onPasswordChange',
-      errorPropName: 'passwordError',
-      validate: value => value != null && value != '',
+      exposed: {
+        onChange: 'onPasswordChange',
+        error: 'passwordError',
+      },
+      getProps: FromTextInputGetProps,
+      validate: value => assert(value != null && value != '', null, { key: 'passwordEmptyError' }),
+    }, {
+      name: 'password-visibility',
+      defaultValue: false,
+      getProps: FromPasswordVisibilityGetProps,
+      converter: {
+        fromView: (({ valueInState }) => {
+          return !valueInState;
+        }),
+      },
     });
 
-    this.state = {
-      ...this.textFieldHelper.getInitState(),
-      showPassword: false,
-      rememberMe: false,
-    };
+    this.state = this.fil.mergeInitState({
+      fil: this.fil,
+      rememberMe: this.props.defaultRememberMe !== undefined ? this.props.defaultRememberMe : false,
+    });
   }
 
   handleSubmit = () => {
@@ -56,8 +99,13 @@ class LoginForm extends React.Component {
       onSubmit = () => {},
     } = this.props;
 
-    if(this.textFieldHelper.validate()){
-      onSubmit(this.state.username, this.state.password, this.state.rememberMe);
+    const {
+      username,
+      password,
+    } = this.fil.getOutputs();
+
+    if(this.fil.validate()){
+      onSubmit(username, password, this.state.rememberMe);
     }
   }
 
@@ -76,13 +124,6 @@ class LoginForm extends React.Component {
     this.setState({ rememberMe: checked });
   };
 
-  componentWillMount(){
-    const {
-      defaultRememberMe = false,
-    } = this.props;
-    this.setState({ rememberMe: defaultRememberMe });
-  }
-
   render(){
     const {
       intl,
@@ -90,39 +131,42 @@ class LoginForm extends React.Component {
       handleCreateAccount = () => {},
       classes,
     } = this.props;
-
-    const usernameText = formatMessage(intl, messages.username, {});
-    const passwordText = formatMessage(intl, messages.password, {});
-    const loginText = formatMessage(intl, messages.login, {});
-    const rememberMeText = formatMessage(intl, messages.rememberMe, {});
-    const forgotPasswordText = formatMessage(intl, messages.forgotPasswordQuestion, {});
-    const createAccountText = formatMessage(intl, messages.createAccount, {});
+    const translate = translateMessages.bind(null, intl, messages);
+    const translated = translateMessages(intl, messages, [
+      'username',
+      'password',
+      'login',
+      'rememberMe',
+      'forgotPasswordQuestion',
+      'createAccount',
+    ]);
 
     return (
       <div>
         <FormSpace variant="top" />
         <FormContent>
-          <FormTextInput
-            id="username"
-            label={usernameText}
+          <FormPhoneOrEmailInput
+            enablePhone={false}
+            label={translated.username}
             onKeyPress={this.handleEnterForTextField}
-            {...this.textFieldHelper.
-              getPropsForInputField('username', formatMessage(intl, messages.usernameEmptyError, {}))}
+            {...this.fil
+              .getPropsForInputField('username', { translate })}
           />
           <FormSpace variant="content1" />
           <FormPasswordInput
-            id="password"
-            label={passwordText}
+            label={translated.password}
             onKeyPress={this.handleEnterForTextField}
-            {...this.textFieldHelper
-              .getPropsForInputField('password', formatMessage(intl, messages.passwordEmptyError, {}))}
+            {...this.fil
+              .getPropsForInputField('password', { translate })}
+            {...this.fil
+              .getPropsForInputField('password-visibility', { translate })}
           />
           <FormCheckbox
             dense="true"
             color="primary"
             checked={this.state.rememberMe}
             onChange={this.handleRememberMeChange}
-            label={rememberMeText}
+            label={translated.rememberMe}
             onKeyPress={this.handleEnterForTextField}
           />
           <FormSpace variant="content1" />
@@ -132,7 +176,7 @@ class LoginForm extends React.Component {
             color="primary"
             className={classes.loginBtn}
             onClick={this.handleSubmit}>
-            {loginText}
+            {translated.login}
           </Button>
           <FormSpace variant="content1" />
           <Typography
@@ -142,14 +186,14 @@ class LoginForm extends React.Component {
             className={classes.link}
             onClick={handleForgotPassword}
           >
-            {forgotPasswordText}
+            {translated.forgotPasswordQuestion}
           </Typography>
           <FormSpace variant="content1" />
         </FormContent>
         <Divider />
         <FormContent>
           <Button fullWidth={true} className={classes.loginBtn} onClick={handleCreateAccount}>
-            {createAccountText}
+            {translated.createAccount}
           </Button>
         </FormContent>
       </div>

@@ -34,6 +34,7 @@ export default (routesConfig) => {
         routeConfig,
         level,
         parents,
+        navbar,
       };
       newLevel = level + 1;
       newParents = parents.concat([listData]);

@@ -4,7 +4,7 @@ import { create } from 'jss';
 import { SheetsRegistry } from 'react-jss';
 import preset from 'jss-preset-default';
 import { createMuiTheme, createTypography } from '@material-ui/core/styles';
-import { purple, green, blue, black, pink, grey, common } from '@material-ui/core/colors';
+import { purple, green, orange, red, blue, black, pink, grey, common } from '@material-ui/core/colors';
 import createGenerateClassName from '@material-ui/core/styles/createGenerateClassName';
 
 // const theme = createMuiTheme({
@@ -64,6 +64,16 @@ export function getTheme(theme) {
         light: green[300],
         main: green[500],
         dark: green[700],
+      },
+      warning: {
+        light: orange[300],
+        main: orange[500],
+        dark: orange[700],
+      },
+      danger: {
+        light: red[300],
+        main: red[500],
+        dark: red[700],
       },
     },
   });

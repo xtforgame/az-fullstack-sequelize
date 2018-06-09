@@ -71,16 +71,16 @@ class EnhancedTable extends React.PureComponent { // eslint-disable-line react/p
     };
   }
   
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if ((nextProps.rows && (nextProps.rows !== prevState.rows))
-      || (nextProps.order && (nextProps.order !== prevState.order))
-      || (nextProps.orderBy && (nextProps.orderBy !== prevState.orderBy))
-      || (nextProps.columns && (nextProps.columns !== prevState.columns))
+  static getDerivedStateFromProps(props, prevState) {
+    if ((props.rows && (props.rows !== prevState.rows))
+      || (props.order && (props.order !== prevState.order))
+      || (props.orderBy && (props.orderBy !== prevState.orderBy))
+      || (props.columns && (props.columns !== prevState.columns))
     ) {
-      const rows = nextProps.rows || prevState.rows;
-      const order = nextProps.order || prevState.order;
-      const orderBy = nextProps.orderBy || prevState.orderBy;
-      const columns = nextProps.columns || prevState.columns;
+      const rows = props.rows || prevState.rows;
+      const order = props.order || prevState.order;
+      const orderBy = props.orderBy || prevState.orderBy;
+      const columns = props.columns || prevState.columns;
 
       return EnhancedTable.updateState({ columns, rows, order, orderBy });
     }

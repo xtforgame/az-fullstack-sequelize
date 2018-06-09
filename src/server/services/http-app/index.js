@@ -21,10 +21,14 @@ export default class HttpApp extends ServiceBase {
   static $name = 'httpApp';
   static $type = 'service';
   static $inject = ['envCfg'];
+  static $funcDeps = {
+    start: ['mailer'],
+  };
 
   constructor(envCfg){
     super();
     this.app = new Koa();
+    this.app.proxy = !!process.env.KOA_PROXY_ENABLED;
     // prevent any error to be sent to user
     this.app.use((ctx, next) => {
       return next().catch((err) => {

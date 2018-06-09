@@ -8,6 +8,7 @@ import Home from '~/containers/Home';
 import SubContent01 from '~/containers/Home/SubContent01';
 import SubContent02 from '~/containers/Home/SubContent02';
 import SubContent03 from '~/containers/Home/SubContent03';
+import SubContent04 from '~/containers/Home/SubContent04';
 
 import UserProfile from '~/containers/UserProfile';
 
@@ -17,6 +18,7 @@ import testCase00 from '~/test-cases/test-case-00';
 import testCase01 from '~/test-cases/test-case-01';
 
 import Login from '~/containers/Login';
+import Recovery from '~/containers/Recovery';
 
 import getListHierarchy from '~/containers/MainFrame/getListHierarchy';
 
@@ -51,6 +53,11 @@ const globalRouteConfig = {
       name: 'login',
       path: '/login',
       component: Login,
+    },
+    {
+      name: 'recovery',
+      path: '/recovery/:username/:code?',
+      component: Recovery,
     },
     {
       name: 'main',
@@ -99,6 +106,14 @@ const globalRouteConfig = {
               component: SubContent03,
               navbar: {
                 title: 'Sub 03',
+              },
+            },
+            {
+              name: 'sub04',
+              path: '/home/sub04',
+              component: SubContent04,
+              navbar: {
+                title: 'Sub 04',
               },
             }],
           }],

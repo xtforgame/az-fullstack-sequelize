@@ -7,6 +7,7 @@ import {
 
 import {
   sessionVerified,
+  clearSensitiveData,
 } from './actions';
 
 const {
@@ -15,6 +16,10 @@ const {
   getUserEpic,
   postUsersEpic,
   patchUserEpic,
+  postRecoveryTokensEpic,
+
+  postChallengeRecoveryTokensEpic,
+  postResetPasswordRequestsEpic,
 } = modelMap.epics;
 
 const types = modelMap.types;
@@ -22,6 +27,9 @@ const types = modelMap.types;
 const {
   getUser,
   postSessions,
+
+  clearUsersCache,
+  clearEachUserCache,
 } = modelMap.actions;
 
 const dispatchSessionVerifiedAfterPostedSession = (action$, store) =>
@@ -32,10 +40,9 @@ const dispatchSessionVerifiedAfterPostedSession = (action$, store) =>
       ];
     });
 
-const fetchMyUserDataAfterSessionVerified = (action$, store) =>
+const fetchDataAfterSessionVerified = (action$, store) =>
   action$.ofType(SESSION_VERIFIED)
     .mergeMap(action => {
-      // console.log('action :', action);
       HeaderManager.set('Authorization', `${action.session.token_type} ${action.session.token}`);
       return [
         getUser(action.session.user_id),
@@ -46,7 +53,9 @@ const clearAuthorizationHeaderAfterClearSession = (action$, store) =>
   action$.ofType(types.clearSessionCache)
     .mergeMap(action => {
       HeaderManager.delete('Authorization');
-      return [{ type: 'TO_NULL' }];
+      return [
+        clearSensitiveData(),
+      ];
     });
 
 const autologinAfterRegistration = (action$, store) =>
@@ -61,7 +70,7 @@ const autologinAfterRegistration = (action$, store) =>
 
 export default [
   dispatchSessionVerifiedAfterPostedSession,
-  fetchMyUserDataAfterSessionVerified,
+  fetchDataAfterSessionVerified,
   clearAuthorizationHeaderAfterClearSession,
   autologinAfterRegistration,
   postSessionsEpic,
@@ -69,4 +78,8 @@ export default [
   getUserEpic,
   postUsersEpic,
   patchUserEpic,
+  postRecoveryTokensEpic,
+
+  postChallengeRecoveryTokensEpic,
+  postResetPasswordRequestsEpic,
 ];

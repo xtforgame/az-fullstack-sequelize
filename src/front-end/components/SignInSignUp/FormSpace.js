@@ -10,6 +10,12 @@ let styles = theme => ({
   content2: {
     height: theme.spacing.unit * 2,
   },
+  content4: {
+    height: theme.spacing.unit * 4,
+  },
+  content8: {
+    height: theme.spacing.unit * 8,
+  },
   top: {
     height: theme.spacing.unit * 8,
   },
@@ -23,7 +29,7 @@ const FormSpace = (props) => {
 }
 
 FormSpace.propTypes = {
-  variant: PropTypes.oneOf(['top', 'content1', 'content2']),
+  variant: PropTypes.oneOf(['top', 'content1', 'content2', 'content4', 'content8']),
 };
 
 export default compose(

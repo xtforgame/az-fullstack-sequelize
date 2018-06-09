@@ -4,6 +4,7 @@ import {
   RestfulError,
 } from 'az-restful-helpers';
 import drawIcon from '~/utils/drawIcon';
+import { isValidEmail } from 'common/utils/validators';
 
 export default class UserRouter extends RouterBase {
   findUser(userId) {
@@ -33,10 +34,17 @@ export default class UserRouter extends RouterBase {
     router.post('/api/users', (ctx) => {
       const User = this.resourceManager.getSqlzModel('user');
       const jsonBody = ctx.request.body;
-      const alParamsArray = jsonBody.accountLinks || []; // alParamsArray
+      let alParamsArray = jsonBody.accountLinks || []; // alParamsArray
 
       if (alParamsArray.length === 0) {
         return RestfulError.koaThrowWith(ctx, 400, 'No account link provided');
+      }
+
+      // create only one account per user creation
+      alParamsArray = [alParamsArray[0]];
+
+      if (!isValidEmail(alParamsArray[0].username)) {
+        return RestfulError.koaThrowWith(ctx, 400, 'Invalid username');
       }
 
       let newUser = null;
@@ -57,7 +65,7 @@ export default class UserRouter extends RouterBase {
                 bio: `I'm ${jsonBody.name}`,
                 email: null,
               },
-              privilege: jsonBody.privilege || 'user',
+              privilege: 'user',
               accountLinks: accountLinkDataArray,
             }, {
               transaction: t,
@@ -97,6 +105,24 @@ export default class UserRouter extends RouterBase {
       })
       .then(([_, [result]]) => {
         ctx.body = result;
+      });
+    });
+
+    router.get('/api/users', this.authKit.koaHelper.getIdentity, (ctx) => {
+      if(!ctx.local.userSession
+        || !ctx.local.userSession.user_id
+        || ctx.local.userSession.privilege !== 'admin'
+      ){
+        return RestfulError.koaThrowWith(ctx, 403, 'Forbidden');
+      }
+
+      const User = this.resourceManager.getSqlzModel('user');
+      return User.findAll({
+        attributes: { exclude: ['picture', /*'created_at',*/ 'updated_at', 'deleted_at'] },
+        // attributes: ['id', , 'name', 'labels', /*'picture',*/ 'data'],
+      })
+      .then(users => {
+        ctx.body = users;
       });
     });
   }

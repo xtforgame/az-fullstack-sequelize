@@ -9,6 +9,9 @@ let credentialFiles = {
 let httpPort = 8080;
 let httpsPort = 8443;
 
+let sendRecoveryTokenInterval = 1 * 5 * 1000;
+let externalUrl = 'https://localhost:8443';
+
 let postgresPort = 5432;
 let postgresUser = 'rick';
 let postgresDbName = 'db_rick_data';
@@ -19,6 +22,9 @@ export {
   credentialFiles,
   httpPort,
   httpsPort,
+
+  sendRecoveryTokenInterval,
+  externalUrl,
 
   postgresPort,
   postgresUser,

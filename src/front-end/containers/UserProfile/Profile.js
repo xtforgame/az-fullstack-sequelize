@@ -8,6 +8,12 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListSubheader from '@material-ui/core/ListSubheader';
 import Button from '@material-ui/core/Button';
 import EditIcon from '@material-ui/icons/Edit';
 import CloseIcon from '@material-ui/icons/Close';
@@ -141,6 +147,7 @@ class Profile extends React.Component {
       editing: true,
       name: user.name,
       bio: user.data && user.data.bio,
+      email: user.data && user.data.email,
     });
   };
 
@@ -148,6 +155,7 @@ class Profile extends React.Component {
     this.setState({
       editing: false,
       name: undefined,
+      email: undefined,
       bio: undefined,
       thumbnail: undefined,
       dataURL: undefined,
@@ -167,6 +175,9 @@ class Profile extends React.Component {
       if(this.state.name){
         patchData.name = this.state.name;
       }
+      if(this.state.email){
+        patchData.email = this.state.email;
+      }
       if(this.state.bio){
         patchData.data = {
           ...user.data,
@@ -182,6 +193,7 @@ class Profile extends React.Component {
       this.setState({
         editing: false,
         name: undefined,
+        email: undefined,
         bio: undefined,
         thumbnail: undefined,
         dataURL: undefined,
@@ -192,13 +204,128 @@ class Profile extends React.Component {
     });
   }
 
-  render(){
+  renderDetailView(){
     const {
       classes,
       user = {},
     } = this.props;
 
     const bio = user.data && user.data.bio;
+
+    return (
+      <CardContent>
+        <Centered>
+          <Typography gutterBottom variant="headline" component="h2">
+            {user.name}
+          </Typography>
+        </Centered>
+        <List>
+          <ListItem>
+            <ListItemText
+              primary="Email"
+              secondary={user.email}
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              disableTypography
+              primary={<Typography
+                variant="subheading"
+              >
+                Bio
+              </Typography>}
+              secondary={<Typography
+                variant="body1"
+                component="pre"
+                color="textSecondary"
+              >
+                {bio}
+              </Typography>}
+            />
+          </ListItem>
+        </List>
+      </CardContent>
+    );
+  }
+
+  renderEditView(){
+    const {
+      classes,
+      user = {},
+    } = this.props;
+
+    const bio = user.data && user.data.bio;
+
+    return (
+      <CardContent>
+        <FormTextInput
+          id={'name'}
+          label={'Name'}
+          onKeyPress={() => {}}
+          value={(this.state.editing ? this.state.name : user.name) || ''}
+          onChange={e => {
+            this.setState({
+              name: e.target.value,
+            });
+          }}
+          formProps={{
+            style: {
+              width: '100%',
+            },
+          }}
+          fullWidth
+        />
+        <div className={classes.space3} />
+        <FormTextInput
+          id={'email'}
+          label={'Email'}
+          onKeyPress={() => {}}
+          value={(this.state.editing ? this.state.email : user.email) || ''}
+          onChange={e => {
+            this.setState({
+              email: e.target.value,
+            });
+          }}
+          formProps={{
+            style: {
+              width: '100%',
+            },
+          }}
+          fullWidth
+        />
+        <div className={classes.space3} />
+        <React.Fragment>
+          <FormTextInput
+            id={'bio'}
+            label={'Bio'}
+            onKeyPress={() => {}}
+            value={(this.state.editing ? this.state.bio : bio) || ''}
+            onChange={e => {
+              this.setState({
+                bio: e.target.value,
+              });
+            }}
+            formProps={{
+              style: {
+                width: '100%',
+              },
+            }}
+            multiline
+            fullWidth
+            rows={1}
+            rowsMax={10}
+          />
+          <div className={classes.space3} />
+        </React.Fragment>
+      </CardContent>
+    );
+  }
+
+  render(){
+    const {
+      classes,
+      user = {},
+    } = this.props;
 
     return (
       <React.Fragment>
@@ -270,60 +397,10 @@ class Profile extends React.Component {
               </Centered>
             </CardMedia>
             <div className={classes.space2} />
-            <CardContent>
-              {this.state.editing ?
-                <React.Fragment>
-                  <FormTextInput
-                    id={'name'}
-                    label={'Name'}
-                    onKeyPress={() => {}}
-                    value={this.state.editing ? this.state.name : user.name}
-                    onChange={e => {
-                      this.setState({
-                        name: e.target.value,
-                      });
-                    }}
-                    formProps={{
-                      style: {
-                        width: '100%',
-                      },
-                    }}
-                    fullWidth
-                  />
-                  <div className={classes.space3} />
-                </React.Fragment> :
-                <Centered>
-                  <Typography gutterBottom variant="headline" component="h2">
-                    {user.name}
-                  </Typography>
-                </Centered>
-              }
-              {this.state.editing ?
-                <FormTextInput
-                  id={'bio'}
-                  label={'Bio'}
-                  onKeyPress={() => {}}
-                  value={this.state.editing ? this.state.bio : bio}
-                  onChange={e => {
-                    this.setState({
-                      bio: e.target.value,
-                    });
-                  }}
-                  formProps={{
-                    style: {
-                      width: '100%',
-                    },
-                  }}
-                  multiline
-                  fullWidth
-                  rows={1}
-                  rowsMax={10}
-                /> :
-                <Typography component="p">
-                  {bio}
-                </Typography>
-              }
-            </CardContent>
+            {this.state.editing ?
+              this.renderEditView()
+              : this.renderDetailView()
+            }
             {this.state.editing &&
               <CardActions>
                 <SuccessButton

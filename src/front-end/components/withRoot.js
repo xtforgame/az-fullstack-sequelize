@@ -20,23 +20,23 @@ if (process.browser && !global.__INSERTION_POINT__) {
 
 export default function withRoot(BaseComponent) {
   class WithRoot extends Component {
-    static getDerivedStateFromProps(nextProps, prevState) {
+    static getDerivedStateFromProps(props, prevState) {
       if (typeof prevState.pageContext === 'undefined') {
         return {
-          prevProps: nextProps,
-          pageContext: nextProps.pageContext || getPageContext(nextProps.uiTheme),
+          prevProps: props,
+          pageContext: props.pageContext || getPageContext(props.uiTheme),
         };
       }
   
       const { prevProps } = prevState;
 
       if (
-        nextProps.uiTheme.paletteType !== prevProps.uiTheme.paletteType ||
-        nextProps.uiTheme.direction !== prevProps.uiTheme.direction
+        props.uiTheme.paletteType !== prevProps.uiTheme.paletteType ||
+        props.uiTheme.direction !== prevProps.uiTheme.direction
       ) {
         return {
-          prevProps: nextProps,
-          pageContext: updatePageContext(nextProps.uiTheme),
+          prevProps: props,
+          pageContext: updatePageContext(props.uiTheme),
         };
       }
   

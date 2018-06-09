@@ -7,7 +7,28 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-export default class ConfirmDialog extends React.Component {
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
+import { compose } from 'recompose';
+import createCommonStyles from '~/styles/common';
+
+const styles = theme => ({
+  appBar: {
+    position: 'relative',
+  },
+  ...createCommonStyles(theme, ['flex', 'appBar']),
+});
+
+class ConfirmDialog extends React.Component {
+  static propTypes = {
+    open: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+  };
+
   handleClose = (result) => () => {
     this.props.onClose(result);
   };
@@ -21,6 +42,8 @@ export default class ConfirmDialog extends React.Component {
       buttonTexts = {},
       dialogProps,
       children,
+      classes,
+      fullScreen,
     } = this.props;
 
     const YesButton = buttonComponents.yes || Button;
@@ -31,22 +54,36 @@ export default class ConfirmDialog extends React.Component {
 
     return (
       <Dialog
-        fullWidth
+        fullScreen={fullScreen}
         open={this.props.open}
         onClose={this.handleClose()}
         aria-labelledby="form-dialog-title"
         {...dialogProps}
       >
-        <DialogTitle id="form-dialog-title">{title}</DialogTitle>
-        <DialogContent>
+        {fullScreen && <AppBar className={classes.appBar}>
+          <Toolbar>
+            <IconButton color="inherit" className={classes.menuButton} onClick={this.handleClose(false)} aria-label="Close">
+              <CloseIcon />
+            </IconButton>
+            <Typography variant="title" color="inherit" className={classes.flex1}>
+              {title}
+            </Typography>
+            {/* <Button color="inherit" onClick={onClose}>
+              save
+            </Button> */}
+          </Toolbar>
+        </AppBar>
+        }
+        {!fullScreen && <DialogTitle id="form-dialog-title">{title}</DialogTitle>}
+        {!!(contents || contentText) && <DialogContent>
           {contents}
           {!contents &&
             <DialogContentText>
               {contentText}
             </DialogContentText>
           }
-          {children}
-        </DialogContent>
+        </DialogContent>}
+        {children}
         <DialogActions>
           <NoButton onClick={this.handleClose(false)} color="primary">
             {NoButtonText}
@@ -60,7 +97,6 @@ export default class ConfirmDialog extends React.Component {
   }
 }
 
-ConfirmDialog.propTypes = {
-  open: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-};
+export default compose(
+  withStyles(styles),
+)(ConfirmDialog);

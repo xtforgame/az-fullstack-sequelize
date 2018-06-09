@@ -28,19 +28,14 @@ import {
 import {
   makeUiThemeSelector,
 } from '~/containers/App/selectors';
+import createCommonStyles from '~/styles/common';
 
-const styles = {
+const styles = theme => ({
   appBar: {
     position: 'relative',
   },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
-  flex: {
-    flex: 1,
-  },
-};
+  ...createCommonStyles(theme, ['flex', 'appBar']),
+});
 
 class UserSettingsDialog extends React.Component {
   handleToggle = () => {
@@ -72,7 +67,7 @@ class UserSettingsDialog extends React.Component {
             <IconButton color="inherit" className={classes.menuButton} onClick={onClose} aria-label="Close">
               <CloseIcon />
             </IconButton>
-            <Typography variant="title" color="inherit" className={classes.flex}>
+            <Typography variant="title" color="inherit" className={classes.flex1}>
               <FormattedMessage {...messages.settings} />
             </Typography>
             {/* <Button color="inherit" onClick={onClose}>

@@ -9,6 +9,9 @@ import createReduxWaitForMiddleware from 'redux-wait-for-action';
 
 import languageProviderReducer from '~/containers/LanguageProvider/reducer';
 
+import {
+  CLEAR_SENSITIVE_DATA,
+} from '~/containers/App/constants';
 import appReducer from '~/containers/App/reducer';
 import appEpic from '~/containers/App/epic';
 
@@ -27,6 +30,17 @@ if(process.env.NODE_ENV === 'development'){
 }
 
 export default (initialState, history) => configureStore(staticReducers, ImmutableMap(initialState), {
+  reducerOptions: {
+    createRootReducer: ((rootReducer) => (state, action) => {
+      if (action.type === CLEAR_SENSITIVE_DATA) {
+        // leave keys belong to staticReducers after logout
+        state = state.filter((v, k) => staticReducers[k] !== undefined);
+        state = state.update('global', v => { persistence: v.persistence });
+      }
+
+      return rootReducer(state, action);
+    }),
+  },
   extensions: [
     {
       extension: RrwExEpic,

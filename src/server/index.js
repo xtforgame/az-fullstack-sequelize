@@ -7,6 +7,7 @@ import SequelizeDb from '~/services/sequelize-db';
 import ResourceManager from '~/services/resource-manager';
 import CreateTestData from '~/services/create-test-data';
 import RouterManager from '~/services/router-manager';
+import Mailer from '~/services/mailer';
 import {
   runningMode,
 } from 'common/core/config';
@@ -21,6 +22,7 @@ class Server {
       ResourceManager,
       CreateTestData,
       RouterManager,
+      Mailer,
     ]);
   
     this.ioc.digest();

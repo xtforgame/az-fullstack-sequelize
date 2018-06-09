@@ -2,7 +2,6 @@ export default theme => {
   return {
     flexContainer: {
       display: 'flex',
-      height: '100%',
     },
     flexContainerFH: {
       display: 'flex',
