@@ -1,7 +1,7 @@
 {
-  "name": "az-react-dev",
+  "name": "az-react-material-dev",
   "version": "1.0.0",
-  "description": "A react seed project",
+  "description": "A react material ui seed project",
   "main": "dist/server/index.js",
   "repository": {
     "type": "git"

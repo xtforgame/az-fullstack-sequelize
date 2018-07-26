@@ -1,4 +1,4 @@
-# AzReactDev
+# AzReactMaterialDev
 
 A general purpose seed project base
 

@@ -135,10 +135,6 @@ class Login extends React.Component {
       case 1:
         title = <FormattedMessage {...messages.createAccount} />;
         break;
-
-      case 2:
-        title = <FormattedMessage {...messages.forgotPasswordQuestion} />;
-        break;
     }
 
     return (
@@ -170,7 +166,6 @@ class Login extends React.Component {
               passwordError={this.state.tabIndex === 0 && this.state.loginError && wrongUsernameOrPassword}
               defaultRememberMe={rememberUser}
               onSubmit={login}
-              handleForgotPassword={() => this.swipeTo(2)}
               handleCreateAccount={() => this.swipeTo(1)}
             />
             <RegistrationForm
@@ -181,14 +176,6 @@ class Login extends React.Component {
               usernameError={this.state.tabIndex === 1 && this.state.postUsersError && usernameIsTaken}
               onSubmit={register}
               comfirmUserAgreement={true}
-            />
-            <RecoveryForm
-              username={this.state.username}
-              onUsernameChange={(username) => this.setState({
-                username,
-              })}
-              usernameError={this.state.tabIndex === 2 && this.state.postUsersError && usernameIsTaken}
-              onBackToLogin={() => this.swipeTo(0)}
             />
           </SwipeableViews>
         </Paper>

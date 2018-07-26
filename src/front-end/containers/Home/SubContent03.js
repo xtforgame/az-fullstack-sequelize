@@ -3,12 +3,17 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import RefreshIcon from '@material-ui/icons/Refresh';
+import SearchIcon from '@material-ui/icons/Search'
 import MenuItem from '@material-ui/core/MenuItem';
+import TableAppBar from '~/components/Tables/TableAppBar';
 import EnhancedTable from '~/components/Tables/EnhancedTable';
 import SimpleTabs from './SimpleTabs';
+import Chip from '@material-ui/core/Chip';
+import createCommonStyles from '~/styles/common';
 
 const styles = theme => ({
+  ...createCommonStyles(theme, ['flex', 'appBar']),
   root: {
     width: '100%',
     overflowX: 'auto',
@@ -66,6 +71,21 @@ class SubContent03 extends React.PureComponent { // eslint-disable-line react/pr
     } = this.props;
     return (
       <Paper className={classes.root}>
+        <TableAppBar>
+          <div className={classes.flex1} />
+          <Chip
+            color="inherit"
+            label={`Search for '${'xxxxxxxxxxxxxxxxxxxxxxxxx'}'`}
+            onDelete={() => {}}
+            className={classes.appBarChip}
+          />
+          <IconButton color="inherit" onClick={() => {}} aria-label="refresh">
+            <SearchIcon />
+          </IconButton>
+          <IconButton color="inherit" onClick={() => {}} aria-label="refresh">
+            <RefreshIcon />
+          </IconButton>
+        </TableAppBar>
         <EnhancedTable
           withDetail
           getActionMenuItems={(closeMenu) => ([

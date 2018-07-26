@@ -27,10 +27,7 @@ import ArrowBack from '@material-ui/icons/ArrowBack';
 import createCommonStyles from '~/styles/common';
 import createFormPaperStyle from '~/styles/FormPaper';
 
-import SwipeableViews from 'react-swipeable-views';
 import LoginForm from './LoginForm';
-import RegistrationForm from './RegistrationForm';
-import RecoveryForm from '~/containers/Recovery/RecoveryForm';
 
 import { createStructuredSelector } from 'reselect';
 import modelMap from '~/containers/App/modelMap';
@@ -58,7 +55,6 @@ class Login extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      tabIndex: 0,
       // username: FormPhoneOrEmailInput.rawInputToState('admin@foo.bar'),
       loginError: null,
       postUsersError: null,
@@ -72,10 +68,6 @@ class Login extends React.Component {
       fromPath && console.log(`Redirected page from ${fromPath} to Login`);
     }
   }
-
-  swipeTo = (tabIndex) => {
-    this.setState({ tabIndex });
-  };
 
   render(){
     let { location, intl, postSessions, postUsers, postRecoveryTokens, session, rememberUser, classes } = this.props;
@@ -126,71 +118,28 @@ class Login extends React.Component {
       });
     };
 
-    let title = null;
-    switch (this.state.tabIndex) {
-      case 0:
-        title = <FormattedMessage {...messages.login} />;
-        break;
-
-      case 1:
-        title = <FormattedMessage {...messages.createAccount} />;
-        break;
-
-      case 2:
-        title = <FormattedMessage {...messages.forgotPasswordQuestion} />;
-        break;
-    }
-
     return (
       <div className={classes.flexContainerFH}>
         <div className={classes.flex1} />
         <Paper className={classes.paper} elevation={4}>
           <AppBar position="static">
             <Toolbar>
-              {this.state.tabIndex !== 0 && <IconButton className={classes.menuButton} color="inherit" aria-label="Back" onClick={() => { this.swipeTo(0); }}>
-                <ArrowBack/>
-              </IconButton>}
               <Typography variant="title" color="inherit" className={classes.flex1}>
-                {title}
+                <FormattedMessage {...messages.login} />
               </Typography>
               <LocaleDropdown />
             </Toolbar>
           </AppBar>
-          <SwipeableViews
-            index={this.state.tabIndex}
-            {...{}/*onChangeIndex={this.handleChangeIndex}*/}
-            disabled={true}
-          >
-            <LoginForm
-              username={this.state.username}
-              onUsernameChange={(username) => this.setState({
-                username,
-              })}
-              usernameError={this.state.tabIndex === 0 && !!this.state.loginError}
-              passwordError={this.state.tabIndex === 0 && this.state.loginError && wrongUsernameOrPassword}
-              defaultRememberMe={rememberUser}
-              onSubmit={login}
-              handleForgotPassword={() => this.swipeTo(2)}
-              handleCreateAccount={() => this.swipeTo(1)}
-            />
-            <RegistrationForm
-              username={this.state.username}
-              onUsernameChange={(username) => this.setState({
-                username,
-              })}
-              usernameError={this.state.tabIndex === 1 && this.state.postUsersError && usernameIsTaken}
-              onSubmit={register}
-              comfirmUserAgreement={true}
-            />
-            <RecoveryForm
-              username={this.state.username}
-              onUsernameChange={(username) => this.setState({
-                username,
-              })}
-              usernameError={this.state.tabIndex === 2 && this.state.postUsersError && usernameIsTaken}
-              onBackToLogin={() => this.swipeTo(0)}
-            />
-          </SwipeableViews>
+          <LoginForm
+            username={this.state.username}
+            onUsernameChange={(username) => this.setState({
+              username,
+            })}
+            usernameError={!!this.state.loginError}
+            passwordError={this.state.loginError && wrongUsernameOrPassword}
+            defaultRememberMe={rememberUser}
+            onSubmit={login}
+          />
         </Paper>
         <div className={classes.flex1} />
       </div>
