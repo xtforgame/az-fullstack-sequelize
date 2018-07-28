@@ -12,6 +12,8 @@ import SubContent04 from '~/containers/Home/SubContent04';
 
 import UserProfile from '~/containers/UserProfile';
 
+import Idle from '~/containers/Idle';
+
 import Test from '~/containers/Test';
 import TestContent from '~/containers/Test/TestContent';
 import testCase00 from '~/test-cases/test-case-00';
@@ -117,6 +119,12 @@ const globalRouteConfig = {
               },
             }],
           }],
+        },
+        {
+          name: 'idle',
+          path: '/idle',
+          component: Idle, 
+          navbar: true,
         },
         {
           name: 'test',

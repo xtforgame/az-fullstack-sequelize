@@ -81,12 +81,12 @@ class MainFrame extends React.Component {
     );
 
     return (
-      <div className={classes.container}>
+      <div className={classes.verticalFlexContainerFWFH}>
         <MainAppBar
           onToggleMenu={this.toggleDrawer(true)}
         />
         <div className={classes.appBarPlaceholder} />
-        <div className={classes.verticalFlexContainerFH}>
+        <div className={classes.verticalFlexContainerFWF1}>
           <div className={classes.mainContent}>
             {routeView}
           </div>

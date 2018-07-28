@@ -71,6 +71,7 @@
     "react-router-dom": "^4.2.2",
     "react-router-redux": "5.0.0-alpha.6",
     "react-router-scroll": "^0.4.3",
+    "react-sticky": "^6.0.3",
     "react-swipeable-views": "^0.12.13",
     "recompose": "^0.26.0",
     "redux": "^3.7.2",

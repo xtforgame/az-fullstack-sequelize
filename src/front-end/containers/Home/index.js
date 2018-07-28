@@ -10,12 +10,15 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import SimpleMediaCard from './SimpleMediaCard';
 
-const styles = {
+const styles = theme => ({
   placeholder: {
     height: 40,
   },
   mainContainer: {
-    margin: 40,
+    margin: 8,
+    [theme.breakpoints.up('sm')]: {
+      margin: 40,
+    },
   },
   cardContainer: {
     display: 'flex',
@@ -31,7 +34,7 @@ const styles = {
   listFull: {
     width: 'auto',
   },
-};
+});
 
 class Home extends React.Component {
   constructor(props){
