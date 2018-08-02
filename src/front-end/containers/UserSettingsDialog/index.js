@@ -1,16 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { createStructuredSelector } from 'reselect';
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import Divider from '@material-ui/core/Divider';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -19,8 +14,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Switch from '@material-ui/core/Switch';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { injectIntl } from 'react-intl';
-import { FormattedMessage } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { messages } from '~/containers/App/translation';
 import {
   changeTheme,
@@ -48,8 +42,8 @@ class UserSettingsDialog extends React.Component {
       paletteType: uiTheme.paletteType === 'dark' ? 'light' : 'dark',
     });
   };
-  
-  render(){
+
+  render() {
     const {
       classes,
       open,
@@ -96,10 +90,6 @@ class UserSettingsDialog extends React.Component {
     );
   }
 }
-
-UserSettingsDialog.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 const mapStateToProps = createStructuredSelector({
   uiTheme: makeUiThemeSelector(),

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types, react/forbid-prop-types, no-empty */
 import React from 'react';
 import { compose } from 'recompose';
 import PropTypes from 'prop-types';
@@ -6,29 +7,29 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import Email from '@material-ui/icons/Email';
 
-import FormTextInput from '../FormTextInput';
-import PhoneRegionSelect from './PhoneRegionSelect';
-import libphonenumber, {
+import /* libphonenumber, */ {
   PhoneNumberFormat as PNF,
   PhoneNumberUtil,
 } from 'google-libphonenumber';
-import { getCountryCodeFromBrowser } from './langToCountry';
 import { isValidEmail } from 'common/utils/validators';
+import FormTextInput from '../FormTextInput';
+import PhoneRegionSelect from './PhoneRegionSelect';
+import { getCountryCodeFromBrowser } from './langToCountry';
 
 const country = getCountryCodeFromBrowser();
 const phoneUtil = PhoneNumberUtil.getInstance();
 
-export const isValidPhoneNumber = value => {
+export const isValidPhoneNumber = (value) => {
   try {
     const number = phoneUtil.parseAndKeepRawInput(value, country);
-    return phoneUtil.isValidNumber(number)
+    return phoneUtil.isValidNumber(number);
   } catch (error) {}
   return false;
 };
 export { isValidEmail };
 
 
-let styles = theme => ({
+const styles = theme => ({
   adornment: {
     marginRight: 0,
   },
@@ -39,9 +40,9 @@ class FormPhoneOrEmailInput extends React.Component {
     let regionCode = null;
     let value = rawInput;
     let number = null;
-    let type = undefined;
+    let type;
 
-    if(enablePhone){
+    if (enablePhone) {
       try {
         number = phoneUtil.parseAndKeepRawInput(rawInput, country);
         // console.log('CountryCode:', number.getCountryCode());
@@ -49,17 +50,16 @@ class FormPhoneOrEmailInput extends React.Component {
         // console.log('RegionCodeForNumber:', phoneUtil.getRegionCodeForNumber(number));
         // const formattedPhoneNumber = phoneUtil.format(number, /*PNF.NATIONAL*/ PNF.INTERNATIONAL);
         // console.log(formattedPhoneNumber);
-        if(phoneUtil.isValidNumber(number)){
+        if (phoneUtil.isValidNumber(number)) {
           type = 'phone-number';
         }
         // e.target.value = formattedPhoneNumber;
         regionCode = phoneUtil.getRegionCodeForNumber(number);
         value = phoneUtil.format(number, PNF.E164);
-      } catch (error) {
-      }
+      } catch (error) {}
     }
 
-    if(enableEmail && isValidEmail(rawInput)){
+    if (enableEmail && isValidEmail(rawInput)) {
       type = 'email-address';
     }
 
@@ -70,7 +70,17 @@ class FormPhoneOrEmailInput extends React.Component {
       type,
     };
   }
-  
+
+  state = {};
+
+  onChange = (e) => {
+    const state = FormPhoneOrEmailInput.rawInputToState(e.target.value || '', this.state.enablePhone, this.state.enableEmail);
+    if (this.props.onChange) {
+      this.props.onChange(state);
+    }
+    this.setState(state);
+  }
+
   static getDerivedStateFromProps(props, prevState) {
     let newState = null;
     let enablePhone = prevState.enablePhone !== undefined ? prevState.enablePhone : true;
@@ -78,15 +88,17 @@ class FormPhoneOrEmailInput extends React.Component {
 
     if (props.enablePhone !== undefined && (props.enablePhone !== prevState.enablePhone)) {
       newState = newState || {};
-      enablePhone = newState.enablePhone = props.enablePhone;
+      newState.enablePhone = props.enablePhone;
+      ({ enablePhone } = newState.enablePhone);
     }
 
     if (props.enableEmail !== undefined && (props.enableEmail !== prevState.enableEmail)) {
       newState = newState || {};
-      enableEmail = newState.enableEmail = props.enableEmail;
+      newState.enableEmail = props.enableEmail;
+      ({ enableEmail } = newState.enableEmail);
     }
 
-    if(props.value){
+    if (props.value) {
       newState = {
         ...(newState || {}),
         ...FormPhoneOrEmailInput.rawInputToState(props.value, enablePhone, enableEmail),
@@ -96,45 +108,36 @@ class FormPhoneOrEmailInput extends React.Component {
     // No state update necessary
     return newState;
   }
-  
-  constructor(...args){
-    super(...args);
-    this.state = {};
-  }
 
-  onChange = (e) => {
-    const state = FormPhoneOrEmailInput.rawInputToState(e.target.value || '', this.state.enablePhone, this.state.enableEmail);
-    this.props.onChange && this.props.onChange(state);
-    this.setState(state);
-  }
-
-  render(){
+  render() {
     const {
       id,
       classes,
       enablePhone,
       enableEmail,
-      ...rest,
+      ...rest
     } = this.props;
 
     const {
       regionCode,
     } = this.state;
 
-    let startAdornment = (
+    const startAdornment = (
       <InputAdornment
         position="start"
         className={classes.adornment}
       >
         {regionCode != null ? <PhoneRegionSelect regionCode={regionCode} />
-          : <IconButton
+          : (
+            <IconButton
               tabIndex="-1"
-              onMouseDown={event => {
+              onMouseDown={(event) => {
                 event.preventDefault();
               }}
             >
               <Email />
             </IconButton>
+          )
         }
       </InputAdornment>
     );

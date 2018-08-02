@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import Azldi from 'azldi';
 import { httpPort, httpsPort } from 'config';
 // ============================================
@@ -13,7 +14,7 @@ import {
 } from 'common/core/config';
 
 class Server {
-  constructor(){
+  constructor() {
     this.ioc = new Azldi();
     this.ioc.register([
       EnvCfg,
@@ -24,15 +25,15 @@ class Server {
       RouterManager,
       Mailer,
     ]);
-  
+
     this.ioc.digest();
   }
 
-  start(){
+  start() {
     return this.ioc.runAsync('start');
   }
 
-  destroy(){
+  destroy() {
     return this.ioc.runAsync('destroy')
       .then((_) => {
         this.ioc = null;
@@ -50,7 +51,7 @@ export default Server;
 
 const envName = process.env.NODE_ENV ? process.env.NODE_ENV : 'production';
 
-if(envName !== 'test'){
+if (envName !== 'test') {
   // start automatically
   const server = new Server();
   server.start()

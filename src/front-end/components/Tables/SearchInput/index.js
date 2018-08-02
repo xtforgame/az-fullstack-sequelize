@@ -1,14 +1,11 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import keycode from 'keycode';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import { withStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types'
-import IconButton from '@material-ui/core/IconButton'
-import Input from '@material-ui/core/Input'
-import Paper from '@material-ui/core/Paper'
-import ClearIcon from '@material-ui/icons/Clear'
-import SearchIcon from '@material-ui/icons/Search'
-import { grey } from '@material-ui/core/colors'
+import IconButton from '@material-ui/core/IconButton';
+import Input from '@material-ui/core/Input';
+import ClearIcon from '@material-ui/icons/Clear';
+import SearchIcon from '@material-ui/icons/Search';
 
 const styles = theme => ({
   root: {
@@ -43,48 +40,52 @@ const styles = theme => ({
  * @see [Search patterns](https://material.io/guidelines/patterns/search.html)
  */
 class SearchInput extends Component {
-  constructor (props) {
-    super(props)
+  constructor(props) {
+    super(props);
     this.state = {
       value: this.props.value,
       active: false,
-    }
+    };
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (this.props.value !== nextProps.value) {
-      this.setState({...this.state, value: nextProps.value})
+      this.setState({ ...this.state, value: nextProps.value });
     }
   }
 
   handleInput = (e) => {
-    this.setState({value: e.target.value})
-    this.props.onChange && this.props.onChange(e.target.value)
+    this.setState({ value: e.target.value });
+    if (this.props.onChange) {
+      this.props.onChange(e.target.value);
+    }
   }
 
   handleCancel = () => {
-    this.setState({active: false, value: ''})
-    this.props.onChange && this.props.onChange('')
+    this.setState({ active: false, value: '' });
+    if (this.props.onChange) {
+      this.props.onChange('');
+    }
   }
 
   handleKeyDown = (event) => {
     if (keycode(event) === 'enter') {
-      this.props.onRequestSearch(this.state.value)
+      this.props.onRequestSearch(this.state.value);
     }
   }
 
-  render () {
-    const { value } = this.state
+  render() {
+    const { value } = this.state;
     const {
       disabled,
       onRequestSearch,
       classes,
       ...inputProps
-    } = this.props
+    } = this.props;
 
     const nonEmpty = value && value.length > 0;
 
-    const styles =  {
+    const styles = {
       iconButtonClose: {
         transform: nonEmpty ? 'scale(1, 1)' : 'scale(0, 0)',
       },
@@ -109,7 +110,7 @@ class SearchInput extends Component {
             disabled={disabled}
           />
         </div>
-        <div style={{position: 'relative', width: 48}}>
+        <div style={{ position: 'relative', width: 48 }}>
           <IconButton
             color="inherit"
             className={classes.iconButton}
@@ -129,7 +130,7 @@ class SearchInput extends Component {
           </IconButton>
         </div>
       </div>
-    )
+    );
   }
 }
 

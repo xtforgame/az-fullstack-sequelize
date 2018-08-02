@@ -1,10 +1,9 @@
+/* eslint-disable react/prop-types, react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Collapse from '@material-ui/core/Collapse';
@@ -12,28 +11,18 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
-import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import SkipNextIcon from '@material-ui/icons/SkipNext';
-import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import red from '@material-ui/core/colors/red';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import SettingsIcon from '@material-ui/icons/Settings';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Chip from '@material-ui/core/Chip';
-import FaceIcon from '@material-ui/icons/Face';
-import ExposureNeg1 from '@material-ui/icons/ExposureNeg1';
-import DateRange from '@material-ui/icons/DateRange';
-import Done from '@material-ui/icons/Done';
 import Divider from '@material-ui/core/Divider';
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
 const styles = theme => ({
@@ -117,7 +106,7 @@ const styles = theme => ({
 class ServiceCard extends React.Component {
   static propTypes = {
     status: PropTypes.shape({
-      type: PropTypes.oneOf(['healthy', 'waring', 'danger', 'inactive', 'unknown']).isRequired,
+      type: PropTypes.oneOf(['healthy', 'warning', 'danger', 'inactive', 'unknown']).isRequired,
       state: PropTypes.string.isRequired,
     }),
   };
@@ -131,7 +120,6 @@ class ServiceCard extends React.Component {
   render() {
     const {
       classes,
-      theme,
       name,
       status = {
         type: 'unknown',
@@ -150,7 +138,7 @@ class ServiceCard extends React.Component {
       label: `${key} : ${tags[key]}`,
     }));
 
-    const portList = ports.sort((a, b) => (a.number - b.number)).map(({type, number}) => `${number} : ${type}`);
+    const portList = ports.sort((a, b) => (a.number - b.number)).map(({ type, number }) => `${number} : ${type}`);
 
     return (
       <Card className={classes.card}>
@@ -162,7 +150,9 @@ class ServiceCard extends React.Component {
           /> */}
           <div className={classes.details}>
             <CardContent className={classes.content}>
-              <Typography variant="subheading">{name}</Typography>
+              <Typography variant="subheading">
+                {name}
+              </Typography>
               <Typography
                 variant="subheading"
                 color="textSecondary"
@@ -194,53 +184,58 @@ class ServiceCard extends React.Component {
               <ListItem>
                 <ListItemText
                   disableTypography
-                  primary={<Typography
-                    variant="subheading"
-                  >
+                  primary={(
+                    <Typography
+                      variant="subheading"
+                    >
                     Tags
-                  </Typography>}
-                  secondary={<div className={classes.chipContainer} >
-                    {
-                      tagList.map(tag => (
-                        <Chip
-                          key={tag.key}
-                          label={tag.label}
-                          className={classes.chip}
-                        />
-                      ))
-                    }
-                  </div>}
+                    </Typography>
+                  )}
+                  secondary={(
+                    <div className={classes.chipContainer}>
+                      {
+                        tagList.map(tag => (
+                          <Chip
+                            key={tag.key}
+                            label={tag.label}
+                            className={classes.chip}
+                          />
+                        ))
+                      }
+                    </div>
+                  )}
                 />
               </ListItem>
               <ListItem>
                 <ListItemText
                   disableTypography
-                  primary={<Typography
-                    variant="subheading"
-                  >
+                  primary={(
+                    <Typography
+                      variant="subheading"
+                    >
                     Ports
-                  </Typography>}
-                  secondary={
-                  <Table className={classes.table}>
-                    {/* <TableHead>
+                    </Typography>
+                  )}
+                  secondary={(
+                    <Table className={classes.table}>
+                      {/* <TableHead>
                       <TableRow>
                         <TableCell>exposed</TableCell>
                         <TableCell numeric={false}>forward to</TableCell>
                       </TableRow>
                     </TableHead> */}
-                    <TableBody>
-                      {portList.map(port => {
-                        return (
+                      <TableBody>
+                        {portList.map(port => (
                           <TableRow key={port}>
                             <TableCell component="th" scope="row">
                               {port}
                             </TableCell>
                             {/* <TableCell numeric={false}>{port}</TableCell> */}
                           </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>}
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
                 />
               </ListItem>
             </List>
@@ -278,28 +273,25 @@ class ServiceCard extends React.Component {
         <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
           <List
             component="nav"
-            subheader={<ListSubheader component="div">Containers</ListSubheader>}
+            subheader={(
+              <ListSubheader component="div">
+                Containers
+              </ListSubheader>
+            )}
           >
-            {Object.keys(containers).map(key => {
-              return (
-                <ListItem key={key}>
-                  <ListItemText
-                    primary={key}
-                    secondary={containers[key]}
-                  />
-                </ListItem>
-              );
-            })}
+            {Object.keys(containers).map(key => (
+              <ListItem key={key}>
+                <ListItemText
+                  primary={key}
+                  secondary={containers[key]}
+                />
+              </ListItem>
+            ))}
           </List>
         </Collapse>
       </Card>
     );
   }
 }
-
-ServiceCard.propTypes = {
-  classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired,
-};
 
 export default withStyles(styles, { withTheme: true })(ServiceCard);

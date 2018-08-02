@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types, react/forbid-prop-types */
 import React from 'react';
 import { compose } from 'recompose';
 import PropTypes from 'prop-types';
@@ -7,7 +8,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 
-let styles = theme => ({
+const styles = theme => ({
 });
 
 const FormTextInput = (props) => {
@@ -17,20 +18,28 @@ const FormTextInput = (props) => {
     helperText,
     formProps,
     classes,
-    ...rest,
+    ...rest
   } = props;
   return (
     <FormControl {...formProps}>
-      {!!label && <InputLabel htmlFor={id}>{label}</InputLabel>}
+      {!!label && (
+        <InputLabel htmlFor={id}>
+          {label}
+        </InputLabel>
+      )}
       <Input
         id={id}
         label={label}
         {...rest}
       />
-      {!!helperText && <FormHelperText id={`${id}-helper-text`}>{helperText}</FormHelperText>}
+      {!!helperText && (
+        <FormHelperText id={`${id}-helper-text`}>
+          {helperText}
+        </FormHelperText>
+      )}
     </FormControl>
   );
-}
+};
 
 FormTextInput.propTypes = {
   id: PropTypes.string.isRequired,

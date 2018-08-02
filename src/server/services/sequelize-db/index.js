@@ -1,9 +1,6 @@
+/* eslint-disable no-console */
 import Sequelize from 'sequelize';
-import ServiceBase from '../ServiceBase';
-import pg_utils, { removeRoleAndDb, createRoleAndDb } from './pg-utils';
-
-import { promiseWait } from 'common/utils'
-
+import { promiseWait } from 'common/utils';
 import {
   postgresHost,
   postgresPort,
@@ -11,6 +8,10 @@ import {
   postgresDbName,
   postgresPassword,
 } from 'config';
+import ServiceBase from '../ServiceBase';
+import pg_utils, { removeRoleAndDb, createRoleAndDb } from './pg-utils';
+
+
 import write from './write-file'; // eslint-disable-line no-unused-vars
 
 function databaseLogger(...args) { // eslint-disable-line no-unused-vars
@@ -27,7 +28,9 @@ function getConnectString(user) {
 
 export default class SequelizeDb extends ServiceBase {
   static $name = 'sequelizeDb';
+
   static $type = 'service';
+
   static $inject = [];
 
   constructor(envCfg) {
@@ -44,15 +47,13 @@ export default class SequelizeDb extends ServiceBase {
     Sequelize.removeHook('beforeInit', 'h1');
   }
 
-  retryConnecting(){
+  retryConnecting() {
     return pg_utils.create_connection(getConnectString('postgres'))
-    .then(result => {
-      return result;
-    })
-    .catch(result => {
+    .then(result => result)
+    .catch((result) => {
       this.retryCounter++;
       console.log('==== Retry connecting:', this.retryCounter);
-      if(this.retryCounter < 999999999999){
+      if (this.retryCounter < 999999999999) {
         return promiseWait(3000).then(() => this.retryConnecting());
       }
       throw result;
@@ -62,9 +63,7 @@ export default class SequelizeDb extends ServiceBase {
   ensurePostgresqlInited() {
     // this.forceSync = false;
     return this.retryConnecting()
-      .then(result => {
-        return pg_utils.create_connection(getConnectString(postgresUser))
-      })
+      .then(result => pg_utils.create_connection(getConnectString(postgresUser)))
       .catch(() => {
         console.log('========= init database =========');
         return pg_utils.create_connection(getConnectString('postgres'))
@@ -86,7 +85,7 @@ export default class SequelizeDb extends ServiceBase {
       });
   }
 
-  onDestroy(){
+  onDestroy() {
     return this.database.close();
   }
 }

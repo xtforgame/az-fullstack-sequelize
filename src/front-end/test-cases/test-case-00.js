@@ -1,14 +1,8 @@
-let expect = chai.expect;
-
 function testCase() {
-  describe('Basic', function() {
+  describe('Basic', function () {
     this.timeout(20000);
-    it('should able to use promise', () =>
-      Promise.resolve()
-    );
-    it('should able to use promise', () =>
-      Promise.reject()
-    );
+    it('should able to use promise', () => Promise.resolve());
+    it('should able to use promise', () => Promise.reject());
   });
 }
 

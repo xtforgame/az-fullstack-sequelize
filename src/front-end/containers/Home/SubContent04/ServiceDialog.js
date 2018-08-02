@@ -1,16 +1,15 @@
 import React from 'react';
 import { compose } from 'recompose';
-import PropTypes from 'prop-types';
 import { FormTextInput, FormSpace } from '~/components/SignInSignUp';
 import ConfirmDialog from '~/components/Dialogs/ConfirmDialog';
 import { withStyles } from '@material-ui/core/styles';
 import DialogContent from '@material-ui/core/DialogContent';
-import DetailedExpansionPanel from './DetailedExpansionPanel';
-import Panel01 from './Panel01';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import Panel01 from './Panel01';
+import DetailedExpansionPanel from './DetailedExpansionPanel';
 
 const styles = theme => ({
   space: {
@@ -26,7 +25,7 @@ const styles = theme => ({
 });
 
 class ServiceDialog extends React.Component {
-  constructor(...args){
+  constructor(...args) {
     super(...args);
     this.state = {
       editingText: this.props.value || '',
@@ -43,10 +42,12 @@ class ServiceDialog extends React.Component {
 
   handleClose = (_result) => {
     let result = _result;
-    if(result === true){
+    if (result === true) {
       result = this.state.editingText;
     }
-    this.props.onClose && this.props.onClose(result);
+    if (this.props.onClose) {
+      this.props.onClose(result);
+    }
   }
 
   handlePanelExpanded = (panel, nextPanel) => (event, expanded) => {
@@ -71,36 +72,40 @@ class ServiceDialog extends React.Component {
         title={isCreating ? 'New Service' : 'Update Service'}
         onClose={this.handleClose}
       >
-        {isCreating ?
-          <DialogContent className={classes.dialogContent1}>
-            <FormSpace variant = 'content2' />
-            <FormTextInput
-              id={'service-name'}
-              label={'Service Name'}
-              onKeyPress={this.handleEnterForTextField}
-              value={this.state.editingText}
-              onChange={e => this.setState({editingText: e.target.value})}
-              formProps={{
-                style: {
-                  width: '100%',
-                },
-              }}
-              autoFocus
-              margin="dense"
-              fullWidth
-            />
-          </DialogContent> :
-          <React.Fragment>
-            <FormSpace variant = 'content2' />
-            <List>
-              <ListItem>
-                <ListItemText
-                  primary="Service Name"
-                  secondary={name}
-                />
-              </ListItem>
-            </List>
-          </React.Fragment>}
+        {isCreating
+          ? (
+            <DialogContent className={classes.dialogContent1}>
+              <FormSpace variant="content2" />
+              <FormTextInput
+                id="service-name"
+                label="Service Name"
+                onKeyPress={this.handleEnterForTextField}
+                value={this.state.editingText}
+                onChange={e => this.setState({ editingText: e.target.value })}
+                formProps={{
+                  style: {
+                    width: '100%',
+                  },
+                }}
+                autoFocus
+                margin="dense"
+                fullWidth
+              />
+            </DialogContent>
+          )
+          : (
+            <React.Fragment>
+              <FormSpace variant="content2" />
+              <List>
+                <ListItem>
+                  <ListItemText
+                    primary="Service Name"
+                    secondary={name}
+                  />
+                </ListItem>
+              </List>
+            </React.Fragment>
+          )}
         <div className={classes.space} />
         <DialogContent className={classes.dialogContent2}>
           <Panel01
@@ -110,25 +115,25 @@ class ServiceDialog extends React.Component {
           />
           <DetailedExpansionPanel
             expanded={expanded === 'panel2'}
-            title={'web'}
+            title="web"
             onChange={this.handlePanelExpanded('panel2')}
             onDone={this.handlePanelExpanded('panel2', 'panel3')}
           />
           <DetailedExpansionPanel
             expanded={expanded === 'panel3'}
-            title={'postgres'}
+            title="postgres"
             onChange={this.handlePanelExpanded('panel3')}
             onDone={this.handlePanelExpanded('panel3', 'panel4')}
           />
           <DetailedExpansionPanel
             expanded={expanded === 'panel4'}
-            title={'nginx'}
+            title="nginx"
             onChange={this.handlePanelExpanded('panel4')}
             onDone={this.handlePanelExpanded('panel4', 'panel5')}
           />
           <DetailedExpansionPanel
             expanded={expanded === 'panel5'}
-            title={'nginx'}
+            title="nginx"
             onChange={this.handlePanelExpanded('panel5')}
             onDone={this.handlePanelExpanded('panel5')}
           />
@@ -137,11 +142,6 @@ class ServiceDialog extends React.Component {
     );
   }
 }
-
-ServiceDialog.propTypes = {
-  open: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-};
 
 export default compose(
   withStyles(styles),

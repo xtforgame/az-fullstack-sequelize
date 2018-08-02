@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types, react/forbid-prop-types */
 import React from 'react';
 import { compose } from 'recompose';
 import PropTypes from 'prop-types';
@@ -21,11 +22,15 @@ const FormSelect = (props) => {
     inputProps,
     classes,
     children,
-    ...rest,
+    ...rest
   } = props;
   return (
     <FormControl {...formProps}>
-      {!!label && <InputLabel htmlFor={id}>{label}</InputLabel>}
+      {!!label && (
+        <InputLabel htmlFor={id}>
+          {label}
+        </InputLabel>
+      )}
       <Select
         id={id}
         input={<Input {...inputProps} name={name} id={id} />}
@@ -33,10 +38,14 @@ const FormSelect = (props) => {
       >
         {children}
       </Select>
-      {!!helperText && <FormHelperText id={`${id}-helper-text`}>{helperText}</FormHelperText>}
+      {!!helperText && (
+        <FormHelperText id={`${id}-helper-text`}>
+          {helperText}
+        </FormHelperText>
+      )}
     </FormControl>
   );
-}
+};
 
 FormSelect.propTypes = {
   id: PropTypes.string.isRequired,

@@ -4,13 +4,13 @@ import EmbeddedMocha from '~/embedded-tests/embedded-mocha';
 
 export default class TestContent extends React.Component {
   run = () => {
-    if(this.props.testCase){
+    if (this.props.testCase) {
       this.ebdMocha = this.ebdMocha || new EmbeddedMocha();
       this.ebdMocha.run(this.props.testCase);
     }
   };
 
-  render(){
+  render() {
     return (
       <div>
         <Button

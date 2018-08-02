@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
@@ -7,14 +8,11 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
-import { FormattedMessage } from 'react-intl';
 import { messages } from '~/containers/App/translation';
 import translateMessages from '~/utils/translateMessages';
 import {
   FormSpace,
   FormContent,
-  FormPhoneOrEmailInput,
-  FormCheckbox,
   FormPasswordInput,
 } from '~/components/SignInSignUp';
 
@@ -28,11 +26,12 @@ import {
 } from 'common/utils/validators';
 
 import modelMap from '~/containers/App/modelMap';
+
 const {
   postRecoveryTokens,
 } = modelMap.waitableActions;
 
-let styles = theme => ({
+const styles = theme => ({
   flexContainer: {
     display: 'flex',
   },
@@ -50,16 +49,7 @@ class ResetPassword extends React.Component {
     onResetPassword: PropTypes.func.isRequired,
   };
 
-  static getDerivedStateFromProps(props, state) {
-    if(state.fil){
-      return state.fil.derivedFromProps(props, state);
-    }
-
-    // No state update necessary
-    return null;
-  }
-
-  constructor(props){
+  constructor(props) {
     super(props);
     this.fil = new FormInputLinker(this, {
       namespace: 'reset-password',
@@ -74,7 +64,7 @@ class ResetPassword extends React.Component {
     }, {
       name: 'confrimPassword',
       getProps: FromTextInputGetProps,
-      validate: value => {
+      validate: (value) => {
         const {
           password,
           confrimPassword,
@@ -86,15 +76,22 @@ class ResetPassword extends React.Component {
       defaultValue: false,
       getProps: FromPasswordVisibilityGetProps,
       converter: {
-        fromView: (({ valueInState }) => {
-          return !valueInState;
-        }),
+        fromView: (({ valueInState }) => !valueInState),
       },
     });
 
     this.state = this.fil.mergeInitState({
       fil: this.fil,
     });
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if (state.fil) {
+      return state.fil.derivedFromProps(props, state);
+    }
+
+    // No state update necessary
+    return null;
   }
 
   handleEnterForTextField = (event) => {
@@ -114,7 +111,7 @@ class ResetPassword extends React.Component {
       password,
     } = this.fil.getOutputs();
 
-    if(this.fil.validate()){
+    if (this.fil.validate()) {
       this.props.onResetPassword({
         username: recoveringUsername,
         code: recoveringCode,
@@ -123,8 +120,8 @@ class ResetPassword extends React.Component {
     }
   }
 
-  render(){
-    let {
+  render() {
+    const {
       intl,
       classes,
       recoveryCodeError,
@@ -147,13 +144,15 @@ class ResetPassword extends React.Component {
         <FormSpace variant="top" />
         <FormContent>
           <FormSpace variant="content2" />
-          {recoveryCodeError &&
-            <React.Fragment>
-              <Typography variant="body2" color="secondary">
-                {recoveryCodeError}
-              </Typography>
-              <FormSpace variant="content4" />
-            </React.Fragment>
+          {recoveryCodeError
+            && (
+              <React.Fragment>
+                <Typography variant="body2" color="secondary">
+                  {recoveryCodeError}
+                </Typography>
+                <FormSpace variant="content4" />
+              </React.Fragment>
+            )
           }
           <FormPasswordInput
             label={translated.enterNewPassword}

@@ -6,9 +6,11 @@ import {
   jwtSecretFiles,
 } from 'config';
 
-const basePath = jwtSecretFiles.basePath;
-const privateFilename = jwtSecretFiles.private;
-const publicFilename = jwtSecretFiles.public;
+const {
+  basePath,
+  private: privateFilename,
+  public: publicFilename,
+} = jwtSecretFiles;
 
 export default {
   private: privateFilename && fs.readFileSync(path.join(basePath, privateFilename), 'utf8'),

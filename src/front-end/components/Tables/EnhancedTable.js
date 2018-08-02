@@ -1,18 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
 import EnhancedTableHead from './EnhancedTableHead';
 import EnhancedTableActionMenuButton from './EnhancedTableActionMenuButton';
@@ -44,19 +40,21 @@ const styles = theme => ({
 });
 
 class EnhancedTable extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
-  static updateState({ columns, rows = [], order, orderBy }){
-    let sortedRows = [...rows];
+  static updateState({
+    columns, rows = [], order, orderBy,
+  }) {
+    let sortedRows = [...rows]; // eslint-disable-line no-unused-vars
 
     const columnMap = {};
-    columns.map(column => {
+    columns.forEach((column) => {
       columnMap[column.id] = column;
     });
 
     let compare = (a, b, orderBy) => a[orderBy] < b[orderBy];
-    if(columnMap[orderBy] && columnMap[orderBy].numeric){
+    if (columnMap[orderBy] && columnMap[orderBy].numeric) {
       compare = (a, b, orderBy) => parseFloat(a[orderBy]) < parseFloat(b[orderBy]);
     }
-    if(order && orderBy){
+    if (order && orderBy) {
       sortedRows = order === 'desc'
         ? rows.sort((a, b) => (compare(b, a, orderBy) ? -1 : 1))
         : rows.sort((a, b) => (compare(a, b, orderBy) ? -1 : 1));
@@ -70,26 +68,8 @@ class EnhancedTable extends React.PureComponent { // eslint-disable-line react/p
       orderBy,
     };
   }
-  
-  static getDerivedStateFromProps(props, prevState) {
-    if ((props.rows && (props.rows !== prevState.rows))
-      || (props.order && (props.order !== prevState.order))
-      || (props.orderBy && (props.orderBy !== prevState.orderBy))
-      || (props.columns && (props.columns !== prevState.columns))
-    ) {
-      const rows = props.rows || prevState.rows;
-      const order = props.order || prevState.order;
-      const orderBy = props.orderBy || prevState.orderBy;
-      const columns = props.columns || prevState.columns;
 
-      return EnhancedTable.updateState({ columns, rows, order, orderBy });
-    }
-
-    // No state update necessary
-    return null;
-  }
-  
-  constructor(...args){
+  constructor(...args) {
     super(...args);
 
     this.state = {
@@ -105,11 +85,31 @@ class EnhancedTable extends React.PureComponent { // eslint-disable-line react/p
     };
   }
 
+  static getDerivedStateFromProps(props, prevState) {
+    if ((props.rows && (props.rows !== prevState.rows))
+      || (props.order && (props.order !== prevState.order))
+      || (props.orderBy && (props.orderBy !== prevState.orderBy))
+      || (props.columns && (props.columns !== prevState.columns))
+    ) {
+      const rows = props.rows || prevState.rows;
+      const order = props.order || prevState.order;
+      const orderBy = props.orderBy || prevState.orderBy;
+      const columns = props.columns || prevState.columns;
+
+      return EnhancedTable.updateState({
+        columns, rows, order, orderBy,
+      });
+    }
+
+    // No state update necessary
+    return null;
+  }
+
   handleChangePage = (event, page) => {
     this.setState({ page });
   };
 
-  handleChangeRowsPerPage = event => {
+  handleChangeRowsPerPage = (event) => {
     this.setState({ rowsPerPage: event.target.value });
   };
 
@@ -118,12 +118,12 @@ class EnhancedTable extends React.PureComponent { // eslint-disable-line react/p
     let order = 'desc';
 
     if (this.state.orderBy === property) {
-      if(this.state.order === 'desc'){
+      if (this.state.order === 'desc') {
         order = 'asc';
-      }else if(orderBy !== this.props.defaultSortBy){
+      } else if (orderBy !== this.props.defaultSortBy) {
         orderBy = this.props.defaultSortBy;
         order = 'asc';
-      }else{
+      } else {
         order = 'desc';
       }
     }
@@ -137,7 +137,7 @@ class EnhancedTable extends React.PureComponent { // eslint-disable-line react/p
   };
 
   toggleDetail(row) {
-    if(this.state.expanded[row.id]){
+    if (this.state.expanded[row.id]) {
       return this.setState({
         expanded: {},
       });
@@ -150,9 +150,13 @@ class EnhancedTable extends React.PureComponent { // eslint-disable-line react/p
   }
 
   render() {
-    const { classes, withDetail, getActionMenuItems, columns, loading, loadingRows } = this.props;
-    const { order, orderBy, rowsPerPage, page } = this.state;
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, this.state.rows.length - page * rowsPerPage);
+    const {
+      classes, withDetail, getActionMenuItems, columns, loading, loadingRows,
+    } = this.props;
+    const {
+      order, orderBy, rowsPerPage, page,
+    } = this.state;
+    // const emptyRows = rowsPerPage - Math.min(rowsPerPage, this.state.rows.length - page * rowsPerPage);
 
     return (
       <Paper className={classes.root}>
@@ -175,41 +179,52 @@ class EnhancedTable extends React.PureComponent { // eslint-disable-line react/p
               return (
                 <React.Fragment key={row.id}>
                   <TableRow>
-                    { withDetail &&
-                      <TableCell padding="checkbox" className={classes.iconCell}>
-                        <IconButton
-                          onClick={() => { this.toggleDetail(row); }}>
-                          {expanded ? <ExpandMoreIcon /> : <ChevronRightIcon />}
-                        </IconButton>
-                      </TableCell>
+                    { withDetail
+                      && (
+                        <TableCell padding="checkbox" className={classes.iconCell}>
+                          <IconButton
+                            onClick={() => { this.toggleDetail(row); }}
+                          >
+                            {expanded ? <ExpandMoreIcon /> : <ChevronRightIcon />}
+                          </IconButton>
+                        </TableCell>
+                      )
                     }
-                    {columns.map(column => {
-                      const renderFunction = row.renderCell || column.renderRowCell || ((columnId, row) => row[columnId]);
+                    {columns.map((column) => {
+                      const renderFunction = row.renderCell
+                        || column.renderRowCell
+                        || ((columnId, row) => row[columnId]);
                       return (
                         <TableCell
                           key={column.id}
                           numeric={column.numeric}
                           padding={column.padding || 'default'}
                           className={column.cellClassName}
-                        >{renderFunction(column.id, row, options)}</TableCell>
+                        >
+                          {renderFunction(column.id, row, options)}
+                        </TableCell>
                       );
                     })}
-                    { getActionMenuItems &&
-                      <TableCell padding="checkbox" className={classes.actionsCell}>
-                        <EnhancedTableActionMenuButton
-                          getActionMenuItems={getActionMenuItems}
-                        />
-                      </TableCell>
+                    { getActionMenuItems
+                      && (
+                        <TableCell padding="checkbox" className={classes.actionsCell}>
+                          <EnhancedTableActionMenuButton
+                            getActionMenuItems={getActionMenuItems}
+                          />
+                        </TableCell>
+                      )
                     }
                   </TableRow>
-                  {withDetail && expanded && <TableRow>
-                    <TableCell
-                      colSpan={columns.length + (+withDetail) + (+!!getActionMenuItems)}
-                      className={classes.detailCell}
-                    >
-                      {this.props.renderRowDetail && this.props.renderRowDetail(row, options)}
-                    </TableCell>
-                  </TableRow>}
+                  {withDetail && expanded && (
+                    <TableRow>
+                      <TableCell
+                        colSpan={columns.length + (+withDetail) + (+!!getActionMenuItems)}
+                        className={classes.detailCell}
+                      >
+                        {this.props.renderRowDetail && this.props.renderRowDetail(row, options)}
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </React.Fragment>
               );
             })}
@@ -240,9 +255,5 @@ class EnhancedTable extends React.PureComponent { // eslint-disable-line react/p
     );
   }
 }
-
-EnhancedTable.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 export default withStyles(styles)(EnhancedTable);

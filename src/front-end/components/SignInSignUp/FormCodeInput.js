@@ -1,15 +1,12 @@
+/* eslint-disable react/prop-types, react/forbid-prop-types */
 import React from 'react';
 import { compose } from 'recompose';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
-
 import FormTextInput from './FormTextInput';
 
-let styles = theme => ({
+const styles = theme => ({
 });
 
 const FormCodeInput = (props) => {
@@ -17,9 +14,9 @@ const FormCodeInput = (props) => {
     id,
     type = 'text',
     onShowPassswordClick,
-    ...rest,
+    ...rest
   } = props;
-  let startAdornment = (
+  const startAdornment = (
     <InputAdornment position="start">
       VXL-
     </InputAdornment>
@@ -32,7 +29,7 @@ const FormCodeInput = (props) => {
       {...rest}
     />
   );
-}
+};
 
 FormCodeInput.propTypes = {
   id: PropTypes.string.isRequired,

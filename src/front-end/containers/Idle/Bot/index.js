@@ -1,15 +1,12 @@
 import React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { injectIntl } from 'react-intl';
-import formatMessage from '~/utils/formatMessage';
-import { messages } from '~/containers/App/translation';
 import { withStyles } from '@material-ui/core/styles';
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth';
 import { StickyContainer, Sticky } from 'react-sticky';
+import { fade } from '@material-ui/core/styles/colorManipulator';
 import Status from './Status';
 import CharCard from './CharCard';
-import { fade } from '@material-ui/core/styles/colorManipulator';
 
 const styles = {
   placeholder: {
@@ -31,61 +28,81 @@ const styles = {
   },
 };
 
-const owner = 'rick';
-const proj = `${owner}-proj01`;
-
-class SubContent04 extends React.Component {
-  render(){
-    let { classes, theme, width } = this.props;
+class Bot extends React.Component {
+  render() {
+    const { classes, theme, width } = this.props;
     let topOffset = 56;
-    if (isWidthUp('sm', this.props.width)) {
+    if (isWidthUp('sm', width)) {
       topOffset = 64;
     }
     return (
       <div className={classes.mainContainer}>
         <StickyContainer>
           <Sticky topOffset={-topOffset}>
-            { ({ style }) => {
-              return (
+            { ({ style }) => (
+              <div
+                style={{
+                  ...style,
+                  top: topOffset,
+                  zIndex: 1101,
+                }}
+              >
                 <div
                   style={{
-                    ...style,
-                    top: topOffset,
-                    zIndex: 1101,
+                    zIndex: 1102,
+                    position: 'relative',
                   }}
                 >
-                  <div
-                    style={{
-                      zIndex: 1102,
-                      position: 'relative',
-                    }}
-                  >
-                    <Status />
-                  </div>
-                  <div
-                    style={{
-                      width: '100%',
-                      height: 30,
-                      background: `linear-gradient(${fade(theme.palette.background.default, 1.0)}, ${fade(theme.palette.background.default, 0.0)})`,
-                    }}
-                  />
+                  <Status />
                 </div>
-              );
-            } }
+                <div
+                  style={{
+                    width: '100%',
+                    height: 30,
+                    background: `linear-gradient(${fade(theme.palette.background.default, 1.0)}, ${fade(theme.palette.background.default, 0.0)})`,
+                  }}
+                />
+              </div>
+            ) }
           </Sticky>
-          <br /><br />
-          <CharCard /><br /><br />
-          <CharCard /><br /><br />
-          <CharCard /><br /><br />
-          <CharCard /><br /><br />
-          <CharCard /><br /><br />
-          <CharCard /><br /><br />
-          <CharCard /><br /><br />
-          <CharCard /><br /><br />
-          <CharCard /><br /><br />
-          <CharCard /><br /><br />
-          <CharCard /><br /><br />
-          <CharCard /><br /><br />
+          <br />
+          <br />
+          <CharCard />
+          <br />
+          <br />
+          <CharCard />
+          <br />
+          <br />
+          <CharCard />
+          <br />
+          <br />
+          <CharCard />
+          <br />
+          <br />
+          <CharCard />
+          <br />
+          <br />
+          <CharCard />
+          <br />
+          <br />
+          <CharCard />
+          <br />
+          <br />
+          <CharCard />
+          <br />
+          <br />
+          <CharCard />
+          <br />
+          <br />
+          <CharCard />
+          <br />
+          <br />
+          <CharCard />
+          <br />
+          <br />
+          <CharCard />
+          <br />
+          <br />
         </StickyContainer>
       </div>
     );
@@ -98,7 +115,6 @@ export default compose(
       greetName: state.get('global').greetName,
     }),
   ),
-  injectIntl,
   withWidth(),
   withStyles(styles, { withTheme: true }),
-)(SubContent04);
+)(Bot);

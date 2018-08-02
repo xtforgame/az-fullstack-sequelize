@@ -2,21 +2,12 @@ import React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { injectIntl } from 'react-intl';
+import { ConnectedRouter } from 'react-router-redux';
+import { withStyles } from '@material-ui/core/styles';
 import {
   changeTheme,
 } from './actions';
-import {
-  withRouter,
-} from 'react-router-dom';
-import { FormattedMessage } from 'react-intl';
-import formatMessage from '~/utils/formatMessage';
-import { messages } from './translation';
-import { ConnectedRouter } from 'react-router-redux';
-import { changeLocale } from '~/containers/LanguageProvider/actions';
-import { makeSelectLocale } from '~/containers/LanguageProvider/selectors';
 
-import { withStyles } from '@material-ui/core/styles';
 import withRoot from '../../components/withRoot';
 
 import {
@@ -49,7 +40,7 @@ const AppWithTheme = compose(
 )(AppInternal);
 
 class App extends React.Component {
-  componentDidMount(){
+  componentDidMount() {
     // setInterval(() => {
     //   if(this.props.uiTheme.paletteType === 'dark'){
     //     this.toLight();
@@ -61,28 +52,28 @@ class App extends React.Component {
     // }, 1000);
   }
 
-  toDark(){
+  toDark() {
     this.props.changeTheme({
       direction: 'ltr',
       paletteType: 'dark',
     });
   }
 
-  toLight(){
+  toLight() {
     this.props.changeTheme({
       direction: 'ltr',
       paletteType: 'light',
     });
   }
 
-  toVaxal(){
+  toVaxal() {
     this.props.changeTheme({
       direction: 'ltr',
       paletteType: 'vaxal',
     });
   }
 
-  render(){
+  render() {
     return (
       <AppWithTheme
         {...this.props}
@@ -101,4 +92,3 @@ export default compose(
     changeTheme,
   }),
 )(App);
-

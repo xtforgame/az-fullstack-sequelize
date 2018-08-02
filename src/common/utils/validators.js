@@ -1,10 +1,11 @@
+/* eslint-disable max-len, no-useless-escape */
 import validator from 'validator';
 
 export {
   validator,
 };
 
-export function isValidPassword(value){
+export function isValidPassword(value) {
   const reg = /^(?=.*[a-zA-Z\d#$^+=!*()@%&])(?!.*\s).{8,128}/;
   // const lengthReg = /^.{8,128}/;
   // const noSpaceReg = /^(?!.*\s)/;
@@ -12,7 +13,7 @@ export function isValidPassword(value){
   return !!value && reg.test(value);
 }
 
-export function isAllDigital(value){
+export function isAllDigital(value) {
   const reg = /^\d+$/;
   return !!value && reg.test(value);
 }

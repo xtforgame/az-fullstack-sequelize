@@ -9,27 +9,27 @@ const rememberUserSelector = makeRememberUserSelector();
 
 export const loadState = () => {
   try {
-    let serializedState = localStorage.getItem('state');
-    if(serializedState == null){
+    const serializedState = localStorage.getItem('state');
+    if (serializedState == null) {
       return undefined;
     }
-    let global = JSON.parse(serializedState);
+    const global = JSON.parse(serializedState);
     return {
       global,
     };
-  }catch(err){
-    console.log('err :', err);
+  } catch (err) {
+    console.error('loadState error :', err);
     return undefined;
   }
 };
 
-export const saveState = state => {
+export const saveState = (state) => {
   try {
     // console.log('state :', state);
-    let serializedState = JSON.stringify(state);
+    const serializedState = JSON.stringify(state);
     localStorage.setItem('state', serializedState);
-  }catch(err){
-    console.log('err :', err);
+  } catch (err) {
+    console.error('saveState error :', err);
   }
 };
 
@@ -41,11 +41,11 @@ export const clearState = () => {
   localStorage.clear();
 };
 
-const delaySave = throttle(store => {
-  let state = store.getState();
-  let persistedData = state.get('global');
+const delaySave = throttle((store) => {
+  const state = store.getState();
+  const persistedData = state.get('global');
 
-  if(rememberUserSelector(state) && userSessionSelector(state)){
+  if (rememberUserSelector(state) && userSessionSelector(state)) {
     const {
       sessions,
       persistence,
@@ -54,13 +54,13 @@ const delaySave = throttle(store => {
       sessions,
       persistence,
     });
-  }else{
+  } else {
     // removeState();
     localStorage.clear();
   }
 }, 300);
 
-export const middleware = store => next => action => {
+export const middleware = store => next => (action) => {
   setTimeout(() => {
     delaySave(store);
   }, 0);

@@ -1,6 +1,5 @@
 import React from 'react';
 import { compose } from 'recompose';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 // import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -10,7 +9,7 @@ const styles = theme => ({
   ...createButtonStyles(theme, 'success'),
 });
 
-const SuccessButton = ({classes, ...props}) => (
+const SuccessButton = ({ classes, ...props }) => (
   <Button
     variant="raised"
     classes={{

@@ -1,6 +1,6 @@
 /* eslint-disable flowtype/require-valid-file-annotation */
 
-import React, { Component } from 'react';
+import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 
@@ -28,13 +28,13 @@ const styles = theme => ({
   },
 });
 
-const Centered = (props) => (
+const Centered = props => (
   <div className={classNames(props.classes.aligner, props.className)}>
-    <div className={classNames(props.classes.alignerItem, props.classes.alignerItemTop)}></div>
+    <div className={classNames(props.classes.alignerItem, props.classes.alignerItemTop)} />
     <div className={classNames(props.classes.alignerItemFixed)}>
       {props.children}
     </div>
-    <div className={classNames(props.classes.alignerItem, props.classes.alignerItemBottom)}></div>
+    <div className={classNames(props.classes.alignerItem, props.classes.alignerItemBottom)} />
   </div>
 );
 

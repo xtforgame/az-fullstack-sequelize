@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types, react/forbid-prop-types */
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
@@ -23,39 +24,39 @@ const {
   postResetPasswordRequests,
 } = modelMap.waitableActions;
 
-let styles = theme => ({
+const styles = theme => ({
 });
 
 class RecoveryForm extends React.Component {
   static propTypes = {
-    classes: PropTypes.object.isRequired,
+    classes: PropTypes.object.isRequired, // eslint-disable-line react/no-unused-prop-types
     username: PropTypes.object,
     recoveringUsername: PropTypes.string,
     recoveringCode: PropTypes.string,
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      recoveringUsername: this.props.recoveringUsername,
+      recoveringCode: this.props.recoveringCode,
+    };
+  }
+
   static getDerivedStateFromProps(props, prevState) {
     let retval = null;
-    if(props.recoveringUsername !== undefined){
+    if (props.recoveringUsername !== undefined) {
       retval = retval || {};
       retval.recoveringUsername = props.recoveringUsername;
     }
 
-    if(props.recoveringCode !== undefined){
+    if (props.recoveringCode !== undefined) {
       retval = retval || {};
       retval.recoveringCode = props.recoveringCode;
     }
 
     // No state update necessary
     return retval;
-  }
-
-  constructor(props){
-    super(props);
-    this.state = {
-      recoveringUsername: this.props.recoveringUsername,
-      recoveringCode: this.props.recoveringCode,
-    };
   }
 
   handleCodeSent = ({
@@ -89,12 +90,12 @@ class RecoveryForm extends React.Component {
     const { postChallengeRecoveryTokens, intl } = this.props;
     postChallengeRecoveryTokens({ username, token: code })
     .then(({ data }) => {
-      if(data.passed){
+      if (data.passed) {
         this.setState({
           recoveringCode: code,
           recoveryCodeError: null,
         });
-      }else{
+      } else {
         const translated = translateMessages(intl, messages, [
           'worngCode',
         ]);
@@ -115,11 +116,11 @@ class RecoveryForm extends React.Component {
     })
     .then(({ data }) => {
       // console.log('data :', data);
-      if(data.passed){
+      if (data.passed) {
         this.setState({
           resetCompleted: data.passed,
         });
-      }else{
+      } else {
         const translated = translateMessages(intl, messages, [
           'worngCodeFromUrl',
         ]);
@@ -142,14 +143,11 @@ class RecoveryForm extends React.Component {
     onBackToLogin();
   }
 
-  render(){
+  render() {
     const {
-      postChallengeRecoveryTokens,
       onUsernameChange,
       username,
       usernameError,
-      intl,
-      ...rest
     } = this.props;
     const {
       recoveringUsername,
@@ -161,15 +159,14 @@ class RecoveryForm extends React.Component {
       resetCompleted,
     } = this.state;
 
-    let child = null;
-    if(resetCompleted){
-      child = (
+    if (resetCompleted) {
+      return (
         <ResetCompleted
           onBackToLogin={this.backToLoginPage}
         />
       );
-    }else if(recoveringUsername && recoveringCode){
-      child = (
+    } else if (recoveringUsername && recoveringCode) {
+      return (
         <ResetPassword
           recoveringUsername={recoveringUsername}
           recoveringCode={recoveringCode}
@@ -177,8 +174,8 @@ class RecoveryForm extends React.Component {
           onResetPassword={this.handleResetPassword}
         />
       );
-    }else if(recoveringUsername){
-      child = (
+    } else if (recoveringUsername) {
+      return (
         <EnterRecovryCode
           recoveringUsername={recoveringUsername}
           onResend={this.handleResend}
@@ -186,24 +183,18 @@ class RecoveryForm extends React.Component {
           recoveryCodeError={recoveryCodeError}
         />
       );
-    }else{
-      child = (
-        <SendRecovryCode
-          onUsernameChange={onUsernameChange}
-          username={username}
-          usernameError={usernameError}
-          lastSentUsername={lastSentUsername}
-          lastUpdatedTime={lastUpdatedTime}
-          remainingTime={remainingTime}
-          onCodeSent={this.handleCodeSent}
-          onBackToEnterTheCode={this.handleBackToEnterTheCode}
-        />
-      );
     }
     return (
-      <React.Fragment>
-        {child}
-      </React.Fragment>
+      <SendRecovryCode
+        onUsernameChange={onUsernameChange}
+        username={username}
+        usernameError={usernameError}
+        lastSentUsername={lastSentUsername}
+        lastUpdatedTime={lastUpdatedTime}
+        remainingTime={remainingTime}
+        onCodeSent={this.handleCodeSent}
+        onBackToEnterTheCode={this.handleBackToEnterTheCode}
+      />
     );
   }
 }

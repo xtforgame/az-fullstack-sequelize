@@ -1,26 +1,27 @@
-/* eslint-disable no-bitwise, no-mixed-operators, no-shadow, prefer-spread, no-nested-ternary */
+/*
+  eslint-disable no-bitwise, no-mixed-operators, no-shadow, prefer-spread,
+    no-nested-ternary, no-param-reassign, no-console
+*/
 
-import {ReporterBase} from './reporter-base';
+import { ReporterBase } from './reporter-base';
 
 export default class WebConsoleReporter extends ReporterBase {
-  constructor(...args) {
-    super(...args);
-  }
-
-  run(This, runner){
+  run(This, runner) {
     // TODO needs to be removed to options somehow
-    let reporterQueryParameter = 'test=console';
+    const reporterQueryParameter = 'test=console';
 
-    let stats = {suites: 0, tests: 0, passes: 0, pending: 0, failures: 0};
-    let failures = this.failures = [];
-    let total = runner.total;
-    let title = document.title;
-    let calls = [];
+    const stats = {
+      suites: 0, tests: 0, passes: 0, pending: 0, failures: 0,
+    };
+    const failures = this.failures = []; // eslint-disable-line no-multi-assign
+    // const { total } = runner;
+    // const { title } = document;
+    const calls = [];
 
-    function parentSuiteTitle(suite) { // eslint-disable-line no-unused-vars
-      if (!suite.parent) return suite.title;
-      return `${parentSuiteTitle(suite.parent)} ${suite.title}`;
-    }
+    // function parentSuiteTitle(suite) { // eslint-disable-line no-unused-vars
+    //   if (!suite.parent) return suite.title;
+    //   return `${parentSuiteTitle(suite.parent)} ${suite.title}`;
+    // }
 
     function flagFailures(node) {
       node.hasFailures = true;
@@ -28,9 +29,9 @@ export default class WebConsoleReporter extends ReporterBase {
     }
 
     function logCall(call) {
-      let command = call.shift();
-      let suite = call.shift();
-      let failures = !suite || suite.hasFailures;
+      const command = call.shift();
+      const suite = call.shift();
+      const failures = !suite || suite.hasFailures;
       if (failures || command === 'info' || command === 'error') {
         console[command].apply(console, call);
       }
@@ -44,9 +45,9 @@ export default class WebConsoleReporter extends ReporterBase {
 
     runner.stats = stats;
 
-    runner.on('pass', test => {
+    runner.on('pass', (test) => {
       stats.passes = stats.passes || 0;
-      let medium = test.slow() / 2;
+      const medium = test.slow() / 2;
       test.speed = test.duration > test.slow() ? 'slow' : (test.duration > medium ? 'medium' : 'fast');
       stats.passes++;
     });
@@ -59,7 +60,7 @@ export default class WebConsoleReporter extends ReporterBase {
       stats.start = new Date();
     });
 
-    runner.on('test', test => {
+    runner.on('test', (test) => {
       console.log('Running test:', test.title);
     });
 
@@ -70,33 +71,33 @@ export default class WebConsoleReporter extends ReporterBase {
       failures.push(test);
       calls.push(['info', null, test.title]);
       calls.push(['error', null, test.err.stack]);
-      calls.push(['log', null, {Expected: err.expected, Actual: err.actual}]);
+      calls.push(['log', null, { Expected: err.expected, Actual: err.actual }]);
       flagFailures(test.parent);
     });
 
-    runner.on('suite', suite => {
+    runner.on('suite', (suite) => {
       console.log('suite.title :', suite.title);
       stats.suites = stats.suites || 0;
       suite.root || stats.suites++;
 
-      let parameter = `?grep=${encodeURIComponent(suite.fullTitle())}&${reporterQueryParameter}`;
-      let location = document.location;
-      let url = location.origin + location.pathname + parameter;
+      const parameter = `?grep=${encodeURIComponent(suite.fullTitle())}&${reporterQueryParameter}`;
+      const { location } = document;
+      const url = location.origin + location.pathname + parameter;
       calls.push(['group', suite, suite.title]);
       calls.push(['groupCollapsed', suite, 'url']);
       calls.push(['log', suite, url]);
       calls.push(['groupEnd', suite]);
     });
 
-    runner.on('suite end', suite => {
+    runner.on('suite end', (suite) => {
       calls.push(['groupEnd', suite]);
       logNewCalls();
     });
 
-    runner.on('test end', test => { // eslint-disable-line no-unused-vars
+    runner.on('test end', (test) => { // eslint-disable-line no-unused-vars
       stats.tests = stats.tests || 0;
       stats.tests++;
-      let percent = stats.tests / total * 100 | 0;
+      // const percent = stats.tests / total * 100 | 0;
       // document.title = `${percent}% ${(stats.failures ? `${stats.failures} failures ` : '')}${title}`;
     });
 
@@ -106,12 +107,12 @@ export default class WebConsoleReporter extends ReporterBase {
       logNewCalls();
       if (stats.errors) console.warn(stats.errors, ' errors');
       if (stats.failures) console.warn(stats.failures, ' failures');
-      let skipped = stats.tests - stats.failures - stats.passes;
+      const skipped = stats.tests - stats.failures - stats.passes;
       if (skipped) console.warn(skipped, ' skipped');
       console.log(stats.passes, ' tests passed');
       console.log(stats.duration / 1000, ' seconds');
       console.log(new Date().toUTCString());
-      console.log(`Run all tests ${location.origin}${location.pathname}?${reporterQueryParameter}`);
+      console.log(`Run all tests ${location.origin}${location.pathname}?${reporterQueryParameter}`); // eslint-disable-line no-restricted-globals
       This.done('done');
     });
   }

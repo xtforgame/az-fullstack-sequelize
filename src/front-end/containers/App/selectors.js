@@ -1,5 +1,4 @@
 import { createSelector } from 'reselect';
-import { capitalizeFirstLetter } from 'common/utils';
 import { defaultUiTheme } from '~/styles/getPageContext';
 
 import modelMap from './modelMap';
@@ -22,20 +21,18 @@ const {
 
 const makeUserSessionSelector = () => createSelector(
   makeSessionHierarchySelector(),
-  (hierarchy) => {
-    return hierarchy && hierarchy.byId && hierarchy.byId.me;
-  }
+  hierarchy => hierarchy && hierarchy.byId && hierarchy.byId.me
 );
 
 const makeMyUserSelector = () => createSelector(
   makeUserSessionSelector(),
   makeUserHierarchySelector(),
   (mySession, userHierarchy) => {
-    if(!mySession
+    if (!mySession
       || !userHierarchy
       || (mySession.user_id === undefined)
       || !userHierarchy.byId
-    ){
+    ) {
       return undefined;
     }
     return userHierarchy.byId[mySession.user_id];
@@ -45,12 +42,12 @@ const makeMyUserSelector = () => createSelector(
 const persistenceSelector = state => state.get('global').persistence;
 const makeRememberUserSelector = () => createSelector(
   persistenceSelector,
-  (persistence) => persistence.rememberUser
+  persistence => persistence.rememberUser
 );
 
 const makeUiThemeSelector = () => createSelector(
   persistenceSelector,
-  (persistence) => persistence.uiTheme || defaultUiTheme,
+  persistence => persistence.uiTheme || defaultUiTheme,
 );
 
 export {

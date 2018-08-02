@@ -9,7 +9,7 @@ class EnhancedTableActionMenuButton extends React.Component {
     open: false,
   };
 
-  handleClick = event => {
+  handleClick = (event) => {
     this.setState({
       anchorEl: event.currentTarget,
       open: true,
@@ -37,8 +37,8 @@ class EnhancedTableActionMenuButton extends React.Component {
           <MoreVertIcon />
         </IconButton>
         <Menu
-          anchorEl={this.state.anchorEl}
-          open={this.state.open}
+          anchorEl={anchorEl}
+          open={open}
           onClose={this.handleClose}
           {...props}
         >

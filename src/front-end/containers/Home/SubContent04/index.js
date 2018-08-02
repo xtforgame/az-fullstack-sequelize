@@ -1,11 +1,5 @@
 import React from 'react';
-import { compose } from 'recompose';
-import { connect } from 'react-redux';
-import { injectIntl } from 'react-intl';
-import formatMessage from '~/utils/formatMessage';
-import { messages } from '~/containers/App/translation';
 import { withStyles } from '@material-ui/core/styles';
-import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import ServiceCard from '~/components/Cards/ServiceCard';
@@ -37,14 +31,14 @@ const owner = 'rick';
 const proj = `${owner}-proj01`;
 
 class SubContent04 extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       modifyingService: null,
     };
   }
 
-  startModifyService = (name) => () => {
+  startModifyService = name => () => {
     this.setState({
       modifyingService: name || true,
     });
@@ -56,8 +50,10 @@ class SubContent04 extends React.Component {
     });
   }
 
-  render(){
-    let { routeView, intl, greetName, classes } = this.props;
+  render() {
+    const {
+      classes,
+    } = this.props;
     const { modifyingService } = this.state;
 
     return (
@@ -74,7 +70,7 @@ class SubContent04 extends React.Component {
         <Typography variant="display1">
           Services
         </Typography>
-        <div className={classes.cardContainer} >
+        <div className={classes.cardContainer}>
           <ServiceCard
             name={proj}
             status={{
@@ -101,7 +97,7 @@ class SubContent04 extends React.Component {
         <Typography variant="display1">
           Containers
         </Typography>
-        <div className={classes.cardContainer} >
+        <div className={classes.cardContainer}>
           <ContainerCard
             name={`${proj}-nginx`}
             status={{
@@ -181,12 +177,4 @@ class SubContent04 extends React.Component {
   }
 }
 
-export default compose(
-  connect(
-    state => ({
-      greetName: state.get('global').greetName,
-    }),
-  ),
-  injectIntl,
-  withStyles(styles),
-)(SubContent04);
+export default withStyles(styles)(SubContent04);

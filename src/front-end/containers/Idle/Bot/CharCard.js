@@ -1,24 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
-import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import SkipNextIcon from '@material-ui/icons/SkipNext';
 
-import CardHeader from '@material-ui/core/CardHeader';
-import Avatar from '@material-ui/core/Avatar';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-
-import { green, lightBlue, orange, red } from '@material-ui/core/colors';
-import GaugeBar from './GaugeBar';
-import droneX from './DroneX.png';
+import {
+  green, lightBlue, orange, red,
+} from '@material-ui/core/colors';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import { fade } from '@material-ui/core/styles/colorManipulator';
+import GaugeBar from './GaugeBar';
+import droneX from './DroneX.png';
 
 const styles = theme => ({
   flexContaner: {
@@ -84,7 +76,7 @@ function CharCard(props) {
           title="Live from space album cover"
         />
         <div className={classes.status}>
-        
+
           <div className={classes.flexContaner}>
             <div style={{
               height: 10,
@@ -96,36 +88,48 @@ function CharCard(props) {
               borderStyle: 'solid',
               backgroundColor: green[700],
               borderRadius: '50%',
-            }} />
+            }}
+            />
             <Typography variant="body2" gutterBottom>
               BPK-01
             </Typography>
           </div>
-          <GaugeBar textColor={textColor} labelColor={labelColor} segments={[
-            { name: '1', percent: 50, color: green[700] },
-            { name: '2', percent: 50, color: green[400] },
-          ]} />
-          <GaugeBar textColor={textColor} labelColor={labelColor} segments={[
-            { name: '1', percent: 50, color: lightBlue[700] },
-            { name: '2', percent: 30, color: lightBlue[400] },
-          ]} />
-          <GaugeBar textColor={textColor} labelColor={labelColor} segments={[
-            { name: '1', percent: 40, color: orange[700] },
-            { name: '2', percent: 40, color: orange[400] },
-          ]} />
-          <GaugeBar textColor={textColor} labelColor={labelColor} segments={[
-            { name: '1', percent: 30, color: red[700] },
-            { name: '2', percent: 30, color: red[400] },
-          ]} />
+          <GaugeBar
+            textColor={textColor}
+            labelColor={labelColor}
+            segments={[
+              { name: '1', percent: 50, color: green[700] },
+              { name: '2', percent: 50, color: green[400] },
+            ]}
+          />
+          <GaugeBar
+            textColor={textColor}
+            labelColor={labelColor}
+            segments={[
+              { name: '1', percent: 50, color: lightBlue[700] },
+              { name: '2', percent: 30, color: lightBlue[400] },
+            ]}
+          />
+          <GaugeBar
+            textColor={textColor}
+            labelColor={labelColor}
+            segments={[
+              { name: '1', percent: 40, color: orange[700] },
+              { name: '2', percent: 40, color: orange[400] },
+            ]}
+          />
+          <GaugeBar
+            textColor={textColor}
+            labelColor={labelColor}
+            segments={[
+              { name: '1', percent: 30, color: red[700] },
+              { name: '2', percent: 30, color: red[400] },
+            ]}
+          />
         </div>
       </Card>
     </ButtonBase>
   );
 }
-
-CharCard.propTypes = {
-  classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired,
-};
 
 export default withStyles(styles, { withTheme: true })(CharCard);

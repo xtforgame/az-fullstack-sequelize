@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { capitalizeFirstLetter } from 'common/utils';
 
 export const FromTextInputGetProps = ({
@@ -11,10 +12,13 @@ export const FromTextInputGetProps = ({
   errorFromProps,
 },
 { translate } = {}) => {
-  let errorMessage = undefined;
-  if(validateError){
-    errorMessage = (validateError.i18n && translate(validateError.i18n.key, validateError.i18n.values) || validateError.message);
-  }else if(errorFromProps){
+  let errorMessage;
+  if (validateError) {
+    errorMessage = (
+      (validateError.i18n && translate(validateError.i18n.key, validateError.i18n.values))
+      || validateError.message
+    );
+  } else if (errorFromProps) {
     errorMessage = errorFromProps === true ? '' : errorFromProps;
   }
 
@@ -25,27 +29,28 @@ export const FromTextInputGetProps = ({
     formProps: {
       error: errorOccurred,
     },
-    helperText: errorMessage,// helperMessage,
+    helperText: errorMessage, // helperMessage,
     ...link.props,
   };
 };
 
-export const FromPasswordVisibilityGetProps = ({value, link, linker, handleChange, errorOccurred, helperMessage}, options = {}) => ({
+export const FromPasswordVisibilityGetProps = ({
+  value, link, linker, handleChange, errorOccurred, helperMessage,
+}, options = {}) => ({
   type: value ? 'text' : 'password',
   onShowPassswordClick: handleChange,
 });
 
 export const assert = (condition, message, i18n) => {
   if (!condition) {
-    message = message || 'Validation failed';
-    const error = new Error(message);
+    const error = new Error(message || 'Validation failed');
     error.i18n = i18n;
     throw error;
   }
-}
+};
 
 export class Converter {
-  constructor(convertFuncMap = {}){
+  constructor(convertFuncMap = {}) {
     this.propToState = convertFuncMap.propToState || (value => value);
     this.fromView = convertFuncMap.fromView || ((_, event) => event.target.value);
     this.toView = convertFuncMap.toView || (value => value || '');
@@ -54,12 +59,12 @@ export class Converter {
 }
 
 export class StateLink {
-  constructor(link){
+  constructor(link) {
     this.name = link.name;
     this.defaultValue = link.defaultValue;
     this.exposed = false;
     this.exposedProps = {};
-    if(link.exposed){
+    if (link.exposed) {
       this.exposed = true;
       const {
         onChange = `on${capitalizeFirstLetter(link.name)}Change`,
@@ -88,7 +93,7 @@ export default class FormInputLinker {
     fieldStateName = 'fields',
     fieldErrorStateName = 'errors',
     prevPropsStateName = 'prevProps',
-  }){
+  }) {
     this.component = component;
     this.namespace = namespace && `${namespace}-`;
     this.fieldStateName = fieldStateName;
@@ -97,58 +102,58 @@ export default class FormInputLinker {
     this.fields = {};
   }
 
-  add(...fields){
-    fields.map(field => {
+  add(...fields) {
+    fields.forEach((field) => {
       this.fields[field.name] = new StateLink(field);
-    })
+    });
   }
 
-  getOutput(fieldName){
+  getOutput(fieldName) {
     const valueFromState = this.getOutputFromState(fieldName);
     return this.fields[fieldName].converter.toOutput(valueFromState);
   }
 
-  getOutputs(){
+  getOutputs() {
     const values = {};
-    Object.keys(this.fields).map(fieldName => {
+    Object.keys(this.fields).forEach((fieldName) => {
       values[fieldName] = this.getOutput(fieldName);
     });
     return values;
   }
 
-  remove(...fieldNames){
-    fieldNames.map(fieldName => {
+  remove(...fieldNames) {
+    fieldNames.forEach((fieldName) => {
       delete this.fields[fieldName];
     });
   }
 
   // ==========================
 
-  getFieldsFromState(targetState){
+  getFieldsFromState(targetState) {
     return (targetState || this.component.state)[this.fieldStateName];
   }
 
-  getOutputFromState(fieldName, targetState){
+  getOutputFromState(fieldName, targetState) {
     return this.getFieldsFromState(targetState)[fieldName];
   }
 
-  getErrorsFromState(targetState){
+  getErrorsFromState(targetState) {
     return (targetState || this.component.state)[this.fieldErrorStateName];
   }
 
-  getErrorFromState(fieldName, targetState){
+  getErrorFromState(fieldName, targetState) {
     return this.getErrorsFromState(targetState)[fieldName];
   }
 
-  getPrevPropsFromState(targetState){
+  getPrevPropsFromState(targetState) {
     return (targetState || this.component.state)[this.prevPropsStateName];
   }
 
-  getPrevPropFromState(fieldName, targetState){
+  getPrevPropFromState(fieldName, targetState) {
     return this.getPrevPropsFromState(targetState)[fieldName];
   }
 
-  mergeInitState(state = {}){
+  mergeInitState(state = {}) {
     const newState = {
       ...state,
       [this.fieldStateName]: {
@@ -161,19 +166,19 @@ export default class FormInputLinker {
         ...state[this.prevPropsStateName],
       },
     };
-    Object.keys(this.fields).map(fieldName => {
+    Object.keys(this.fields).forEach((fieldName) => {
       newState[this.fieldStateName][fieldName] = this.fields[fieldName].defaultValue;
       newState[this.fieldErrorStateName][fieldName] = undefined;
     });
     return newState;
   }
 
-  derivedFromProps(props, currState){
+  derivedFromProps(props, currState) {
     let state = null;
-    Object.keys(this.fields).map(fieldName => {
+    Object.keys(this.fields).forEach((fieldName) => {
       const valueProp = this.fields[fieldName].exposedProps.value;
-      if(valueProp && props[valueProp] !== this.getPrevPropFromState(fieldName, currState)){
-        if(!state){
+      if (valueProp && props[valueProp] !== this.getPrevPropFromState(fieldName, currState)) {
+        if (!state) {
           state = { ...currState };
         }
         state = this._getUpdatedState(fieldName, this.fields[fieldName].converter.propToState(props[valueProp]), state);
@@ -182,7 +187,7 @@ export default class FormInputLinker {
     return state;
   }
 
-  _getUpdatedState(fieldName, value, targetState){
+  _getUpdatedState(fieldName, value, targetState) {
     return {
       [this.fieldStateName]: {
         ...this.getFieldsFromState(targetState),
@@ -199,18 +204,18 @@ export default class FormInputLinker {
     };
   }
 
-  updateState(fieldName, value){
+  updateState(fieldName, value) {
     this.component.setState(this._getUpdatedState(fieldName, value));
   }
 
-  validate(){
+  validate() {
     let passed = true;
-    let newErrorState = {};
-    Object.keys(this.fields).map(fieldName => {
-      if(this.fields[fieldName].validate){
+    const newErrorState = {};
+    Object.keys(this.fields).forEach((fieldName) => {
+      if (this.fields[fieldName].validate) {
         try {
           const result = this.fields[fieldName].validate(this.getOutputFromState(fieldName));
-          if(result instanceof Error){
+          if (result instanceof Error) {
             newErrorState[fieldName] = result;
             passed = false;
           }
@@ -221,7 +226,7 @@ export default class FormInputLinker {
       }
     });
 
-    if(!passed){
+    if (!passed) {
       this.component.setState({
         [this.fieldErrorStateName]: {
           ...this.getErrorsFromState(),
@@ -232,15 +237,16 @@ export default class FormInputLinker {
     return passed;
   }
 
-  getErrorStatus(fieldName){
+  getErrorStatus(fieldName) {
     let occurred = false;
-    let message = undefined;
-    const errorFromProps = this.fields[fieldName].exposedProps.error && this.component.props[this.fields[fieldName].exposedProps.error];
+    let message;
+    const errorFromProps = this.fields[fieldName].exposedProps.error
+      && this.component.props[this.fields[fieldName].exposedProps.error];
     const validateError = this.getErrorFromState(fieldName);
-    if(validateError){
+    if (validateError) {
       message = validateError;
       occurred = true;
-    }else if(!!errorFromProps){
+    } else if (errorFromProps) {
       message = errorFromProps === true ? '' : errorFromProps;
       occurred = true;
     }
@@ -253,8 +259,8 @@ export default class FormInputLinker {
   }
 
   // handlers
-  handleChange = (field) => (...args) => {
-    const fieldName = field.name
+  handleChange = field => (...args) => {
+    const fieldName = field.name;
     const value = this.fields[fieldName].converter.fromView({
       linker: this,
       valueInState: this.getOutputFromState(fieldName),
@@ -268,7 +274,7 @@ export default class FormInputLinker {
 
   // render helper
   getPropsForInputField = (fieldName, options = {}) => {
-    let field = this.fields[fieldName];
+    const field = this.fields[fieldName];
 
     const {
       occurred,

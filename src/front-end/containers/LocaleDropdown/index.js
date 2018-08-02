@@ -1,7 +1,6 @@
 // @flow weak
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Translate from '@material-ui/icons/Translate';
@@ -19,16 +18,29 @@ const styles = theme => ({
 });
 
 class LocaleDropdown extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       anchorEl: null,
       open: false,
-      selectedIndex: 0,
+      // selectedIndex: 0,
     };
   }
 
-  handleClick = event => {
+  getMenuItmes() {
+    const { locale } = this.props;
+    return appLocales.map((_locale, i) => (
+      <MenuItem
+        key={_locale}
+        selected={localeIndex[locale] === i}
+        onClick={event => this.handleMenuItemClick(event, i, _locale)}
+      >
+        {appLocaleNames[i]}
+      </MenuItem>
+    ));
+  }
+
+  handleClick = (event) => {
     this.setState({
       open: true,
       anchorEl: event.currentTarget,
@@ -44,28 +56,15 @@ class LocaleDropdown extends React.Component {
 
     changeLocale(locale);
     this.setState({
-      selectedIndex: index,
+      // selectedIndex: index,
       open: false,
     });
   };
 
-  getMenuItmes(){
-    const { locale, changeLocale } = this.props;
-    return appLocales.map((_locale, i) => {
-      return (
-        <MenuItem
-          key={_locale}
-          selected={localeIndex[locale] === i}
-          onClick={event => this.handleMenuItemClick(event, i, _locale)}
-        >
-          {appLocaleNames[i]}
-        </MenuItem>
-      );
-    });
-  }
-
-  render(){
-    const { classes, locale, dispatch, changeLocale, ...props } = this.props;
+  render() {
+    const {
+      classes, locale, dispatch, changeLocale, ...props
+    } = this.props;
     return (
       <div>
         <IconButton
@@ -76,7 +75,7 @@ class LocaleDropdown extends React.Component {
           onClick={this.handleClick}
         >
           <Translate />
-          {/*appLocaleNames[localeIndex[locale]]*/}
+          {/* appLocaleNames[localeIndex[locale]] */}
         </IconButton>
         <Menu
           id="simple-menu"
@@ -93,12 +92,12 @@ class LocaleDropdown extends React.Component {
 
 const mapStateToProps = createSelector(
   makeSelectLocale(),
-  (locale) => ({ locale })
+  locale => ({ locale })
 );
 
 function mapDispatchToProps(dispatch) {
   return {
-    changeLocale: (locale) => dispatch(changeLocale(locale)),
+    changeLocale: locale => dispatch(changeLocale(locale)),
     dispatch,
   };
 }

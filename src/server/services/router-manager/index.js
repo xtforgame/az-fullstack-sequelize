@@ -1,5 +1,5 @@
 import ServiceBase from '../ServiceBase';
-//========================================
+//= =======================================
 import MainRouter from '~/routers/MainRouter';
 import SessionRouter from '~/routers/SessionRouter';
 import UserRouter from '~/routers/UserRouter';
@@ -7,10 +7,12 @@ import RecoveryRouter from '~/routers/RecoveryRouter';
 
 export default class RouterManager extends ServiceBase {
   static $name = 'routerManager';
+
   static $type = 'service';
+
   static $inject = ['httpApp', 'resourceManager', 'mailer'];
 
-  constructor(httpApp, resourceManager, mailer){
+  constructor(httpApp, resourceManager, mailer) {
     super();
     this.authKit = resourceManager.authKit;
     this.resourceManager = resourceManager.resourceManager;
@@ -23,7 +25,7 @@ export default class RouterManager extends ServiceBase {
       koaHelper: this.authKit.get('koaHelper'),
     };
 
-    let routers = [MainRouter, SessionRouter, UserRouter, RecoveryRouter]
+    this.routers = [MainRouter, SessionRouter, UserRouter, RecoveryRouter]
     .map(Router => new Router({
       authKit,
       resourceManager: this.resourceManager,
@@ -31,6 +33,6 @@ export default class RouterManager extends ServiceBase {
     }).setupRoutes(httpApp.appConfig));
   }
 
-  onStart(){
+  onStart() {
   }
 }

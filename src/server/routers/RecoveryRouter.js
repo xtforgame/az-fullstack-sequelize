@@ -1,15 +1,14 @@
-import RouterBase from '../core/router-base';
 import {
-  RestfulResponse,
+  // RestfulResponse,
   RestfulError,
 } from 'az-restful-helpers';
-import drawIcon from '~/utils/drawIcon';
 import { externalUrl, sendRecoveryTokenInterval } from 'config';
+import RouterBase from '../core/router-base';
 
 export default class RecoveryRouter extends RouterBase {
-  getTokenUpdatedTimeFromAccountLink(accountLink){
+  getTokenUpdatedTimeFromAccountLink(accountLink) {
     const token = accountLink.get('recoveryToken');
-    if(!token){
+    if (!token) {
       return token;
     }
     const {
@@ -19,11 +18,11 @@ export default class RecoveryRouter extends RouterBase {
     return updated_at || created_at;
   }
 
-  challengeRecoveryTokens(ctx){
+  challengeRecoveryTokens(ctx) {
     // console.log('ctx.request.body :', ctx.request.body);
     const AccountLink = this.resourceManager.getSqlzModel('accountLink');
     const RecoveryToken = this.resourceManager.getSqlzModel('recoveryToken');
-    
+
     return AccountLink.findOne({
       where: {
         provider_id: 'basic',
@@ -34,13 +33,13 @@ export default class RecoveryRouter extends RouterBase {
         as: 'recoveryToken',
       }],
     })
-    .then(accountLink => {
+    .then((accountLink) => {
       const retval = {
         passed: false,
         accountLink,
       };
-    
-      if(!accountLink || !accountLink.recoveryToken){
+
+      if (!accountLink || !accountLink.recoveryToken) {
         return retval;
       }
 
@@ -56,7 +55,7 @@ export default class RecoveryRouter extends RouterBase {
       // console.log('ctx.request.body :', ctx.request.body);
       const AccountLink = this.resourceManager.getSqlzModel('accountLink');
       const RecoveryToken = this.resourceManager.getSqlzModel('recoveryToken');
-      
+
       return AccountLink.findOne({
         where: {
           provider_id: 'basic',
@@ -67,14 +66,14 @@ export default class RecoveryRouter extends RouterBase {
           as: 'recoveryToken',
         }],
       })
-      .then(accountLink => {
-        if(!accountLink){
+      .then((accountLink) => {
+        if (!accountLink) {
           return RestfulError.koaThrowWith(ctx, 404, 'User not found');
         }
         const updatedTime = this.getTokenUpdatedTimeFromAccountLink(accountLink);
-        if(updatedTime){
+        if (updatedTime) {
           const remainingTime = sendRecoveryTokenInterval - (new Date().getTime() - new Date(updatedTime).getTime());
-          if(remainingTime > 0){
+          if (remainingTime > 0) {
             return RestfulError.koaThrowWith(ctx, 429, { error: 'Too Many Request', remainingTime });
           }
         }
@@ -86,10 +85,10 @@ export default class RecoveryRouter extends RouterBase {
           account_link_id: accountLink.id,
         }, {
           where: {
-            account_link_id: accountLink.id, 
+            account_link_id: accountLink.id,
           },
           returning: true,
-        })
+        });
       })
       .then(([tokenInfo]) => {
         const data = tokenInfo.get();
@@ -98,43 +97,34 @@ export default class RecoveryRouter extends RouterBase {
       })
       .then((data) => {
         const updatedTime = data.updated_at || data.created_at;
-        if(updatedTime){
+        if (updatedTime) {
           const remainingTime = sendRecoveryTokenInterval - (new Date().getTime() - new Date(updatedTime).getTime());
           return ctx.body = { remainingTime };
-        }else{
+        } else {
           return ctx.body = { remainingTime: 0 };
         }
       });
     });
 
-    router.post('/api/challengeRecoveryTokens', (ctx, next) => {
-      return this.challengeRecoveryTokens(ctx)
-      .then(result => {
-        return ctx.body = { passed: result.passed };
-      });
-    });
+    router.post('/api/challengeRecoveryTokens', (ctx, next) => this.challengeRecoveryTokens(ctx)
+      .then(result => ctx.body = { passed: result.passed }));
 
-    router.post('/api/resetPasswordRequests', (ctx, next) => {
-      return this.challengeRecoveryTokens(ctx)
-      .then(result => {
-        if(!result.passed){
+    router.post('/api/resetPasswordRequests', (ctx, next) => this.challengeRecoveryTokens(ctx)
+      .then((result) => {
+        if (!result.passed) {
           return ctx.body = { passed: result.passed };
         }
         return this.resourceManager.db.transaction()
-          .then(t => {
-            return result.accountLink.recoveryToken.destroy({
-              transaction: t,
-            })
-            .then(() => {
-              return this.authKit.authProviderManager.getAuthProvider('basic')
-                .then(provider => {
-                  return provider.getAlParamsForCreate({
-                    auth_type: 'basic',
-                    username: ctx.request.body.username,
-                    password: ctx.request.body.newPassword,
-                  });
-                })
-                .then(paramsArrayForCreate => {
+          .then(t => result.accountLink.recoveryToken.destroy({
+            transaction: t,
+          })
+            .then(() => this.authKit.authProviderManager.getAuthProvider('basic')
+                .then(provider => provider.getAlParamsForCreate({
+                  auth_type: 'basic',
+                  username: ctx.request.body.username,
+                  password: ctx.request.body.newPassword,
+                }))
+                .then((paramsArrayForCreate) => {
                   const {
                     provider_user_access_info,
                   } = paramsArrayForCreate;
@@ -143,20 +133,13 @@ export default class RecoveryRouter extends RouterBase {
                   }, {
                     transaction: t,
                   });
-                });
-            })
+                }))
             .then(() => {
               t.commit();
               return ctx.body = { passed: result.passed };
             })
-            .catch(error => {
-              return t.rollback()
-              .then(() => {
-                return ctx.body = { passed: result.passed };
-              });
-            });
-          });
-      });
-    });
+            .catch(error => t.rollback()
+              .then(() => ctx.body = { passed: result.passed })));
+      }));
   }
 }

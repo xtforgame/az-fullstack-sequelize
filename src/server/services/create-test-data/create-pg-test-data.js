@@ -2,10 +2,10 @@ import Sequelize from 'sequelize';
 import {
   toSeqPromise,
 } from 'common/utils';
-import {sha512gen_salt, crypt} from 'az-authn-kit';
+import { sha512gen_salt, crypt } from 'az-authn-kit';
 import drawIcon from '~/utils/drawIcon';
 
-let getAccountLinks = (username, password) => ([{
+const getAccountLinks = (username, password) => ([{
   provider_id: 'basic',
   provider_user_id: `${username}@foo.bar`,
   provider_user_access_info: {
@@ -31,17 +31,19 @@ const builtInUsers = [
   },
 ];
 
-function createTestUser(resourceManager){
-  let User = resourceManager.getSqlzModel('user');
-  let sharedDishes = []
+function createTestUser(resourceManager) {
+  const User = resourceManager.getSqlzModel('user');
+
   return User.findAll({
     attributes: [[Sequelize.fn('COUNT', Sequelize.col('name')), 'usercount']],
   })
   .then((users) => {
-    if(users[0].dataValues.usercount == 0){
+    if (users[0].dataValues.usercount == 0) { // eslint-disable-line eqeqeq
       let idCounter = 0;
       return toSeqPromise(builtInUsers, (_, _value) => {
-        const { username, password, name, privilege } = _value;
+        const {
+          username, password, name, privilege,
+        } = _value;
         return User.create({
           id: (++idCounter),
           name,
@@ -52,15 +54,15 @@ function createTestUser(resourceManager){
             bio: `I'm ${name}`,
           },
           accountLinks: getAccountLinks(username, password || username),
-        })
+        });
       });
     }
     return Promise.resolve(null);
   });
 }
 
-export default function createPgTestData(resourceManager, ignore = false){
-  if(ignore){
+export default function createPgTestData(resourceManager, ignore = false) {
+  if (ignore) {
     return Promise.resolve(true);
   }
   return createTestUser(resourceManager);

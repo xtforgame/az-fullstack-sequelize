@@ -1,9 +1,8 @@
 import React from 'react';
 import { compose } from 'recompose';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
-let styles = theme => ({
+const styles = theme => ({
   content: {
     margin: theme.spacing.unit,
     display: 'flex',
@@ -17,9 +16,11 @@ let styles = theme => ({
   },
 });
 
-const FormContent = (props) => {
-  return (<div className={props.classes.content} children={props.children} />);
-}
+const FormContent = props => (
+  <div className={props.classes.content}>
+    {props.children}
+  </div>
+);
 
 export default compose(
   withStyles(styles),

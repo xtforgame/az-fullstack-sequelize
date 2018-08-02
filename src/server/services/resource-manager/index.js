@@ -1,4 +1,3 @@
-import ServiceBase from '../ServiceBase';
 // ========================================
 import AsuOrm from 'az-sequelize-utils';
 import Azldi from 'azldi';
@@ -9,13 +8,16 @@ import {
   KoaHelper,
   BasicProvider,
 } from 'az-authn-kit';
+import ServiceBase from '../ServiceBase';
 
 import createAsuModelDefs from '../../asu-model';
 // ========================================
 
 export default class ResourceManager extends ServiceBase {
   static $name = 'resourceManager';
+
   static $type = 'service';
+
   static $inject = ['envCfg', 'sequelizeDb'];
 
   constructor(envCfg, sequelizeDb) {
@@ -31,10 +33,10 @@ export default class ResourceManager extends ServiceBase {
       KoaHelper,
     ]);
 
-    let digestIndex = 0;
+    // const digestIndex = 0;
 
-    let results = this.authKit.digest({
-      onCreate: (obj) => {},
+    this.authKit.digest({
+      onCreate: (/* obj */) => {},
       appendArgs: {
         authCore: [this.jwtSecrets, { algorithm: 'RS256' }],
         sequelizeStore: [{}],
@@ -53,7 +55,7 @@ export default class ResourceManager extends ServiceBase {
     //   this.resourceManager.tableInfo['users'].table.removeHook('beforeSync', 'hx');
     // });
 
-    let sequelizeStore = this.authKit.get('sequelizeStore');
+    const sequelizeStore = this.authKit.get('sequelizeStore');
     this.resourceManager = new AsuOrm(this.database, createAsuModelDefs(sequelizeStore));
   }
 

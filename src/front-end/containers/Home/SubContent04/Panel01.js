@@ -1,14 +1,11 @@
 import React from 'react';
 import { compose } from 'recompose';
-import PropTypes from 'prop-types';
-import { FormTextInput, FormSpace } from '~/components/SignInSignUp';
 import InputDialog from '~/components/Dialogs/InputDialog';
 import { withStyles } from '@material-ui/core/styles';
-import DialogContent from '@material-ui/core/DialogContent';
-import DetailedExpansionPanel from './DetailedExpansionPanel';
 
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import DetailedExpansionPanel from './DetailedExpansionPanel';
 
 const styles = theme => ({
   space: {
@@ -24,7 +21,7 @@ const styles = theme => ({
 });
 
 class Panel01 extends React.Component {
-  constructor(...args){
+  constructor(...args) {
     super(...args);
     this.state = {
       dialogOpend: false,
@@ -45,7 +42,7 @@ class Panel01 extends React.Component {
       editingParam: null,
       editingParamTitle: null,
     };
-    if(data !== false){
+    if (data !== false) {
       newState[this.state.editingParam] = data;
     }
 
@@ -68,38 +65,44 @@ class Panel01 extends React.Component {
       <React.Fragment>
         <DetailedExpansionPanel
           expanded={expanded}
-          title={'nginx'}
+          title="nginx"
           listItems={[
-            (<ListItem
-              key="httpPort"
-              button
-              onClick={this.handleOpen('Http Port', 'httpPort')}
-            >
-              <ListItemText
-                primary="Http Port"
-                secondary={httpPort ? httpPort : '<N/A>'}
-              />
-            </ListItem>),
-            (<ListItem
-              key="httpsPort"
-              button
-              onClick={this.handleOpen('Https Port', 'httpsPort')}
-            >
-              <ListItemText
-                primary="Https Port"
-                secondary={httpsPort ? httpsPort : '<N/A>'}
-              />
-            </ListItem>),
+            (
+              <ListItem
+                key="httpPort"
+                button
+                onClick={this.handleOpen('Http Port', 'httpPort')}
+              >
+                <ListItemText
+                  primary="Http Port"
+                  secondary={httpPort || '<N/A>'}
+                />
+              </ListItem>
+            ),
+            (
+              <ListItem
+                key="httpsPort"
+                button
+                onClick={this.handleOpen('Https Port', 'httpsPort')}
+              >
+                <ListItemText
+                  primary="Https Port"
+                  secondary={httpsPort || '<N/A>'}
+                />
+              </ListItem>
+            ),
           ]}
           onChange={onChange}
           onDone={onDone}
         />
-        {editingParam && <InputDialog
-          id="param-input"
-          title={editingParamTitle || ''}
-          open={this.state.dialogOpend}
-          onClose={this.handleClose}
-        />}
+        {editingParam && (
+          <InputDialog
+            id="param-input"
+            title={editingParamTitle || ''}
+            open={this.state.dialogOpend}
+            onClose={this.handleClose}
+          />
+        )}
       </React.Fragment>
     );
   }

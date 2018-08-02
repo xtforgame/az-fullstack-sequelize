@@ -1,29 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { injectIntl } from 'react-intl';
-import PropTypes from 'prop-types';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Paper from '@material-ui/core/Paper';
-import { FormattedMessage } from 'react-intl';
 import formatMessage from '~/utils/formatMessage';
 import {
-  withRouter,
+  Redirect,
 } from 'react-router-dom';
 import {
   rememberMe,
 } from '../App/actions';
 import { messages } from '../App/translation';
-import {
-  Redirect,
-} from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
-import LocaleDropdown from '~/containers/LocaleDropdown'
+import LocaleDropdown from '~/containers/LocaleDropdown';
 
-import IconButton from '@material-ui/core/IconButton';
-import ArrowBack from '@material-ui/icons/ArrowBack';
 import createCommonStyles from '~/styles/common';
 import createFormPaperStyle from '~/styles/FormPaper';
 
@@ -52,68 +45,51 @@ const styles = theme => ({
 });
 
 class Login extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       // username: FormPhoneOrEmailInput.rawInputToState('admin@foo.bar'),
       loginError: null,
-      postUsersError: null,
     };
   }
 
-  componentWillMount(){
-    let { location, session } = this.props;
-    let fromPath = location.state && location.state.from.pathname;
-    if(!session){
-      fromPath && console.log(`Redirected page from ${fromPath} to Login`);
+  componentWillMount() {
+    const { location, session } = this.props;
+    const fromPath = location.state && location.state.from.pathname;
+    if (!session && fromPath) {
+      console.warn(`Redirected page from ${fromPath} to Login`);
     }
   }
 
-  render(){
-    let { location, intl, postSessions, postUsers, postRecoveryTokens, session, rememberUser, classes } = this.props;
+  render() {
+    const {
+      location, intl, postSessions, session, rememberUser, classes,
+    } = this.props;
     let fromPath = location.state && location.state.from.pathname;
     const wrongUsernameOrPassword = formatMessage(intl, messages.wrongUsernameOrPassword, {});
-    const usernameIsTaken = formatMessage(intl, messages.usernameIsTaken, {});
+    // const usernameIsTaken = formatMessage(intl, messages.usernameIsTaken, {});
 
-    if(session){
+    if (session) {
       fromPath = fromPath || '/';
       return (
         <Redirect to={{
           pathname: fromPath,
-        }}/>
+        }}
+        />
       );
     }
 
     const login = (username, password, rememberUser) => {
       const { rememberMe } = this.props;
       rememberMe(rememberUser);
-      // popup('/auth-popup.html');
-      // return ;
       postSessions({
         auth_type: 'basic',
         username,
         password,
       })
-      .catch(action => {
+      .catch((action) => {
         this.setState({
           loginError: action.data.error,
-        });
-      });
-    };
-
-    const register = (username, password) => {
-      postUsers({
-        name: username,
-        privilege: 'admin',
-        accountLinks: [{
-          auth_type: 'basic',
-          username,
-          password,
-        }],
-      })
-      .catch(action => {
-        this.setState({
-          postUsersError: action.data.error,
         });
       });
     };
@@ -132,7 +108,7 @@ class Login extends React.Component {
           </AppBar>
           <LoginForm
             username={this.state.username}
-            onUsernameChange={(username) => this.setState({
+            onUsernameChange={username => this.setState({
               username,
             })}
             usernameError={!!this.state.loginError}

@@ -4,9 +4,10 @@ import jwtSecrets from './jwtSecrets';
 
 export default class EnvCfg extends ServiceBase {
   static $name = 'envCfg';
+
   static $type = 'service';
 
-  constructor(){
+  constructor() {
     super();
     this.credentials = credentials;
     this.jwtSecrets = jwtSecrets;

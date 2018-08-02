@@ -1,23 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import classNames from 'classnames';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Chip from '@material-ui/core/Chip';
 import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
-
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
-import ListSubheader from '@material-ui/core/ListSubheader';
 import Switch from '@material-ui/core/Switch';
 
 const styles = theme => ({
@@ -77,10 +70,9 @@ const styles = theme => ({
 class DetailedExpansionPanel extends React.Component {
   state = {
     enabled: true,
-    checkedA: true,
   };
 
-  handleChecked = name => event => {
+  handleChecked = name => (event) => {
     this.setState({ [name]: event.target.checked });
   };
 
@@ -90,7 +82,7 @@ class DetailedExpansionPanel extends React.Component {
     });
   };
 
-  render(){
+  render() {
     const {
       title,
       listItems = [],
@@ -159,7 +151,9 @@ class DetailedExpansionPanel extends React.Component {
           </ExpansionPanelDetails>
           {/* <Divider /> */}
           <ExpansionPanelActions>
-            <Button size="small" onClick={onDone}>Cancel</Button>
+            <Button size="small" onClick={onDone}>
+              Cancel
+            </Button>
             <Button size="small" color="primary" onClick={onDone}>
               Save
             </Button>
@@ -169,9 +163,5 @@ class DetailedExpansionPanel extends React.Component {
     );
   }
 }
-
-DetailedExpansionPanel.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 export default withStyles(styles)(DetailedExpansionPanel);

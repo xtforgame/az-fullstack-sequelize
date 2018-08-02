@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -10,10 +9,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
-import ListSubheader from '@material-ui/core/ListSubheader';
 import Button from '@material-ui/core/Button';
 import EditIcon from '@material-ui/icons/Edit';
 import CloseIcon from '@material-ui/icons/Close';
@@ -32,8 +28,6 @@ import {
 
 import {
   FormTextInput,
-  FormSelect,
-  FormAutocomplete,
 } from '~/components/SignInSignUp';
 
 import {
@@ -41,11 +35,12 @@ import {
 } from '~/containers/App/selectors';
 
 import modelMap from '~/containers/App/modelMap';
+
 const {
   patchUser,
 } = modelMap.waitableActions;
 
-const styles = (theme) => ({
+const styles = theme => ({
   mainContainer: {
     width: '100%',
   },
@@ -132,7 +127,7 @@ const styles = (theme) => ({
 });
 
 class Profile extends React.Component {
-  constructor(...args){
+  constructor(...args) {
     super(...args);
     this.state = {
       editing: false,
@@ -158,7 +153,6 @@ class Profile extends React.Component {
       email: undefined,
       bio: undefined,
       thumbnail: undefined,
-      dataURL: undefined,
     });
   };
 
@@ -170,21 +164,21 @@ class Profile extends React.Component {
 
     let p = Promise.resolve();
 
-    if(user.id != null){
+    if (user.id != null) {
       const patchData = {};
-      if(this.state.name){
+      if (this.state.name) {
         patchData.name = this.state.name;
       }
-      if(this.state.email){
+      if (this.state.email) {
         patchData.email = this.state.email;
       }
-      if(this.state.bio){
+      if (this.state.bio) {
         patchData.data = {
           ...user.data,
           bio: this.state.bio,
         };
       }
-      if(this.state.thumbnail){
+      if (this.state.thumbnail) {
         patchData.picture = this.state.thumbnail;
       }
       p = patchUser(user.id, patchData);
@@ -196,17 +190,15 @@ class Profile extends React.Component {
         email: undefined,
         bio: undefined,
         thumbnail: undefined,
-        dataURL: undefined,
       });
     })
-    .catch(e => {
-      console.log('e :', e);
+    .catch((e) => {
+      console.error('Failed to update user info :', e);
     });
   }
 
-  renderDetailView(){
+  renderDetailView() {
     const {
-      classes,
       user = {},
     } = this.props;
 
@@ -229,18 +221,22 @@ class Profile extends React.Component {
           <ListItem>
             <ListItemText
               disableTypography
-              primary={<Typography
-                variant="subheading"
-              >
+              primary={(
+                <Typography
+                  variant="subheading"
+                >
                 Bio
-              </Typography>}
-              secondary={<Typography
-                variant="body1"
-                component="pre"
-                color="textSecondary"
-              >
-                {bio}
-              </Typography>}
+                </Typography>
+              )}
+              secondary={(
+                <Typography
+                  variant="body1"
+                  component="p"
+                  color="textSecondary"
+                >
+                  {bio}
+                </Typography>
+              )}
             />
           </ListItem>
         </List>
@@ -248,7 +244,7 @@ class Profile extends React.Component {
     );
   }
 
-  renderEditView(){
+  renderEditView() {
     const {
       classes,
       user = {},
@@ -259,11 +255,11 @@ class Profile extends React.Component {
     return (
       <CardContent>
         <FormTextInput
-          id={'name'}
-          label={'Name'}
+          id="name"
+          label="Name"
           onKeyPress={() => {}}
           value={(this.state.editing ? this.state.name : user.name) || ''}
-          onChange={e => {
+          onChange={(e) => {
             this.setState({
               name: e.target.value,
             });
@@ -277,11 +273,11 @@ class Profile extends React.Component {
         />
         <div className={classes.space3} />
         <FormTextInput
-          id={'email'}
-          label={'Email'}
+          id="email"
+          label="Email"
           onKeyPress={() => {}}
           value={(this.state.editing ? this.state.email : user.email) || ''}
-          onChange={e => {
+          onChange={(e) => {
             this.setState({
               email: e.target.value,
             });
@@ -296,11 +292,11 @@ class Profile extends React.Component {
         <div className={classes.space3} />
         <React.Fragment>
           <FormTextInput
-            id={'bio'}
-            label={'Bio'}
+            id="bio"
+            label="Bio"
             onKeyPress={() => {}}
             value={(this.state.editing ? this.state.bio : bio) || ''}
-            onChange={e => {
+            onChange={(e) => {
               this.setState({
                 bio: e.target.value,
               });
@@ -321,7 +317,7 @@ class Profile extends React.Component {
     );
   }
 
-  render(){
+  render() {
     const {
       classes,
       user = {},
@@ -343,47 +339,55 @@ class Profile extends React.Component {
               >
                 <Avatar
                   alt="Adelle Charles"
-                  {...{/*src: bgImg*/}}
+                  {...{/* src: bgImg */}}
                   className={classNames(classes.orangeAvatar, classes.bigAvatar)}
                 >
-                  {this.state.editing && <input
-                    accept="image/*"
-                    className={classes.input}
-                    id="icon-button-file"
-                    type="file"
-                    onChange={e => {
-                      e.target.files[0] &&
-                      (readFile(e.target.files[0], {
-                        thumbnailInfo: {
-                          maxWidth: 512,
-                          maxHeight: 512,
-                        },
-                      })
-                      .then(imgInfo => {
-                        this.setState(imgInfo);
-                        // console.log('imgInfo :', imgInfo);
-                      }));
-                    }}
-                  />}
-                  {user.picture && <img src={(this.state.editing && this.state.thumbnail) || user.picture} className={classes.avatarImage}>
-                  </img>
+                  {this.state.editing && (
+                    <input
+                      accept="image/*"
+                      className={classes.input}
+                      id="icon-button-file"
+                      type="file"
+                      onChange={(e) => {
+                        if (e.target.files[0]) {
+                          readFile(e.target.files[0], {
+                            thumbnailInfo: {
+                              maxWidth: 512,
+                              maxHeight: 512,
+                            },
+                          })
+                          .then((imgInfo) => {
+                            this.setState(imgInfo);
+                            // console.log('imgInfo :', imgInfo);
+                          });
+                        }
+                      }}
+                    />
+                  )}
+                  {user.picture && (
+                    <img alt="me" src={(this.state.editing && this.state.thumbnail) || user.picture} className={classes.avatarImage} />
+                  )
                   }
-                  {!user.picture && <Typography variant="display1">
-                    {(user.name || '').substr(0, 2)}
-                  </Typography>
+                  {!user.picture && (
+                    <Typography variant="display1">
+                      {(user.name || '').substr(0, 2)}
+                    </Typography>
+                  )
                   }
-                  {this.state.editing &&
-                    <React.Fragment>
-                      <div
-                        className={classNames(classes.absolute, classes.bigAvatar)}
-                        style={{backgroundColor: 'rgba(0, 0, 0, 0.35)'}}
-                      />
-                      <label htmlFor="icon-button-file">
-                        <IconButton component="span" className={classNames(classes.editPhoto)}>
-                          <PhotoCamera />
-                        </IconButton>
-                      </label>
-                    </React.Fragment>}
+                  {this.state.editing
+                    && (
+                      <React.Fragment>
+                        <div
+                          className={classNames(classes.absolute, classes.bigAvatar)}
+                          style={{ backgroundColor: 'rgba(0, 0, 0, 0.35)' }}
+                        />
+                        <label htmlFor="icon-button-file">
+                          <IconButton component="span" className={classNames(classes.editPhoto)}>
+                            <PhotoCamera />
+                          </IconButton>
+                        </label>
+                      </React.Fragment>
+                    )}
                 </Avatar>
                 <Button
                   variant="fab"
@@ -397,32 +401,30 @@ class Profile extends React.Component {
               </Centered>
             </CardMedia>
             <div className={classes.space2} />
-            {this.state.editing ?
-              this.renderEditView()
+            {this.state.editing
+              ? this.renderEditView()
               : this.renderDetailView()
             }
-            {this.state.editing &&
-              <CardActions>
-                <SuccessButton
-                  size="small"
-                  variant="raised"
-                  fullWidth
-                  color="primary"
-                  onClick={this.submit}
-                >
+            {this.state.editing
+              && (
+                <CardActions>
+                  <SuccessButton
+                    size="small"
+                    variant="raised"
+                    fullWidth
+                    color="primary"
+                    onClick={this.submit}
+                  >
                   Save
-                </SuccessButton>
-              </CardActions>}
+                  </SuccessButton>
+                </CardActions>
+              )}
           </Card>
         </Centered>
       </React.Fragment>
     );
   }
 }
-
-Profile.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 const mapStateToProps = createStructuredSelector({
   user: makeMyUserSelector(),
@@ -434,4 +436,3 @@ export default compose(
   }),
   withStyles(styles),
 )(Profile);
-

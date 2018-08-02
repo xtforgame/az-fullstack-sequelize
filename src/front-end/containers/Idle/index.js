@@ -2,22 +2,20 @@ import React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-import formatMessage from '~/utils/formatMessage';
-import { messages } from '../App/translation';
 import { withStyles } from '@material-ui/core/styles';
-import Bot from './Bot';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import RestoreIcon from '@material-ui/icons/Restore';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
+import Bot from './Bot';
 
 const styles = theme => ({
   nav: {
     width: '100%',
   },
   placeholder: {
-    height: 0,// 40,
+    height: 0, // 40,
   },
   mainContainer: {
     margin: 8,
@@ -44,7 +42,7 @@ const styles = theme => ({
 });
 
 class Home extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       tab: 'stats',
@@ -58,22 +56,22 @@ class Home extends React.Component {
     });
   };
 
-  changeTab = (tabName) => this.handleTabChange(undefined, `/home/${tabName}`);
+  changeTab = tabName => this.handleTabChange(undefined, `/home/${tabName}`);
 
-  render(){
-    let { routeView, classes } = this.props;
+  render() {
+    const { routeView, classes } = this.props;
 
-    let newRouteView = routeView
-    if(routeView){
+    let newRouteView = routeView;
+    if (routeView) {
       // Append props to children
-      newRouteView = newRouteView.map(v => React.cloneElement(v, { 
+      newRouteView = newRouteView.map(v => React.cloneElement(v, {
         componentProps: {
           changeTab: this.changeTab,
         },
       }));
     }
     return (
-      <div className={classes.verticalFlexContainer} >
+      <div className={classes.verticalFlexContainer}>
         <div className={classes.placeholder} />
         <div className={classes.content}>
           <Bot />

@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux'
+import { combineReducers } from 'redux';
 import {
   REMEMBER_ME,
   CHANGE_THEME,
@@ -16,7 +16,6 @@ const {
 
 const persistence = (state = { rememberUser: false }, action) => {
   switch (action.type) {
-
   case REMEMBER_ME:
     return {
       ...state,

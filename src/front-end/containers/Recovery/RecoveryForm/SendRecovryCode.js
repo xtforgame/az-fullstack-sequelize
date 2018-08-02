@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types, react/forbid-prop-types */
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
@@ -6,17 +7,12 @@ import PropTypes from 'prop-types';
 import jsonPtr from 'jsonpointer';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-
-import { FormattedMessage } from 'react-intl';
 import { messages } from '~/containers/App/translation';
 import translateMessages from '~/utils/translateMessages';
 import {
-  createFormStyle,
   FormSpace,
   FormContent,
   FormPhoneOrEmailInput,
-  FormCheckbox,
-  FormCodeInput,
 } from '~/components/SignInSignUp';
 
 import FormInputLinker, {
@@ -25,40 +21,15 @@ import FormInputLinker, {
 } from '~/utils/FormInputLinker';
 
 import modelMap from '~/containers/App/modelMap';
+
 const {
   postRecoveryTokens,
 } = modelMap.waitableActions;
 
-let styles = theme => ({
+const styles = theme => ({
 });
 
 class SendRecovryCode extends React.Component {
-  static getDerivedStateFromProps(props, state) {
-    const { fil, countDown } = state;
-    let newState = null;
-    if(fil){
-      newState = {
-        ...fil.derivedFromProps(props, state),
-      }
-    }
-
-    if(props.lastUpdatedTime > (state.lastUpdatedTime || 0)){
-      let remainingTime = props.remainingTime;
-      if(!state.lastUpdatedTime){
-        remainingTime -= (new Date().getTime() - props.lastUpdatedTime);
-      }
-      newState = {
-        ...newState,
-        lastUpdatedTime: props.lastUpdatedTime,
-        remainingTime,
-      }
-      countDown();
-    }
-
-    // No state update necessary
-    return newState;
-  }
-
   static propTypes = {
     onCodeSent: PropTypes.func.isRequired,
     onBackToEnterTheCode: PropTypes.func.isRequired,
@@ -70,7 +41,7 @@ class SendRecovryCode extends React.Component {
     remainingTime: PropTypes.number.isRequired,
   };
 
-  constructor(props){
+  constructor(props) {
     super(props);
     this.fil = new FormInputLinker(this, {
       namespace: 'forgot-password',
@@ -94,10 +65,13 @@ class SendRecovryCode extends React.Component {
           phoneNumber: { key: 'phoneNumber' },
         }),
       }),
-      validate: value => assert(value && value.type, null, { key: 'usernameEmptyError', values: {
-        emailAddress: { key: 'emailAddress' },
-        phoneNumber: { key: 'phoneNumber' },
-      }}),
+      validate: value => assert(value && value.type, null, {
+        key: 'usernameEmptyError',
+        values: {
+          emailAddress: { key: 'emailAddress' },
+          phoneNumber: { key: 'phoneNumber' },
+        },
+      }),
     });
 
     this.state = this.fil.mergeInitState({
@@ -107,17 +81,51 @@ class SendRecovryCode extends React.Component {
     });
   }
 
+  componentDidMount() {
+    this.countDown();
+  }
+
+  componentWillUnmount() {
+    this.stopCountDown();
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    const { fil, countDown } = state;
+    let newState = null;
+    if (fil) {
+      newState = {
+        ...fil.derivedFromProps(props, state),
+      };
+    }
+
+    if (props.lastUpdatedTime > (state.lastUpdatedTime || 0)) {
+      let { remainingTime } = props;
+      if (!state.lastUpdatedTime) {
+        remainingTime -= (new Date().getTime() - props.lastUpdatedTime);
+      }
+      newState = {
+        ...newState,
+        lastUpdatedTime: props.lastUpdatedTime,
+        remainingTime,
+      };
+      countDown();
+    }
+
+    // No state update necessary
+    return newState;
+  }
+
   stopCountDown = () => clearTimeout(this.countDownTimer);
 
   countDown = () => {
     this.stopCountDown();
     this.countDownTimer = setTimeout(() => {
-      if(this.state.remainingTime >= 1000){
+      if (this.state.remainingTime >= 1000) {
         this.setState({
           remainingTime: this.state.remainingTime - 1000,
         });
         this.countDown();
-      }else{
+      } else {
         this.setState({
           remainingTime: 0,
         });
@@ -125,27 +133,19 @@ class SendRecovryCode extends React.Component {
     }, 1000);
   }
 
-  componentDidMount(){
-    this.countDown();
-  }
-
-  componentWillUnmount(){
-    this.stopCountDown();
-  }
-
   recover = () => {
-    let {
+    const {
       postRecoveryTokens,
       onCodeSent,
     } = this.props;
     const userNameState = this.fil.getOutputFromState('username');
 
-    if(this.fil.validate()){
+    if (this.fil.validate()) {
       postRecoveryTokens({
         type: userNameState.type,
         username: userNameState.value,
       })
-      .then(({data}) => {
+      .then(({ data }) => {
         const {
           username,
         } = this.fil.getOutputs();
@@ -154,17 +154,17 @@ class SendRecovryCode extends React.Component {
           remainingTime: data.remainingTime,
         });
       })
-      .catch(e => {
+      .catch((e) => {
         const {
           username,
         } = this.fil.getOutputs();
         const resData = jsonPtr.get(e, '/data/error/response/data');
-        if(resData){
+        if (resData) {
           onCodeSent({
             recoveringUsername: username,
             remainingTime: resData.remainingTime,
           });
-        }else{
+        } else {
           throw e;
         }
       });
@@ -172,12 +172,11 @@ class SendRecovryCode extends React.Component {
   }
 
   backToEnterTheCode = () => {
-    let {
-      postRecoveryTokens,
+    const {
       onBackToEnterTheCode,
     } = this.props;
 
-    if(this.fil.validate()){
+    if (this.fil.validate()) {
       const {
         username,
       } = this.fil.getOutputs();
@@ -194,8 +193,8 @@ class SendRecovryCode extends React.Component {
     }
   };
 
-  render(){
-    let {
+  render() {
+    const {
       intl,
       classes,
       lastSentUsername,
@@ -232,7 +231,7 @@ class SendRecovryCode extends React.Component {
           <FormSpace variant="content8" />
           <Button
             variant="raised"
-            fullWidth={true}
+            fullWidth
             color="secondary"
             disabled={!username || remainingTime > 0}
             className={classes.loginBtn}
@@ -241,14 +240,16 @@ class SendRecovryCode extends React.Component {
             {`${translated.sendCode}${remainingTime > 0 ? `, Remaining Time : ${remainingSec}` : ''}`}
           </Button>
           <FormSpace variant="content4" />
-          {lastSentUsername && lastSentUsername === username && <Button
-            fullWidth={true}
-            disabled={!username}
-            className={classes.loginBtn}
-            onClick={this.backToEnterTheCode}
-          >
-            {translated.enterCode}
-          </Button>}
+          {lastSentUsername && lastSentUsername === username && (
+            <Button
+              fullWidth
+              disabled={!username}
+              className={classes.loginBtn}
+              onClick={this.backToEnterTheCode}
+            >
+              {translated.enterCode}
+            </Button>
+          )}
         </FormContent>
       </div>
     );

@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
@@ -8,7 +9,6 @@ import configureStore from './configureStore';
 import getRoutes from './getRoutes';
 import fontLoader from './fontLoader';
 import { loadState } from './localStorage';
-import HeaderManager from '~/utils/HeaderManager';
 import {
   makeUserSessionSelector,
 } from '~/containers/App/selectors';
@@ -31,19 +31,23 @@ const store = configureStore(initialState, history);
 const userSessionSelector = makeUserSessionSelector();
 const session = userSessionSelector(store.getState());
 
-if(session){
+if (session) {
   store.dispatch(sessionVerified(session));
 }
 
 class AppWrapper extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
-      app: <div id="loading-page" style={{fontFamily: ''}}>Loading Page</div>, // the loading page
+      app: (
+        <div id="loading-page" style={{ fontFamily: '' }}>
+          Loading Page
+        </div>
+      ), // the loading page
     };
   }
 
-  componentWillMount(){
+  componentWillMount() {
     fontLoader().min
     .then(() => {
       this.setState({
@@ -52,10 +56,11 @@ class AppWrapper extends React.Component {
     });
   }
 
-  render(){
+  render() {
+    const { app } = this.state;
     return (
       <Provider store={store}>
-        {this.state.app}
+        {app}
       </Provider>
     );
   }

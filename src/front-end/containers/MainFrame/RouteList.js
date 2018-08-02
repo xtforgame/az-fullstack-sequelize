@@ -13,8 +13,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
-import DraftsIcon from '@material-ui/icons/Drafts';
-import SendIcon from '@material-ui/icons/Send';
+// import DraftsIcon from '@material-ui/icons/Drafts';
+// import SendIcon from '@material-ui/icons/Send';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import StarBorder from '@material-ui/icons/StarBorder';
@@ -42,22 +42,26 @@ const styles = theme => ({
 class RouteList extends React.Component {
   state = {};
 
-  handleClick = (name) => () => {
+  handleClick = name => () => {
     this.setState({ [`open-${name}`]: !this.state[`open-${name}`] });
   };
 
   render() {
-    let listHierarchy = getListHierarchy();
+    const listHierarchy = getListHierarchy();
     const { closeDrawer, push, classes } = this.props;
-    let navigateToFunc = (path) => (e) => {
-      closeDrawer && closeDrawer();
-      path && push(path);
+    const navigateToFunc = path => (e) => {
+      if (closeDrawer) {
+        closeDrawer();
+      }
+      if (path) {
+        push(path);
+      }
     };
 
-    let getList = (array = listHierarchy, level = 0, parents = []) => {
-      let children = []
-      array.map(item => {
-        if(item.children){
+    const getList = (array = listHierarchy, level = 0, parents = []) => {
+      const children = [];
+      array.forEach((item) => {
+        if (item.children) {
           children.push(
             <ListItem key={item.name} className={classes[`nested${level}`]} button onClick={this.handleClick(item.name)}>
               <ListItemIcon>
@@ -74,7 +78,7 @@ class RouteList extends React.Component {
               {getList(item.children, 1, parents.concat([item]))}
             </Collapse>
           );
-        }else{
+        } else {
           children.push(
             <ListItem key={item.name} className={classes[`nested${level}`]} button onClick={navigateToFunc(item.path)}>
               <ListItemIcon>
@@ -88,11 +92,18 @@ class RouteList extends React.Component {
 
       if (!level) {
         return (
-          <List className={classes.root} subheader={<ListSubheader>Nested List Items</ListSubheader>}>
+          <List
+            className={classes.root}
+            subheader={(
+              <ListSubheader>
+Nested List Items
+              </ListSubheader>
+            )}
+          >
             {children}
           </List>
         );
-      }else{
+      } else {
         return (
           <List disablePadding>
             {children}

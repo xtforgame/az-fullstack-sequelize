@@ -1,21 +1,17 @@
+/* eslint-disable react/prop-types, react/forbid-prop-types, jsx-a11y/anchor-is-valid */
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-
-import { FormattedMessage } from 'react-intl';
 import { messages } from '~/containers/App/translation';
 import translateMessages from '~/utils/translateMessages';
 import {
-  createFormStyle,
   FormSpace,
   FormContent,
-  FormPhoneOrEmailInput,
-  FormCheckbox,
   FormCodeInput,
 } from '~/components/SignInSignUp';
 
@@ -29,11 +25,12 @@ import {
 } from 'common/utils/validators';
 
 import modelMap from '~/containers/App/modelMap';
+
 const {
   postRecoveryTokens,
 } = modelMap.waitableActions;
 
-let styles = theme => ({
+const styles = theme => ({
   flexContainer: {
     display: 'flex',
   },
@@ -54,15 +51,6 @@ let styles = theme => ({
 });
 
 class EnterRecovryCode extends React.Component {
-  static getDerivedStateFromProps(props, state) {
-    if(state.fil){
-      return state.fil.derivedFromProps(props, state);
-    }
-
-    // No state update necessary
-    return null;
-  }
-
   static propTypes = {
     classes: PropTypes.object.isRequired,
     onChallenge: PropTypes.func.isRequired,
@@ -71,7 +59,7 @@ class EnterRecovryCode extends React.Component {
     recoveryCodeError: PropTypes.any,
   };
 
-  constructor(props){
+  constructor(props) {
     super(props);
     this.fil = new FormInputLinker(this, {
       namespace: 'forgot-password',
@@ -83,9 +71,12 @@ class EnterRecovryCode extends React.Component {
         error: 'recoveryCodeError',
       },
       converter: {
-        fromView: (({ valueInState }, e) =>
-        (!e.target.value || (isAllDigital(e.target.value) && e.target.value.length <= 6))
-          ? e.target.value : valueInState),
+        fromView: (({ valueInState }, e) => (
+          (
+            !e.target.value
+            || (isAllDigital(e.target.value) && e.target.value.length <= 6)
+          ) ? e.target.value : valueInState)
+        ),
       },
       getProps: FromTextInputGetProps,
       validate: value => assert(value, null),
@@ -94,6 +85,15 @@ class EnterRecovryCode extends React.Component {
     this.state = this.fil.mergeInitState({
       fil: this.fil,
     });
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if (state.fil) {
+      return state.fil.derivedFromProps(props, state);
+    }
+
+    // No state update necessary
+    return null;
   }
 
   handleEnterForTextField = (event) => {
@@ -112,7 +112,7 @@ class EnterRecovryCode extends React.Component {
       recoveryCode,
     } = this.fil.getOutputs();
 
-    if(this.fil.validate()){
+    if (this.fil.validate()) {
       this.props.onChallenge({
         username: recoveringUsername,
         code: recoveryCode,
@@ -120,8 +120,8 @@ class EnterRecovryCode extends React.Component {
     }
   }
 
-  render(){
-    let {
+  render() {
+    const {
       intl,
       classes,
       onResend,
@@ -151,32 +151,28 @@ class EnterRecovryCode extends React.Component {
                 <a
                   key="accountName"
                   className={classes.link}
-                >{this.props.recoveringUsername}</a>
+                >
+                  {this.props.recoveringUsername}
+                </a>
               ),
             }}
           >
-            {(...parts) => {
-              return (
-                <Typography
-                  variant="body2"
-                  className={classes.textContainer}
-                  onClick={event => {
-                    event.stopPropagation();
-                    event.preventDefault();
-                  }}
-                  onMouseDown={event => {
-                    event.stopPropagation();
-                    event.preventDefault();
-                  }}
-                  onClick={event => {
-                    event.stopPropagation();
-                    event.preventDefault();
-                  }}
-                >
-                  {parts}
-                </Typography>
-              );
-            }}
+            {(...parts) => (
+              <Typography
+                variant="body2"
+                className={classes.textContainer}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  event.preventDefault();
+                }}
+                onMouseDown={(event) => {
+                  event.stopPropagation();
+                  event.preventDefault();
+                }}
+              >
+                {parts}
+              </Typography>
+            )}
           </FormattedMessage>
           <FormSpace variant="content2" />
           <FormSpace variant="content2" />
@@ -190,13 +186,15 @@ class EnterRecovryCode extends React.Component {
           <FormSpace variant="content2" />
           <FormSpace variant="content2" />
           <div className={classes.flexContainer}>
-            {onResend && <Button
-              color="default"
-              className={classes.actionBtn}
-              onClick={onResend}
-            >
-              {translated.resendCode}
-            </Button>}
+            {onResend && (
+              <Button
+                color="default"
+                className={classes.actionBtn}
+                onClick={onResend}
+              >
+                {translated.resendCode}
+              </Button>
+            )}
             <div className={classes.flex1} />
             <Button
               variant="raised"

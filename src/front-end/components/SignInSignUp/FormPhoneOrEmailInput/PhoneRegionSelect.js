@@ -1,14 +1,9 @@
-// @flow weak
-
 import React from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
-import Translate from '@material-ui/icons/Translate';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { compose } from 'recompose';
-import { getCountryCodeFromBrowser } from './langToCountry';
 import xkFlag from './xk.svg';
 
 // import libphonenumber from 'google-libphonenumber';
@@ -18,16 +13,27 @@ const styles = theme => ({
 });
 
 class PhoneRegionSelect extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       anchorEl: null,
       open: false,
-      selectedIndex: 0,
     };
   }
 
-  handleClick = event => {
+  getMenuItmes() {
+    return ['TW', 'CN'].map((_locale, i) => (
+      <MenuItem
+        key={_locale}
+        selected
+        onClick={event => this.handleMenuItemClick(event, i, _locale)}
+      >
+        {_locale}
+      </MenuItem>
+    ));
+  }
+
+  handleClick = (event) => {
     this.setState({
       open: true,
       anchorEl: event.currentTarget,
@@ -42,22 +48,10 @@ class PhoneRegionSelect extends React.Component {
 
   };
 
-  getMenuItmes(){
-    return ['TW', 'CN'].map((_locale, i) => {
-      return (
-        <MenuItem
-          key={_locale}
-          selected={true}
-          onClick={event => this.handleMenuItemClick(event, i, _locale)}
-        >
-          {_locale}
-        </MenuItem>
-      );
-    });
-  }
-
-  render(){
-    const { classes, locale, dispatch, changeLocale, regionCode, ...props } = this.props;
+  render() {
+    const {
+      classes, locale, dispatch, changeLocale, regionCode, ...props
+    } = this.props;
     return (
       <div>
         <IconButton

@@ -4,7 +4,7 @@ import Sequelize from 'sequelize';
 import AsuOrm from 'az-sequelize-utils';
 
 export default (sequelizeStore) => {
-  let authModels = sequelizeStore.getDefaultAsuModels();
+  const authModels = sequelizeStore.getDefaultAsuModels();
   return {
     models: {
       ...authModels.models,
@@ -94,19 +94,20 @@ export default (sequelizeStore) => {
           ...authModels.models.user.options,
           hooks: {
             // executed "before" `Model.sync(...)`
-            beforeSync: function (options) {
+            beforeSync(options) {
               // console.log('beforeSync');
             },
             // executed "after" `Model.sync(...)`
-            afterSync: function (options) {
+            afterSync(options) {
               // this = Model
               // console.log('afterSync');
               return options.sequelize.query('SELECT start_value, last_value, is_called FROM tbl_user_id_seq', { type: Sequelize.QueryTypes.SELECT })
               .then(([result]) => {
-                if(!result.is_called){
+                if (!result.is_called) {
                   return options.sequelize.query('ALTER SEQUENCE tbl_user_id_seq RESTART WITH 1000000001', { type: Sequelize.QueryTypes.SELECT })
                   .then((result2) => {});
                 }
+                return Promise.resolve();
               });
             },
           },
@@ -330,21 +331,21 @@ export default (sequelizeStore) => {
           data: {
             type: Sequelize.BLOB,
             set(val) {
-              if(ArrayBuffer.isView(val) || val instanceof ArrayBuffer){
+              if (ArrayBuffer.isView(val) || val instanceof ArrayBuffer) {
                 this.setDataValue('data', val);
-              }else if(typeof val === 'string'){
+              } else if (typeof val === 'string') {
                 this.setDataValue('data', Buffer.from(val, 'utf8'));
-              }else{
+              } else {
                 this.setDataValue('data', Buffer.from(JSON.stringify(val), 'utf8'));
               }
             },
             get() {
               const mimeType = this.getDataValue('mime_type');
-              if(mimeType === 'application/json'){
+              if (mimeType === 'application/json') {
                 return JSON.parse(this.getDataValue('data').toString('utf8'));
-              }else if(mimeType.substr(0, 4) === 'text'){
+              } else if (mimeType.substr(0, 4) === 'text') {
                 return this.getDataValue('data').toString('utf8');
-              }else{
+              } else {
                 return this.getDataValue('data');
               }
             },

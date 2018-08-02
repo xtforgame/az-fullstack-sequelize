@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types, react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import keycode from 'keycode';
@@ -10,10 +11,12 @@ import {
 } from '~/components/SignInSignUp';
 
 const WrappedInput = (props) => {
-  const { label, InputProps = {}, classes, multiline, onKeyDown, ...other } = props;
+  const {
+    label, InputProps = {}, classes, multiline, onKeyDown, ...other
+  } = props;
   // console.log('InputProps :', InputProps);
   const { onKeyDown: downshiftOnKeyDown, ...otherInputProps } = InputProps;
-  const handleMultilinesKeyDown = event => {
+  const handleMultilinesKeyDown = (event) => {
     // console.log('keycode(event) :', keycode(event));
     if (
       !multiline
@@ -23,7 +26,9 @@ const WrappedInput = (props) => {
     ) {
       downshiftOnKeyDown(event);
     }
-    onKeyDown && onKeyDown(event);
+    if (onKeyDown) {
+      onKeyDown(event);
+    }
   };
 
   return (
@@ -37,9 +42,11 @@ const WrappedInput = (props) => {
       {...other}
     />
   );
-}
+};
 
-function SuggestionItem({ suggestion, index, itemProps, highlightedIndex, selectedItem }) {
+function SuggestionItem({
+  suggestion, index, itemProps, highlightedIndex, selectedItem,
+}) {
   const isHighlighted = highlightedIndex === index;
   const isSelected = (selectedItem || '').indexOf(suggestion.label) > -1;
 
@@ -65,14 +72,13 @@ SuggestionItem.propTypes = {
 };
 
 function getSuggestions(suggestions, inputValue) {
-  let count = 0;
+  // let count = 0;
 
-  return suggestions.filter(suggestion => {
-    const keep =
-      (!inputValue || suggestion.label.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1);
+  return suggestions.filter((suggestion) => {
+    const keep = (!inputValue || suggestion.label.toLowerCase().indexOf(inputValue.toLowerCase()) !== -1);
 
     if (keep) {
-      count += 1;
+      // count += 1;
     }
 
     return keep;
@@ -103,7 +109,7 @@ class FormAutocomplete extends React.Component {
     inputValue: '',
   };
 
-  render(){
+  render() {
     const {
       classes,
       id,
@@ -111,20 +117,26 @@ class FormAutocomplete extends React.Component {
       suggestions,
       value,
       onChange,
-      ...rest,
+      ...rest
     } = this.props;
 
     return (
       <Downshift
         onStateChange={({ inputValue }) => {
-          if(inputValue != null){
-            onChange && onChange(inputValue);
-            return inputValue && this.setState({ inputValue })
+          if (inputValue != null) {
+            if (onChange) {
+              onChange(inputValue);
+            }
+            if (inputValue) {
+              this.setState({ inputValue });
+            }
           }
         }}
-        selectedItem={value == null ? this.state.inputValue: value}
+        selectedItem={value == null ? this.state.inputValue : value}
       >
-        {({ getInputProps, getItemProps, isOpen, inputValue, selectedItem, highlightedIndex }) => (
+        {({
+          getInputProps, getItemProps, isOpen, inputValue, selectedItem, highlightedIndex,
+        }) => (
           <div className={classes.container}>
             {<WrappedInput
               label={label}
@@ -136,7 +148,7 @@ class FormAutocomplete extends React.Component {
                 //   if (event.key === 'Enter') {
                 //     // Prevent Downshift's default 'Enter' behavior.
                 //     event.preventDownshiftDefault = true
-      
+
                 //     // your handler code
                 //   }
                 // },

@@ -2,9 +2,7 @@ import React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-
 import { push } from 'react-router-redux';
-import { messages } from '../App/translation';
 import MainAppBar from './MainAppBar';
 import {
   getMailFolderList,
@@ -14,10 +12,8 @@ import {
 import RouteList from './RouteList';
 import { withStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import Button from '@material-ui/core/Button';
 
 import Divider from '@material-ui/core/Divider';
-import Icon from '@material-ui/core/Icon';
 import createCommonStyles from '~/styles/common';
 
 const styles = theme => ({
@@ -45,18 +41,16 @@ const styles = theme => ({
 });
 
 class MainFrame extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       drawerOpened: false,
     };
   }
 
-  toggleDrawer = (open) => () => {
-    this.setState({
-      drawerOpened: open,
-    });
-  };
+  componentWillMount() {
+    // console.log('MainFrame componentWillMount');
+  }
 
   closeDrawer = () => {
     this.setState({
@@ -64,12 +58,14 @@ class MainFrame extends React.Component {
     });
   };
 
-  componentWillMount(){
-    console.log('MainFrame componentWillMount');
-  }
+  toggleDrawer = open => () => {
+    this.setState({
+      drawerOpened: open,
+    });
+  };
 
-  render(){
-    let { routeView, push, classes } = this.props;
+  render() {
+    const { routeView, push, classes } = this.props;
     const sideList = (
       <div className={classes.list}>
         <RouteList closeDrawer={this.closeDrawer} />

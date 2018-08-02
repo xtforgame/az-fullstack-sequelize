@@ -7,6 +7,7 @@ import FormCodeInput from './FormCodeInput';
 import FormCheckbox from './FormCheckbox';
 import FormSelect from './FormSelect';
 import FormAutocomplete from './FormAutocomplete';
+import InternalLink from './InternalLink';
 
 export {
   FormSpace,
@@ -18,4 +19,5 @@ export {
   FormCheckbox,
   FormSelect,
   FormAutocomplete,
+  InternalLink,
 };

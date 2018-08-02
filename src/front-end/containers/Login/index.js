@@ -1,26 +1,21 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { injectIntl } from 'react-intl';
-import PropTypes from 'prop-types';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Paper from '@material-ui/core/Paper';
-import { FormattedMessage } from 'react-intl';
 import formatMessage from '~/utils/formatMessage';
 import {
-  withRouter,
+  Redirect,
 } from 'react-router-dom';
 import {
   rememberMe,
 } from '../App/actions';
 import { messages } from '../App/translation';
-import {
-  Redirect,
-} from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
-import LocaleDropdown from '~/containers/LocaleDropdown'
+import LocaleDropdown from '~/containers/LocaleDropdown';
 
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBack from '@material-ui/icons/ArrowBack';
@@ -55,7 +50,7 @@ const styles = theme => ({
 });
 
 class Login extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       tabIndex: 0,
@@ -65,11 +60,11 @@ class Login extends React.Component {
     };
   }
 
-  componentWillMount(){
-    let { location, session } = this.props;
-    let fromPath = location.state && location.state.from.pathname;
-    if(!session){
-      fromPath && console.log(`Redirected page from ${fromPath} to Login`);
+  componentWillMount() {
+    const { location, session } = this.props;
+    const fromPath = location.state && location.state.from.pathname;
+    if (!session && fromPath) {
+      console.warn(`Redirected page from ${fromPath} to Login`);
     }
   }
 
@@ -77,18 +72,21 @@ class Login extends React.Component {
     this.setState({ tabIndex });
   };
 
-  render(){
-    let { location, intl, postSessions, postUsers, postRecoveryTokens, session, rememberUser, classes } = this.props;
+  render() {
+    const {
+      location, intl, postSessions, postUsers, session, rememberUser, classes,
+    } = this.props;
     let fromPath = location.state && location.state.from.pathname;
     const wrongUsernameOrPassword = formatMessage(intl, messages.wrongUsernameOrPassword, {});
     const usernameIsTaken = formatMessage(intl, messages.usernameIsTaken, {});
 
-    if(session){
+    if (session) {
       fromPath = fromPath || '/';
       return (
         <Redirect to={{
           pathname: fromPath,
-        }}/>
+        }}
+        />
       );
     }
 
@@ -102,7 +100,7 @@ class Login extends React.Component {
         username,
         password,
       })
-      .catch(action => {
+      .catch((action) => {
         this.setState({
           loginError: action.data.error,
         });
@@ -119,7 +117,7 @@ class Login extends React.Component {
           password,
         }],
       })
-      .catch(action => {
+      .catch((action) => {
         this.setState({
           postUsersError: action.data.error,
         });
@@ -128,17 +126,19 @@ class Login extends React.Component {
 
     let title = null;
     switch (this.state.tabIndex) {
-      case 0:
-        title = <FormattedMessage {...messages.login} />;
-        break;
+    case 0:
+      title = <FormattedMessage {...messages.login} />;
+      break;
 
-      case 1:
-        title = <FormattedMessage {...messages.createAccount} />;
-        break;
+    case 1:
+      title = <FormattedMessage {...messages.createAccount} />;
+      break;
 
-      case 2:
-        title = <FormattedMessage {...messages.forgotPasswordQuestion} />;
-        break;
+    case 2:
+      title = <FormattedMessage {...messages.forgotPasswordQuestion} />;
+      break;
+    default:
+      break;
     }
 
     return (
@@ -147,9 +147,11 @@ class Login extends React.Component {
         <Paper className={classes.paper} elevation={4}>
           <AppBar position="static">
             <Toolbar>
-              {this.state.tabIndex !== 0 && <IconButton className={classes.menuButton} color="inherit" aria-label="Back" onClick={() => { this.swipeTo(0); }}>
-                <ArrowBack/>
-              </IconButton>}
+              {this.state.tabIndex !== 0 && (
+                <IconButton className={classes.menuButton} color="inherit" aria-label="Back" onClick={() => { this.swipeTo(0); }}>
+                  <ArrowBack />
+                </IconButton>
+              )}
               <Typography variant="title" color="inherit" className={classes.flex1}>
                 {title}
               </Typography>
@@ -158,12 +160,12 @@ class Login extends React.Component {
           </AppBar>
           <SwipeableViews
             index={this.state.tabIndex}
-            {...{}/*onChangeIndex={this.handleChangeIndex}*/}
-            disabled={true}
+            {...{}/* onChangeIndex={this.handleChangeIndex} */}
+            disabled
           >
             <LoginForm
               username={this.state.username}
-              onUsernameChange={(username) => this.setState({
+              onUsernameChange={username => this.setState({
                 username,
               })}
               usernameError={this.state.tabIndex === 0 && !!this.state.loginError}
@@ -175,16 +177,16 @@ class Login extends React.Component {
             />
             <RegistrationForm
               username={this.state.username}
-              onUsernameChange={(username) => this.setState({
+              onUsernameChange={username => this.setState({
                 username,
               })}
               usernameError={this.state.tabIndex === 1 && this.state.postUsersError && usernameIsTaken}
               onSubmit={register}
-              comfirmUserAgreement={true}
+              comfirmUserAgreement
             />
             <RecoveryForm
               username={this.state.username}
-              onUsernameChange={(username) => this.setState({
+              onUsernameChange={username => this.setState({
                 username,
               })}
               usernameError={this.state.tabIndex === 2 && this.state.postUsersError && usernameIsTaken}

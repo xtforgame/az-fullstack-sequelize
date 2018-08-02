@@ -1,10 +1,12 @@
-/* eslint-disable flowtype/require-valid-file-annotation */
+/* eslint-disable flowtype/require-valid-file-annotation, no-underscore-dangle */
 
 import { create } from 'jss';
 import { SheetsRegistry } from 'react-jss';
 import preset from 'jss-preset-default';
-import { createMuiTheme, createTypography } from '@material-ui/core/styles';
-import { purple, green, orange, red, blue, black, pink, grey, common } from '@material-ui/core/colors';
+import { createMuiTheme } from '@material-ui/core/styles';
+import {
+  /* purple, */green, orange, red, blue, black, pink, grey, common,
+} from '@material-ui/core/colors';
 import createGenerateClassName from '@material-ui/core/styles/createGenerateClassName';
 
 // const theme = createMuiTheme({
@@ -15,20 +17,20 @@ import createGenerateClassName from '@material-ui/core/styles/createGenerateClas
 // });
 
 export function getTheme(theme) {
-  let paletteType = theme.paletteType;
+  let { paletteType } = theme;
   let primary = blue;
   let secondary = pink;
   let background = {
     paper: common.white,
     default: grey[50],
   };
-  if(theme.paletteType === 'dark'){
+  if (theme.paletteType === 'dark') {
     primary = black;
     background = {
       paper: grey[800],
       default: '#303030',
     };
-  }else if(theme.paletteType === 'vaxal'){
+  } else if (theme.paletteType === 'vaxal') {
     primary = {
       light: '#765cb7',
       main: '#463287',
@@ -51,7 +53,7 @@ export function getTheme(theme) {
   return createMuiTheme({
     direction: theme.direction,
     typography: {
-      fontFamily: `"Noto Sans TC", "Noto Sans SC", "Noto Sans JP", "Roboto", sans-serif`,
+      fontFamily: '"Noto Sans TC", "Noto Sans SC", "Noto Sans JP", "Roboto", sans-serif',
     },
     palette: {
       primary,
@@ -84,7 +86,7 @@ export const defaultUiTheme = {
   // paletteType: 'light',
   paletteType: 'dark',
   // paletteType: 'vaxal',
-}
+};
 
 // Configure JSS
 const jss = create(preset());

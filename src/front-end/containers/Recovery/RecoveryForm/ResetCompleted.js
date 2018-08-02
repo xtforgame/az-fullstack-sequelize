@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
@@ -6,32 +7,14 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { FormattedMessage } from 'react-intl';
 import { messages } from '~/containers/App/translation';
 import translateMessages from '~/utils/translateMessages';
 import {
   FormSpace,
   FormContent,
-  FormPhoneOrEmailInput,
-  FormCheckbox,
-  FormPasswordInput,
 } from '~/components/SignInSignUp';
 
-import FormInputLinker, {
-  FromTextInputGetProps,
-  FromPasswordVisibilityGetProps,
-  assert,
-} from '~/utils/FormInputLinker';
-import {
-  isValidPassword,
-} from 'common/utils/validators';
-
-import modelMap from '~/containers/App/modelMap';
-const {
-  postRecoveryTokens,
-} = modelMap.waitableActions;
-
-let styles = theme => ({
+const styles = theme => ({
   flexContainer: {
     display: 'flex',
   },
@@ -47,12 +30,8 @@ class ResetPassword extends React.Component {
     onBackToLogin: PropTypes.func.isRequired,
   };
 
-  constructor(props){
-    super(props);
-  }
-
-  render(){
-    let {
+  render() {
+    const {
       intl,
       classes,
       onBackToLogin,

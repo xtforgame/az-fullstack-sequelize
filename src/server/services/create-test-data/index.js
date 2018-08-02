@@ -3,18 +3,21 @@ import createPgTestData from './create-pg-test-data';
 
 export default class CreateTestData extends ServiceBase {
   static $name = 'createTestData';
+
   static $type = 'service';
+
   static $inject = ['resourceManager', 'envCfg'];
+
   static $funcDeps = {
     start: ['sequelizeDb', 'resourceManager'],
   };
 
-  constructor(resourceManager, envCfg){
+  constructor(resourceManager, envCfg) {
     super();
     this.resourceManager = resourceManager.resourceManager;
   }
 
-  onStart(){
+  onStart() {
     return createPgTestData(this.resourceManager, false);
   }
 }

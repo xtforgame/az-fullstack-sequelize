@@ -9,7 +9,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import DraftsIcon from '@material-ui/icons/Drafts';
-import StarIcon from '@material-ui/icons/Star';
+// import StarIcon from '@material-ui/icons/Star';
 import SendIcon from '@material-ui/icons/Send';
 import MailIcon from '@material-ui/icons/Mail';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -17,12 +17,21 @@ import ReportIcon from '@material-ui/icons/Report';
 import Icon from '@material-ui/core/Icon';
 
 export const getMailFolderList = (closeDrawer, onClick01, onClick02, onClick03) => {
-  let closeWrapper = (func) => (e) => {
-    closeDrawer && closeDrawer();
-    func && func(e);
-  }
+  const closeWrapper = func => (e) => {
+    if (closeDrawer) {
+      closeDrawer();
+    }
+    if (func) {
+      func(e);
+    }
+  };
   return (
-    <List subheader={<ListSubheader>Mail Folder List</ListSubheader>}>
+    <List subheader={(
+      <ListSubheader>
+Mail Folder List
+      </ListSubheader>
+    )}
+    >
       <ListItem onClick={closeWrapper(onClick01)} button>
         <ListItemIcon>
           <InboxIcon />
@@ -31,12 +40,16 @@ export const getMailFolderList = (closeDrawer, onClick01, onClick02, onClick03) 
       </ListItem>
       <ListItem onClick={closeWrapper(onClick02)} button>
         <ListItemIcon>
-          <Icon className="fa fa-calculator" style={{
-            fontSize: 20,
-            padding: 2,
-            width: 20,
-            height: 20,
-          }} />{/*<StarIcon />*/}
+          <Icon
+            className="fa fa-calculator"
+            style={{
+              fontSize: 20,
+              padding: 2,
+              width: 20,
+              height: 20,
+            }}
+          />
+          {/* <StarIcon /> */}
         </ListItemIcon>
         <ListItemText primary="Starred" />
       </ListItem>
@@ -57,7 +70,12 @@ export const getMailFolderList = (closeDrawer, onClick01, onClick02, onClick03) 
 };
 
 export const getOtherMailFolderList = () => (
-  <List subheader={<ListSubheader>Other Mail Folder List</ListSubheader>}>
+  <List subheader={(
+    <ListSubheader>
+Other Mail Folder List
+    </ListSubheader>
+  )}
+  >
     <ListItem button>
       <ListItemIcon>
         <MailIcon />

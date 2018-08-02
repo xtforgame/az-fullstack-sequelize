@@ -1,14 +1,15 @@
-import ServiceBase from '../ServiceBase';
+/* eslint-disable no-console */
 import AzMailer from 'az-mail-kit';
-import fs from 'fs';
-import path from 'path';
 import appRootPath from 'app-root-path';
+import ServiceBase from '../ServiceBase';
 
 const appRoot = appRootPath.resolve('./');
 
 export default class Mailer extends ServiceBase {
   static $name = 'mailer';
+
   static $type = 'service';
+
   static $inject = [];
 
   constructor() {
@@ -17,18 +18,16 @@ export default class Mailer extends ServiceBase {
   }
 
   renderMail(templateName, ejsParams = {}, mjmlOprions = {}) {
-    return this.azMailer.renderMail(`template/${templateName}.mjml`, ejsParams/*, {
-      filePath: __dirname,
-    }*/);
+    return this.azMailer.renderMail(`template/${templateName}.mjml`, ejsParams/* , { filePath: __dirname } */);
   }
 
-  sendResetPasswordMail(target, resetLink, resetCode){
+  sendResetPasswordMail(target, resetLink, resetCode) {
     let targets = target;
-    if(Array.isArray(target)){
+    if (Array.isArray(target)) {
       targets = target.join(', ');
     }
     return this.azMailer.createTransporter('test')
-    .then(transporter => {
+    .then((transporter) => {
       const result = this.renderMail('reset-password', {
         serviceName: 'Az Service',
         resetPasswordUrl: resetLink,
@@ -42,19 +41,19 @@ export default class Mailer extends ServiceBase {
       }
 
       // setup email data with unicode symbols
-      let mailOptions = {
+      const mailOptions = {
         from: '"Az Service" <no-reply@az-authn.io', // sender address
         to: targets, // list of receivers
         subject: 'Reset your password', // Subject line
         text: `Reset link: ${resetLink}`, // plain text body
         // HTML body
-        html: result.mailHtml,// fs.readFileSync(path.join(__dirname, 'assets/template.html'), 'utf8'),
+        html: result.mailHtml, // fs.readFileSync(path.join(__dirname, 'assets/template.html'), 'utf8'),
       };
 
       // send mail with defined transport object
       return transporter.sendMail(mailOptions);
     })
-    .then(info => {
+    .then((info) => {
       console.log('Message sent: %s', info.messageId);
       // Preview only available when sending through an Ethereal account
       console.log('Preview URL: %s', this.azMailer.nodemailer.getTestMessageUrl(info));

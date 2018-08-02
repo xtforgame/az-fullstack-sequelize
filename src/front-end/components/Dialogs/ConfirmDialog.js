@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types, react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
@@ -29,7 +30,7 @@ class ConfirmDialog extends React.Component {
     onClose: PropTypes.func.isRequired,
   };
 
-  handleClose = (result) => () => {
+  handleClose = result => () => {
     this.props.onClose(result);
   };
 
@@ -60,29 +61,39 @@ class ConfirmDialog extends React.Component {
         aria-labelledby="form-dialog-title"
         {...dialogProps}
       >
-        {fullScreen && <AppBar className={classes.appBar}>
-          <Toolbar>
-            <IconButton color="inherit" className={classes.menuButton} onClick={this.handleClose(false)} aria-label="Close">
-              <CloseIcon />
-            </IconButton>
-            <Typography variant="title" color="inherit" className={classes.flex1}>
-              {title}
-            </Typography>
-            {/* <Button color="inherit" onClick={onClose}>
+        {fullScreen && (
+          <AppBar className={classes.appBar}>
+            <Toolbar>
+              <IconButton color="inherit" className={classes.menuButton} onClick={this.handleClose(false)} aria-label="Close">
+                <CloseIcon />
+              </IconButton>
+              <Typography variant="title" color="inherit" className={classes.flex1}>
+                {title}
+              </Typography>
+              {/* <Button color="inherit" onClick={onClose}>
               save
             </Button> */}
-          </Toolbar>
-        </AppBar>
+            </Toolbar>
+          </AppBar>
+        )
         }
-        {!fullScreen && <DialogTitle id="form-dialog-title">{title}</DialogTitle>}
-        {!!(contents || contentText) && <DialogContent>
-          {contents}
-          {!contents &&
-            <DialogContentText>
-              {contentText}
-            </DialogContentText>
-          }
-        </DialogContent>}
+        {!fullScreen && (
+          <DialogTitle id="form-dialog-title">
+            {title}
+          </DialogTitle>
+        )}
+        {!!(contents || contentText) && (
+          <DialogContent>
+            {contents}
+            {!contents
+            && (
+              <DialogContentText>
+                {contentText}
+              </DialogContentText>
+            )
+            }
+          </DialogContent>
+        )}
         {children}
         <DialogActions>
           <NoButton onClick={this.handleClose(false)} color="primary">

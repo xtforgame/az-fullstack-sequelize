@@ -1,8 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import purple from '@material-ui/core/colors/purple';
 import createCommonStyles from '~/styles/common';
 
 const styles = theme => ({
@@ -15,7 +13,7 @@ const styles = theme => ({
     height: '100%',
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
 
-    //verticalFlexContainer
+    // verticalFlexContainer
     flexDirection: 'column',
     display: 'flex',
     // height: '100%',
@@ -27,7 +25,7 @@ const styles = theme => ({
     width: '100%',
     height: '100%',
 
-    //verticalFlexContainer
+    // verticalFlexContainer
     flexDirection: 'column',
     display: 'flex',
     // height: '100%',
@@ -38,11 +36,7 @@ const styles = theme => ({
 });
 
 class ProgressWithMask extends React.Component {
-  static propTypes = {
-    classes: PropTypes.object.isRequired,
-  };
-
-  constructor(...args){
+  constructor(...args) {
     super(...args);
     this.state = {
       delayTimeout: null,
@@ -53,8 +47,8 @@ class ProgressWithMask extends React.Component {
   componentWillMount() {
     const { delay } = this.props;
 
-    if(delay){
-      let delayTimeout = setTimeout(() => {
+    if (delay) {
+      const delayTimeout = setTimeout(() => {
         this.setState({
           delayTimeout: null,
           show: true,
@@ -64,7 +58,7 @@ class ProgressWithMask extends React.Component {
         delayTimeout,
         show: false,
       });
-    }else{
+    } else {
       this.setState({
         delayTimeout: null,
         show: true,
@@ -73,12 +67,12 @@ class ProgressWithMask extends React.Component {
   }
 
   componentWillUnmount() {
-    if(this.state.delayTimeout){
+    if (this.state.delayTimeout) {
       clearTimeout(this.state.delayTimeout);
     }
   }
 
-  render(){
+  render() {
     const { classes } = this.props;
     const { show } = this.state;
 

@@ -1,10 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import SearchIcon from '@material-ui/icons/Search'
+import SearchIcon from '@material-ui/icons/Search';
 import MenuItem from '@material-ui/core/MenuItem';
 import TableAppBar from '~/components/Tables/TableAppBar';
 import EnhancedTable from '~/components/Tables/EnhancedTable';
@@ -30,7 +29,9 @@ const styles = theme => ({
 });
 
 function createData(id, name, calories, fat, carbs, protein) {
-  return { id, name, calories, fat, carbs, protein, expanded: false };
+  return {
+    id, name, calories, fat, carbs, protein, expanded: false,
+  };
 }
 
 const createList = () => [
@@ -52,19 +53,18 @@ const createList = () => [
 const rows = createList();
 
 class SubContent03 extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
-  getColumnData(){
-    const {
-      classes,
-    } = this.props;
+  getColumnData() {
     return [
-      { id: 'name', numeric: false, padding: 'none', label: 'Dessert (100g serving)' },
+      {
+        id: 'name', numeric: false, padding: 'none', label: 'Dessert (100g serving)',
+      },
       { id: 'calories', numeric: true, label: 'Calories' },
       { id: 'fat', numeric: true, label: 'Fat (g)' },
       { id: 'carbs', numeric: true, label: 'Carbs (g)' },
       { id: 'protein', numeric: true, label: 'Protein (g)' },
     ];
   }
-  
+
   render() {
     const {
       classes,
@@ -88,20 +88,20 @@ class SubContent03 extends React.PureComponent { // eslint-disable-line react/pr
         </TableAppBar>
         <EnhancedTable
           withDetail
-          getActionMenuItems={(closeMenu) => ([
+          getActionMenuItems={closeMenu => ([
             <MenuItem
-              key={'edit'} 
+              key="edit"
               onClick={() => {
-                console.log('Edit');
+                // console.log('Edit');
                 closeMenu();
               }}
             >
               Edit
             </MenuItem>,
             <MenuItem
-              key={'delete'} 
+              key="delete"
               onClick={() => {
-                console.log('Delete');
+                // console.log('Delete');
                 closeMenu();
               }}
             >
@@ -112,18 +112,16 @@ class SubContent03 extends React.PureComponent { // eslint-disable-line react/pr
           columns={this.getColumnData()}
           rows={rows}
           renderRowDetail={
-            (row, { columns }) => <Paper className={classes.paper}>
-              <SimpleTabs row={row} columns={columns} />
-            </Paper>
+            (row, { columns }) => (
+              <Paper className={classes.paper}>
+                <SimpleTabs row={row} columns={columns} />
+              </Paper>
+            )
           }
         />
       </Paper>
     );
   }
 }
-
-SubContent03.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 export default withStyles(styles)(SubContent03);

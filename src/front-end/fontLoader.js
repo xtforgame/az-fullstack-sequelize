@@ -1,24 +1,25 @@
 import FontFaceObserver from 'fontfaceobserver';
-import {toSeqPromise} from 'common/utils';
+import { toSeqPromise } from 'common/utils';
 
-let loadMin = () => toSeqPromise([
+
+const loadMin = () => toSeqPromise([
   ['FontAwesome', undefined],
   ['Noto Sans TC', 400],
   ['Noto Sans TC', 500],
   ['Noto Sans TC', 700],
 ], (_, value) => {
-  let observer = new FontFaceObserver(value[0], {
+  const observer = new FontFaceObserver(value[0], {
     weight: value[1],
   });
   return observer.load()
-  .then(function () {
+  .then(() => {
     // console.log(`${value[0]}:${value[1]} is available`);
-  }, function () {
-    console.log(`${value[0]}:${value[1]} is not available`);
-  })
+  }, () => {
+    console.warn(`${value[0]}:${value[1]} is not available`);
+  });
 });
 
-let loadAll = () => toSeqPromise([
+const loadAll = () => toSeqPromise([
   ['Noto Sans SC', 400],
   ['Noto Sans SC', 500],
   ['Noto Sans SC', 700],
@@ -29,19 +30,19 @@ let loadAll = () => toSeqPromise([
   ['Roboto', 500],
   ['Roboto', 700],
 ], (_, value) => {
-  let observer = new FontFaceObserver(value[0], {
+  const observer = new FontFaceObserver(value[0], {
     weight: value[1],
   });
   return observer.load()
-  .then(function () {
+  .then(() => {
     // console.log(`${value[0]}:${value[1]} is available`);
-  }, function () {
-    console.log(`${value[0]}:${value[1]} is not available`);
-  })
+  }, () => {
+    console.warn(`${value[0]}:${value[1]} is not available`);
+  });
 });
 
 export default () => {
-  let min = loadMin();
-  let all = min.then(loadAll);
-  return {min, all};
+  const min = loadMin();
+  const all = min.then(loadAll);
+  return { min, all };
 };

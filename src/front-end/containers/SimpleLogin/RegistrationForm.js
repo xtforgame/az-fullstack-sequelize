@@ -1,15 +1,10 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import { compose } from 'recompose';
-import { injectIntl } from 'react-intl';
-import PropTypes from 'prop-types';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
-
-import { FormattedMessage } from 'react-intl';
 import { messages } from '~/containers/App/translation';
-import formatMessage from '~/utils/formatMessage';
 import translateMessages from '~/utils/translateMessages';
 import {
   FormSpace,
@@ -17,6 +12,7 @@ import {
   FormTextInput,
   FormPasswordInput,
   FormCheckbox,
+  InternalLink as Link,
 } from '~/components/SignInSignUp';
 
 import FormInputLinker, {
@@ -27,42 +23,13 @@ import FormInputLinker, {
 
 import SuccessButton from '~/components/Buttons/SuccessButton';
 
-import createCommonStyles from '~/styles/common';
 import createFormPaperStyle from '~/styles/FormPaper';
 import {
   isValidPassword,
 } from 'common/utils/validators';
 
-const LinkInternal = ({text, url, classes}) => (
-  <a
-    className={classes.link}
-    onClick={event => {
-      event.stopPropagation();
-      event.preventDefault();
-    }}
-  >{text}</a>
-);
-
-const Link = compose(
-  withStyles(createFormPaperStyle),
-)(LinkInternal);
-
-const styles = theme => ({
-  ...createFormPaperStyle(theme),
-  ...createCommonStyles(theme, 'flex'),
-});
-
 class RegistrationForm extends React.Component {
-  static getDerivedStateFromProps(props, state) {
-    if(state.fil){
-      return state.fil.derivedFromProps(props, state);
-    }
-
-    // No state update necessary
-    return null;
-  }
-
-  constructor(props){
+  constructor(props) {
     super(props);
     this.fil = new FormInputLinker(this, {
       namespace: 'register',
@@ -81,10 +48,13 @@ class RegistrationForm extends React.Component {
           phoneNumber: { key: 'phoneNumber' },
         }),
       }),
-      validate: value => assert(!!value, null, { key: 'usernameEmptyError', values: {
-        emailAddress: { key: 'emailAddress' },
-        phoneNumber: { key: 'phoneNumber' },
-      }}),
+      validate: value => assert(!!value, null, {
+        key: 'usernameEmptyError',
+        values: {
+          emailAddress: { key: 'emailAddress' },
+          phoneNumber: { key: 'phoneNumber' },
+        },
+      }),
     }, {
       name: 'password',
       exposed: {
@@ -98,9 +68,7 @@ class RegistrationForm extends React.Component {
       defaultValue: false,
       getProps: FromPasswordVisibilityGetProps,
       converter: {
-        fromView: (({ valueInState }) => {
-          return !valueInState;
-        }),
+        fromView: (({ valueInState }) => !valueInState),
       },
     });
 
@@ -108,6 +76,19 @@ class RegistrationForm extends React.Component {
       fil: this.fil,
       agreed: false,
     });
+  }
+
+  onAgreementChange = () => {
+    this.setState({ agreed: !this.state.agreed });
+  };
+
+  static getDerivedStateFromProps(props, state) {
+    if (state.fil) {
+      return state.fil.derivedFromProps(props, state);
+    }
+
+    // No state update necessary
+    return null;
   }
 
   handleSubmit = () => {
@@ -121,7 +102,7 @@ class RegistrationForm extends React.Component {
       password,
     } = this.fil.getOutputs();
 
-    if((!comfirmUserAgreement || this.state.agreed) && this.fil.validate()){
+    if ((!comfirmUserAgreement || this.state.agreed) && this.fil.validate()) {
       onSubmit(username, password);
     }
   }
@@ -133,12 +114,8 @@ class RegistrationForm extends React.Component {
     }
   };
 
-  onAgreementChange = () => {
-    this.setState({ agreed: !this.state.agreed });
-  };
-
-  render(){
-    let {
+  render() {
+    const {
       intl,
       comfirmUserAgreement = false,
       classes,
@@ -162,28 +139,22 @@ class RegistrationForm extends React.Component {
           privacyPolicy: (<Link key="privacyPolicy" text={translated.privacyPolicy} />),
         }}
       >
-        {(...parts) => {
-          return (
-            <Typography
-              variant="body1"
-              className={classes.textContainer}
-              onClick={event => {
-                event.stopPropagation();
-                event.preventDefault();
-              }}
-              onMouseDown={event => {
-                event.stopPropagation();
-                event.preventDefault();
-              }}
-              onClick={event => {
-                event.stopPropagation();
-                event.preventDefault();
-              }}
-            >
-              {parts}
-            </Typography>
-          );
-        }}
+        {(...parts) => (
+          <Typography
+            variant="body1"
+            className={classes.textContainer}
+            onClick={(event) => {
+              event.stopPropagation();
+              event.preventDefault();
+            }}
+            onMouseDown={(event) => {
+              event.stopPropagation();
+              event.preventDefault();
+            }}
+          >
+            {parts}
+          </Typography>
+        )}
       </FormattedMessage>
     );
 
@@ -208,14 +179,16 @@ class RegistrationForm extends React.Component {
           />
           <FormSpace variant="content2" />
           {
-            !!comfirmUserAgreement && (<FormCheckbox
-              dense="true"
-              color="primary"
-              checked={this.state.agreed}
-              onChange={this.onAgreementChange}
-              label={userAgreementLable}
-              onKeyPress={this.handleEnterForTextField}
-            />)
+            !!comfirmUserAgreement && (
+              <FormCheckbox
+                dense="true"
+                color="primary"
+                checked={this.state.agreed}
+                onChange={this.onAgreementChange}
+                label={userAgreementLable}
+                onKeyPress={this.handleEnterForTextField}
+              />
+            )
           }
           <FormSpace variant="content2" />
           {
@@ -223,7 +196,7 @@ class RegistrationForm extends React.Component {
           }
           <SuccessButton
             variant="raised"
-            fullWidth={true}
+            fullWidth
             color="primary"
             disabled={comfirmUserAgreement && !this.state.agreed}
             className={classes.loginBtn}

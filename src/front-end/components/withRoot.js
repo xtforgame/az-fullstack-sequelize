@@ -1,4 +1,4 @@
-/* eslint-disable flowtype/require-valid-file-annotation */
+/* eslint-disable flowtype/require-valid-file-annotation, no-underscore-dangle */
 
 import React, { Component } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -20,33 +20,10 @@ if (process.browser && !global.__INSERTION_POINT__) {
 
 export default function withRoot(BaseComponent) {
   class WithRoot extends Component {
-    static getDerivedStateFromProps(props, prevState) {
-      if (typeof prevState.pageContext === 'undefined') {
-        return {
-          prevProps: props,
-          pageContext: props.pageContext || getPageContext(props.uiTheme),
-        };
-      }
-  
-      const { prevProps } = prevState;
-
-      if (
-        props.uiTheme.paletteType !== prevProps.uiTheme.paletteType ||
-        props.uiTheme.direction !== prevProps.uiTheme.direction
-      ) {
-        return {
-          prevProps: props,
-          pageContext: updatePageContext(props.uiTheme),
-        };
-      }
-  
-      return null;
-    }
-
-    constructor(...args){
+    constructor(...args) {
       super(...args);
       this.state = {
-        prevProps:{
+        prevProps: {
           uiTheme: {
             ...this.props.uiTheme,
           },
@@ -60,6 +37,29 @@ export default function withRoot(BaseComponent) {
       if (jssStyles && jssStyles.parentNode) {
         jssStyles.parentNode.removeChild(jssStyles);
       }
+    }
+
+    static getDerivedStateFromProps(props, prevState) {
+      if (typeof prevState.pageContext === 'undefined') {
+        return {
+          prevProps: props,
+          pageContext: props.pageContext || getPageContext(props.uiTheme),
+        };
+      }
+
+      const { prevProps } = prevState;
+
+      if (
+        props.uiTheme.paletteType !== prevProps.uiTheme.paletteType
+        || props.uiTheme.direction !== prevProps.uiTheme.direction
+      ) {
+        return {
+          prevProps: props,
+          pageContext: updatePageContext(props.uiTheme),
+        };
+      }
+
+      return null;
     }
 
     render() {

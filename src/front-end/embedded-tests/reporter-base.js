@@ -9,12 +9,12 @@ export class ReporterBase {
     this.done = this.done.bind(this);
   }
 
-  run(This, runner){ // eslint-disable-line class-methods-use-this, no-unused-vars
+  run(This, runner) { // eslint-disable-line class-methods-use-this, no-unused-vars
     This.done('done');
   }
 
-  done(result){
-    if(this.resolve){
+  done(result) {
+    if (this.resolve) {
       this.resolve(result);
       this.resolve = null;
       this.reject = null;
@@ -22,15 +22,15 @@ export class ReporterBase {
     }
   }
 
-  get(){
-    let This = this;
-    let reporter = this.run.bind(this);
-    return {reporter: (runner) => reporter(This, runner), promise: this.promise};
+  get() {
+    const This = this;
+    const reporter = this.run.bind(this);
+    return { reporter: runner => reporter(This, runner), promise: this.promise };
   }
 }
 
 export class ReporterFactory {
-  static create(Reporter, config){
+  static create(Reporter, config) {
     return new Reporter(config);
   }
 }

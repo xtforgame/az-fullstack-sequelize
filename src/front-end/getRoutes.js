@@ -24,31 +24,31 @@ import Recovery from '~/containers/Recovery';
 
 import getListHierarchy from '~/containers/MainFrame/getListHierarchy';
 
-let testCases = [testCase00, testCase01];
-let getTestCaseRoutes = () => testCases.map((testCase, i) => {
-  i = ('0'.repeat(3) + i).slice(-3);
+const testCases = [testCase00, testCase01];
+const getTestCaseRoutes = () => testCases.map((testCase, i) => {
+  const ii = ('0'.repeat(3) + i).slice(-3);
   return {
-    name: `case${i}`,
-    path: `/test/case${i}`,
-    component: (props) => (<TestContent testCase={testCase}></TestContent>),
+    name: `case${ii}`,
+    path: `/test/case${ii}`,
+    component: props => (<TestContent testCase={testCase} />),
     navbar: {
-      title: `Case ${i}`,
+      title: `Case ${ii}`,
     },
-  }
+  };
 });
 
 const defaultName = 'default';
 
 const globalRouteConfig = {
   name: 'root',
-  component: props => props.routeView, // or props => props.routeViews.default
+  component: ({ routeView }) => routeView, // or props => props.routeViews.default
   routeViews: [{
     switch: true,
     name: 'default',
     routes: [{
       name: 'redirect',
       path: '/',
-      component: () => <Redirect to={{ pathname: '/home' }}/>,
+      component: () => <Redirect to={{ pathname: '/home' }} />,
       exact: true,
     },
     {
@@ -72,7 +72,7 @@ const globalRouteConfig = {
         routes: [{
           name: 'home',
           path: '/home',
-          component: Home, 
+          component: Home,
           // navbar: {
           //   title: 'Home',
           //   level: 0,
@@ -83,7 +83,7 @@ const globalRouteConfig = {
             routes: [{
               name: 'home-index',
               path: '/home',
-              component: () => <Redirect to={{ pathname: '/home/sub01' }}/>,
+              component: () => <Redirect to={{ pathname: '/home/sub01' }} />,
               exact: true,
             },
             {
@@ -123,19 +123,19 @@ const globalRouteConfig = {
         {
           name: 'idle',
           path: '/idle',
-          component: Idle, 
+          component: Idle,
           navbar: true,
         },
         {
           name: 'test',
           path: '/test',
-          component: Test, 
+          component: Test,
           navbar: true,
           routeViews: [{
             routes: [{
               name: 'test-index',
               path: '/test',
-              component: () => <Redirect to={{ pathname: '/test/case001' }}/>,
+              component: () => <Redirect to={{ pathname: '/test/case001' }} />,
               exact: true,
             },
             ...getTestCaseRoutes(),
@@ -197,4 +197,3 @@ function createRoute(routeConfig) {
 }
 
 export default () => createRoute(globalRouteConfig);
-

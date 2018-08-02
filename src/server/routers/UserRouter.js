@@ -1,10 +1,14 @@
-import RouterBase from '../core/router-base';
+// import {
+//   RestfulResponse,
+//   RestfulError,
+// } from 'az-restful-helpers';
 import {
   RestfulResponse,
   RestfulError,
 } from 'az-restful-helpers';
 import drawIcon from '~/utils/drawIcon';
 import { isValidEmail } from 'common/utils/validators';
+import RouterBase from '../core/router-base';
 
 export default class UserRouter extends RouterBase {
   findUser(userId) {
@@ -22,11 +26,11 @@ export default class UserRouter extends RouterBase {
     router.get('/api/users/:userId', (ctx, next) => {
       // console.log('ctx.local.userSession :', ctx.local.userSession);
 
-      if(!ctx.local.userSession || !ctx.local.userSession.user_id){
+      if (!ctx.local.userSession || !ctx.local.userSession.user_id) {
         return RestfulError.koaThrowWith(ctx, 404, 'User not found');
       }
       return this.findUser(ctx.local.userSession.user_id)
-      .then(result => {
+      .then((result) => {
         ctx.body = result;
       });
     });
@@ -47,30 +51,28 @@ export default class UserRouter extends RouterBase {
         return RestfulError.koaThrowWith(ctx, 400, 'Invalid username');
       }
 
-      let newUser = null;
       let accountLinkDataArray = null;
 
       return Promise.all(
         alParamsArray.map(alParams => this.authKit.authProviderManager.getAuthProvider(alParams.auth_type)
           .then(provider => provider.getAlParamsForCreate(alParams))),
-        )
+      )
         .then((paramsArrayForCreate) => {
           accountLinkDataArray = paramsArrayForCreate;
           return this.resourceManager.db.transaction()
-          .then(t =>
-            User.create({
-              name: jsonBody.name,
-              picture: `data:png;base64,${drawIcon(jsonBody.name).toString('base64')}`,
-              data: jsonBody.data || {
-                bio: `I'm ${jsonBody.name}`,
-                email: null,
-              },
-              privilege: 'user',
-              accountLinks: accountLinkDataArray,
-            }, {
-              transaction: t,
-            })
-            .then(user => {
+          .then(t => User.create({
+            name: jsonBody.name,
+            picture: `data:png;base64,${drawIcon(jsonBody.name).toString('base64')}`,
+            data: jsonBody.data || {
+              bio: `I'm ${jsonBody.name}`,
+              email: null,
+            },
+            privilege: 'user',
+            accountLinks: accountLinkDataArray,
+          }, {
+            transaction: t,
+          })
+            .then((user) => {
               t.commit();
               const returnData = user.get();
               delete returnData.updated_at;
@@ -79,27 +81,25 @@ export default class UserRouter extends RouterBase {
               delete returnData.accountLinks;
               return RestfulResponse.koaResponseWith(ctx, 200, returnData);
             })
-            .catch(error =>
-              t.rollback()
+            .catch(error => t.rollback()
                 .then(() => {
                   if (error.name === 'SequelizeUniqueConstraintError') {
                     return RestfulError.koaThrowWith(ctx, 400, 'Account id has already been taken.');
                   }
                   // console.log('error :', error);
                   return RestfulError.koaThrowWith(ctx, 500, 'Failed to create user.');
-                }))
-          );
+                })));
         });
     });
 
     router.patch('/api/users/:userId', (ctx, next) => {
-      if(!ctx.local.userSession || !ctx.local.userSession.user_id){
+      if (!ctx.local.userSession || !ctx.local.userSession.user_id) {
         return RestfulError.koaThrowWith(ctx, 404, 'User not found');
       }
       const User = this.resourceManager.getSqlzModel('user');
       return User.update(ctx.request.body, {
         where: {
-          id: ctx.local.userSession.user_id, 
+          id: ctx.local.userSession.user_id,
         },
         returning: true,
       })
@@ -109,19 +109,19 @@ export default class UserRouter extends RouterBase {
     });
 
     router.get('/api/users', this.authKit.koaHelper.getIdentity, (ctx) => {
-      if(!ctx.local.userSession
+      if (!ctx.local.userSession
         || !ctx.local.userSession.user_id
         || ctx.local.userSession.privilege !== 'admin'
-      ){
+      ) {
         return RestfulError.koaThrowWith(ctx, 403, 'Forbidden');
       }
 
       const User = this.resourceManager.getSqlzModel('user');
       return User.findAll({
-        attributes: { exclude: ['picture', /*'created_at',*/ 'updated_at', 'deleted_at'] },
+        attributes: { exclude: ['picture', /* 'created_at', */ 'updated_at', 'deleted_at'] },
         // attributes: ['id', , 'name', 'labels', /*'picture',*/ 'data'],
       })
-      .then(users => {
+      .then((users) => {
         ctx.body = users;
       });
     });

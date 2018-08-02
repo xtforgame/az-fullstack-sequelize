@@ -1,3 +1,4 @@
+/* eslint-disable react/no-multi-comp, react/prop-types, react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -30,15 +31,17 @@ export class SegmentContainer extends React.Component {
   }
 
   render() {
-    const { percent, animation, absolute, className, height, children } = this.props;
+    const {
+      percent, animation, absolute, className, height, children,
+    } = this.props;
     const containerStyle = {
-      width: percent + '%',
+      width: `${percent}%`,
       transition: `width ${animation}ms`,
       position: 'relative',
       minHeight: height,
     };
 
-    if(absolute){
+    if (absolute) {
       containerStyle.position = 'absolute';
       containerStyle.bottom = 0;
     }
@@ -70,7 +73,9 @@ export class Segment extends React.Component {
   }
 
   render() {
-    const { color, percent, animation, absolute, className, height, children } = this.props;
+    const {
+      color, percent, animation, absolute, className, height, children,
+    } = this.props;
     const barStyle = {
       width: '100%',
       backgroundColor: color,
@@ -87,11 +92,11 @@ export class Segment extends React.Component {
         className={className}
         height={height}
       >
-        <div style={barStyle}/>
+        <div style={barStyle} />
         <div style={flexContainer}>
-          <div style={flex1}/>
+          <div style={flex1} />
           {children}
-          <div style={flex1}/>
+          <div style={flex1} />
         </div>
       </SegmentContainer>
     );
@@ -113,9 +118,11 @@ export default class StackedProgress extends React.Component {
   }
 
   render() {
-    const { title, mainLabel, className, children, height, ...rest } = this.props;
+    const {
+      title, mainLabel, className, children, height, ...rest
+    } = this.props;
     let totalPercent = 0;
-    (children || []).map(child => {
+    (children || []).forEach((child) => {
       totalPercent += (child && child.props && child.props.percent) || 0;
     });
     return (
@@ -129,7 +136,7 @@ export default class StackedProgress extends React.Component {
             <div style={flexContainer}>
               <Segment
                 absolute
-                color={'none'}
+                color="none"
                 percent={totalPercent}
                 height={height}
               >

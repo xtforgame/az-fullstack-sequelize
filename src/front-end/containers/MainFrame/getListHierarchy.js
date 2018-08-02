@@ -3,13 +3,13 @@ import { capitalizeFirstLetter } from 'common/utils';
 let listHierarchy = null;
 
 export default (routesConfig) => {
-  if(listHierarchy){
+  if (listHierarchy) {
     return listHierarchy;
   }
 
   listHierarchy = [];
 
-  let toListDefine = (routeConfig, currentList = listHierarchy, level = 0, parents = []) => {
+  const toListDefine = (routeConfig, currentList = listHierarchy, level = 0, parents = []) => {
     let {
       routeViews,
       name,
@@ -26,7 +26,7 @@ export default (routesConfig) => {
       if (navbar === true) {
         navbar = {};
       }
-      let title = navbar.title || capitalizeFirstLetter(name);
+      const title = navbar.title || capitalizeFirstLetter(name);
       listData = {
         name,
         path,
@@ -47,15 +47,15 @@ export default (routesConfig) => {
         newList = listData.children;
       }
 
-      routeViews.map(routeView => {
-        routeView.routes.map(route => {
+      routeViews.forEach((routeView) => {
+        routeView.routes.forEach((route) => {
           toListDefine(route, newList, newLevel, newParents);
         });
       });
     }
-  }
+  };
 
   toListDefine(routesConfig);
 
   return listHierarchy;
-}
+};

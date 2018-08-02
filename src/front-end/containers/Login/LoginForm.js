@@ -1,7 +1,6 @@
 import React from 'react';
 import { compose } from 'recompose';
 import { injectIntl } from 'react-intl';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -32,16 +31,7 @@ const styles = theme => ({
 });
 
 class LoginForm extends React.Component {
-  static getDerivedStateFromProps(props, state) {
-    if(state.fil){
-      return state.fil.derivedFromProps(props, state);
-    }
-
-    // No state update necessary
-    return null;
-  }
-
-  constructor(props){
+  constructor(props) {
     super(props);
     this.fil = new FormInputLinker(this, {
       namespace: 'login',
@@ -65,10 +55,13 @@ class LoginForm extends React.Component {
           phoneNumber: { key: 'phoneNumber' },
         }),
       }),
-      validate: value => assert(value && value.type, null, { key: 'usernameEmptyError', values: {
-        emailAddress: { key: 'emailAddress' },
-        phoneNumber: { key: 'phoneNumber' },
-      }}),
+      validate: value => assert(value && value.type, null, {
+        key: 'usernameEmptyError',
+        values: {
+          emailAddress: { key: 'emailAddress' },
+          phoneNumber: { key: 'phoneNumber' },
+        },
+      }),
     }, {
       name: 'password',
       exposed: {
@@ -76,15 +69,13 @@ class LoginForm extends React.Component {
         error: 'passwordError',
       },
       getProps: FromTextInputGetProps,
-      validate: value => assert(value != null && value != '', null, { key: 'passwordEmptyError' }),
+      validate: value => assert(value != null && value !== '', null, { key: 'passwordEmptyError' }),
     }, {
       name: 'password-visibility',
       defaultValue: false,
       getProps: FromPasswordVisibilityGetProps,
       converter: {
-        fromView: (({ valueInState }) => {
-          return !valueInState;
-        }),
+        fromView: (({ valueInState }) => !valueInState),
       },
     });
 
@@ -92,6 +83,15 @@ class LoginForm extends React.Component {
       fil: this.fil,
       rememberMe: this.props.defaultRememberMe !== undefined ? this.props.defaultRememberMe : false,
     });
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if (state.fil) {
+      return state.fil.derivedFromProps(props, state);
+    }
+
+    // No state update necessary
+    return null;
   }
 
   handleSubmit = () => {
@@ -104,7 +104,7 @@ class LoginForm extends React.Component {
       password,
     } = this.fil.getOutputs();
 
-    if(this.fil.validate()){
+    if (this.fil.validate()) {
       onSubmit(username, password, this.state.rememberMe);
     }
   }
@@ -124,7 +124,7 @@ class LoginForm extends React.Component {
     this.setState({ rememberMe: checked });
   };
 
-  render(){
+  render() {
     const {
       intl,
       handleForgotPassword = () => {},
@@ -172,10 +172,11 @@ class LoginForm extends React.Component {
           <FormSpace variant="content1" />
           <Button
             variant="raised"
-            fullWidth={true}
+            fullWidth
             color="primary"
             className={classes.loginBtn}
-            onClick={this.handleSubmit}>
+            onClick={this.handleSubmit}
+          >
             {translated.login}
           </Button>
           <FormSpace variant="content1" />
@@ -192,7 +193,7 @@ class LoginForm extends React.Component {
         </FormContent>
         <Divider />
         <FormContent>
-          <Button fullWidth={true} className={classes.loginBtn} onClick={handleCreateAccount}>
+          <Button fullWidth className={classes.loginBtn} onClick={handleCreateAccount}>
             {translated.createAccount}
           </Button>
         </FormContent>
