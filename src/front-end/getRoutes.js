@@ -13,6 +13,9 @@ import SubContent04 from '~/containers/Home/SubContent04';
 import UserProfile from '~/containers/UserProfile';
 
 import Idle from '~/containers/Idle';
+import Stats from '~/containers/Idle/tabs/Stats';
+import Bots from '~/containers/Idle/tabs/Bots';
+import Schedules from '~/containers/Idle/tabs/Schedules';
 
 import Test from '~/containers/Test';
 import TestContent from '~/containers/Test/TestContent';
@@ -44,7 +47,7 @@ const globalRouteConfig = {
   component: ({ routeView }) => routeView, // or props => props.routeViews.default
   routeViews: [{
     switch: true,
-    name: 'default',
+    name: defaultName,
     routes: [{
       name: 'redirect',
       path: '/',
@@ -68,7 +71,7 @@ const globalRouteConfig = {
       component: MainFrame,
       routeViews: [{
         switch: true,
-        name: 'default',
+        name: defaultName,
         routes: [{
           name: 'home',
           path: '/home',
@@ -125,6 +128,38 @@ const globalRouteConfig = {
           path: '/idle',
           component: Idle,
           navbar: true,
+          routeViews: [{
+            routes: [{
+              name: 'idle-index',
+              path: '/idle',
+              component: () => <Redirect to={{ pathname: '/idle/stats' }} />,
+              exact: true,
+            },
+            {
+              name: 'stats',
+              path: '/idle/stats',
+              component: Stats,
+              navbar: {
+                title: 'Stats',
+              },
+            },
+            {
+              name: 'bots',
+              path: '/idle/bots',
+              component: Bots,
+              navbar: {
+                title: 'Bots',
+              },
+            },
+            {
+              name: 'schedules',
+              path: '/idle/schedules',
+              component: Schedules,
+              navbar: {
+                title: 'Schedules',
+              },
+            }],
+          }],
         },
         {
           name: 'test',

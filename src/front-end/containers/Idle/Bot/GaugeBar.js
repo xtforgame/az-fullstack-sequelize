@@ -1,7 +1,16 @@
+/* eslint-disable max-len */
 import React from 'react';
 import StackedProgress, {
   Segment,
 } from '~/components/Progress/StackedProgress';
+
+export const getTextStyle = color => ({
+
+  height: 15,
+  lineHeight: '10px',
+  color,
+  fontSize: 10,
+});
 
 export default class GaugeBar extends React.Component {
   render() {
@@ -11,22 +20,16 @@ export default class GaugeBar extends React.Component {
       textColor = 'inherit',
       labelColor = 'rgba(255, 255, 255, 0.7)',
     } = this.props;
-    const total = segments.reduce((v, segment) => v + (segment.percent || 0), 0);
-    let mainLabel = this.props.mainLabel || (
-      <span style={{ backgroundColor: labelColor }}>
-        {`${Math.round(total)}%`}
-      </span>
-    );
-    mainLabel = undefined;
+    // let total = segments.reduce((v, segment) => v + (segment.percent || 0), 0);
+    // let mainLabel = this.props.mainLabel != null ? this.props.mainLabel : <span style={{ backgroundColor: labelColor }}>{`${Math.round(total)}%`}</span>;
+    const { mainLabel } = this.props;
+
     return (
       <div style={{
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
-        height: 15,
-        lineHeight: '10px',
-        color: textColor,
-        fontSize: 10,
+        ...getTextStyle(textColor),
       }}
       >
         <div style={{
@@ -35,18 +38,24 @@ export default class GaugeBar extends React.Component {
         />
         <StackedProgress
           title={title}
-          mainLabel={mainLabel}
-          height={4}
+          mainLabel={mainLabel && (
+            <span style={{ backgroundColor: labelColor }}>
+              {mainLabel}
+            </span>
+          )}
+          barHeight={4}
+          fullHeight={10}
         >
           {segments.map(segment => (
             <Segment
               key={segment.name}
               color={segment.color}
               percent={segment.percent}
-              height={segment.height || 4}
+              barHeight={segment.height || 4}
+              fullHeight={10}
             >
               <span style={{ backgroundColor: labelColor }}>
-                {`${Math.round(segment.percent)}%`}
+                {segment.label != null ? segment.label : `${Math.round(segment.percent)}%`}
               </span>
             </Segment>
           ))}

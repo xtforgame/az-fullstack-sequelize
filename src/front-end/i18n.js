@@ -10,7 +10,7 @@ import deLocaleData from 'react-intl/locale-data/de';
 import jaLocaleData from 'react-intl/locale-data/ja';
 import zhLocaleData from 'react-intl/locale-data/zh';
 
-import { DEFAULT_LOCALE } from '~/containers/App/constants';
+import { DEFAULT_LOCALE } from '~/containers/LanguageProvider/constants';
 
 import enTranslationFromJson from './translations/en.json';
 import deTranslationFromJson from './translations/de.json';

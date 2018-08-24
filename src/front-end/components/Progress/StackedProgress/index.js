@@ -13,12 +13,11 @@ const flex1 = {
   flex: 1,
 };
 
-
 export class SegmentContainer extends React.Component {
   static propTypes = {
     percent: PropTypes.number,
     animation: PropTypes.number,
-    height: PropTypes.oneOfType([
+    fullHeight: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.number,
     ]),
@@ -27,18 +26,18 @@ export class SegmentContainer extends React.Component {
   static defaultProps = {
     percent: 0,
     animation: 200,
-    height: 10,
+    fullHeight: 10,
   }
 
   render() {
     const {
-      percent, animation, absolute, className, height, children,
+      percent, animation, absolute, className, fullHeight, children,
     } = this.props;
     const containerStyle = {
       width: `${percent}%`,
       transition: `width ${animation}ms`,
       position: 'relative',
-      minHeight: height,
+      minHeight: fullHeight,
     };
 
     if (absolute) {
@@ -59,7 +58,11 @@ export class Segment extends React.Component {
     percent: PropTypes.number,
     color: PropTypes.string,
     animation: PropTypes.number,
-    height: PropTypes.oneOfType([
+    barHeight: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]),
+    fullHeight: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.number,
     ]),
@@ -69,17 +72,18 @@ export class Segment extends React.Component {
     percent: 0,
     color: '#0BD318',
     animation: 200,
-    height: 10,
+    barHeight: 10,
+    fullHeight: 10,
   }
 
   render() {
     const {
-      color, percent, animation, absolute, className, height, children,
+      color, percent, animation, absolute, className, barHeight, fullHeight, children,
     } = this.props;
     const barStyle = {
       width: '100%',
       backgroundColor: color,
-      height,
+      height: barHeight,
       position: 'absolute',
       bottom: 0,
     };
@@ -90,10 +94,10 @@ export class Segment extends React.Component {
         animation={animation}
         absolute={absolute}
         className={className}
-        height={height}
+        fullHeight={fullHeight}
       >
-        <div style={barStyle} />
-        <div style={flexContainer}>
+        <div style={{ ...barStyle }} />
+        <div style={{ ...flexContainer, position: 'absolute', zIndex: 1 }}>
           <div style={flex1} />
           {children}
           <div style={flex1} />
@@ -119,7 +123,7 @@ export default class StackedProgress extends React.Component {
 
   render() {
     const {
-      title, mainLabel, className, children, height, ...rest
+      title, mainLabel, className, children, barHeight, fullHeight, ...rest
     } = this.props;
     let totalPercent = 0;
     (children || []).forEach((child) => {
@@ -129,7 +133,8 @@ export default class StackedProgress extends React.Component {
       <div className={className} {...rest}>
         <div style={flexContainer}>
           {title}
-          <div style={{ width: '100%' }}>
+          {title && '\u00A0'}
+          <div style={flex1}>
             <div style={flexContainer}>
               {children}
             </div>
@@ -138,7 +143,8 @@ export default class StackedProgress extends React.Component {
                 absolute
                 color="none"
                 percent={totalPercent}
-                height={height}
+                barHeight={barHeight}
+                fullHeight={fullHeight}
               >
                 {mainLabel}
               </Segment>

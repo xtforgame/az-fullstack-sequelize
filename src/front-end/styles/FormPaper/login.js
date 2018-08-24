@@ -19,6 +19,9 @@ export default theme => ({
     '&:hover': {
       textDecoration: 'underline',
     },
+    '&:focus': {
+      outline: 'none',
+    },
   },
   paper: {
     margin: 0,

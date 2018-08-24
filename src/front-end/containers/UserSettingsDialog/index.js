@@ -1,20 +1,15 @@
 import React from 'react';
 import { createStructuredSelector } from 'reselect';
 import { withStyles } from '@material-ui/core/styles';
-import Dialog from '@material-ui/core/Dialog';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/Close';
 import Switch from '@material-ui/core/Switch';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { injectIntl, FormattedMessage } from 'react-intl';
+import SimpleFullScreenDialog from '~/components/Dialogs/SimpleFullScreenDialog';
 import { messages } from '~/containers/App/translation';
 import {
   changeTheme,
@@ -22,14 +17,9 @@ import {
 import {
   makeUiThemeSelector,
 } from '~/containers/App/selectors';
-import createCommonStyles from '~/styles/common';
 
-const styles = theme => ({
-  appBar: {
-    position: 'relative',
-  },
-  ...createCommonStyles(theme, ['flex', 'appBar']),
-});
+const styles = {
+};
 
 class UserSettingsDialog extends React.Component {
   handleToggle = () => {
@@ -45,30 +35,16 @@ class UserSettingsDialog extends React.Component {
 
   render() {
     const {
-      classes,
       open,
       onClose,
       uiTheme,
     } = this.props;
     return (
-      <Dialog
-        fullScreen
+      <SimpleFullScreenDialog
+        title={<FormattedMessage {...messages.settings} />}
         open={open}
         onClose={onClose}
       >
-        <AppBar className={classes.appBar}>
-          <Toolbar>
-            <IconButton color="inherit" className={classes.menuButton} onClick={onClose} aria-label="Close">
-              <CloseIcon />
-            </IconButton>
-            <Typography variant="title" color="inherit" className={classes.flex1}>
-              <FormattedMessage {...messages.settings} />
-            </Typography>
-            {/* <Button color="inherit" onClick={onClose}>
-              save
-            </Button> */}
-          </Toolbar>
-        </AppBar>
         <List>
           <ListItem
             button
@@ -86,7 +62,7 @@ class UserSettingsDialog extends React.Component {
             </ListItemSecondaryAction>
           </ListItem>
         </List>
-      </Dialog>
+      </SimpleFullScreenDialog>
     );
   }
 }

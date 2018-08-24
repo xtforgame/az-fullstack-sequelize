@@ -30,38 +30,21 @@ const styles = {
 
 class Bot extends React.Component {
   render() {
-    const { classes, theme, width } = this.props;
+    const { theme, width } = this.props;
     let topOffset = 56;
     if (isWidthUp('sm', width)) {
       topOffset = 64;
     }
     return (
-      <div className={classes.mainContainer}>
+      <div>
         <StickyContainer>
           <Sticky topOffset={-topOffset}>
             { ({ style }) => (
-              <div
-                style={{
-                  ...style,
-                  top: topOffset,
-                  zIndex: 1101,
-                }}
-              >
-                <div
-                  style={{
-                    zIndex: 1102,
-                    position: 'relative',
-                  }}
-                >
+              <div style={{ ...style, top: topOffset, zIndex: 1101 }}>
+                <div style={{ zIndex: 1102, position: 'relative' }}>
                   <Status />
                 </div>
-                <div
-                  style={{
-                    width: '100%',
-                    height: 30,
-                    background: `linear-gradient(${fade(theme.palette.background.default, 1.0)}, ${fade(theme.palette.background.default, 0.0)})`,
-                  }}
-                />
+                <div style={{ width: '100%', height: 30, background: `linear-gradient(${fade(theme.palette.background.default, 1.0)}, ${fade(theme.palette.background.default, 0.0)})` }} />
               </div>
             ) }
           </Sticky>

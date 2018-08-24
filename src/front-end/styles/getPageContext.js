@@ -1,13 +1,12 @@
 /* eslint-disable flowtype/require-valid-file-annotation, no-underscore-dangle */
 
-import { create } from 'jss';
-import { SheetsRegistry } from 'react-jss';
-import preset from 'jss-preset-default';
-import { createMuiTheme } from '@material-ui/core/styles';
+// https://github.com/mui-org/material-ui/blob/master/docs/src/modules/styles/getPageContext.js
+import { create, SheetsRegistry } from 'jss';
+import rtl from 'jss-rtl';
+import { createMuiTheme, createGenerateClassName, jssPreset } from '@material-ui/core/styles';
 import {
   /* purple, */green, orange, red, blue, black, pink, grey, common,
 } from '@material-ui/core/colors';
-import createGenerateClassName from '@material-ui/core/styles/createGenerateClassName';
 
 // const theme = createMuiTheme({
 //   palette: {
@@ -89,9 +88,10 @@ export const defaultUiTheme = {
 };
 
 // Configure JSS
-const jss = create(preset());
-jss.options.createGenerateClassName = createGenerateClassName;
-jss.options.insertionPoint = 'insertion-point-jss';
+const jss = create({
+  insertionPoint: 'insertion-point-jss',
+  plugins: [...jssPreset().plugins, rtl()],
+});
 
 function createPageContext(uiTheme) {
   return {

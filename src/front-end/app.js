@@ -47,7 +47,7 @@ class AppWrapper extends React.Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     fontLoader().min
     .then(() => {
       this.setState({

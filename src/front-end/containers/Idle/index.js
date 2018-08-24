@@ -6,9 +6,12 @@ import { withStyles } from '@material-ui/core/styles';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import RestoreIcon from '@material-ui/icons/Restore';
-import NotificationsIcon from '@material-ui/icons/Notifications';
+import ScheduleIcon from '@material-ui/icons/Schedule';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
-import Bot from './Bot';
+import { push } from 'react-router-redux';
+import {
+  withRouter,
+} from 'react-router-dom';
 
 const styles = theme => ({
   nav: {
@@ -41,25 +44,16 @@ const styles = theme => ({
   },
 });
 
-class Home extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      tab: 'stats',
-    };
-  }
-
+class Idle extends React.Component {
   handleTabChange = (_, value) => {
     // console.log('value :', value);
-    this.setState({
-      tab: value,
-    });
+    this.props.push(value);
   };
 
-  changeTab = tabName => this.handleTabChange(undefined, `/home/${tabName}`);
+  changeTab = tabName => this.handleTabChange(undefined, `/idle/${tabName}`);
 
   render() {
-    const { routeView, classes } = this.props;
+    const { routeView, classes, location } = this.props;
 
     let newRouteView = routeView;
     if (routeView) {
@@ -74,14 +68,13 @@ class Home extends React.Component {
       <div className={classes.verticalFlexContainer}>
         <div className={classes.placeholder} />
         <div className={classes.content}>
-          <Bot />
           { newRouteView }
         </div>
         <div className={classes.spacing} />
-        <BottomNavigation value={this.state.tab} onChange={this.handleTabChange} className={classes.nav}>
-          <BottomNavigationAction label="Stats" value="stats" icon={<RestoreIcon />} />
-          <BottomNavigationAction label="Bot" value="bot" icon={<LocationOnIcon />} />
-          <BottomNavigationAction label="Notifictions" value="notifictions" icon={<NotificationsIcon />} />
+        <BottomNavigation value={location.pathname} onChange={this.handleTabChange} className={classes.nav}>
+          <BottomNavigationAction label="Stats" value="/idle/stats" icon={<RestoreIcon />} />
+          <BottomNavigationAction label="Bot" value="/idle/bots" icon={<LocationOnIcon />} />
+          <BottomNavigationAction label="Schedules" value="/idle/schedules" icon={<ScheduleIcon />} />
         </BottomNavigation>
       </div>
     );
@@ -90,11 +83,12 @@ class Home extends React.Component {
 
 export default compose(
   connect(
-    state => ({
-      greetName: state.get('global').greetName,
-    }), {
-    }
+    null,
+    {
+      push,
+    },
   ),
   injectIntl,
+  withRouter,
   withStyles(styles),
-)(Home);
+)(Idle);

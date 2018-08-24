@@ -1,5 +1,5 @@
 /* eslint-disable flowtype/require-valid-file-annotation, no-underscore-dangle */
-
+// https://github.com/mui-org/material-ui/blob/master/docs/src/modules/components/AppWrapper.js
 import React, { Component } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import JssProvider from 'react-jss/lib/JssProvider';
@@ -66,8 +66,8 @@ export default function withRoot(BaseComponent) {
       const { pageContext } = this.state;
       return (
         <JssProvider
-          registry={pageContext.sheetsRegistry}
           jss={pageContext.jss}
+          registry={pageContext.sheetsRegistry}
           generateClassName={pageContext.generateClassName}
         >
           <MuiThemeProvider theme={pageContext.theme} sheetsManager={pageContext.sheetsManager}>
