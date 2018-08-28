@@ -14,6 +14,7 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import modelMap from '~/containers/App/modelMap';
 import { messages } from '~/containers/App/translation';
+import ProfileDialog from '~/containers/UserProfile/ProfileDialog';
 import UserSettingsDialog from '~/containers/UserSettingsDialog';
 import { push } from 'react-router-redux';
 
@@ -40,26 +41,26 @@ class UserInfoDropdown extends React.Component {
     this.state = {
       anchorEl: null,
       menuOpen: false,
+      profileOpen: false,
       settingsOpen: false,
     };
   }
 
   getMenuItmes() {
-    const { classes, clearSessionCache, push } = this.props;
+    const { classes, clearSessionCache/* , push */ } = this.props;
     return [
       <MenuItem
         key="user-profile"
         className={classes.menuItem}
         onClick={(event) => {
           this.setState({
+            profileOpen: true,
             menuOpen: false,
           });
-          push('/user-profile');
+          // push('/user-profile');
         }}
       >
-        {/* <ListItemIcon
-          className={classes.icon}
-        >
+        {/* <ListItemIcon className={classes.icon}>
           <AccountBox />
         </ListItemIcon> */}
         <ListItemText
@@ -68,26 +69,26 @@ class UserInfoDropdown extends React.Component {
           primary={<FormattedMessage {...messages.profile} />}
         />
       </MenuItem>,
-      <MenuItem
-        key="user-account"
-        className={classes.menuItem}
-        onClick={(event) => {
-          this.setState({
-            menuOpen: false,
-          });
-        }}
-      >
-        {/* <ListItemIcon
-          className={classes.icon}
-        >
-          <AccountBox />
-        </ListItemIcon> */}
-        <ListItemText
-          inset
-          classes={{ primary: classes.primary }}
-          primary={<FormattedMessage {...messages.myAccount} />}
-        />
-      </MenuItem>,
+      // <MenuItem
+      //   key="user-account"
+      //   className={classes.menuItem}
+      //   onClick={(event) => {
+      //     this.setState({
+      //       menuOpen: false,
+      //     });
+      //   }}
+      // >
+      //   {/* <ListItemIcon
+      //     className={classes.icon}
+      //   >
+      //     <AccountBox />
+      //   </ListItemIcon> */}
+      //   <ListItemText
+      //     inset
+      //     classes={{ primary: classes.primary }}
+      //     primary={<FormattedMessage {...messages.myAccount} />}
+      //   />
+      // </MenuItem>,
       <MenuItem
         key="user-setting"
         className={classes.menuItem}
@@ -98,9 +99,7 @@ class UserInfoDropdown extends React.Component {
           });
         }}
       >
-        <ListItemIcon
-          className={classes.icon}
-        >
+        <ListItemIcon className={classes.icon}>
           <Settings />
         </ListItemIcon>
         <ListItemText
@@ -120,9 +119,7 @@ class UserInfoDropdown extends React.Component {
           clearSessionCache('me');
         }}
       >
-        <ListItemIcon
-          className={classes.icon}
-        >
+        <ListItemIcon className={classes.icon}>
           <ExitToApp />
         </ListItemIcon>
         <ListItemText
@@ -145,8 +142,11 @@ class UserInfoDropdown extends React.Component {
     this.setState({ menuOpen: false });
   };
 
-  handleRequestCloseSettings = () => {
-    this.setState({ settingsOpen: false });
+  handleRequestCloseDialog = () => {
+    this.setState({
+      profileOpen: false,
+      settingsOpen: false,
+    });
   };
 
   render() {
@@ -172,10 +172,18 @@ class UserInfoDropdown extends React.Component {
         >
           {this.getMenuItmes()}
         </Menu>
-        <UserSettingsDialog
-          open={this.state.settingsOpen}
-          onClose={this.handleRequestCloseSettings}
-        />
+        {this.state.profileOpen && (
+          <ProfileDialog
+            open={this.state.profileOpen}
+            onClose={this.handleRequestCloseDialog}
+          />
+        )}
+        {this.state.settingsOpen && (
+          <UserSettingsDialog
+            open={this.state.settingsOpen}
+            onClose={this.handleRequestCloseDialog}
+          />
+        )}
       </div>
     );
   }

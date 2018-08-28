@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
@@ -20,7 +21,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Centered from '~/components/Layout/Centered';
 import IconButton from '@material-ui/core/IconButton';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import deepOrange from '@material-ui/core/colors/deepOrange';
+import grey from '@material-ui/core/colors/grey';
 import SuccessButton from '~/components/Buttons/SuccessButton';
 import {
   readFile,
@@ -49,7 +50,10 @@ const styles = theme => ({
   //   paddingTop: '56.25%', // 16:9
   // },
   card: {
-    width: 345,
+    width: 300,
+    [theme.breakpoints.up('sm')]: {
+      width: 345,
+    },
   },
   media: {
     position: 'relative',
@@ -61,11 +65,8 @@ const styles = theme => ({
   },
   avatar: {
     // margin: 10,
-  },
-  orangeAvatar: {
-    // margin: 10,
     color: '#fff',
-    backgroundColor: deepOrange[500],
+    backgroundColor: grey[500],
   },
   absolute: {
     position: 'absolute',
@@ -324,104 +325,101 @@ class Profile extends React.Component {
     } = this.props;
 
     return (
-      <React.Fragment>
-        <div className={classes.space0} />
-        <Centered className={classes.mainContainer}>
-          <Card className={classes.card}>
-            <CardMedia
-              className={classes.media}
-              image={bgImg}
-              title=""
+      <Centered className={classes.mainContainer}>
+        <Card className={classes.card}>
+          <CardMedia
+            className={classes.media}
+            image={bgImg}
+            title=""
+          >
+            <div className={classes.space1} />
+            <Centered
+              className={classes.avatarContainer}
             >
-              <div className={classes.space1} />
-              <Centered
-                className={classes.avatarContainer}
+              <Avatar
+                alt="Adelle Charles"
+                {...{/* src: bgImg */}}
+                className={classNames(classes.avatar, classes.bigAvatar)}
               >
-                <Avatar
-                  alt="Adelle Charles"
-                  {...{/* src: bgImg */}}
-                  className={classNames(classes.orangeAvatar, classes.bigAvatar)}
-                >
-                  {this.state.editing && (
-                    <input
-                      accept="image/*"
-                      className={classes.input}
-                      id="icon-button-file"
-                      type="file"
-                      onChange={(e) => {
-                        if (e.target.files[0]) {
-                          readFile(e.target.files[0], {
-                            thumbnailInfo: {
-                              maxWidth: 512,
-                              maxHeight: 512,
-                            },
-                          })
-                          .then((imgInfo) => {
-                            this.setState(imgInfo);
-                            // console.log('imgInfo :', imgInfo);
-                          });
-                        }
-                      }}
-                    />
+                {this.state.editing && (
+                  <input
+                    accept="image/*"
+                    className={classes.input}
+                    id="icon-button-file"
+                    type="file"
+                    onChange={(e) => {
+                      if (e.target.files[0]) {
+                        readFile(e.target.files[0], {
+                          thumbnailInfo: {
+                            maxWidth: 512,
+                            maxHeight: 512,
+                          },
+                        })
+                        .then((imgInfo) => {
+                          this.setState(imgInfo);
+                          // console.log('imgInfo :', imgInfo);
+                        });
+                      }
+                    }}
+                  />
+                )}
+                {user.picture && (
+                  <img alt="me" src={(this.state.editing && this.state.thumbnail) || user.picture} className={classes.avatarImage} />
+                )
+                }
+                {!user.picture && (
+                  <Typography variant="display1">
+                    {(user.name || '').substr(0, 2)}
+                  </Typography>
+                )
+                }
+                {this.state.editing
+                  && (
+                    <React.Fragment>
+                      <div
+                        className={classNames(classes.absolute, classes.bigAvatar)}
+                        style={{ backgroundColor: 'rgba(0, 0, 0, 0.35)' }}
+                      />
+                      <label htmlFor="icon-button-file">
+                        <IconButton component="span" className={classNames(classes.editPhoto)}>
+                          <PhotoCamera />
+                        </IconButton>
+                      </label>
+                    </React.Fragment>
                   )}
-                  {user.picture && (
-                    <img alt="me" src={(this.state.editing && this.state.thumbnail) || user.picture} className={classes.avatarImage} />
-                  )
-                  }
-                  {!user.picture && (
-                    <Typography variant="display1">
-                      {(user.name || '').substr(0, 2)}
-                    </Typography>
-                  )
-                  }
-                  {this.state.editing
-                    && (
-                      <React.Fragment>
-                        <div
-                          className={classNames(classes.absolute, classes.bigAvatar)}
-                          style={{ backgroundColor: 'rgba(0, 0, 0, 0.35)' }}
-                        />
-                        <label htmlFor="icon-button-file">
-                          <IconButton component="span" className={classNames(classes.editPhoto)}>
-                            <PhotoCamera />
-                          </IconButton>
-                        </label>
-                      </React.Fragment>
-                    )}
-                </Avatar>
-                <Button
-                  variant="fab"
-                  color={this.state.editing ? 'default' : 'secondary'}
-                  aria-label={this.state.editing ? 'cancel' : 'edit'}
-                  className={classes.editButton}
-                  onClick={this.state.editing ? this.cancelEditing : this.startEditing}
+              </Avatar>
+              <Button
+                variant="fab"
+                color={this.state.editing ? 'default' : 'secondary'}
+                aria-label={this.state.editing ? 'cancel' : 'edit'}
+                className={classes.editButton}
+                onClick={this.state.editing ? this.cancelEditing : this.startEditing}
+              >
+                {this.state.editing ? (<CloseIcon />) : (<EditIcon />)}
+              </Button>
+            </Centered>
+          </CardMedia>
+          <div className={classes.space2} />
+          {this.state.editing
+            ? this.renderEditView()
+            : this.renderDetailView()
+          }
+          {this.state.editing
+            && (
+              <CardActions>
+                <SuccessButton
+                  size="small"
+                  variant="raised"
+                  fullWidth
+                  color="primary"
+                  onClick={this.submit}
                 >
-                  {this.state.editing ? (<CloseIcon />) : (<EditIcon />)}
-                </Button>
-              </Centered>
-            </CardMedia>
-            <div className={classes.space2} />
-            {this.state.editing
-              ? this.renderEditView()
-              : this.renderDetailView()
-            }
-            {this.state.editing
-              && (
-                <CardActions>
-                  <SuccessButton
-                    size="small"
-                    variant="raised"
-                    fullWidth
-                    color="primary"
-                    onClick={this.submit}
-                  >
-                  Save
-                  </SuccessButton>
-                </CardActions>
-              )}
-          </Card>
-        </Centered>
-      </React.Fragment>
+                Save
+                </SuccessButton>
+              </CardActions>
+            )}
+        </Card>
+      </Centered>
     );
   }
 }

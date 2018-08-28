@@ -74,7 +74,6 @@ class SubContent03 extends React.PureComponent { // eslint-disable-line react/pr
         <TableAppBar>
           <div className={classes.flex1} />
           <Chip
-            color="inherit"
             label={`Search for '${'xxxxxxxxxxxxxxxxxxxxxxxxx'}'`}
             onDelete={() => {}}
             className={classes.appBarChip}

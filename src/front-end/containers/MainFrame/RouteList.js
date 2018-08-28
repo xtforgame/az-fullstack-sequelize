@@ -96,7 +96,7 @@ class RouteList extends React.Component {
             className={classes.root}
             subheader={(
               <ListSubheader>
-Nested List Items
+                Pages
               </ListSubheader>
             )}
           >

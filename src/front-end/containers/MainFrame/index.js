@@ -3,6 +3,11 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
 import { push } from 'react-router-redux';
+import { withStyles } from '@material-ui/core/styles';
+import Drawer from '@material-ui/core/Drawer';
+
+import Divider from '@material-ui/core/Divider';
+import createCommonStyles from '~/styles/common';
 import MainAppBar from './MainAppBar';
 import {
   getMailFolderList,
@@ -10,11 +15,6 @@ import {
 } from './tileData';
 
 import RouteList from './RouteList';
-import { withStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-
-import Divider from '@material-ui/core/Divider';
-import createCommonStyles from '~/styles/common';
 
 const styles = theme => ({
   list: {
@@ -36,6 +36,10 @@ const styles = theme => ({
       // margin: 40,
       // width: 1200,
     },
+  },
+  media: {
+    position: 'relative',
+    height: 150,
   },
   ...createCommonStyles(theme, ['flex', 'appBar']),
 });

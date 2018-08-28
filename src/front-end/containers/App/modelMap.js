@@ -10,7 +10,7 @@ import WaitableActionsCreator from 'reduxtful/extensions/WaitableActionsCreator'
 
 
 import axios from 'axios';
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
 import { createSelector } from 'reselect';
 
 const responseMiddleware = (response, info, next) => {
@@ -32,7 +32,7 @@ const epics = {
 
 const modelsDefine = {
   api: {
-    url: '/api',
+    url: './api',
     names: { model: 'api', member: 'api', collection: 'apis' },
     singleton: true,
     config: {
@@ -44,7 +44,7 @@ const modelsDefine = {
     },
   },
   sessions: {
-    url: '/api/sessions',
+    url: './api/sessions',
     names: { model: 'session', member: 'session', collection: 'sessions' },
     config: {
       // actionNoRedundantBody: true,
@@ -59,7 +59,7 @@ const modelsDefine = {
     },
   },
   users: {
-    url: '/api/users',
+    url: './api/users',
     names: { model: 'user', member: 'user', collection: 'users' },
     config: {
       // actionNoRedundantBody: true,
@@ -74,7 +74,7 @@ const modelsDefine = {
     },
   },
   recoveryTokens: {
-    url: '/api/recoveryTokens',
+    url: './api/recoveryTokens',
     names: { model: 'recoveryToken', member: 'recoveryToken', collection: 'recoveryTokens' },
     config: {
       // actionNoRedundantBody: true,
@@ -89,7 +89,7 @@ const modelsDefine = {
     },
   },
   challengeRecoveryTokens: {
-    url: '/api/challengeRecoveryTokens',
+    url: './api/challengeRecoveryTokens',
     names: { model: 'challengeRecoveryToken', member: 'challengeRecoveryToken', collection: 'challengeRecoveryTokens' },
     config: {
       // actionNoRedundantBody: true,
@@ -104,7 +104,7 @@ const modelsDefine = {
     },
   },
   resetPasswordRequests: {
-    url: '/api/resetPasswordRequests',
+    url: './api/resetPasswordRequests',
     names: { model: 'resetPasswordRequest', member: 'resetPasswordRequest', collection: 'resetPasswordRequests' },
     config: {
       // actionNoRedundantBody: true,
