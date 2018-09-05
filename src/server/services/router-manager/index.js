@@ -3,6 +3,7 @@ import ServiceBase from '../ServiceBase';
 import MainRouter from '~/routers/MainRouter';
 import SessionRouter from '~/routers/SessionRouter';
 import UserRouter from '~/routers/UserRouter';
+import UserSettingRouter from '~/routers/UserSettingRouter';
 import RecoveryRouter from '~/routers/RecoveryRouter';
 
 export default class RouterManager extends ServiceBase {
@@ -25,7 +26,13 @@ export default class RouterManager extends ServiceBase {
       koaHelper: this.authKit.get('koaHelper'),
     };
 
-    this.routers = [MainRouter, SessionRouter, UserRouter, RecoveryRouter]
+    this.routers = [
+      MainRouter,
+      SessionRouter,
+      UserRouter,
+      UserSettingRouter,
+      RecoveryRouter,
+    ]
     .map(Router => new Router({
       authKit,
       resourceManager: this.resourceManager,

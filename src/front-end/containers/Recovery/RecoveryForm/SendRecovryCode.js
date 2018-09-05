@@ -188,7 +188,7 @@ class SendRecovryCode extends React.Component {
 
   handleEnterForTextField = (event) => {
     if (event.key === 'Enter') {
-      this.handleSubmit();
+      this.recover();
       event.preventDefault();
     }
   };

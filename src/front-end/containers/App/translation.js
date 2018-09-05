@@ -41,6 +41,7 @@ export const translationData = {
     privacyPolicy: 'Privacy Policy',
     wrongUsernameOrPassword: 'Wrong username or password',
     usernameIsTaken: 'That username is taken. Try another.',
+    failToGetUserData: 'Fail to get user data, please back to the login page.',
   },
   translation: {
     de: {
@@ -116,6 +117,7 @@ export const translationData = {
       privacyPolicy: 'Privacy Policy',
       wrongUsernameOrPassword: 'Wrong username or password',
       usernameIsTaken: 'That username is taken. Try another.',
+      failToGetUserData: 'Fail to get user data, please back to the login page.',
     },
     ja: {
       greetText: '{user}さん、こんにちは。',
@@ -190,6 +192,7 @@ export const translationData = {
       privacyPolicy: '隐私权政策',
       wrongUsernameOrPassword: '用户名或密码錯誤',
       usernameIsTaken: '已有人使用了该用户名，请尝试其他用户名。',
+      failToGetUserData: '无法获取用户信息，请返回重新登入。',
     },
     'zh-TW': {
       greetText: '你好，{user}。',
@@ -231,6 +234,7 @@ export const translationData = {
       privacyPolicy: '隱私權政策',
       wrongUsernameOrPassword: '使用者名稱或密碼錯誤',
       usernameIsTaken: '這個使用者名稱已有人使用，請試試其他名稱。',
+      failToGetUserData: '無法取得使用者資料，請返回重新登入。',
     },
   },
 };

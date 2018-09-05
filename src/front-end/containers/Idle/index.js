@@ -8,6 +8,7 @@ import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import RestoreIcon from '@material-ui/icons/Restore';
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
+import createCommonStyles from '~/styles/common';
 import { push } from 'react-router-redux';
 import {
   withRouter,
@@ -17,31 +18,10 @@ const styles = theme => ({
   nav: {
     width: '100%',
   },
-  placeholder: {
-    height: 0, // 40,
-  },
-  mainContainer: {
-    margin: 8,
-    [theme.breakpoints.up('sm')]: {
-      margin: 40,
-    },
-  },
-  verticalFlexContainer: {
-    width: '100%',
-    height: '100%',
-    flexDirection: 'column',
-    display: 'flex',
-  },
-  content: {
-    marginRight: 8,
-    marginLeft: 8,
-    flex: 1,
-    height: 1,
-    overflowY: 'scroll',
-  },
   spacing: {
     height: 8,
   },
+  ...createCommonStyles(theme, ['flex', 'mobile']),
 });
 
 class Idle extends React.Component {
@@ -65,9 +45,9 @@ class Idle extends React.Component {
       }));
     }
     return (
-      <div className={classes.verticalFlexContainer}>
-        <div className={classes.placeholder} />
-        <div className={classes.content}>
+      <div className={classes.mobielContainer}>
+        <div className={classes.mobileContentPlaceholder} />
+        <div className={classes.mobileContent}>
           { newRouteView }
         </div>
         <div className={classes.spacing} />

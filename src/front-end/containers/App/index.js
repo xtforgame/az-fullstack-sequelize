@@ -4,9 +4,6 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { ConnectedRouter } from 'react-router-redux';
 import { withStyles } from '@material-ui/core/styles';
-import {
-  changeTheme,
-} from './actions';
 
 import withRoot from '../../components/withRoot';
 
@@ -40,39 +37,6 @@ const AppWithTheme = compose(
 )(AppInternal);
 
 class App extends React.Component {
-  componentDidMount() {
-    // setInterval(() => {
-    //   if(this.props.uiTheme.paletteType === 'dark'){
-    //     this.toLight();
-    //   }else if(this.props.uiTheme.paletteType === 'light'){
-    //     this.toVaxal();
-    //   }else{
-    //     this.toDark();
-    //   }
-    // }, 1000);
-  }
-
-  toDark() {
-    this.props.changeTheme({
-      direction: 'ltr',
-      paletteType: 'dark',
-    });
-  }
-
-  toLight() {
-    this.props.changeTheme({
-      direction: 'ltr',
-      paletteType: 'light',
-    });
-  }
-
-  toVaxal() {
-    this.props.changeTheme({
-      direction: 'ltr',
-      paletteType: 'vaxal',
-    });
-  }
-
   render() {
     return (
       <AppWithTheme
@@ -88,7 +52,5 @@ const mapStateToProps = createStructuredSelector({
 });
 
 export default compose(
-  connect(mapStateToProps, {
-    changeTheme,
-  }),
+  connect(mapStateToProps),
 )(App);

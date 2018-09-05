@@ -82,8 +82,8 @@ export function getTheme(theme) {
 
 export const defaultUiTheme = {
   direction: 'ltr',
-  // paletteType: 'light',
-  paletteType: 'dark',
+  paletteType: 'light',
+  // paletteType: 'dark',
   // paletteType: 'vaxal',
 };
 

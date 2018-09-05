@@ -3,7 +3,9 @@ import {
   toSeqPromise,
 } from 'common/utils';
 import { sha512gen_salt, crypt } from 'az-authn-kit';
-import drawIcon from '~/utils/drawIcon';
+import {
+  createInitialUserData,
+} from '~/domain-logic';
 
 const getAccountLinks = (username, password) => ([{
   provider_id: 'basic',
@@ -44,17 +46,12 @@ function createTestUser(resourceManager) {
         const {
           username, password, name, privilege,
         } = _value;
-        return User.create({
+        return User.create(createInitialUserData({
           id: (++idCounter),
           name,
           privilege,
-          picture: `data:png;base64,${drawIcon(name).toString('base64')}`,
-          email: `${username}@foo.bar`,
-          data: {
-            bio: `I'm ${name}`,
-          },
           accountLinks: getAccountLinks(username, password || username),
-        });
+        }));
       });
     }
     return Promise.resolve(null);

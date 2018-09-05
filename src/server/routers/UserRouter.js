@@ -1,22 +1,26 @@
-// import {
-//   RestfulResponse,
-//   RestfulError,
-// } from 'az-restful-helpers';
 import {
   RestfulResponse,
   RestfulError,
 } from 'az-restful-helpers';
-import drawIcon from '~/utils/drawIcon';
+import {
+  createInitialUserData,
+} from '~/domain-logic';
 import { isValidEmail } from 'common/utils/validators';
 import RouterBase from '../core/router-base';
 
 export default class UserRouter extends RouterBase {
   findUser(userId) {
     const User = this.resourceManager.getSqlzModel('user');
+    // const UserSetting = this.resourceManager.getSqlzModel('userSetting');
+
     return User.findOne({
       where: {
         id: userId,
       },
+      // include: [{
+      //   model: UserSetting,
+      //   as: 'userSettings',
+      // }],
     });
   }
 
@@ -60,16 +64,11 @@ export default class UserRouter extends RouterBase {
         .then((paramsArrayForCreate) => {
           accountLinkDataArray = paramsArrayForCreate;
           return this.resourceManager.db.transaction()
-          .then(t => User.create({
+          .then(t => User.create(createInitialUserData({
             name: jsonBody.name,
-            picture: `data:png;base64,${drawIcon(jsonBody.name).toString('base64')}`,
-            data: jsonBody.data || {
-              bio: `I'm ${jsonBody.name}`,
-              email: null,
-            },
             privilege: 'user',
             accountLinks: accountLinkDataArray,
-          }, {
+          }), {
             transaction: t,
           })
             .then((user) => {

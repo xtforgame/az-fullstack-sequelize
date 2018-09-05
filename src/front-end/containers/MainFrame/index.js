@@ -1,14 +1,21 @@
 import React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 import { injectIntl } from 'react-intl';
 import { push } from 'react-router-redux';
 import { withStyles } from '@material-ui/core/styles';
+import Fade from '@material-ui/core/Fade';
 import Drawer from '@material-ui/core/Drawer';
 
 import Divider from '@material-ui/core/Divider';
+import ProgressWithMask from '~/components/Progress/ProgressWithMask';
+import {
+  appTempStateSelector,
+} from '~/containers/App/selectors';
 import createCommonStyles from '~/styles/common';
 import MainAppBar from './MainAppBar';
+import ErrorContent from './ErrorContent';
 import {
   getMailFolderList,
   getOtherMailFolderList,
@@ -48,13 +55,32 @@ class MainFrame extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      transitionEnd: true,
       drawerOpened: false,
     };
   }
 
-  componentWillMount() {
-    // console.log('MainFrame componentWillMount');
+  static getDerivedStateFromProps(props, prevState) {
+    let newState = null;
+    const {
+      appTempState: {
+        userLoaded,
+        loadUserError,
+      } = {},
+    } = props;
+
+    if (!userLoaded && !loadUserError) {
+      newState = {
+        transitionEnd: false,
+      };
+    }
+
+    return newState;
   }
+
+  // componentWillMount() {
+  //   console.log('MainFrame componentWillMount');
+  // }
 
   closeDrawer = () => {
     this.setState({
@@ -68,8 +94,14 @@ class MainFrame extends React.Component {
     });
   };
 
-  render() {
-    const { routeView, push, classes } = this.props;
+  renderMainContent() {
+    const {
+      routeView,
+      push,
+      classes,
+    } = this.props;
+    const { drawerOpened } = this.state;
+
     const sideList = (
       <div className={classes.list}>
         <RouteList closeDrawer={this.closeDrawer} />
@@ -81,7 +113,7 @@ class MainFrame extends React.Component {
     );
 
     return (
-      <div className={classes.verticalFlexContainerFWFH}>
+      <React.Fragment>
         <MainAppBar
           onToggleMenu={this.toggleDrawer(true)}
         />
@@ -92,7 +124,7 @@ class MainFrame extends React.Component {
           </div>
         </div>
         <Drawer
-          open={this.state.drawerOpened}
+          open={drawerOpened}
           onClose={this.toggleDrawer(false)}
           ModalProps={{
             keepMounted: true, // Better open performance on mobile.
@@ -107,14 +139,55 @@ class MainFrame extends React.Component {
             {sideList}
           </div>
         </Drawer>
+      </React.Fragment>
+    );
+  }
+
+  render() {
+    const {
+      classes,
+      appTempState: {
+        userLoaded,
+        loadUserError,
+      } = {},
+    } = this.props;
+    const { transitionEnd } = this.state;
+
+    return (
+      <div className={classes.verticalFlexContainerFWFH}>
+        {loadUserError ? (<ErrorContent />) : this.renderMainContent()}
+        {!transitionEnd && (
+          <Fade
+            in={!userLoaded && !loadUserError}
+            timeout={{
+              enter: 0,
+              exit: 200,
+            }}
+            onExited={() => {
+              this.setState({
+                transitionEnd: true,
+              });
+            }}
+          >
+            <ProgressWithMask
+              backgroundColor="#FFFFFF"
+              zIndex={1101}
+              delay={0}
+            />
+          </Fade>
+        )}
       </div>
     );
   }
 }
 
+const mapStateToProps = createStructuredSelector({
+  appTempState: appTempStateSelector,
+});
+
 export default compose(
   connect(
-    state => ({}),
+    mapStateToProps,
     { push }
   ),
   injectIntl,

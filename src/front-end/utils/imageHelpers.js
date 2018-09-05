@@ -110,7 +110,7 @@ export function processFile(dataURL, fileType, thumbnailInfo) {
 
       const context = canvas.getContext('2d');
 
-      context.drawImage(this, 0, 0, width, height);
+      context.drawImage(image, 0, 0, width, height);
 
       result.thumbnail = canvas.toDataURL(fileType);
       return resolve(result);

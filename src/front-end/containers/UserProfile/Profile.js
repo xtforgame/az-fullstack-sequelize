@@ -171,11 +171,16 @@ class Profile extends React.Component {
         patchData.name = this.state.name;
       }
       if (this.state.email) {
-        patchData.email = this.state.email;
+        patchData.data = {
+          ...user.data,
+          ...patchData.data,
+          email: this.state.email,
+        };
       }
       if (this.state.bio) {
         patchData.data = {
           ...user.data,
+          ...patchData.data,
           bio: this.state.bio,
         };
       }
@@ -204,6 +209,7 @@ class Profile extends React.Component {
     } = this.props;
 
     const bio = user.data && user.data.bio;
+    const email = user.data && user.data.email;
 
     return (
       <CardContent>
@@ -216,7 +222,7 @@ class Profile extends React.Component {
           <ListItem>
             <ListItemText
               primary="Email"
-              secondary={user.email}
+              secondary={email}
             />
           </ListItem>
           <ListItem>
@@ -252,6 +258,7 @@ class Profile extends React.Component {
     } = this.props;
 
     const bio = user.data && user.data.bio;
+    const email = user.data && user.data.email;
 
     return (
       <CardContent>
@@ -277,7 +284,7 @@ class Profile extends React.Component {
           id="email"
           label="Email"
           onKeyPress={() => {}}
-          value={(this.state.editing ? this.state.email : user.email) || ''}
+          value={(this.state.editing ? this.state.email : email) || ''}
           onChange={(e) => {
             this.setState({
               email: e.target.value,

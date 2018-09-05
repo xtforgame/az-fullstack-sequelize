@@ -23,7 +23,7 @@ export default (sequelizeStore) => {
         ...authModels.models.user,
         columns: {
           ...authModels.models.user.columns,
-          email: Sequelize.STRING(900),
+          // email: Sequelize.STRING(900),
           picture: Sequelize.TEXT,
           data: {
             type: Sequelize.JSONB,
@@ -89,6 +89,11 @@ export default (sequelizeStore) => {
               otherKey: 'project_id',
             }),
           },
+          userSettings: {
+            type: AsuOrm.HAS_MANY('userSetting', {
+              foreignKey: 'user_id',
+            }),
+          },
         },
         options: {
           ...authModels.models.user.options,
@@ -111,6 +116,37 @@ export default (sequelizeStore) => {
               });
             },
           },
+        },
+      },
+      userSetting: {
+        columns: {
+          id: {
+            type: Sequelize.BIGINT.UNSIGNED,
+            primaryKey: true,
+            autoIncrement: true,
+          },
+          type: {
+            type: Sequelize.STRING(20),
+            defaultValue: 'general',
+          },
+          data: {
+            type: Sequelize.JSONB,
+            defaultValue: {},
+          },
+          user: {
+            type: AsuOrm.BELONGS_TO('user', {
+              foreignKey: 'user_id',
+            }),
+          },
+        },
+        options: {
+          indexes: [
+            {
+              name: 'type_should_be_unique_for_each_user',
+              unique: true,
+              fields: ['user_id', 'type'],
+            },
+          ],
         },
       },
       log: {

@@ -97,7 +97,7 @@ export class Segment extends React.Component {
         fullHeight={fullHeight}
       >
         <div style={{ ...barStyle }} />
-        <div style={{ ...flexContainer, position: 'absolute', zIndex: 1 }}>
+        <div style={{ ...flexContainer, position: 'absolute' }}>
           <div style={flex1} />
           {children}
           <div style={flex1} />

@@ -73,6 +73,21 @@ const modelsDefine = {
       },
     },
   },
+  userSettings: {
+    url: './api/userSettings',
+    names: { model: 'userSetting', member: 'userSetting', collection: 'userSettings' },
+    config: {
+      // actionNoRedundantBody: true,
+      getId: data => data.type,
+    },
+    extensionConfigs: {
+      epics,
+      selectors: {
+        createSelector,
+        baseSelector: state => state.get('global').userSettings,
+      },
+    },
+  },
   recoveryTokens: {
     url: './api/recoveryTokens',
     names: { model: 'recoveryToken', member: 'recoveryToken', collection: 'recoveryTokens' },

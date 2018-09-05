@@ -1,32 +1,25 @@
+import { Observable } from 'rxjs/Observable';
 import HeaderManager from '~/utils/HeaderManager';
-import modelMap from './modelMap';
+import modelMap from '../modelMap';
 import {
   SESSION_VERIFIED,
-} from './constants';
+} from '../constants';
 
 import {
   sessionVerified,
+  userLoaded,
+  failToLoadUser,
   clearSensitiveData,
-} from './actions';
-
-const {
-  postSessionsEpic,
-  getSessionsEpic,
-  getUserEpic,
-  postUsersEpic,
-  patchUserEpic,
-  postRecoveryTokensEpic,
-
-  postChallengeRecoveryTokensEpic,
-  postResetPasswordRequestsEpic,
-} = modelMap.epics;
+  changeTheme,
+} from '../actions';
 
 const { types } = modelMap;
 
 const {
   getUser,
+  getUserSettings,
   postSessions,
-} = modelMap.actions;
+} = modelMap.waitableActions;
 
 const dispatchSessionVerifiedAfterPostedSession = (action$, store) => action$.ofType(types.respondPostSessions)
     .mergeMap(action => [
@@ -36,9 +29,18 @@ const dispatchSessionVerifiedAfterPostedSession = (action$, store) => action$.of
 const fetchDataAfterSessionVerified = (action$, store) => action$.ofType(SESSION_VERIFIED)
     .mergeMap((action) => {
       HeaderManager.set('Authorization', `${action.session.token_type} ${action.session.token}`);
-      return [
-        getUser(action.session.user_id),
-      ];
+      return Observable.combineLatest(
+        Observable.fromPromise(store.dispatch(getUser(action.session.user_id))),
+        Observable.fromPromise(store.dispatch(getUserSettings()))
+      )
+      .mergeMap(([_, action]) => action.data
+        .filter(setting => setting.type === 'preference' && setting.data)
+        .map(setting => changeTheme(setting.data.uiTheme, false))
+        .concat([userLoaded()]))
+      .catch((error) => {
+        console.error('fetch data failed :', error);
+        return [failToLoadUser(error)];
+      });
     });
 
 const clearAuthorizationHeaderAfterClearSession = (action$, store) => action$.ofType(types.clearSessionCache)
@@ -59,13 +61,4 @@ export default [
   fetchDataAfterSessionVerified,
   clearAuthorizationHeaderAfterClearSession,
   autologinAfterRegistration,
-  postSessionsEpic,
-  getSessionsEpic,
-  getUserEpic,
-  postUsersEpic,
-  patchUserEpic,
-  postRecoveryTokensEpic,
-
-  postChallengeRecoveryTokensEpic,
-  postResetPasswordRequestsEpic,
 ];

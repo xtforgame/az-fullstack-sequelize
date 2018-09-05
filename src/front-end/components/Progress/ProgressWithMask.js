@@ -73,15 +73,41 @@ class ProgressWithMask extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const {
+      classes,
+      color,
+      style,
+      zIndex,
+      backgroundColor,
+      delay,
+      ...rest
+    } = this.props;
     const { show } = this.state;
 
+    const extraStyle = {};
+
+    if (show) {
+      if (zIndex != null) {
+        extraStyle.zIndex = zIndex;
+      }
+      if (backgroundColor != null) {
+        extraStyle.backgroundColor = backgroundColor;
+      }
+    }
+
     return (
-      <div className={show ? classes.maskedContainer : classes.container}>
+      <div
+        className={show ? classes.maskedContainer : classes.container}
+        style={{
+          ...style,
+          ...extraStyle,
+        }}
+        {...rest}
+      >
         <div className={classes.flex1} />
         <div className={classes.flexContainer}>
           <div className={classes.flex1} />
-          {show && <CircularProgress className={classes.progress} size={50} color="primary" thickness={7} />}
+          {show && <CircularProgress className={classes.progress} size={50} color={color || 'primary'} thickness={7} />}
           <div className={classes.flex1} />
         </div>
         <div className={classes.flex1} />

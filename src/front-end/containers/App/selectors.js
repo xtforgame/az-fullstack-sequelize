@@ -50,6 +50,9 @@ const makeUiThemeSelector = () => createSelector(
   persistence => persistence.uiTheme || defaultUiTheme,
 );
 
+
+const appTempStateSelector = state => state.get('global').appTempState;
+
 export {
   sessionSelector,
   makeSessionHierarchySelector,
@@ -70,4 +73,6 @@ export {
   persistenceSelector,
   makeRememberUserSelector,
   makeUiThemeSelector,
+
+  appTempStateSelector,
 };

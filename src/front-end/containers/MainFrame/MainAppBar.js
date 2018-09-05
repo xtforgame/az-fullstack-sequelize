@@ -27,15 +27,19 @@ const styles = theme => ({
 class MainAppBar extends React.Component {
   render() {
     const {
-      classes, onToggleMenu = () => {},
+      classes,
+      isUserLoggedIn = true,
+      onToggleMenu = () => {},
     } = this.props;
     return (
       <div className={classes.root}>
         <AppBar position="fixed">
           <Toolbar>
-            <IconButton color="inherit" className={classes.menuButton} onClick={onToggleMenu} aria-label="Menu">
-              <MenuIcon />
-            </IconButton>
+            {isUserLoggedIn && (
+              <IconButton color="inherit" className={classes.menuButton} onClick={onToggleMenu} aria-label="Menu">
+                <MenuIcon />
+              </IconButton>
+            )}
             <Typography variant="title" color="inherit" className={classes.flex1}>
               <FormattedMessage {...messages.appTitle} />
             </Typography>
@@ -43,7 +47,9 @@ class MainAppBar extends React.Component {
             {/* <Button color="inherit" onClick={() => clearSessionCache('me')}>
               <FormattedMessage {...messages.logout} />
             </Button> */}
-            <UserInfoDropdown />
+            {isUserLoggedIn && (
+              <UserInfoDropdown />
+            )}
           </Toolbar>
         </AppBar>
       </div>
