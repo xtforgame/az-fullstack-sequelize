@@ -2,6 +2,10 @@ export default theme => ({
   flexContainer: {
     display: 'flex',
   },
+  flexContainerFW: {
+    display: 'flex',
+    width: '100%',
+  },
   flexContainerFH: {
     display: 'flex',
     height: '100%',
@@ -33,6 +37,11 @@ export default theme => ({
     flexDirection: 'column',
     display: 'flex',
     height: '100%',
+  },
+  verticalFlexContainerFW: {
+    flexDirection: 'column',
+    display: 'flex',
+    width: '100%',
   },
   verticalFlexContainerFH: {
     flexDirection: 'column',

@@ -4,22 +4,14 @@ import { withStyles } from '@material-ui/core/styles';
 import SimpleExpansionCard from '~/components/Cards/SimpleExpansionCard';
 import Avatar from '@material-ui/core/Avatar';
 import blue from '@material-ui/core/colors/blue';
-import ButtonBase from '@material-ui/core/ButtonBase';
 import Typography from '@material-ui/core/Typography';
 import moment from 'moment';
-import {
-  InternalLink as Link,
-} from '~/components/SignInSignUp';
-import ScheduleStepper from './ScheduleStepper';
 
 moment.locale('zh-TW');
 
 const styles = theme => ({
   avatar: {
     backgroundColor: blue[500],
-  },
-  linkBtn: {
-    verticalAlign: 'baseline',
   },
 });
 
@@ -29,16 +21,7 @@ class ScheduleCard extends React.Component {
   };
 
   render() {
-    const { classes, schedule } = this.props;
-
-    let time = '<unknown>';
-    if (schedule && schedule.nextScheduledTime) {
-      time = `於 ${moment(schedule.nextScheduledTime).fromNow()} 執行`;
-    }
-    let executor = '<unknown>';
-    if (schedule && schedule.executor) {
-      executor = `${schedule.executor.name}`;
-    }
+    const { classes, memo: { data: memo } = {} } = this.props;
 
     return (
       <SimpleExpansionCard
@@ -47,29 +30,17 @@ class ScheduleCard extends React.Component {
             S
           </Avatar>
         )}
-        title={schedule.title}
-        subheader={(
+        title={(
           <Typography
             variant="body1"
             component="pre"
             color="textSecondary"
           >
-            {`${time} - `}
-            <ButtonBase
-              className={classes.linkBtn}
-            >
-              <Typography
-                variant="body1"
-                component="pre"
-                color="textSecondary"
-              >
-                <Link key="terms" text={`[${executor}]`} />
-              </Typography>
-            </ButtonBase>
+            {memo.title}
           </Typography>
         )}
       >
-        <ScheduleStepper schedule={schedule} />
+        Detail
       </SimpleExpansionCard>
     );
   }

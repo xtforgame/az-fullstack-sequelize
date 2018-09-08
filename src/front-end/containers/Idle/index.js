@@ -33,7 +33,12 @@ class Idle extends React.Component {
   changeTab = tabName => this.handleTabChange(undefined, `/idle/${tabName}`);
 
   render() {
-    const { routeView, classes, location } = this.props;
+    const {
+      routeView,
+      classes,
+      location,
+      match,
+    } = this.props;
 
     let newRouteView = routeView;
     if (routeView) {
@@ -52,9 +57,9 @@ class Idle extends React.Component {
         </div>
         <div className={classes.spacing} />
         <BottomNavigation value={location.pathname} onChange={this.handleTabChange} className={classes.nav}>
-          <BottomNavigationAction label="Stats" value="/idle/stats" icon={<RestoreIcon />} />
-          <BottomNavigationAction label="Bot" value="/idle/bots" icon={<LocationOnIcon />} />
-          <BottomNavigationAction label="Schedules" value="/idle/schedules" icon={<ScheduleIcon />} />
+          <BottomNavigationAction label="Stats" value={`${match.url}/stats`} icon={<RestoreIcon />} />
+          <BottomNavigationAction label="Bot" value={`${match.url}/bots`} icon={<LocationOnIcon />} />
+          <BottomNavigationAction label="Schedules" value={`${match.url}/schedules`} icon={<ScheduleIcon />} />
         </BottomNavigation>
       </div>
     );

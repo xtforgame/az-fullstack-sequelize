@@ -17,6 +17,10 @@ import Stats from '~/containers/Idle/tabs/Stats';
 import Bots from '~/containers/Idle/tabs/Bots';
 import Schedules from '~/containers/Idle/tabs/Schedules';
 
+import Memo from '~/containers/Memo';
+import Memos from '~/containers/Memo/tabs/Memos';
+import MemoSchedules from '~/containers/Memo/tabs/Schedules';
+
 import Test from '~/containers/Test';
 import TestContent from '~/containers/Test/TestContent';
 import testCase00 from '~/test-cases/test-case-00';
@@ -155,6 +159,36 @@ const globalRouteConfig = {
               name: 'schedules',
               path: '/idle/schedules',
               component: Schedules,
+              navbar: {
+                title: 'Schedules',
+              },
+            }],
+          }],
+        },
+        {
+          name: 'memo',
+          path: '/memo',
+          component: Memo,
+          navbar: true,
+          routeViews: [{
+            routes: [{
+              name: 'memo-index',
+              path: '/memo',
+              component: () => <Redirect to={{ pathname: '/memo/memos' }} />,
+              exact: true,
+            },
+            {
+              name: 'memos',
+              path: '/memo/memos',
+              component: Memos,
+              navbar: {
+                title: 'Stats',
+              },
+            },
+            {
+              name: 'schedules',
+              path: '/memo/schedules',
+              component: MemoSchedules,
               navbar: {
                 title: 'Schedules',
               },

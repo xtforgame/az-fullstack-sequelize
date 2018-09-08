@@ -55,27 +55,8 @@ class MainFrame extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      transitionEnd: true,
       drawerOpened: false,
     };
-  }
-
-  static getDerivedStateFromProps(props, prevState) {
-    let newState = null;
-    const {
-      appTempState: {
-        userLoaded,
-        loadUserError,
-      } = {},
-    } = props;
-
-    if (!userLoaded && !loadUserError) {
-      newState = {
-        transitionEnd: false,
-      };
-    }
-
-    return newState;
   }
 
   // componentWillMount() {
@@ -151,31 +132,24 @@ class MainFrame extends React.Component {
         loadUserError,
       } = {},
     } = this.props;
-    const { transitionEnd } = this.state;
 
     return (
       <div className={classes.verticalFlexContainerFWFH}>
         {loadUserError ? (<ErrorContent />) : this.renderMainContent()}
-        {!transitionEnd && (
-          <Fade
-            in={!userLoaded && !loadUserError}
-            timeout={{
-              enter: 0,
-              exit: 200,
-            }}
-            onExited={() => {
-              this.setState({
-                transitionEnd: true,
-              });
-            }}
-          >
-            <ProgressWithMask
-              backgroundColor="#FFFFFF"
-              zIndex={1101}
-              delay={0}
-            />
-          </Fade>
-        )}
+        <Fade
+          in={!userLoaded && !loadUserError}
+          timeout={{
+            enter: 0,
+            exit: 200,
+          }}
+          unmountOnExit
+        >
+          <ProgressWithMask
+            backgroundColor="#FFFFFF"
+            zIndex={1101}
+            delay={0}
+          />
+        </Fade>
       </div>
     );
   }

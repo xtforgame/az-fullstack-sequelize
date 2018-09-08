@@ -15,6 +15,7 @@ const {
 
   challengeRecoveryTokenReducer,
   resetPasswordRequestReducer,
+  memoReducer,
 } = modelMap.reducers;
 
 const persistence = (state = { rememberUser: false }, action) => {
@@ -71,6 +72,7 @@ export default combineReducers({
   recoveryTokens: recoveryTokenReducer,
   challengeRecoveryTokens: challengeRecoveryTokenReducer,
   resetPasswordRequests: resetPasswordRequestReducer,
+  memos: memoReducer,
   persistence,
   appTempState,
 });

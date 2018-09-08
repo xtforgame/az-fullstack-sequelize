@@ -15,6 +15,10 @@ const {
 
   postChallengeRecoveryTokensEpic,
   postResetPasswordRequestsEpic,
+
+  getMemosEpic,
+  postMemosEpic,
+  patchMemoEpic,
 } = modelMap.epics;
 
 
@@ -35,4 +39,8 @@ export default [
 
   postChallengeRecoveryTokensEpic,
   postResetPasswordRequestsEpic,
+
+  getMemosEpic,
+  postMemosEpic,
+  patchMemoEpic,
 ];

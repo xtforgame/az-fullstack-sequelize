@@ -10,7 +10,6 @@ import moment from 'moment';
 import {
   InternalLink as Link,
 } from '~/components/SignInSignUp';
-import ScheduleStepper from './ScheduleStepper';
 
 moment.locale('zh-TW');
 
@@ -33,7 +32,7 @@ class ScheduleCard extends React.Component {
 
     let time = '<unknown>';
     if (schedule && schedule.nextScheduledTime) {
-      time = `於 ${moment(schedule.nextScheduledTime).fromNow()} 執行`;
+      time = `於 ${moment(schedule.nextScheduledTime).fromNow()}`;
     }
     let executor = '<unknown>';
     if (schedule && schedule.executor) {
@@ -69,7 +68,17 @@ class ScheduleCard extends React.Component {
           </Typography>
         )}
       >
-        <ScheduleStepper schedule={schedule} />
+        Detail<br /><br /><br /><br /><br /><br />
+        Detail<br /><br /><br /><br /><br /><br />
+        Detail<br /><br /><br /><br /><br /><br />
+        Detail<br /><br /><br /><br /><br /><br />
+        Detail<br /><br /><br /><br /><br /><br />
+        Detail<br /><br /><br /><br /><br /><br />
+        Detail<br /><br /><br /><br /><br /><br />
+        Detail<br /><br /><br /><br /><br /><br />
+        Detail<br /><br /><br /><br /><br /><br />
+        Detail<br /><br /><br /><br /><br /><br />
+        Detail<br /><br /><br /><br /><br /><br />
       </SimpleExpansionCard>
     );
   }

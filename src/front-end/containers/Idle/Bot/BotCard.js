@@ -1,12 +1,11 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
+import ClickableCard from '~/components/Cards/ClickableCard';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import {
   yellow, grey, green, lightBlue, orange, red,
 } from '@material-ui/core/colors';
-import ButtonBase from '@material-ui/core/ButtonBase';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import GaugeBar from './GaugeBar';
 import droneX from './DroneX.png';
@@ -48,12 +47,6 @@ const styles = theme => ({
     margin: 8,
     width: 200,
     // flex: 1,
-  },
-  buttonBase: {
-    marginTop: 8,
-    marginBottom: 8,
-    position: 'relative',
-    textAlign: 'left',
   },
 });
 
@@ -185,112 +178,107 @@ class BotCard extends React.Component {
     } = this.getStorageUsage();
 
     return (
-      <ButtonBase
-        focusRipple
-        className={classes.buttonBase}
-        style={{
-          // width: '30%',
-          padding: 0,
+      <ClickableCard
+        className={classes.card}
+        buttonProps={{
+          onClick,
         }}
-        onClick={onClick}
       >
-        <Card className={classes.card}>
-          <CardMedia
-            className={classes.cover}
-            image={droneX}
-            title="Live from memory album cover"
-          />
-          <div className={classes.status}>
-            <div className={classes.flexContaner}>
-              <div style={{
-                height: 10,
-                width: 10,
-                margin: 7,
-                // boxSizing: 'border-box',
-                borderWidth: 1,
-                borderColor: textColor,
-                borderStyle: 'solid',
-                backgroundColor: green[700],
-                borderRadius: '50%',
-              }}
-              />
-              <Typography variant="body2" gutterBottom>
-                {name}
-              </Typography>
-            </div>
-            <GaugeBar
-              title="Memory :"
-              mainLabel={limitMB ? '' : 'N/A'}
-              textColor={textColor}
-              labelColor={labelColor}
-              segments={[
-                {
-                  name: '1', label: limitMB != null ? `${availableMB} / ${limitMB} MB` : '', percent: memoryPercent, color: green[700],
-                },
-                {
-                  name: '2', label: '', percent: 100 - memoryPercent, color: grey[700],
-                },
-              ]}
+        <CardMedia
+          className={classes.cover}
+          image={droneX}
+          title="Live from memory album cover"
+        />
+        <div className={classes.status}>
+          <div className={classes.flexContaner}>
+            <div style={{
+              height: 10,
+              width: 10,
+              margin: 7,
+              // boxSizing: 'border-box',
+              borderWidth: 1,
+              borderColor: textColor,
+              borderStyle: 'solid',
+              backgroundColor: green[700],
+              borderRadius: '50%',
+            }}
             />
-            <GaugeBar
-              title="ProcTime :"
-              mainLabel={limitProcTime ? '' : 'N/A'}
-              textColor={textColor}
-              labelColor={labelColor}
-              segments={[
-                {
-                  name: '1', label: limitProcTime != null ? `${availableProcTime} / ${limitProcTime} Sec.` : '', percent: procTimePercent, color: lightBlue[700],
-                },
-                {
-                  name: '2', label: '', percent: 100 - procTimePercent, color: grey[700],
-                },
-              ]}
-            />
-            <GaugeBar
-              title="Bandwidth :"
-              mainLabel={limitBandwidth ? '' : 'N/A'}
-              textColor={textColor}
-              labelColor={labelColor}
-              segments={[
-                {
-                  name: '1', label: limitBandwidth != null ? `${availableBandwidth} / ${limitBandwidth}` : '', percent: bandwidthPercent, color: yellow[700],
-                },
-                {
-                  name: '2', label: '', percent: 100 - bandwidthPercent, color: grey[700],
-                },
-              ]}
-            />
-            <GaugeBar
-              title="Feature :"
-              mainLabel={limitFeature ? '' : 'N/A'}
-              textColor={textColor}
-              labelColor={labelColor}
-              segments={[
-                {
-                  name: '1', label: limitFeature != null ? `${availableFeature} / ${limitFeature}` : '', percent: featurePercent, color: orange[700],
-                },
-                {
-                  name: '2', label: '', percent: 100 - featurePercent, color: grey[700],
-                },
-              ]}
-            />
-            <GaugeBar
-              title="Storage :"
-              mainLabel={limitStorage ? '' : 'N/A'}
-              textColor={textColor}
-              labelColor={labelColor}
-              segments={[
-                {
-                  name: '1', label: limitStorage != null ? `${availableStorage} / ${limitStorage} MB` : '', percent: storagePercent, color: red[700],
-                },
-                {
-                  name: '2', label: '', percent: 100 - storagePercent, color: grey[700],
-                },
-              ]}
-            />
+            <Typography variant="body2" gutterBottom>
+              {name}
+            </Typography>
           </div>
-        </Card>
-      </ButtonBase>
+          <GaugeBar
+            title="Memory :"
+            mainLabel={limitMB ? '' : 'N/A'}
+            textColor={textColor}
+            labelColor={labelColor}
+            segments={[
+              {
+                name: '1', label: limitMB != null ? `${availableMB} / ${limitMB} MB` : '', percent: memoryPercent, color: green[700],
+              },
+              {
+                name: '2', label: '', percent: 100 - memoryPercent, color: grey[700],
+              },
+            ]}
+          />
+          <GaugeBar
+            title="ProcTime :"
+            mainLabel={limitProcTime ? '' : 'N/A'}
+            textColor={textColor}
+            labelColor={labelColor}
+            segments={[
+              {
+                name: '1', label: limitProcTime != null ? `${availableProcTime} / ${limitProcTime} Sec.` : '', percent: procTimePercent, color: lightBlue[700],
+              },
+              {
+                name: '2', label: '', percent: 100 - procTimePercent, color: grey[700],
+              },
+            ]}
+          />
+          <GaugeBar
+            title="Bandwidth :"
+            mainLabel={limitBandwidth ? '' : 'N/A'}
+            textColor={textColor}
+            labelColor={labelColor}
+            segments={[
+              {
+                name: '1', label: limitBandwidth != null ? `${availableBandwidth} / ${limitBandwidth}` : '', percent: bandwidthPercent, color: yellow[700],
+              },
+              {
+                name: '2', label: '', percent: 100 - bandwidthPercent, color: grey[700],
+              },
+            ]}
+          />
+          <GaugeBar
+            title="Feature :"
+            mainLabel={limitFeature ? '' : 'N/A'}
+            textColor={textColor}
+            labelColor={labelColor}
+            segments={[
+              {
+                name: '1', label: limitFeature != null ? `${availableFeature} / ${limitFeature}` : '', percent: featurePercent, color: orange[700],
+              },
+              {
+                name: '2', label: '', percent: 100 - featurePercent, color: grey[700],
+              },
+            ]}
+          />
+          <GaugeBar
+            title="Storage :"
+            mainLabel={limitStorage ? '' : 'N/A'}
+            textColor={textColor}
+            labelColor={labelColor}
+            segments={[
+              {
+                name: '1', label: limitStorage != null ? `${availableStorage} / ${limitStorage} MB` : '', percent: storagePercent, color: red[700],
+              },
+              {
+                name: '2', label: '', percent: 100 - storagePercent, color: grey[700],
+              },
+            ]}
+          />
+        </div>
+      </ClickableCard>
     );
   }
 }

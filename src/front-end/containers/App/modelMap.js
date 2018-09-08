@@ -133,6 +133,21 @@ const modelsDefine = {
       },
     },
   },
+  memos: {
+    url: './api/memos',
+    names: { model: 'memo', member: 'memo', collection: 'memos' },
+    config: {
+      // actionNoRedundantBody: true,
+      getId: data => data.id,
+    },
+    extensionConfigs: {
+      epics,
+      selectors: {
+        createSelector,
+        baseSelector: state => state.get('global').memos,
+      },
+    },
+  },
 };
 
 const modelMap = new ModelMap('global', modelsDefine, defaultExtensions.concat([SelectorsCreator, EpicCreator, WaitableActionsCreator]));

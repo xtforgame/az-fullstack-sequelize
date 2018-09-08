@@ -94,6 +94,16 @@ export default (sequelizeStore) => {
               foreignKey: 'user_id',
             }),
           },
+          memos: {
+            type: AsuOrm.BELONGS_TO_MANY('memo', {
+              through: {
+                asuModelName: 'userMemo',
+                asuThroughAs: 'relation',
+              },
+              foreignKey: 'user_id',
+              otherKey: 'memo_id',
+            }),
+          },
         },
         options: {
           ...authModels.models.user.options,
@@ -393,6 +403,29 @@ export default (sequelizeStore) => {
           },
         },
       },
+      memo: {
+        columns: {
+          id: {
+            type: Sequelize.BIGINT.UNSIGNED,
+            primaryKey: true,
+            autoIncrement: true,
+          },
+          data: {
+            type: Sequelize.JSONB,
+            defaultValue: {},
+          },
+          users: {
+            type: AsuOrm.BELONGS_TO_MANY('user', {
+              through: {
+                asuModelName: 'userMemo',
+                asuThroughAs: 'relation',
+              },
+              foreignKey: 'memo_id',
+              otherKey: 'user_id',
+            }),
+          },
+        },
+      },
     },
     associationModels: {
       userUserGroup: {
@@ -492,6 +525,16 @@ export default (sequelizeStore) => {
               },
             },
           ],
+        },
+      },
+      userMemo: {
+        columns: {
+          id: {
+            type: Sequelize.BIGINT.UNSIGNED,
+            primaryKey: true,
+            autoIncrement: true,
+          },
+          role: Sequelize.STRING,
         },
       },
     },

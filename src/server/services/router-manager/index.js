@@ -5,6 +5,7 @@ import SessionRouter from '~/routers/SessionRouter';
 import UserRouter from '~/routers/UserRouter';
 import UserSettingRouter from '~/routers/UserSettingRouter';
 import RecoveryRouter from '~/routers/RecoveryRouter';
+import MemoRouter from '~/routers/MemoRouter';
 
 export default class RouterManager extends ServiceBase {
   static $name = 'routerManager';
@@ -32,6 +33,7 @@ export default class RouterManager extends ServiceBase {
       UserRouter,
       UserSettingRouter,
       RecoveryRouter,
+      MemoRouter,
     ]
     .map(Router => new Router({
       authKit,
