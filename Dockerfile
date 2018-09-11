@@ -30,7 +30,4 @@ COPY . /usr/src/app
 
 COPY docker-cmd.sh /usr/src/app/
 
-
-EXPOSE 8080 8443 3310 3320
-
 # CMD [ "npm", "start" ]

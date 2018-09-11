@@ -1,6 +1,6 @@
-# AzReactMaterialDev
+# AzfullstackSequelizeDev
 
-A general purpose seed project base
+A fullstack sequelize seed project
 
 Run `npm install`
 
