@@ -12,6 +12,7 @@ import WaitableActionsCreator from 'reduxtful/extensions/WaitableActionsCreator'
 import axios from 'axios';
 import { Observable } from 'rxjs/Observable';
 import { createSelector } from 'reselect';
+import * as symbols from 'redux-wait-for-action';
 
 const responseMiddleware = (response, info, next) => {
   if (response.status === 200 && response.data.error) {
@@ -40,6 +41,7 @@ const modelsDefine = {
       getId: data => 'api', // data.user_id,
     },
     extensionConfigs: {
+      waitableActions: { symbols },
       epics,
     },
   },
@@ -51,6 +53,7 @@ const modelsDefine = {
       getId: data => 'me', // data.user_id,
     },
     extensionConfigs: {
+      waitableActions: { symbols },
       epics,
       selectors: {
         createSelector,
@@ -66,6 +69,7 @@ const modelsDefine = {
       getId: data => data.id,
     },
     extensionConfigs: {
+      waitableActions: { symbols },
       epics,
       selectors: {
         createSelector,
@@ -81,6 +85,7 @@ const modelsDefine = {
       getId: data => data.type,
     },
     extensionConfigs: {
+      waitableActions: { symbols },
       epics,
       selectors: {
         createSelector,
@@ -96,6 +101,7 @@ const modelsDefine = {
       getId: data => 'current',
     },
     extensionConfigs: {
+      waitableActions: { symbols },
       epics,
       selectors: {
         createSelector,
@@ -111,6 +117,7 @@ const modelsDefine = {
       getId: data => 'current',
     },
     extensionConfigs: {
+      waitableActions: { symbols },
       epics,
       selectors: {
         createSelector,
@@ -126,6 +133,7 @@ const modelsDefine = {
       getId: data => 'current',
     },
     extensionConfigs: {
+      waitableActions: { symbols },
       epics,
       selectors: {
         createSelector,
@@ -141,6 +149,7 @@ const modelsDefine = {
       getId: data => data.id,
     },
     extensionConfigs: {
+      waitableActions: { symbols },
       epics,
       selectors: {
         createSelector,
