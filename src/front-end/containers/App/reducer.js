@@ -20,47 +20,47 @@ const {
 
 const persistence = (state = { rememberUser: false }, action) => {
   switch (action.type) {
-  case REMEMBER_ME:
-    return {
-      ...state,
-      rememberUser: action.rememberUser,
-    };
+    case REMEMBER_ME:
+      return {
+        ...state,
+        rememberUser: action.rememberUser,
+      };
 
-  case CHANGE_THEME: {
-    if (action.uiTheme && state.uiTheme
+    case CHANGE_THEME: {
+      if (action.uiTheme && state.uiTheme
       && action.uiTheme.direction === state.uiTheme.direction
       && action.uiTheme.paletteType === state.uiTheme.paletteType
-    ) {
-      break;
+      ) {
+        break;
+      }
+      return {
+        ...state,
+        uiTheme: action.uiTheme,
+      };
     }
-    return {
-      ...state,
-      uiTheme: action.uiTheme,
-    };
-  }
 
-  default:
-    break;
+    default:
+      break;
   }
   return state;
 };
 
 const appTempState = (state = {}, action) => {
   switch (action.type) {
-  case USER_LOADED:
-    return {
-      ...state,
-      userLoaded: true,
-    };
+    case USER_LOADED:
+      return {
+        ...state,
+        userLoaded: true,
+      };
 
-  case FAIL_TO_LOAD_USER:
-    return {
-      ...state,
-      loadUserError: action.error,
-    };
+    case FAIL_TO_LOAD_USER:
+      return {
+        ...state,
+        loadUserError: action.error,
+      };
 
-  default:
-    break;
+    default:
+      break;
   }
   return state;
 };

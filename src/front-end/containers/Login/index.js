@@ -126,19 +126,19 @@ class Login extends React.Component {
 
     let title = null;
     switch (this.state.tabIndex) {
-    case 0:
-      title = <FormattedMessage {...messages.login} />;
-      break;
+      case 0:
+        title = <FormattedMessage {...messages.login} />;
+        break;
 
-    case 1:
-      title = <FormattedMessage {...messages.createAccount} />;
-      break;
+      case 1:
+        title = <FormattedMessage {...messages.createAccount} />;
+        break;
 
-    case 2:
-      title = <FormattedMessage {...messages.forgotPasswordQuestion} />;
-      break;
-    default:
-      break;
+      case 2:
+        title = <FormattedMessage {...messages.forgotPasswordQuestion} />;
+        break;
+      default:
+        break;
     }
 
     return (
