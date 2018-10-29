@@ -32,6 +32,13 @@ const mailerConfig = {
   senderName: '"Az Service" <no-reply@az-authn.io>',
 };
 
+const postgresPort = 5432;
+const postgresUser = 'rick';
+const postgresDbName = 'db_rick_data';
+const postgresPassword = 'xxxx1234';
+const postgresHost = 'localhost';
+
+
 export {
   credentialFiles,
   jwtSecretFiles,
@@ -44,4 +51,10 @@ export {
   externalUrl,
 
   mailerConfig,
+
+  postgresPort,
+  postgresUser,
+  postgresDbName,
+  postgresPassword,
+  postgresHost,
 };

@@ -32,6 +32,12 @@ const mailerConfig = {
   tokenFile: path.join(secretsFolder, 'gmail', 'token.json'),
 };
 
+const postgresPort = 5432;
+const postgresUser = 'rick';
+const postgresDbName = 'db_rick_data';
+const postgresPassword = 'xxxx1234';
+const postgresHost = 'localhost';
+
 export {
   credentialFiles,
   jwtSecretFiles,
@@ -42,4 +48,10 @@ export {
   externalUrl,
 
   mailerConfig,
+
+  postgresPort,
+  postgresUser,
+  postgresDbName,
+  postgresPassword,
+  postgresHost,
 };
