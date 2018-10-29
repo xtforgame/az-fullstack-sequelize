@@ -4,6 +4,9 @@ import { httpPort, httpsPort } from 'config';
 // ============================================
 import EnvCfg from '~/services/env-cfg';
 import HttpApp from '~/services/http-app';
+import SequelizeDb from '~/services/sequelize-db';
+import ResourceManager from '~/services/resource-manager';
+import CreateTestData from '~/services/create-test-data';
 import RouterManager from '~/services/router-manager';
 import Mailer from '~/services/mailer';
 import {
@@ -16,6 +19,9 @@ class Server {
     this.ioc.register([
       EnvCfg,
       HttpApp,
+      SequelizeDb,
+      ResourceManager,
+      CreateTestData,
       RouterManager,
       Mailer,
     ]);
