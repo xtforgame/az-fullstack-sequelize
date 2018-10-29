@@ -19,22 +19,20 @@ export const createInitialUserSettingsData = () => ([
 export const createInitialUserData = ({
   id,
   name,
-  username,
-  password,
   privilege = 'user',
   picture,
   data,
+  accountLinks,
 }, extraColumns) => ({
   id,
   name,
-  username,
-  password,
   privilege,
   picture: picture || `data:png;base64,${drawIcon(name).toString('base64')}`,
   data: data || {
     bio: `I'm ${name}`,
     email: null,
   },
+  accountLinks,
   userSettings: createInitialUserSettingsData(),
   ...extraColumns,
 });
