@@ -34,49 +34,64 @@ const builtInUsers = [
   },
 ];
 
-function createTestUser(resourceManager) {
+const createTestUser = async (resourceManager) => {
   const User = resourceManager.getSqlzModel('user');
-
-  return User.findAll({
+  const users = await User.findAll({
     attributes: [[Sequelize.fn('COUNT', Sequelize.col('name')), 'usercount']],
-  })
-  .then((users) => {
-    if (users[0].dataValues.usercount == 0) { // eslint-disable-line eqeqeq
-      let idCounter = 0;
-      return toSeqPromise(builtInUsers, (_, _value) => {
-        const {
-          username, password, name, privilege,
-        } = _value;
-        const extraColumns = {};
-        if (username === 'admin') {
-          extraColumns.organizations = [{
-            name: 'default',
-            [AsuOrm.ThroughValues]: {
-              role: 'owner',
-            },
-          }];
-        }
-        return User.create(createInitialUserData({
-          id: (++idCounter),
-          name,
-          privilege,
-          accountLinks: getAccountLinks(username, password || username),
-        }, extraColumns))
-        .then((user) => {
-          if (username === 'admin') {
-            return user.createProject({
-              name: 'default',
-              data: {},
-              organization_id: user.organizations[0].id,
-            }, { through: { role: 'owner' } });
-          }
-          return null;
-        });
-      });
-    }
-    return Promise.resolve(null);
   });
-}
+  if (users[0].dataValues.usercount != 0) { // eslint-disable-line eqeqeq
+    return Promise.resolve(null);
+  }
+
+  const transaction = await resourceManager.db.transaction();
+  try {
+    let idCounter = 0;
+    let defaultOrgId;
+    let defaultProjId;
+    await toSeqPromise(builtInUsers, async (_, _value) => {
+      const {
+        username, password, name, privilege,
+      } = _value;
+      const extraColumns = {};
+      if (username === 'admin') {
+        extraColumns.organizations = [{
+          name: 'default',
+          [AsuOrm.ThroughValues]: {
+            role: 'owner',
+          },
+        }];
+      }
+      const user = await User.create(createInitialUserData({
+        id: (++idCounter),
+        name,
+        privilege,
+        accountLinks: getAccountLinks(username, password || username),
+      }, extraColumns), {
+        transaction,
+      });
+      if (username === 'admin') {
+        defaultOrgId = user.organizations[0].id;
+        const porject = await user.createProject({
+          name: 'default',
+          data: {},
+          organization_id: defaultOrgId,
+        }, { through: { role: 'owner' }, transaction });
+        defaultProjId = porject.id;
+      } else {
+        await user.addOrganization(defaultOrgId, { through: { role: 'user' }, transaction });
+        await user.addProject(defaultProjId, { through: { role: 'user' }, transaction });
+      }
+      return null;
+    });
+    console.log('defaultOrgId, defaultProjId :', defaultOrgId, defaultProjId);
+    await transaction.commit();
+  } catch (error) {
+    console.log('error :', error);
+    await transaction.rollback();
+    throw error;
+  }
+  return null;
+};
 
 export default function createPgTestData(resourceManager, ignore = false) {
   if (ignore) {
