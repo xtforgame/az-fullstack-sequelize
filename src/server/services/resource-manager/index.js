@@ -8,6 +8,9 @@ import {
   KoaHelper,
   BasicProvider,
 } from 'az-authn-kit';
+import {
+  jwtIssuer,
+} from 'config';
 import ServiceBase from '../ServiceBase';
 
 import createAsuModelDefs from '../../asu-model';
@@ -38,7 +41,7 @@ export default class ResourceManager extends ServiceBase {
     this.authKit.digest({
       onCreate: (/* obj */) => {},
       appendArgs: {
-        authCore: [this.jwtSecrets, { algorithm: 'RS256' }],
+        authCore: [this.jwtSecrets, { algorithm: 'RS256', issuer: jwtIssuer }],
         sequelizeStore: [{}],
         authProviderManager: [
           {

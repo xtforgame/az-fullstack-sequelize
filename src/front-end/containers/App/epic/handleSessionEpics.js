@@ -37,6 +37,15 @@ const dispatchSessionVerifiedAfterPostedSession = (action$, state$) => action$.o
     ])
   );
 
+const dispatchSessionVerifiedAfterGotSession = (action$, state$) => action$.ofType(
+    session.read.creatorRefs.respond.actionType
+  )
+    .pipe(
+      mergeMap(action => [
+        sessionVerified(action.response.data),
+      ])
+    );
+
 const fetchDataAfterSessionVerified = (action$, state$, { getStore }) => action$.ofType(SESSION_VERIFIED)
   .pipe(
     mergeMap((action) => {
@@ -87,6 +96,7 @@ const autologinAfterRegistration = (action$, state$) => action$.ofType(user.crea
 
 export default [
   dispatchSessionVerifiedAfterPostedSession,
+  dispatchSessionVerifiedAfterGotSession,
   fetchDataAfterSessionVerified,
   clearAuthorizationHeaderAfterClearSession,
   autologinAfterRegistration,

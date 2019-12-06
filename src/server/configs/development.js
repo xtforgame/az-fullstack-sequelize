@@ -1,6 +1,8 @@
 import path from 'path';
 import appRootPath from 'app-root-path';
 
+export { jwtIssuer } from 'common/config';
+
 const appRoot = appRootPath.resolve('./');
 const secretsFolder = path.join(appRoot, 'dev-secrets');
 

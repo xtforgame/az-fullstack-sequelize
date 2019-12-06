@@ -29,6 +29,11 @@ export default (sequelizeStore) => {
             type: Sequelize.JSONB,
             defaultValue: {},
           },
+          managedBy: {
+            type: AsuOrm.BELONGS_TO('organization', {
+              foreignKey: 'org_mgr_id',
+            }),
+          },
           userGroups: {
             type: AsuOrm.BELONGS_TO_MANY('userGroup', {
               through: {
