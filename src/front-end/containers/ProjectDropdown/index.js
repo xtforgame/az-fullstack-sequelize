@@ -86,14 +86,12 @@ class ProjectDropdown extends React.Component {
     return (
       <React.Fragment>
         <FormFieldButton
-          color="inherit"
-          aria-owns={this.state.open ? 'language-menu' : null}
-          aria-haspopup="true"
           {...props}
           onClick={this.handleClick}
           label="專案"
           value={`${(defaultProject && defaultProject.name) || '<未選取>'}`}
         >
+          {`${(defaultProject && defaultProject.name) || '<未選取>'}`}
         </FormFieldButton>
         <Menu
           id="simple-menu"
