@@ -109,7 +109,13 @@ class MainFrame extends React.PureComponent {
             // onClick={this.toggleDrawer(false)}
             // onKeyDown={this.toggleDrawer(false)}
           >
-            <div style={{ width: '100%', paddingTop: 16, paddingBottom: 16 }} >
+            <div style={{
+              width: '100%',
+              paddingTop: 16,
+              paddingBottom: 16,
+              paddingLeft: 8,
+              paddingRight: 8,
+            }} >
               <ProjectDropdown key="projectSelector" style={{ width: '100%' }} />
             </div>
             <Divider />

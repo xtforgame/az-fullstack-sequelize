@@ -9,9 +9,6 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from 'recompose';
 import { setSelectedProjectId } from '~/containers/App/actions';
 import modelMapEx from '~/containers/App/modelMapEx';
-import {
-  FormFieldButton,
-} from '~/components/FormInputs';
 
 import {
   makeDefaultProjectSelector,
@@ -85,16 +82,15 @@ class ProjectDropdown extends React.Component {
 
     return (
       <React.Fragment>
-        <FormFieldButton
+        <Button
           color="inherit"
           aria-owns={this.state.open ? 'language-menu' : null}
           aria-haspopup="true"
           {...props}
           onClick={this.handleClick}
-          label="專案"
-          value={`${(defaultProject && defaultProject.name) || '<未選取>'}`}
         >
-        </FormFieldButton>
+          {`專案：${(defaultProject && defaultProject.name) || '未選取'}`}
+        </Button>
         <Menu
           id="simple-menu"
           anchorEl={this.state.anchorEl}
