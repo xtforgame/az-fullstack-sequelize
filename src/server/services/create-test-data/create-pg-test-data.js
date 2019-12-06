@@ -63,14 +63,14 @@ function createTestUser(resourceManager) {
           accountLinks: getAccountLinks(username, password || username),
         }, extraColumns))
         .then((user) => {
-          // if (username === 'admin') {
-          //   return user.createProject({
-          //     name: 'XXX',
-          //     data: {},
-          //     organization_id: user.organizations[0].id,
-          //   }, { through: { role: 'owner' } });
-          // }
-          // return null;
+          if (username === 'admin') {
+            return user.createProject({
+              name: 'default',
+              data: {},
+              organization_id: user.organizations[0].id,
+            }, { through: { role: 'owner' } });
+          }
+          return null;
         });
       });
     }
