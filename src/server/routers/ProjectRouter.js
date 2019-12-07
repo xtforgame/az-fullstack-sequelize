@@ -24,9 +24,17 @@ export default class ProjectRouter extends RouterBase {
     });
   }
 
-  findProject(userId, projectId) {
+  findProject(userId, projectId, withMembers = false) {
+    const User = this.resourceManager.getSqlzModel('user');
     const UserProject = this.resourceManager.getSqlzAssociationModel('userProject');
     const Project = this.resourceManager.getSqlzModel('project');
+
+    const extraOptions = withMembers && {
+      include: [{
+        model: User,
+        as: 'users',
+      }],
+    };
 
     return UserProject.findOne({
       where: {
@@ -42,6 +50,7 @@ export default class ProjectRouter extends RouterBase {
         where: {
           id: projectId,
         },
+        ...extraOptions,
       });
     });
   }
@@ -75,6 +84,20 @@ export default class ProjectRouter extends RouterBase {
           return RestfulError.koaThrowWith(ctx, 404, 'Project not found');
         }
         return ctx.body = result;
+      });
+    });
+
+    router.get('/api/projects/:projectId/members', this.authKit.koaHelper.getIdentity, (ctx, next) => {
+      if (!ctx.local.userSession || !ctx.local.userSession.user_id) {
+        return RestfulError.koaThrowWith(ctx, 404, 'User not found');
+      }
+
+      return this.findProject(ctx.local.userSession.user_id, ctx.params.projectId, true)
+      .then((result) => {
+        if (!result) {
+          return RestfulError.koaThrowWith(ctx, 404, 'Project not found');
+        }
+        return ctx.body = result.users;
       });
     });
   }

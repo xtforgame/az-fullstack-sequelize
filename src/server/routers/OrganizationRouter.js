@@ -25,6 +25,37 @@ export default class OrganizationRouter extends RouterBase {
     });
   }
 
+  findOrganization(userId, organizationId, withMembers = false) {
+    const User = this.resourceManager.getSqlzModel('user');
+    const UserOrganization = this.resourceManager.getSqlzAssociationModel('userOrganization');
+    const Organization = this.resourceManager.getSqlzModel('organization');
+
+    const extraOptions = withMembers && {
+      include: [{
+        model: User,
+        as: 'users',
+      }],
+    };
+
+    return UserOrganization.findOne({
+      where: {
+        user_id: userId,
+        organization_id: organizationId,
+      },
+    })
+    .then((result) => {
+      if (!result) {
+        return null;
+      }
+      return Organization.findOne({
+        where: {
+          id: organizationId,
+        },
+        ...extraOptions,
+      });
+    });
+  }
+
   setupRoutes({ router }) {
     router.get('/api/organizations', this.authKit.koaHelper.getIdentity, (ctx, next) => {
       // console.log('ctx.local.userSession :', ctx.local.userSession);
@@ -75,6 +106,20 @@ export default class OrganizationRouter extends RouterBase {
       })
       .then(([_, [result]]) => {
         ctx.body = result;
+      });
+    });
+
+    router.get('/api/organizations/:organizationId/members', this.authKit.koaHelper.getIdentity, (ctx, next) => {
+      if (!ctx.local.userSession || !ctx.local.userSession.user_id) {
+        return RestfulError.koaThrowWith(ctx, 404, 'User not found');
+      }
+
+      return this.findOrganization(ctx.local.userSession.user_id, ctx.params.organizationId, true)
+      .then((result) => {
+        if (!result) {
+          return RestfulError.koaThrowWith(ctx, 404, 'Organization not found');
+        }
+        return ctx.body = result.users;
       });
     });
   }
