@@ -3,6 +3,9 @@ import {
   // RestfulResponse,
   RestfulError,
 } from 'az-restful-helpers';
+import {
+  createUser,
+} from '~/domain-logic/sequelizeHelpers/user';
 import RouterBase from '../core/router-base';
 
 export default class OrganizationRouter extends RouterBase {
@@ -52,6 +55,81 @@ export default class OrganizationRouter extends RouterBase {
           id: organizationId,
         },
         ...extraOptions,
+      });
+    });
+  }
+
+  postOrganizationMember(userId, organizationId, targetData) {
+    // const User = this.resourceManager.getSqlzModel('user');
+    const UserOrganization = this.resourceManager.getSqlzAssociationModel('userOrganization');
+    // const Organization = this.resourceManager.getSqlzModel('organization');
+
+    return UserOrganization.findOne({
+      where: {
+        role: 'owner',
+        user_id: userId,
+        organization_id: organizationId,
+      },
+    })
+    .then(async (result) => {
+      if (!result) {
+        return Promise.resolve(null);
+      }
+      const transaction = await this.resourceManager.db.transaction();
+      const {
+        username,
+        password,
+        name,
+        privilege,
+      } = targetData;
+      try {
+        const r = await createUser(this.resourceManager, {
+          username,
+          password,
+          name,
+          privilege,
+        }, {
+          org_mgr_id: organizationId,
+        }, transaction);
+        await UserOrganization.create({
+          user_id: r.id,
+          organization_id: organizationId,
+          labels: { identifier: name },
+        }, {
+          transaction,
+        });
+        await transaction.commit();
+        return r;
+      } catch (error) {
+        await transaction.rollback();
+        return Promise.reject(error);
+      }
+    });
+  }
+
+  patchOrganizationMember(userId, organizationId, targetId, targetData) {
+    // const User = this.resourceManager.getSqlzModel('user');
+    const UserOrganization = this.resourceManager.getSqlzAssociationModel('userOrganization');
+    // const Organization = this.resourceManager.getSqlzModel('organization');
+
+    return UserOrganization.findOne({
+      where: {
+        role: 'owner',
+        user_id: userId,
+        organization_id: organizationId,
+      },
+    })
+    .then((result) => {
+      if (!result) {
+        return null;
+      }
+      return UserOrganization.update({
+        labels: Sequelize.literal(`labels || '${JSON.stringify({ identifier: targetData.identifier })}'::jsonb`),
+      }, {
+        where: {
+          user_id: targetId,
+          organization_id: organizationId,
+        },
       });
     });
   }
@@ -120,6 +198,54 @@ export default class OrganizationRouter extends RouterBase {
           return RestfulError.koaThrowWith(ctx, 404, 'Organization not found');
         }
         return ctx.body = result.users;
+      });
+    });
+
+    router.post('/api/organizations/:organizationId/members', this.authKit.koaHelper.getIdentity, (ctx, next) => {
+      if (!ctx.local.userSession || !ctx.local.userSession.user_id) {
+        return RestfulError.koaThrowWith(ctx, 404, 'User not found');
+      }
+
+      const {
+        username,
+        password,
+        name,
+      } = ctx.request.body;
+
+      if (!username || !password || !name) {
+        return RestfulError.koaThrowWith(ctx, 400, 'Wong user');
+      }
+
+      return this.postOrganizationMember(ctx.local.userSession.user_id, ctx.params.organizationId, {
+        username,
+        password,
+        name,
+        privilege: 'user',
+      })
+      .then(async (result) => {
+        const u = await this.findUser(result.id, true);
+        const user = u.get();
+        user.userOrganization = user.organizations.find(o => o.id === ctx.params.organizationId).userOrganization;
+        delete user.organizations;
+        return ctx.body = user;
+      });
+    });
+
+    router.patch('/api/organizations/:organizationId/members/:memberId', this.authKit.koaHelper.getIdentity, (ctx, next) => {
+      if (!ctx.local.userSession || !ctx.local.userSession.user_id) {
+        return RestfulError.koaThrowWith(ctx, 404, 'User not found');
+      }
+
+      return this.patchOrganizationMember(ctx.local.userSession.user_id, ctx.params.organizationId, ctx.params.memberId, ctx.request.body)
+      .then(async (result) => {
+        if (!result) {
+          return RestfulError.koaThrowWith(ctx, 404, 'Organization not found');
+        }
+        const u = await this.findUser(ctx.params.memberId, true);
+        const user = u.get();
+        user.userOrganization = user.organizations.find(o => o.id === ctx.params.organizationId).userOrganization;
+        delete user.organizations;
+        return ctx.body = user;
       });
     });
   }

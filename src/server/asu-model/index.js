@@ -411,6 +411,14 @@ export default (sequelizeStore) => {
             primaryKey: true,
             autoIncrement: true,
           },
+          labels: {
+            type: Sequelize.JSONB,
+            defaultValue: {},
+          },
+          data: {
+            type: Sequelize.JSONB,
+            defaultValue: {},
+          },
           role: Sequelize.STRING,
         },
         options: {},
@@ -443,6 +451,14 @@ export default (sequelizeStore) => {
             type: Sequelize.BIGINT.UNSIGNED,
             primaryKey: true,
             autoIncrement: true,
+          },
+          labels: {
+            type: Sequelize.JSONB,
+            defaultValue: {},
+          },
+          data: {
+            type: Sequelize.JSONB,
+            defaultValue: {},
           },
           role: Sequelize.STRING,
         },

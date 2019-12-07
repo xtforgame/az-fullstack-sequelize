@@ -38,13 +38,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const orgId = '1';
+const projId = '1';
+
 export default (props) => {
   const {
     dialogProps,
   } = props;
 
-  const projectMemberQueryName = './api/projects/1/members';
-  const orgMemberQueryName = './api/organizations/1/members';
+  const projectMemberQueryName = `./api/projects/${orgId}/members`;
+  const orgMemberQueryName = `./api/organizations/${projId}/members`;
 
   const classes = useStyles();
   const {
@@ -92,14 +95,22 @@ export default (props) => {
     && orgMemberMetadata && orgMemberMetadata.requestTimestamp >= reqTime
     && loaded.current === 2;
 
-  const onSubmit = (value, editingParams, index) => {
-    if (index == null) {
-      setId(id + 1);
-      setList([...list, { ...value, id: id + 1 }]);
+  const onSubmit = async (value, editingParams, index) => {
+    const { editingSource } = editingParams;
+    if (!editingSource) {
+      await user.create(value, { queryId: orgMemberQueryName, actionProps: { url: orgMemberQueryName } });
+      setReqTime(new Date().getTime());
+      await user.getCollection({ queryId: orgMemberQueryName, actionProps: { url: orgMemberQueryName } })
+      .then((x) => {
+        forceUpdate({});
+      });
     } else {
-      const newList = [...list];
-      newList.splice(index, 1, value);
-      setList(newList);
+      await user.update(index, value, { queryId: orgMemberQueryName, actionProps: { url: `${orgMemberQueryName}/${editingSource.id}` } });
+      setReqTime(new Date().getTime());
+      await user.getCollection({ queryId: orgMemberQueryName, actionProps: { url: orgMemberQueryName } })
+      .then((x) => {
+        forceUpdate({});
+      });
     }
   };
 
@@ -141,7 +152,7 @@ export default (props) => {
             >
               識別名稱
             </Typography>
-            {` — ${value.labels.identifier || '<無>'}`}
+            {` — ${value.userOrganization.labels.identifier || '<無>'}`}
           </React.Fragment>
         )}
       />
