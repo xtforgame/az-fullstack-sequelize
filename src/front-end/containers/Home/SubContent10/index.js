@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { createStructuredSelector } from 'reselect';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import ListItem from '@material-ui/core/ListItem';
@@ -8,8 +9,23 @@ import Divider from '@material-ui/core/Divider';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import FormDialogInput from '~/components/FormInputs/FormDialogInput';
+import { useConnect } from '~/hooks/redux-react-hook-ex';
 import CrudDialogEx from '~/components/Dialogs/CrudDialogEx';
+import modelMapEx from '~/containers/App/modelMapEx';
 import CrudForm from './CrudForm';
+
+const {
+  user,
+  userSetting,
+  organization,
+  project,
+} = modelMapEx.querchy.promiseActionCreatorSets;
+
+const mapStateToProps = createStructuredSelector({
+  userQueryMap: modelMapEx.cacher.selectorCreatorSet.user.selectQueryMap(),
+});
+
+const mapDispatchToProps = {};
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -27,13 +43,54 @@ export default (props) => {
     dialogProps,
   } = props;
 
+  const projectMemberQueryName = './api/projects/1/members';
+  const orgMemberQueryName = './api/organizations/1/members';
+
   const classes = useStyles();
-  const [list, setList] = useState([
-    { id: 1, text: 'Xxxx1' },
-    { id: 2, text: 'Xxxx2' },
-  ]);
+  const {
+    userQueryMap: {
+      metadata,
+      values,
+    },
+  } = useConnect(mapStateToProps, mapDispatchToProps);
+
+  const projectMemberMetadata = metadata[projectMemberQueryName];
+  const projectMembers = values[projectMemberQueryName] || [];
+
+  const orgMemberMetadata = metadata[orgMemberQueryName];
+  const orgMembers = values[orgMemberQueryName] || [];
+
   const [id, setId] = useState(2);
   const [searchText, setSearchText] = useState('');
+
+  const [reqTime, setReqTime] = useState(0);
+  const [, forceUpdate] = useState({});
+  const loaded = useRef(0);
+  const [value, setValue] = useState(null);
+
+  const [list, setList] = useState([
+    { id: 1, name: 'Xxxx1' },
+    { id: 2, name: 'Xxxx2' },
+  ]);
+
+  useEffect(() => {
+    setReqTime(new Date().getTime());
+    user.getCollection({ queryId: projectMemberQueryName, actionProps: { url: projectMemberQueryName } })
+    .then((x) => {
+      loaded.current++;
+      forceUpdate({});
+    });
+    user.getCollection({ queryId: orgMemberQueryName, actionProps: { url: orgMemberQueryName } })
+    .then((x) => {
+      loaded.current++;
+      forceUpdate({});
+    });
+  }, []);
+
+  const isReady = reqTime
+    && projectMemberMetadata && projectMemberMetadata.requestTimestamp >= reqTime
+    && orgMemberMetadata && orgMemberMetadata.requestTimestamp >= reqTime
+    && loaded.current === 2;
 
   const onSubmit = (value, editingParams, index) => {
     if (index == null) {
@@ -54,7 +111,7 @@ export default (props) => {
         <ListItemAvatar>
           <Avatar alt="Logo" src="./mail-assets/logo.png" />
         </ListItemAvatar>
-        <ListItemText primary={searchText ? `<Create '${searchText}...'>` : '<New Item>'} />
+        <ListItemText primary={searchText ? `<新增 '${searchText}...'>` : '<新增成員>'} />
       </ListItem>
       <Divider />
     </React.Fragment>
@@ -70,7 +127,7 @@ export default (props) => {
       alignItems="flex-start"
     >
       <ListItemAvatar>
-        <Avatar alt="Logo" src="./mail-assets/logo.png" />
+        <Avatar alt="Logo" src={value.picture || './mail-assets/logo.png'} />
       </ListItemAvatar>
       <ListItemText
         primary={`ID: ${value.id}`}
@@ -82,9 +139,9 @@ export default (props) => {
               className={classes.inline}
               color="textPrimary"
             >
-              Text
+              識別名稱
             </Typography>
-            {` — ${value.text}`}
+            {` — ${value.labels.identifier || '<無>'}`}
           </React.Fragment>
         )}
       />
@@ -95,7 +152,6 @@ export default (props) => {
   const onStartSearch = () => setSearchText('');
   const onFinishSearch = () => setSearchText('');
 
-  const [value, setValue] = useState(null);
   return (
     <FormDialogInput
       label="DateRange"
@@ -104,9 +160,11 @@ export default (props) => {
       renderButton={({ buttonProps }) => (
         <Button
           variant="contained"
+          color="primary"
+          disabled={!isReady}
           {...buttonProps}
         >
-          Crud Dialog
+          編輯組織
         </Button>
       )}
       onChange={setValue}
@@ -123,7 +181,7 @@ export default (props) => {
         dialogProps,
       }) => (
         <CrudDialogEx
-          list={searchText ? list.filter(item => (item.text || '').includes(searchText)) : list}
+          list={searchText ? orgMembers.filter(item => (item.name || '').includes(searchText)) : orgMembers}
           addItemPlacement="start"
           renderAddItem={renderAddItem}
           renderListItem={renderListItem}

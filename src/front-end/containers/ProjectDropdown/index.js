@@ -87,6 +87,7 @@ class ProjectDropdown extends React.Component {
       <React.Fragment>
         <FormFieldButton
           {...props}
+          margin="dense"
           onClick={this.handleClick}
           label="專案"
           value={`${(defaultProject && defaultProject.name) || '<未選取>'}`}
