@@ -57,7 +57,7 @@ export default (props) => {
   } = useConnect(mapStateToProps, mapDispatchToProps);
 
   const projectMemberQueryName = selectedProject && `./api/projects/${selectedProject.organization_id}/members`;
-  const orgMemberQueryName = `./api/organizations/${selectedProject.id}/members`;
+  const orgMemberQueryName = selectedProject && `./api/organizations/${selectedProject.id}/members`;
 
   // const projectMemberMetadata = metadata[projectMemberQueryName] || {};
   // const projectMembers = values[projectMemberQueryName] || [];
