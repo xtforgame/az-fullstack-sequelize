@@ -33,6 +33,12 @@ const makeSelectedProjectIdSelector = () => createSelector(
   persistence => persistence.selectedProjectId,
 );
 
+const makeSelectedProjectSelector = () => createSelector(
+  modelMapEx.cacher.selectorCreatorSet.project.selectResourceMapValues(),
+  persistenceSelector,
+  (projects, persistence) => (projects && projects[persistence.selectedProjectId]),
+);
+
 const makeDefaultProjectSelector = () => createSelector(
   modelMapEx.cacher.selectorCreatorSet.project.selectResourceMapValues(),
   makeSelectedProjectIdSelector(),
@@ -52,5 +58,6 @@ export {
 
 
   makeSelectedProjectIdSelector,
+  makeSelectedProjectSelector,
   makeDefaultProjectSelector,
 };

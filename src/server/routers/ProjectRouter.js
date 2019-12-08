@@ -7,12 +7,18 @@ import RouterBase from '../core/router-base';
 export default class ProjectRouter extends RouterBase {
   findUser(userId, withProject = false) {
     const User = this.resourceManager.getSqlzModel('user');
+    const Organization = this.resourceManager.getSqlzModel('organization');
     const Project = this.resourceManager.getSqlzModel('project');
 
     const extraOptions = withProject && {
       include: [{
         model: Project,
         as: 'projects',
+        include: [{
+          model: Organization,
+          as: 'organization',
+          attributes: ['id', 'name'],
+        }],
       }],
     };
 

@@ -13,16 +13,20 @@ import { useConnect } from '~/hooks/redux-react-hook-ex';
 import CrudDialogEx from '~/components/Dialogs/CrudDialogEx';
 import modelMapEx from '~/containers/App/modelMapEx';
 import CrudForm from './CrudForm';
+import {
+  makeSelectedProjectSelector,
+} from '~/containers/App/selectors';
 
 const {
   user,
-  userSetting,
-  organization,
-  project,
+  // userSetting,
+  // organization,
+  // project,
 } = modelMapEx.querchy.promiseActionCreatorSets;
 
 const mapStateToProps = createStructuredSelector({
   userQueryMap: modelMapEx.cacher.selectorCreatorSet.user.selectQueryMap(),
+  selectedProject: makeSelectedProjectSelector(),
 });
 
 const mapDispatchToProps = {};
@@ -38,16 +42,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const orgId = '1';
-const projId = '1';
-
 export default (props) => {
   const {
     dialogProps,
   } = props;
-
-  const projectMemberQueryName = `./api/projects/${orgId}/members`;
-  const orgMemberQueryName = `./api/organizations/${projId}/members`;
 
   const classes = useStyles();
   const {
@@ -55,15 +53,18 @@ export default (props) => {
       metadata,
       values,
     },
+    selectedProject,
   } = useConnect(mapStateToProps, mapDispatchToProps);
 
-  const projectMemberMetadata = metadata[projectMemberQueryName];
-  const projectMembers = values[projectMemberQueryName] || [];
+  const projectMemberQueryName = selectedProject && `./api/projects/${selectedProject.organization_id}/members`;
+  const orgMemberQueryName = `./api/organizations/${selectedProject.id}/members`;
 
-  const orgMemberMetadata = metadata[orgMemberQueryName];
+  // const projectMemberMetadata = metadata[projectMemberQueryName] || {};
+  // const projectMembers = values[projectMemberQueryName] || [];
+
+  const orgMemberMetadata = metadata[orgMemberQueryName] || {};
   const orgMembers = values[orgMemberQueryName] || [];
 
-  const [id, setId] = useState(2);
   const [searchText, setSearchText] = useState('');
 
   const [reqTime, setReqTime] = useState(0);
@@ -71,12 +72,11 @@ export default (props) => {
   const loaded = useRef(0);
   const [value, setValue] = useState(null);
 
-  const [list, setList] = useState([
-    { id: 1, name: 'Xxxx1' },
-    { id: 2, name: 'Xxxx2' },
-  ]);
-
   useEffect(() => {
+    if (!selectedProject) {
+      return;
+    }
+    loaded.current = 0;
     setReqTime(new Date().getTime());
     user.getCollection({ queryId: projectMemberQueryName, actionProps: { url: projectMemberQueryName } })
     .then((x) => {
@@ -88,10 +88,11 @@ export default (props) => {
       loaded.current++;
       forceUpdate({});
     });
-  }, []);
+  }, [selectedProject]);
 
-  const isReady = reqTime
-    && projectMemberMetadata && projectMemberMetadata.requestTimestamp >= reqTime
+  const isReady = selectedProject
+    && reqTime
+    // && projectMemberMetadata && projectMemberMetadata.requestTimestamp >= reqTime
     && orgMemberMetadata && orgMemberMetadata.requestTimestamp >= reqTime
     && loaded.current === 2;
 
@@ -141,7 +142,7 @@ export default (props) => {
         <Avatar alt="Logo" src={value.picture || './mail-assets/logo.png'} />
       </ListItemAvatar>
       <ListItemText
-        primary={`ID: ${value.id}`}
+        primary={`${value.name}(ID: ${value.id})`}
         secondary={(
           <React.Fragment>
             <Typography
@@ -202,6 +203,11 @@ export default (props) => {
           onSearchTextChange={onSearchTextChange}
           onStartSearch={onStartSearch}
           onFinishSearch={onFinishSearch}
+          texts={{
+            edit: '編輯成員',
+            create: '新增成員',
+            pick: '選擇成員',
+          }}
           {...dialogProps}
         />
       )}

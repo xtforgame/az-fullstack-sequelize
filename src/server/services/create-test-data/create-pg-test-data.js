@@ -59,6 +59,11 @@ const createTestUser = async (resourceManager) => {
           [AsuOrm.ThroughValues]: {
             role: 'owner',
           },
+        }, {
+          name: 'private',
+          [AsuOrm.ThroughValues]: {
+            role: 'owner',
+          },
         }];
       }
       const user = await User.create(createInitialUserData({
@@ -72,11 +77,16 @@ const createTestUser = async (resourceManager) => {
       if (username === 'admin') {
         defaultOrgId = user.organizations[0].id;
         const porject = await user.createProject({
-          name: 'default',
+          name: 'management',
           data: {},
           organization_id: defaultOrgId,
         }, { through: { role: 'owner' }, transaction });
         defaultProjId = porject.id;
+        await user.createProject({
+          name: 'management',
+          data: {},
+          organization_id: user.organizations[1].id,
+        }, { through: { role: 'owner' }, transaction });
       } else {
         await user.addOrganization(defaultOrgId, { through: { role: 'user' }, transaction });
         await user.addProject(defaultProjId, { through: { role: 'user' }, transaction });

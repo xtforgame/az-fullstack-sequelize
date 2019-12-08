@@ -46,7 +46,7 @@ class ProjectDropdown extends React.Component {
         selected={(!!defaultProject && project.id === defaultProject.id) || (project.id === projectId)}
         onClick={event => this.handleMenuItemClick(event, i, project.id)}
       >
-        {project.name}
+        {`${project.organization.name}-${project.name}`}
       </MenuItem>
     ));
   }
@@ -90,7 +90,7 @@ class ProjectDropdown extends React.Component {
           margin="dense"
           onClick={this.handleClick}
           label="專案"
-          value={`${(defaultProject && defaultProject.name) || '<未選取>'}`}
+          value={(defaultProject && `${defaultProject.organization.name}-${defaultProject.name}`) || '<未選取>'}
         >
           {`${(defaultProject && defaultProject.name) || '<未選取>'}`}
         </FormFieldButton>
@@ -111,7 +111,6 @@ const mapStateToProps = createStructuredSelector({
   projects: modelMapEx.cacher.selectorCreatorSet.project.selectResourceMapValues(),
   defaultProject: makeDefaultProjectSelector(),
   projectId: makeSelectedProjectIdSelector(),
-  projectId: () => '1',
 });
 
 export default compose(
