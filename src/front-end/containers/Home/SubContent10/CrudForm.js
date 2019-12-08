@@ -41,6 +41,13 @@ export default (props) => {
   const fields = editingSource ? (
     <React.Fragment>
       <FormTextField
+        label="電子信箱"
+        value={editingSource.data.email}
+        disabled
+        margin="dense"
+        fullWidth
+      />
+      <FormTextField
         label="識別名稱"
         value={identifier || ''}
         onChange={e => setIdentifier(e.target.value)}
