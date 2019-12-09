@@ -5,12 +5,12 @@ import Button from '@material-ui/core/Button';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import TextField from '@material-ui/core/TextField';
+import Chip from '@material-ui/core/Chip';
 import Divider from '@material-ui/core/Divider';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import IconButton from '@material-ui/core/IconButton';
-import CommentIcon from '@material-ui/icons/Comment';
 import FormDialogInput from '~/components/FormInputs/FormDialogInput';
 import { useConnect } from '~/hooks/redux-react-hook-ex';
 import CrudDialogEx from '~/components/Dialogs/CrudDialogEx';
@@ -62,8 +62,8 @@ export default (props) => {
   const projectMemberQueryName = selectedProject && `./api/projects/${selectedProject.organization_id}/members`;
   const orgMemberQueryName = selectedProject && `./api/organizations/${selectedProject.id}/members`;
 
-  // const projectMemberMetadata = metadata[projectMemberQueryName] || {};
-  // const projectMembers = values[projectMemberQueryName] || [];
+  const projectMemberMetadata = metadata[projectMemberQueryName] || {};
+  const projectMembers = values[projectMemberQueryName] || [];
 
   const orgMemberMetadata = metadata[orgMemberQueryName] || {};
   const orgMembers = values[orgMemberQueryName] || [];
@@ -74,6 +74,7 @@ export default (props) => {
   const [, forceUpdate] = useState({});
   const loaded = useRef(0);
   const [value, setValue] = useState(null);
+  const [selectValue, setSelectValue] = useState([]);
 
   useEffect(() => {
     if (!selectedProject) {
@@ -95,7 +96,7 @@ export default (props) => {
 
   const isReady = selectedProject
     && reqTime
-    // && projectMemberMetadata && projectMemberMetadata.requestTimestamp >= reqTime
+    && projectMemberMetadata && projectMemberMetadata.requestTimestamp >= reqTime
     && orgMemberMetadata && orgMemberMetadata.requestTimestamp >= reqTime
     && loaded.current === 2;
 
@@ -133,9 +134,8 @@ export default (props) => {
   );
 
   const renderListItem = ({
-    picked,
     handleItemClick,
-  }, value) => console.log('picked :', picked) || (
+  }, value) => (
     <ListItem
       button
       key={value.id}
@@ -161,9 +161,6 @@ export default (props) => {
           </React.Fragment>
         )}
       />
-      <ListItemSecondaryAction>
-        <CommentIcon />
-      </ListItemSecondaryAction>
     </ListItem>
   );
 
@@ -171,55 +168,96 @@ export default (props) => {
   const onStartSearch = () => setSearchText('');
   const onFinishSearch = () => setSearchText('');
 
+  const getIdentifier = option => option.userOrganization.labels.identifier || '';
   return (
-    <FormDialogInput
-      label="DateRange"
-      value={value}
-      displayValue={() => 'XX'}
-      renderButton={({ buttonProps }) => (
-        <Button
-          variant="contained"
-          color="primary"
-          disabled={!isReady}
-          {...buttonProps}
-        >
-          編輯組織
-        </Button>
-      )}
-      onChange={setValue}
-      // buttonProps={{
-      //   fullWidth: true,
-      // }}
-      dialogProps={dialogProps}
-      renderDialog={({
-        label,
-        title,
-        open,
-        handleClose,
-        value,
-        dialogProps,
-      }) => (
-        <CrudDialogEx
-          picker
-          multiple
-          list={searchText ? orgMembers.filter(item => (item.name || '').includes(searchText)) : orgMembers}
-          addItemPlacement="start"
-          renderAddItem={renderAddItem}
-          renderListItem={renderListItem}
-          CrudForm={CrudForm}
-          value={value}
-          onSubmit={onSubmit}
-          onSearchTextChange={onSearchTextChange}
-          onStartSearch={onStartSearch}
-          onFinishSearch={onFinishSearch}
-          texts={{
-            edit: '編輯成員',
-            create: '新增成員',
-            pick: '選擇成員',
-          }}
-          {...dialogProps}
-        />
-      )}
-    />
+    <div>
+      <Autocomplete
+        disablePortal
+        multiple
+        noOptionsText="找不到成員"
+        id="tags-outlined"
+        options={orgMembers}
+        getOptionLabel={option => `${option.name}(ID:${option.id})(${getIdentifier(option) || '<無識別名稱>'})`}
+        renderTags={
+          (value, getTagProps) => value.map((option, index) => (
+            <Chip variant="outlined" label={option.name} {...getTagProps({ index })} />
+          ))
+        }
+        value={selectValue}
+        onChange={(event, newValue) => {
+          setSelectValue(newValue);
+        }}
+        filterOptions={(options, state) => {
+          let { inputValue } = state;
+          inputValue = (inputValue || '').toLowerCase();
+          return options.filter((option) => {
+            if (option.name && option.name.toLowerCase().includes(inputValue)) {
+              return true;
+            }
+            if (getIdentifier(option).toLowerCase().includes(inputValue)) {
+              return true;
+            }
+            return false;
+          });
+        }}
+        filterSelectedOptions
+        renderInput={params => (
+          <TextField
+            {...params}
+            variant="outlined"
+            label="新增成員"
+            placeholder="名稱/信箱"
+            fullWidth
+          />
+        )}
+      />
+      <FormDialogInput
+        label="DateRange"
+        value={value}
+        displayValue={() => 'XX'}
+        renderButton={({ buttonProps }) => (
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={!isReady}
+            {...buttonProps}
+          >
+            編輯組織
+          </Button>
+        )}
+        onChange={setValue}
+        // buttonProps={{
+        //   fullWidth: true,
+        // }}
+        dialogProps={dialogProps}
+        renderDialog={({
+          label,
+          title,
+          open,
+          handleClose,
+          value,
+          dialogProps,
+        }) => (
+          <CrudDialogEx
+            list={searchText ? orgMembers.filter(item => (item.name || '').includes(searchText)) : orgMembers}
+            addItemPlacement="start"
+            renderAddItem={renderAddItem}
+            renderListItem={renderListItem}
+            CrudForm={CrudForm}
+            value={value}
+            onSubmit={onSubmit}
+            onSearchTextChange={onSearchTextChange}
+            onStartSearch={onStartSearch}
+            onFinishSearch={onFinishSearch}
+            texts={{
+              edit: '編輯成員',
+              create: '新增成員',
+              pick: '選擇成員',
+            }}
+            {...dialogProps}
+          />
+        )}
+      />
+    </div>
   );
 };
