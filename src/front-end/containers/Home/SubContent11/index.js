@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createStructuredSelector } from 'reselect';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
@@ -133,37 +134,6 @@ export default (props) => {
     </React.Fragment>
   );
 
-  const renderListItem = ({
-    handleItemClick,
-  }, value) => (
-    <ListItem
-      button
-      key={value.id}
-      onClick={handleItemClick}
-      alignItems="flex-start"
-    >
-      <ListItemAvatar>
-        <Avatar alt="Logo" src={value.picture || './mail-assets/logo.png'} />
-      </ListItemAvatar>
-      <ListItemText
-        primary={`${value.name}(ID: ${value.id})`}
-        secondary={(
-          <React.Fragment>
-            <Typography
-              component="span"
-              variant="body2"
-              className={classes.inline}
-              color="textPrimary"
-            >
-              識別名稱
-            </Typography>
-            {` — ${value.userOrganization.labels.identifier || '<無>'}`}
-          </React.Fragment>
-        )}
-      />
-    </ListItem>
-  );
-
   const onSearchTextChange = t => setSearchText(t);
   const onStartSearch = () => setSearchText('');
   const onFinishSearch = () => setSearchText('');
@@ -211,53 +181,36 @@ export default (props) => {
           />
         )}
       />
-      <FormDialogInput
-        label="DateRange"
-        value={value}
-        displayValue={() => 'XX'}
-        renderButton={({ buttonProps }) => (
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={!isReady}
-            {...buttonProps}
+      <List>
+        {projectMembers.map(projectMember => (
+          <ListItem
+            button
+            key={projectMember.id}
+            onClick={() => {}}
+            alignItems="flex-start"
           >
-            編輯組織
-          </Button>
-        )}
-        onChange={setValue}
-        // buttonProps={{
-        //   fullWidth: true,
-        // }}
-        dialogProps={dialogProps}
-        renderDialog={({
-          label,
-          title,
-          open,
-          handleClose,
-          value,
-          dialogProps,
-        }) => (
-          <CrudDialogEx
-            list={searchText ? orgMembers.filter(item => (item.name || '').includes(searchText)) : orgMembers}
-            addItemPlacement="start"
-            renderAddItem={renderAddItem}
-            renderListItem={renderListItem}
-            CrudForm={CrudForm}
-            value={value}
-            onSubmit={onSubmit}
-            onSearchTextChange={onSearchTextChange}
-            onStartSearch={onStartSearch}
-            onFinishSearch={onFinishSearch}
-            texts={{
-              edit: '編輯成員',
-              create: '新增成員',
-              pick: '選擇成員',
-            }}
-            {...dialogProps}
-          />
-        )}
-      />
+            <ListItemAvatar>
+              <Avatar alt="Logo" src={projectMember.picture || './mail-assets/logo.png'} />
+            </ListItemAvatar>
+            <ListItemText
+              primary={`${projectMember.name}(ID: ${projectMember.id})`}
+              secondary={(
+                <React.Fragment>
+                  <Typography
+                    component="span"
+                    variant="body2"
+                    className={classes.inline}
+                    color="textPrimary"
+                  >
+                    識別名稱
+                  </Typography>
+                  {` — ${projectMember.userProject.labels.identifier || '<無>'}`}
+                </React.Fragment>
+              )}
+            />
+          </ListItem>
+        ))}
+      </List>
     </div>
   );
 };
