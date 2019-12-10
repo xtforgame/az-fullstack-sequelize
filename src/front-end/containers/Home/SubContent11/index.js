@@ -12,11 +12,8 @@ import Chip from '@material-ui/core/Chip';
 import Divider from '@material-ui/core/Divider';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
-import FormDialogInput from '~/components/FormInputs/FormDialogInput';
 import { useConnect } from '~/hooks/redux-react-hook-ex';
-import CrudDialogEx from '~/components/Dialogs/CrudDialogEx';
 import modelMapEx from '~/containers/App/modelMapEx';
-import CrudForm from './CrudForm';
 import {
   makeSelectedProjectSelector,
 } from '~/containers/App/selectors';
@@ -47,10 +44,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default (props) => {
-  const {
-    dialogProps,
-  } = props;
-
   const classes = useStyles();
   const {
     userQueryMap: {
@@ -69,12 +62,9 @@ export default (props) => {
   const orgMemberMetadata = metadata[orgMemberQueryName] || {};
   const orgMembers = values[orgMemberQueryName] || [];
 
-  const [searchText, setSearchText] = useState('');
-
   const [reqTime, setReqTime] = useState(0);
   const [, forceUpdate] = useState({});
   const loaded = useRef(0);
-  const [value, setValue] = useState(null);
   const [selectValue, setSelectValue] = useState([]);
 
   useEffect(() => {
@@ -100,43 +90,6 @@ export default (props) => {
     && projectMemberMetadata && projectMemberMetadata.requestTimestamp >= reqTime
     && orgMemberMetadata && orgMemberMetadata.requestTimestamp >= reqTime
     && loaded.current === 2;
-
-  const onSubmit = async (value, editingParams, index) => {
-    const { editingSource } = editingParams;
-    if (!editingSource) {
-      await user.create(value, { queryId: orgMemberQueryName, actionProps: { url: orgMemberQueryName } });
-      setReqTime(new Date().getTime());
-      await user.getCollection({ queryId: orgMemberQueryName, actionProps: { url: orgMemberQueryName } })
-      .then((x) => {
-        forceUpdate({});
-      });
-    } else {
-      await user.update(index, value, { queryId: orgMemberQueryName, actionProps: { url: `${orgMemberQueryName}/${editingSource.id}` } });
-      setReqTime(new Date().getTime());
-      await user.getCollection({ queryId: orgMemberQueryName, actionProps: { url: orgMemberQueryName } })
-      .then((x) => {
-        forceUpdate({});
-      });
-    }
-  };
-
-  const renderAddItem = ({
-    handleItemClick,
-  }) => (
-    <React.Fragment>
-      <ListItem button onClick={() => handleItemClick({ defaultText: searchText })}>
-        <ListItemAvatar>
-          <Avatar alt="Logo" src="./mail-assets/logo.png" />
-        </ListItemAvatar>
-        <ListItemText primary={searchText ? `<新增 '${searchText}...'>` : '<新增成員>'} />
-      </ListItem>
-      <Divider />
-    </React.Fragment>
-  );
-
-  const onSearchTextChange = t => setSearchText(t);
-  const onStartSearch = () => setSearchText('');
-  const onFinishSearch = () => setSearchText('');
 
   const getIdentifier = option => option.userOrganization.labels.identifier || '';
   return (
