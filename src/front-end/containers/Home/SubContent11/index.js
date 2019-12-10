@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createStructuredSelector } from 'reselect';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+// import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import IconButton from '@material-ui/core/IconButton';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import Chip from '@material-ui/core/Chip';
-import Divider from '@material-ui/core/Divider';
+// import Divider from '@material-ui/core/Divider';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import { useConnect } from '~/hooks/redux-react-hook-ex';
@@ -65,6 +68,7 @@ export default (props) => {
   const [reqTime, setReqTime] = useState(0);
   const [, forceUpdate] = useState({});
   const loaded = useRef(0);
+  const autocompleteOptions = useRef(null);
   const [selectValue, setSelectValue] = useState([]);
 
   useEffect(() => {
@@ -74,12 +78,12 @@ export default (props) => {
     loaded.current = 0;
     setReqTime(new Date().getTime());
     user.getCollection({ queryId: projectMemberQueryName, actionProps: { url: projectMemberQueryName } })
-    .then((x) => {
+    .then(() => {
       loaded.current++;
       forceUpdate({});
     });
     user.getCollection({ queryId: orgMemberQueryName, actionProps: { url: orgMemberQueryName } })
-    .then((x) => {
+    .then(() => {
       loaded.current++;
       forceUpdate({});
     });
@@ -91,6 +95,11 @@ export default (props) => {
     && orgMemberMetadata && orgMemberMetadata.requestTimestamp >= reqTime
     && loaded.current === 2;
 
+  if (isReady && !autocompleteOptions.current) {
+    const projMemberSet = new Set(projectMembers.map(m => m.id));
+    autocompleteOptions.current = orgMembers.filter(m => !projMemberSet.has(m.id));
+  }
+
   const getIdentifier = option => option.userOrganization.labels.identifier || '';
   return (
     <div>
@@ -99,7 +108,7 @@ export default (props) => {
         multiple
         noOptionsText="找不到成員"
         id="tags-outlined"
-        options={orgMembers}
+        options={autocompleteOptions.current || []}
         getOptionLabel={option => `${option.name}(ID:${option.id})(${getIdentifier(option) || '<無識別名稱>'})`}
         renderTags={
           (value, getTagProps) => value.map((option, index) => (
@@ -161,6 +170,11 @@ export default (props) => {
                 </React.Fragment>
               )}
             />
+            <ListItemSecondaryAction>
+              <IconButton edge="end" aria-label="comments">
+                <ExpandMoreIcon />
+              </IconButton>
+            </ListItemSecondaryAction>
           </ListItem>
         ))}
       </List>
