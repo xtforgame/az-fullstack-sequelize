@@ -2,25 +2,20 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createStructuredSelector } from 'reselect';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import MenuItem from '@material-ui/core/MenuItem';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import Chip from '@material-ui/core/Chip';
 // import Divider from '@material-ui/core/Divider';
-import Avatar from '@material-ui/core/Avatar';
-import Typography from '@material-ui/core/Typography';
 import { useConnect } from '~/hooks/redux-react-hook-ex';
 import MoreActionMenuButton from '~/components/Buttons/MoreActionMenuButton';
 import modelMapEx from '~/containers/App/modelMapEx';
 import {
   makeSelectedProjectSelector,
 } from '~/containers/App/selectors';
+import MemberListItem from '../shared/MemberListItem';
 
 const {
   user,
@@ -207,37 +202,19 @@ export default (props) => {
       />
       <List>
         {projectMembers.map(projectMember => (
-          <ListItem
-            button
+          <MemberListItem
             key={projectMember.id}
+            member={projectMember}
+            labels={projectMember.labels}
             onClick={() => {}}
-            alignItems="flex-start"
-          >
-            <ListItemAvatar>
-              <Avatar alt="Logo" src={projectMember.picture || './mail-assets/logo.png'} />
-            </ListItemAvatar>
-            <ListItemText
-              primary={`${projectMember.name}(ID: ${projectMember.id})`}
-              secondary={(
-                <React.Fragment>
-                  <Typography
-                    component="span"
-                    variant="body2"
-                    className={classes.inline}
-                    color="textPrimary"
-                  >
-                    識別名稱
-                  </Typography>
-                  {` — ${projectMember.userProject.labels.identifier || '<無>'}`}
-                </React.Fragment>
-              )}
-            />
-            <ListItemSecondaryAction>
-              <MoreActionMenuButton
-                getActionMenuItems={getActionMenuItems(projectMember.id)}
-              />
-            </ListItemSecondaryAction>
-          </ListItem>
+            action={(
+              <ListItemSecondaryAction>
+                <MoreActionMenuButton
+                  getActionMenuItems={getActionMenuItems(projectMember.id)}
+                />
+              </ListItemSecondaryAction>
+            )}
+          />
         ))}
       </List>
     </div>

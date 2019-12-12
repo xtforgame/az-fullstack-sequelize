@@ -16,6 +16,7 @@ import CrudForm from './CrudForm';
 import {
   makeSelectedProjectSelector,
 } from '~/containers/App/selectors';
+import MemberListItem from '../shared/MemberListItem';
 
 const {
   user,
@@ -132,32 +133,12 @@ export default (props) => {
   const renderListItem = ({
     handleItemClick,
   }, value) => (
-    <ListItem
-      button
+    <MemberListItem
       key={value.id}
+      member={value}
+      labels={value.labels}
       onClick={handleItemClick}
-      alignItems="flex-start"
-    >
-      <ListItemAvatar>
-        <Avatar alt="Logo" src={value.picture || './mail-assets/logo.png'} />
-      </ListItemAvatar>
-      <ListItemText
-        primary={`${value.name}(ID: ${value.id})`}
-        secondary={(
-          <React.Fragment>
-            <Typography
-              component="span"
-              variant="body2"
-              className={classes.inline}
-              color="textPrimary"
-            >
-              識別名稱
-            </Typography>
-            {` — ${value.userOrganization.labels.identifier || '<無>'}`}
-          </React.Fragment>
-        )}
-      />
-    </ListItem>
+    />
   );
 
   const onSearchTextChange = t => setSearchText(t);
