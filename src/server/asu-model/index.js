@@ -37,6 +37,7 @@ export default (sequelizeStore) => {
           userGroups: {
             type: AsuOrm.BELONGS_TO_MANY('userGroup', {
               through: {
+                unique: false,
                 asuModelName: 'userUserGroup',
                 asuThroughAs: 'relation',
               },
@@ -47,6 +48,7 @@ export default (sequelizeStore) => {
           groupInvitations: {
             type: AsuOrm.BELONGS_TO_MANY('userGroup', {
               through: {
+                unique: false,
                 asuModelName: 'groupInvitation',
                 asuThroughAs: 'state',
               },
@@ -57,6 +59,7 @@ export default (sequelizeStore) => {
           organizations: {
             type: AsuOrm.BELONGS_TO_MANY('organization', {
               through: {
+                unique: false,
                 asuModelName: 'userOrganization',
                 asuThroughAs: 'relation',
               },
@@ -67,6 +70,7 @@ export default (sequelizeStore) => {
           organizationInvitations: {
             type: AsuOrm.BELONGS_TO_MANY('organization', {
               through: {
+                unique: false,
                 asuModelName: 'organizationInvitation',
                 asuThroughAs: 'state',
               },
@@ -77,6 +81,7 @@ export default (sequelizeStore) => {
           projects: {
             type: AsuOrm.BELONGS_TO_MANY('project', {
               through: {
+                unique: false,
                 asuModelName: 'userProject',
                 asuThroughAs: 'relation',
               },
@@ -87,6 +92,7 @@ export default (sequelizeStore) => {
           projectInvitations: {
             type: AsuOrm.BELONGS_TO_MANY('project', {
               through: {
+                unique: false,
                 asuModelName: 'projectInvitation',
                 asuThroughAs: 'state',
               },
@@ -102,6 +108,7 @@ export default (sequelizeStore) => {
           memos: {
             type: AsuOrm.BELONGS_TO_MANY('memo', {
               through: {
+                unique: false,
                 asuModelName: 'userMemo',
                 asuThroughAs: 'relation',
               },
@@ -222,6 +229,7 @@ export default (sequelizeStore) => {
           users: {
             type: AsuOrm.BELONGS_TO_MANY('user', {
               through: {
+                unique: false,
                 asuModelName: 'userUserGroup',
                 asuThroughAs: 'relation',
               },
@@ -232,6 +240,7 @@ export default (sequelizeStore) => {
           inviters: {
             type: AsuOrm.BELONGS_TO_MANY('user', {
               through: {
+                unique: false,
                 asuModelName: 'groupInvitation',
                 asuThroughAs: 'state',
               },
@@ -242,6 +251,7 @@ export default (sequelizeStore) => {
           invitees: {
             type: AsuOrm.BELONGS_TO_MANY('user', {
               through: {
+                unique: false,
                 asuModelName: 'groupInvitation',
                 asuThroughAs: 'state',
               },
@@ -262,6 +272,7 @@ export default (sequelizeStore) => {
           users: {
             type: AsuOrm.BELONGS_TO_MANY('user', {
               through: {
+                unique: false,
                 asuModelName: 'userOrganization',
                 asuThroughAs: 'relation',
               },
@@ -277,6 +288,7 @@ export default (sequelizeStore) => {
           inviters: {
             type: AsuOrm.BELONGS_TO_MANY('user', {
               through: {
+                unique: false,
                 asuModelName: 'organizationInvitation',
                 asuThroughAs: 'state',
               },
@@ -287,6 +299,7 @@ export default (sequelizeStore) => {
           invitees: {
             type: AsuOrm.BELONGS_TO_MANY('user', {
               through: {
+                unique: false,
                 asuModelName: 'organizationInvitation',
                 asuThroughAs: 'state',
               },
@@ -312,6 +325,7 @@ export default (sequelizeStore) => {
           users: {
             type: AsuOrm.BELONGS_TO_MANY('user', {
               through: {
+                unique: false,
                 asuModelName: 'userProject',
                 asuThroughAs: 'relation',
               },
@@ -327,6 +341,7 @@ export default (sequelizeStore) => {
           inviters: {
             type: AsuOrm.BELONGS_TO_MANY('user', {
               through: {
+                unique: false,
                 asuModelName: 'projectInvitation',
                 asuThroughAs: 'state',
               },
@@ -337,6 +352,7 @@ export default (sequelizeStore) => {
           invitees: {
             type: AsuOrm.BELONGS_TO_MANY('user', {
               through: {
+                unique: false,
                 asuModelName: 'projectInvitation',
                 asuThroughAs: 'state',
               },
@@ -360,6 +376,7 @@ export default (sequelizeStore) => {
           users: {
             type: AsuOrm.BELONGS_TO_MANY('user', {
               through: {
+                unique: false,
                 asuModelName: 'userMemo',
                 asuThroughAs: 'relation',
               },
@@ -380,7 +397,18 @@ export default (sequelizeStore) => {
           },
           role: Sequelize.STRING,
         },
-        options: {},
+        options: {
+          indexes: [
+            {
+              name: 'user_user_group_uniqueness',
+              unique: true,
+              fields: ['user_id', 'group_id'],
+              where: {
+                deleted_at: null,
+              },
+            },
+          ],
+        },
       },
       groupInvitation: {
         columns: {
@@ -421,7 +449,18 @@ export default (sequelizeStore) => {
           },
           role: Sequelize.STRING,
         },
-        options: {},
+        options: {
+          indexes: [
+            {
+              name: 'user_organization_uniqueness',
+              unique: true,
+              fields: ['user_id', 'organization_id'],
+              where: {
+                deleted_at: null,
+              },
+            },
+          ],
+        },
       },
       organizationInvitation: {
         columns: {
@@ -462,7 +501,18 @@ export default (sequelizeStore) => {
           },
           role: Sequelize.STRING,
         },
-        options: {},
+        options: {
+          indexes: [
+            {
+              name: 'user_project_uniqueness',
+              unique: true,
+              fields: ['user_id', 'project_id'],
+              where: {
+                deleted_at: null,
+              },
+            },
+          ],
+        },
       },
       projectInvitation: {
         columns: {
@@ -494,6 +544,18 @@ export default (sequelizeStore) => {
             autoIncrement: true,
           },
           role: Sequelize.STRING,
+        },
+        options: {
+          indexes: [
+            {
+              name: 'user_memo_uniqueness',
+              unique: true,
+              fields: ['user_id', 'memo_id'],
+              where: {
+                deleted_at: null,
+              },
+            },
+          ],
         },
       },
     },
