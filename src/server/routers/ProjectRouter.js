@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import {
   // RestfulResponse,
   RestfulError,
@@ -34,11 +35,17 @@ export default class ProjectRouter extends RouterBase {
     const User = this.resourceManager.getSqlzModel('user');
     const UserProject = this.resourceManager.getSqlzAssociationModel('userProject');
     const Project = this.resourceManager.getSqlzModel('project');
+    const Organization = this.resourceManager.getSqlzModel('organization');
 
     const extraOptions = withMembers && {
       include: [{
         model: User,
         as: 'users',
+        include: [{
+          model: Organization,
+          as: 'organizations',
+          attributes: ['id', 'name'],
+        }],
       }],
     };
 
@@ -58,6 +65,23 @@ export default class ProjectRouter extends RouterBase {
         },
         ...extraOptions,
       });
+    });
+  }
+
+  findProjectMembers(userId, projectId, withMembers = false) {
+    return this.findProject(userId, projectId, true)
+    .then((project) => {
+      if (!project) {
+        return null;
+      }
+      project.users = project.users.map((u) => {
+        const org = u.organizations.find(o => o.id === project.organization_id);
+        const user = u.get();
+        user.userOrganization = org && org.userOrganization;
+        delete user.organizations;
+        return user;
+      });
+      return project.users;
     });
   }
 
@@ -98,12 +122,12 @@ export default class ProjectRouter extends RouterBase {
         return RestfulError.koaThrowWith(ctx, 404, 'User not found');
       }
 
-      return this.findProject(ctx.local.userSession.user_id, ctx.params.projectId, true)
+      return this.findProjectMembers(ctx.local.userSession.user_id, ctx.params.projectId, true)
       .then((result) => {
         if (!result) {
           return RestfulError.koaThrowWith(ctx, 404, 'Project not found');
         }
-        return ctx.body = result.users;
+        return ctx.body = result;
       });
     });
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createStructuredSelector } from 'reselect';
 import { makeStyles } from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -144,68 +144,67 @@ export default (props) => {
   const getIdentifier = option => option.userOrganization.labels.identifier || '';
   return (
     <div>
-      <div style={{ display: 'flex' }}>
-        <Autocomplete
-          style={{ flex: 1 }}
-          key={updatedBaseTime}
-          disablePortal
-          multiple
-          noOptionsText="找不到成員"
-          id="tags-outlined"
-          options={autocompleteOptions.current || []}
-          getOptionLabel={option => `${option.name}(ID:${option.id})(${getIdentifier(option) || '<無識別名稱>'})`}
-          renderTags={
-            (value, getTagProps) => value.map((option, index) => (
-              <Chip variant="outlined" label={option.name} {...getTagProps({ index })} />
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Button
+          // aria-label="Add"
+          // aria-haspopup="true"
+          variant="contained"
+          color="primary"
+          disabled={!selectValue || selectValue.length === 0}
+          onClick={() => {
+            Promise.all(selectValue.map(
+              m => user.create({ memberId: m.id }, { queryId: projectMemberQueryName, actionProps: { url: projectMemberQueryName } })
             ))
-          }
-          value={selectValue}
-          onChange={(event, newValue) => {
-            setSelectValue(newValue);
+            .then(reload)
+            .catch(reload);
           }}
-          filterOptions={(options, state) => {
-            let { inputValue } = state;
-            inputValue = (inputValue || '').toLowerCase();
-            return options.filter((option) => {
-              if (option.name && option.name.toLowerCase().includes(inputValue)) {
-                return true;
-              }
-              if (getIdentifier(option).toLowerCase().includes(inputValue)) {
-                return true;
-              }
-              return false;
-            });
-          }}
-          filterSelectedOptions
-          renderInput={params => (
-            <TextField
-              {...params}
-              variant="outlined"
-              label="新增成員"
-              placeholder="名稱/信箱"
-              fullWidth
-            />
-          )}
-        />
-        {/* <div style={{ width: 10, height: 1 }} /> */}
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <IconButton
-            aria-label="Add"
-            aria-haspopup="true"
-            color="primary"
-            disabled={!selectValue || selectValue.length === 0}
-            onClick={() => {
-              Promise.all(selectValue.map(
-                m => user.create({ memberId: m.id }, { queryId: projectMemberQueryName, actionProps: { url: projectMemberQueryName } })
-              ))
-              .then(reload)
-              .catch(reload);
-            }}
-          >
-            <AddCircleOutlineIcon />
-          </IconButton>
-        </div>
+        >
+          確認新增
+        </Button>
       </div>
+      <div style={{ width: 10, height: 1 }} />
+      <Autocomplete
+        style={{ flex: 1 }}
+        key={updatedBaseTime}
+        disablePortal
+        multiple
+        noOptionsText="找不到成員"
+        id="tags-outlined"
+        options={autocompleteOptions.current || []}
+        getOptionLabel={option => `${option.name}(ID:${option.id})(${getIdentifier(option) || '<無識別名稱>'})`}
+        renderTags={
+          (value, getTagProps) => value.map((option, index) => (
+            <Chip variant="outlined" label={option.name} {...getTagProps({ index })} />
+          ))
+        }
+        value={selectValue}
+        onChange={(event, newValue) => {
+          setSelectValue(newValue);
+        }}
+        filterOptions={(options, state) => {
+          let { inputValue } = state;
+          inputValue = (inputValue || '').toLowerCase();
+          return options.filter((option) => {
+            if (option.name && option.name.toLowerCase().includes(inputValue)) {
+              return true;
+            }
+            if (getIdentifier(option).toLowerCase().includes(inputValue)) {
+              return true;
+            }
+            return false;
+          });
+        }}
+        filterSelectedOptions
+        renderInput={params => (
+          <TextField
+            {...params}
+            variant="outlined"
+            label="新增成員"
+            placeholder="名稱/信箱"
+            fullWidth
+          />
+        )}
+      />
       <List>
         {projectMembers.map(projectMember => (
           <ListItem

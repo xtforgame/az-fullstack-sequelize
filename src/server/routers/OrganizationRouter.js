@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import Sequelize from 'sequelize';
 import {
   // RestfulResponse,
@@ -56,6 +57,16 @@ export default class OrganizationRouter extends RouterBase {
         },
         ...extraOptions,
       });
+    });
+  }
+
+  findOrganizationMembers(userId, organizationId, withMembers = false) {
+    return this.findOrganization(userId, organizationId, true)
+    .then((organization) => {
+      if (!organization) {
+        return null;
+      }
+      return organization.users;
     });
   }
 
@@ -192,12 +203,12 @@ export default class OrganizationRouter extends RouterBase {
         return RestfulError.koaThrowWith(ctx, 404, 'User not found');
       }
 
-      return this.findOrganization(ctx.local.userSession.user_id, ctx.params.organizationId, true)
+      return this.findOrganizationMembers(ctx.local.userSession.user_id, ctx.params.organizationId, true)
       .then((result) => {
         if (!result) {
           return RestfulError.koaThrowWith(ctx, 404, 'Organization not found');
         }
-        return ctx.body = result.users;
+        return ctx.body = result;
       });
     });
 

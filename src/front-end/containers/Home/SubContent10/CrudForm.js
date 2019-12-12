@@ -42,7 +42,7 @@ export default (props) => {
     <React.Fragment>
       <FormTextField
         label="電子信箱"
-        value={editingSource.data.email}
+        value={editingSource.data.email || ''}
         disabled
         margin="dense"
         fullWidth
