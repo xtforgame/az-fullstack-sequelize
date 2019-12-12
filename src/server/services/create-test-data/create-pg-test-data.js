@@ -8,9 +8,11 @@ import {
 } from '~/domain-logic';
 import AsuOrm from 'az-sequelize-utils';
 
+const getEmail = username => `${username}@foo.bar`;
+
 const getAccountLinks = (username, password) => ([{
   provider_id: 'basic',
-  provider_user_id: `${username}@foo.bar`,
+  provider_user_id: getEmail(username),
   provider_user_access_info: {
     password: crypt(password, sha512gen_salt()),
   },
@@ -70,6 +72,10 @@ const createTestUser = async (resourceManager) => {
         id: (++idCounter),
         name,
         privilege,
+        data: {
+          bio: `I'm ${name}`,
+          email: getEmail(username),
+        },
         accountLinks: getAccountLinks(username, password || username),
       }, extraColumns), {
         transaction,

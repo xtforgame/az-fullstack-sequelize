@@ -92,6 +92,7 @@ export default class OrganizationRouter extends RouterBase {
         password,
         name,
         privilege,
+        disabled,
       } = targetData;
       try {
         const r = await createUser(this.resourceManager, {
@@ -105,7 +106,7 @@ export default class OrganizationRouter extends RouterBase {
         await UserOrganization.create({
           user_id: r.id,
           organization_id: organizationId,
-          labels: { identifier: name },
+          labels: { disabled, identifier: name },
         }, {
           transaction,
         });
@@ -134,8 +135,12 @@ export default class OrganizationRouter extends RouterBase {
       if (!result) {
         return null;
       }
+      const labels = { identifier: targetData.identifier };
+      if (targetData.disabled != null) {
+        labels.disabled = targetData.disabled;
+      }
       return UserOrganization.update({
-        labels: Sequelize.literal(`labels || '${JSON.stringify({ identifier: targetData.identifier })}'::jsonb`),
+        labels: Sequelize.literal(`labels || '${JSON.stringify(labels)}'::jsonb`),
       }, {
         where: {
           user_id: targetId,
@@ -221,6 +226,7 @@ export default class OrganizationRouter extends RouterBase {
         username,
         password,
         name,
+        disabled,
       } = ctx.request.body;
 
       if (!username || !password || !name) {
@@ -231,6 +237,7 @@ export default class OrganizationRouter extends RouterBase {
         username,
         password,
         name,
+        disabled,
         privilege: 'user',
       })
       .then(async (result) => {
