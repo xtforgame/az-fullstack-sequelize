@@ -106,5 +106,64 @@ export default class ProjectRouter extends RouterBase {
         return ctx.body = result.users;
       });
     });
+
+    router.post('/api/projects/:projectId/members', this.authKit.koaHelper.getIdentity, async (ctx, next) => {
+      if (!ctx.local.userSession || !ctx.local.userSession.user_id) {
+        return RestfulError.koaThrowWith(ctx, 404, 'User not found');
+      }
+
+      const { memberId } = ctx.request.body;
+
+      const UserProject = this.resourceManager.getSqlzAssociationModel('userProject');
+
+      const userProject = await UserProject.findOne({
+        where: {
+          user_id: ctx.local.userSession.user_id,
+          project_id: ctx.params.projectId,
+        },
+      });
+
+      if (userProject.role !== 'owner' || ctx.local.userSession.user_id === memberId) {
+        return RestfulError.koaThrowWith(ctx, 403, 'Forbidden');
+      }
+
+      await UserProject.create({
+        user_id: memberId,
+        project_id: ctx.params.projectId,
+        role: 'user',
+      });
+
+      return ctx.body = {};
+    });
+
+    router.delete('/api/projects/:projectId/members/:memberId', this.authKit.koaHelper.getIdentity, async (ctx, next) => {
+      if (!ctx.local.userSession || !ctx.local.userSession.user_id) {
+        return RestfulError.koaThrowWith(ctx, 404, 'User not found');
+      }
+
+      const { memberId } = ctx.params;
+
+      const UserProject = this.resourceManager.getSqlzAssociationModel('userProject');
+
+      const userProject = await UserProject.findOne({
+        where: {
+          user_id: ctx.local.userSession.user_id,
+          project_id: ctx.params.projectId,
+        },
+      });
+
+      if (userProject.role !== 'owner' || ctx.local.userSession.user_id === memberId) {
+        return RestfulError.koaThrowWith(ctx, 403, 'Forbidden');
+      }
+
+      await UserProject.destroy({
+        where: {
+          user_id: memberId,
+          project_id: ctx.params.projectId,
+        },
+      });
+
+      return ctx.body = { success: true };
+    });
   }
 }
