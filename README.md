@@ -1,6 +1,6 @@
-# AzReactMaterialDevWithMinIO
+# AzFullstackSequelizeDev
 
-A react material ui seed project with MinIO
+A fullstack sequelize seed project
 
 Run `npm install`
 

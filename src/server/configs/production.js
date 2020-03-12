@@ -1,6 +1,8 @@
 import path from 'path';
 import appRootPath from 'app-root-path';
 
+export { jwtIssuer } from 'common/config';
+
 const appRoot = appRootPath.resolve('./');
 const secretsFolder = path.join(appRoot, 'secrets');
 
@@ -44,6 +46,12 @@ const minioInfoConfig = {
   defaultBucketName: 'az-rmd-minio',
 };
 
+const postgresPort = 5432;
+const postgresUser = 'rick';
+const postgresDbName = 'db_rick_data';
+const postgresPassword = 'xxxx1234';
+const postgresHost = 'postgres';
+
 export {
   credentialFiles,
   jwtSecretFiles,
@@ -56,4 +64,10 @@ export {
   mailerConfig,
 
   minioInfoConfig,
+
+  postgresPort,
+  postgresUser,
+  postgresDbName,
+  postgresPassword,
+  postgresHost,
 };
