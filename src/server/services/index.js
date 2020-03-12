@@ -5,7 +5,6 @@ import Mailer from '~/services/mailer';
 import MinioApi from '~/services/minio';
 import SequelizeDb from '~/services/sequelize-db';
 import ResourceManager from '~/services/resource-manager';
-import CreateTestData from '~/services/create-test-data';
 
 export default [
   EnvCfg,
@@ -15,5 +14,4 @@ export default [
   MinioApi,
   SequelizeDb,
   ResourceManager,
-  CreateTestData,
 ];

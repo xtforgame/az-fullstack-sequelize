@@ -14,6 +14,9 @@ import ServiceBase from '../ServiceBase';
 import SequelizeStore from './SequelizeStore';
 
 import createAsuModelDefs from '../../asu-model';
+
+import initDatabase from './initDatabase';
+
 // ========================================
 
 export default class ResourceManager extends ServiceBase {
@@ -22,6 +25,10 @@ export default class ResourceManager extends ServiceBase {
   static $type = 'service';
 
   static $inject = ['envCfg', 'sequelizeDb'];
+
+  static $funcDeps = {
+    start: ['sequelizeDb'],
+  };
 
   constructor(envCfg, sequelizeDb) {
     super();
@@ -49,6 +56,7 @@ export default class ResourceManager extends ServiceBase {
     return Promise.all([
       this.authKit.sequelizeStore.setResourceManager(this.resourceManager),
       this.authKit.authProviderManager.setAccountLinkStore(this.authKit.sequelizeStore.getAccountLinkStore()),
-    ]);
+    ])
+    .then(() => initDatabase(this.resourceManager, false));
   }
 }

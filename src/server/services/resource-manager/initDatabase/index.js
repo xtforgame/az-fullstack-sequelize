@@ -1,4 +1,5 @@
 import Sequelize from 'sequelize';
+import AsuOrm from 'az-sequelize-utils';
 import {
   toSeqPromise,
 } from 'common/utils';
@@ -7,7 +8,6 @@ import {
   createInitialUserData,
   createInitialProjectCurrencyAccounts,
 } from '~/domain-logic';
-import AsuOrm from 'az-sequelize-utils';
 
 const getEmail = username => `${username}@foo.bar`;
 

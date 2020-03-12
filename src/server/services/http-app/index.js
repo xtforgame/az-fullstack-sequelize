@@ -23,7 +23,7 @@ export default class HttpApp extends ServiceBase {
   static $inject = ['envCfg'];
 
   static $funcDeps = {
-    start: ['mailer'],
+    start: ['routerManager', 'mailer'],
   };
 
   constructor(envCfg) {
