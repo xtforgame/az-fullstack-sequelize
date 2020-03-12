@@ -1,4 +1,4 @@
-import { sha512gen_salt, crypt } from 'az-authn-kit';
+import { sha512gen_salt, crypt } from 'az-authn-kit-v2';
 import drawIcon from '~/utils/drawIcon';
 import {
   createInitialUserCurrencyAccounts,

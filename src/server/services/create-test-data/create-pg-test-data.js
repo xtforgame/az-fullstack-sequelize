@@ -2,7 +2,7 @@ import Sequelize from 'sequelize';
 import {
   toSeqPromise,
 } from 'common/utils';
-import { sha512gen_salt, crypt } from 'az-authn-kit';
+import { sha512gen_salt, crypt } from 'az-authn-kit-v2';
 import {
   createInitialUserData,
   createInitialProjectCurrencyAccounts,

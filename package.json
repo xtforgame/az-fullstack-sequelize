@@ -62,7 +62,7 @@
     "@stfy/react-editor.js": "^1.0.3",
     "app-root-path": "^1.0.0",
     "axios": "^0.19.0",
-    "az-authn-kit": "git+https://github.com/xtforgame/az-authn-kit.git#v0.1.2",
+    "az-authn-kit-v2": "git+https://github.com/xtforgame/az-authn-kit-v2.git#v0.1.2",
     "az-mail-kit": "git+https://github.com/xtforgame/az-mail-kit.git#v0.1.0",
     "az-restful-helpers": "git+https://github.com/xtforgame/az-restful-helpers.git#v0.1.0",
     "az-sequelize-utils": "git+https://github.com/xtforgame/az-sequelize-utils.git#v0.1.0",
