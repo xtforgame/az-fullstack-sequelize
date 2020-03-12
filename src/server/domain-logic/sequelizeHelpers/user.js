@@ -1,8 +1,5 @@
 import { sha512gen_salt, crypt } from 'az-authn-kit-v2';
 import drawIcon from '~/utils/drawIcon';
-import {
-  createInitialUserCurrencyAccounts,
-} from './currencyAccount';
 
 export const createInitialUserSettingsData = () => ([
   {
@@ -46,7 +43,6 @@ export const createInitialUserData = ({
   },
   accountLinks,
   userSettings: createInitialUserSettingsData(),
-  currencyAccounts: createInitialUserCurrencyAccounts(),
   ...extraColumns,
 });
 

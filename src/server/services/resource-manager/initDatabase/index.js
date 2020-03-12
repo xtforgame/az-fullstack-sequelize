@@ -6,7 +6,6 @@ import {
 import { sha512gen_salt, crypt } from 'az-authn-kit-v2';
 import {
   createInitialUserData,
-  createInitialProjectCurrencyAccounts,
 } from '~/domain-logic';
 
 const getEmail = username => `${username}@foo.bar`;
@@ -87,14 +86,12 @@ const createTestUser = async (resourceManager) => {
           name: 'management',
           data: {},
           organization_id: defaultOrgId,
-          currencyAccounts: createInitialProjectCurrencyAccounts(),
         }, { through: { role: 'owner' }, transaction });
         defaultProjId = porject.id;
         await user.createProject({
           name: 'management',
           data: {},
           organization_id: user.organizations[1].id,
-          currencyAccounts: createInitialProjectCurrencyAccounts(),
         }, { through: { role: 'owner' }, transaction });
       } else {
         await user.addOrganization(defaultOrgId, { through: { role: 'user' }, transaction });
