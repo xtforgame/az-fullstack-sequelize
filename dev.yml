@@ -27,3 +27,45 @@ services:
     ports:
       - "5432:5432"
 
+
+  wordpress:
+    image: wordpress:5.4-php7.2-apache
+    container_name: wordpress
+    restart: always
+    ports:
+      - 8282:80
+    depends_on:
+      - mysql
+    environment:
+      WORDPRESS_DB_HOST: mysql:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      # WORDPRESS_CONFIG_EXTRA: |
+      #   // Proxy fix
+      #   define( 'WP_SITEURL', '/blog' );
+      #   define( 'WP_HOME', '/blog' );
+      #   if ($$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+      #       $$_SERVER['HTTPS'] = 'on';
+      #   if (isset($$_SERVER['HTTP_X_FORWARDED_HOST'])) {
+      #       $$_SERVER['HTTP_HOST'] = $$_SERVER['HTTP_X_FORWARDED_HOST'];
+      #   }
+      #   $$_SERVER['REQUEST_URI'] = "/blog".$$_SERVER['REQUEST_URI'];
+
+    volumes:
+      # - "./wp-config.php:/var/www/html/wp-config.php"
+      - "./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini"
+      - "./var/www/html:/var/www/html"
+
+  mysql:
+    image: mysql:5.7
+    container_name: wordpress-mysql
+    restart: always
+    environment:
+       MYSQL_ROOT_PASSWORD: somewordpress
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+
+    # volumes:
+    #   - "./datadir:/var/lib/mysql"
