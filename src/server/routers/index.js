@@ -11,6 +11,7 @@ import ProjectRouter from '~/routers/ProjectRouter';
 import MemoRouter from '~/routers/MemoRouter';
 import ModuleComplierRouter from '~/routers/ModuleComplierRouter';
 import ContactUsMessageRouter from '~/routers/ContactUsMessageRouter';
+import SsrRouter from '~/routers/SsrRouter';
 
 export default [
   SystemInfoRouter,
@@ -26,4 +27,5 @@ export default [
   MemoRouter,
   ModuleComplierRouter,
   ContactUsMessageRouter,
+  SsrRouter,
 ];

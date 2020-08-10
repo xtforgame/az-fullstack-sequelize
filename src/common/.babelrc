@@ -1,15 +1,12 @@
 {
   "presets": [
-    [
-      "@babel/preset-env",
-      {
-        "targets": { 
-          "node": "10"
-        },
-        "forceAllTransforms": true
+    ["@babel/preset-env", {
+      "targets": { 
+        "node": "10"
       }
-    ],
-    "@babel/typescript"
+    }],
+    "@babel/typescript",
+    "@babel/preset-react"
   ],
   "plugins": [
     ["@babel/proposal-decorators", { "decoratorsBeforeExport": true }],

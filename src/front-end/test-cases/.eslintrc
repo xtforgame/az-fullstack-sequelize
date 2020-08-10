@@ -1,7 +1,0 @@
-{
-  "rules": {
-    "no-undef": "off",
-    "no-unused-expressions": "off",
-    "func-names": "off"
-  }
-}
