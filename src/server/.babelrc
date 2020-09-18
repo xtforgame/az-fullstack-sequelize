@@ -18,8 +18,8 @@
           "extensions": [".js", ".ts"],
           "alias": {
             "~": "./src/server",
-            "common/config": "./src/server/common/configs/development",
-            "common": "./src/server/common",
+            "common/config": "./src/common/configs/development",
+            "common": "./src/common",
             "config": "./src/server/configs/development"
           }
         }]
@@ -31,8 +31,8 @@
           "extensions": [".js", ".ts"],
           "alias": {
             "~": "./src/server",
-            "common/config": "./src/server/common/configs/production",
-            "common": "./src/server/common",
+            "common/config": "./src/common/configs/production",
+            "common": "./src/common",
             "config": "./src/server/configs/production"
           }
         }]

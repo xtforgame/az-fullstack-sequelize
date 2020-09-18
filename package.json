@@ -21,6 +21,7 @@
     "lint-all": "eslint --ext .js ./src ./test ./internals && tslint -c ./tslint.json './src/**/*.ts'",
     "lint-all-fix": "eslint --fix --ext .js ./src ./test ./internals&& tslint --fix -c ./tslint.json './src/**/*.ts'",
     "build": "cross-env NODE_ENV=production gulp server:build && cross-env NODE_ENV=production gulp server:build:extras && cross-env NODE_ENV=production webpack --config ./webpack/webpack.prod.js",
+    "build2": "cross-env NODE_ENV=production webpack --config ./webpack/server/webpack.prod.js",
     "build-server": "cross-env NODE_ENV=production gulp server:build && cross-env NODE_ENV=production gulp server:build:extras",
     "start": "cross-env NODE_ENV=development gulp server:watch:dev",
     "debug": "cross-env NODE_ENV=development gulp server:watch:dev --inspect",
@@ -178,7 +179,8 @@
     "typescript": "^3.4.4",
     "webpack": "^4.19.0",
     "webpack-bundle-analyzer": "^3.0.2",
-    "webpack-cli": "^3.1.0"
+    "webpack-cli": "^3.1.0",
+    "webpack-node-externals": "^2.5.2"
   },
   "false": {}
 }
