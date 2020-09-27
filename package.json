@@ -70,6 +70,7 @@
     "azldi": "git+https://github.com/xtforgame/azldi.git#v0.1.0",
     "azrmui": "git+https://github.com/xtforgame/azrmui.git#v0.1.1",
     "classnames": "^2.2.5",
+    "clsx": "^1.1.1",
     "connected-react-router": "^6.5.2",
     "downshift": "^1.31.12",
     "fontfaceobserver": "^2.0.13",

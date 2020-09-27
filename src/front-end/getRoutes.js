@@ -77,6 +77,11 @@ const globalRouteConfig = {
       exact: true,
     },
     {
+      name: 'gti',
+      path: '/gti',
+      component: SubContent01,
+    },
+    {
       name: 'landing-main1',
       path: '/landing1',
       component: LandingMainFrame1,

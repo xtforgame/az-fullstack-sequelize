@@ -18,7 +18,12 @@ import {
 
 export function getTheme(theme) {
   let { paletteType } = theme;
-  let primary = blue;
+  let primary = {
+    light: '#034EA1',
+    main: '#034EA1',
+    dark: '#034EA1',
+    contrastText: common.white,
+  };
   let secondary = pink;
   let background = {
     paper: common.white,
