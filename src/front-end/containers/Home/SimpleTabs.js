@@ -5,6 +5,12 @@ import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+
+import AddIcon from '@material-ui/icons/Add';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+
+import { FormTextField, FormSpace } from 'azrmui/core/FormInputs';
 
 function TabContainer(props) {
   return (
@@ -23,6 +29,14 @@ const styles = theme => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
   },
+  searchBar: {
+    display: 'flex',
+    alignItems: 'center',
+    // padding: theme.spacing(0, 1),
+    ...theme.mixins.toolbar,
+    justifyContent: 'flex-start',
+    padding: 24,
+  },
 });
 
 class SimpleTabs extends React.PureComponent {
@@ -35,39 +49,131 @@ class SimpleTabs extends React.PureComponent {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, row, columns } = this.props;
     const { value } = this.state;
+
+    console.log('row, columns :', row, columns);
 
     return (
       <div className={classes.root}>
         <AppBar position="static">
           <Tabs value={value} onChange={this.handleChange}>
-            <Tab label="客戶基本資料" />
-            <Tab label="客戶訂閱資訊" />
-            <Tab label="產出/發送報吿" />
+            <Tab label="商品基本資料" />
+            <Tab label="社群連結" />
+            <Tab label="尺寸/試穿報告" />
+            <Tab label="其他擴充功能" />
           </Tabs>
         </AppBar>
         {value === 0 && (
           <React.Fragment>
             <Typography component="div" style={{ padding: 8 * 3 }}>
-              客戶名：思序網路有限公司
+              商品編號：
+              {row.name}
             </Typography>
             <Typography component="div" style={{ padding: 8 * 3 }}>
-              連絡信箱：rick.chen@vaxal.io
+              商品名稱：
+              {row.calories}
             </Typography>
-            <Typography component="div" style={{ padding: 8 * 3 }}>
+            {/* <Typography component="div" style={{ padding: 8 * 3 }}>
               聯絡人：陳宗麟
-            </Typography>
+            </Typography> */}
           </React.Fragment>
         )}
         {value === 1 && (
-          <TabContainer>
-            客戶資料
-          </TabContainer>
+          <React.Fragment>
+            <Typography component="div" style={{ padding: 8 * 3 }}>
+              商品編號：
+              {row.name}
+            </Typography>
+            <Typography component="div" style={{ padding: 8 * 3 }}>
+              商品名稱：
+              {row.calories}
+            </Typography>
+            <div className={classes.searchBar}>
+              <FormTextField
+                id="tag"
+                label="Instagram Hash Tag"
+                // onPressEnter={e => setSearchQuery(e.target.value)}
+                value="allsaints"
+                onChange={e => null}
+                // autoFocus
+                margin="dense"
+                fullWidth
+              />
+            </div>
+            <div className={classes.searchBar}>
+              <FormTextField
+                id="lin01"
+                label="Instagram 貼文連結"
+                // onPressEnter={e => setSearchQuery(e.target.value)}
+                value="https://www.instagram.com/p/CGFHic6gO6o/"
+                onChange={e => null}
+                // autoFocus
+                margin="dense"
+                fullWidth
+              />
+              <IconButton size="small" onClick={e => null}>
+                <AddIcon />
+              </IconButton>
+            </div>
+            <img width={400} src={'https://www.instagram.com/p/CGFHic6gO6o/media/?size=l'} />
+            <div className={classes.searchBar}>
+              <FormTextField
+                id="lin02"
+                label="Instagram 貼文連結"
+                // onPressEnter={e => setSearchQuery(e.target.value)}
+                value="https://www.instagram.com/p/CGJhk0NHDcC/"
+                onChange={e => null}
+                // autoFocus
+                margin="dense"
+                fullWidth
+              />
+              <IconButton size="small" onClick={e => null}>
+                <AddIcon />
+              </IconButton>
+            </div>
+            <img width={400} src={'https://www.instagram.com/p/CGJhk0NHDcC/media/?size=l'} />
+          </React.Fragment>
         )}
         {value === 2 && (
+          <React.Fragment>
+            <Typography component="div" style={{ padding: 8 * 3 }}>
+              商品編號：
+              {row.name}
+            </Typography>
+            <Typography component="div" style={{ padding: 8 * 3 }}>
+              商品名稱：
+              {row.calories}
+            </Typography>
+            <div className={classes.searchBar}>
+              <FormTextField
+                id="sizes"
+                label="尺寸對照表(HTML)"
+                // onPressEnter={e => setSearchQuery(e.target.value)}
+                value="<table><tr><td></td></tr></table>"
+                onChange={e => null}
+                // autoFocus
+                margin="dense"
+                fullWidth
+              />
+            </div>
+            <div className={classes.searchBar}>
+              <FormTextField
+                id="wearreport"
+                label="試穿報告(HTML)"
+                // onPressEnter={e => setSearchQuery(e.target.value)}
+                value="<table><tr><td></td></tr></table>"
+                onChange={e => null}
+                // autoFocus
+                margin="dense"
+                fullWidth
+              />
+            </div>
+          </React.Fragment>
+        )}
+        {value === 3 && (
           <TabContainer>
-            客戶資料
+            商品資料
           </TabContainer>
         )}
       </div>

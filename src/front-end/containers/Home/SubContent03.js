@@ -35,18 +35,18 @@ function createData(id, name, calories, fat, carbs, protein) {
 }
 
 const createList = () => [
-  createData(0, '思序網路有限公司', 'rick.chen@vaxal.io', 'Basic', '2020/11/30', ''),
-  createData(1, '炙星股份有限公司', 'starworks@gmail.com', 'Basic', '2021/01/21', ''),
-  createData(2, '思序網路有限公司', 'rick.chen@vaxal.io', 'Basic', '2020/11/30', ''),
-  createData(3, '炙星股份有限公司', 'starworks@gmail.com', 'Basic', '2021/01/21', ''),
-  createData(4, '思序網路有限公司', 'rick.chen@vaxal.io', 'Basic', '2020/11/30', ''),
-  createData(5, '炙星股份有限公司', 'starworks@gmail.com', 'Basic', '2021/01/21', ''),
-  createData(6, '思序網路有限公司', 'rick.chen@vaxal.io', 'Basic', '2020/11/30', ''),
-  createData(7, '炙星股份有限公司', 'starworks@gmail.com', 'Basic', '2021/01/21', ''),
-  createData(8, '思序網路有限公司', 'rick.chen@vaxal.io', 'Basic', '2020/11/30', ''),
-  createData(9, '炙星股份有限公司', 'starworks@gmail.com', 'Basic', '2021/01/21', ''),
-  createData(10, '思序網路有限公司', 'rick.chen@vaxal.io', 'Basic', '2020/11/30', ''),
-  createData(11, '炙星股份有限公司', 'starworks@gmail.com', 'Basic', '2021/01/21', ''),
+  createData(0, '100233412', '外衣12', 'Basic', '2020/11/30', ''),
+  createData(1, '100233411', '外衣11', 'Basic', '2020/11/30', '已下架'),
+  createData(2, '100233410', '外衣10', 'Basic', '2020/11/30', ''),
+  createData(3, '100233409', '外衣09', 'Basic', '2020/11/30', ''),
+  createData(4, '100233408', '外衣08', 'Basic', '2020/11/30', ''),
+  createData(5, '100233407', '外衣07', 'Basic', '2020/11/30', ''),
+  createData(6, '100233406', '外衣06', 'Basic', '2020/11/30', '已下架'),
+  createData(7, '100233405', '外衣05', 'Basic', '2020/11/30', ''),
+  createData(8, '100233404', '外衣04', 'Basic', '2020/11/30', ''),
+  createData(9, '100233403', '外衣03', 'Basic', '2020/11/30', ''),
+  createData(10, '100233402', '外衣02', 'Basic', '2020/11/30', ''),
+  createData(11, '100233401', '外衣01', 'Basic', '2020/11/30', ''),
 ];
 
 const rows = createList();
@@ -55,11 +55,11 @@ class SubContent03 extends React.PureComponent { // eslint-disable-line react/pr
   getColumnData() {
     return [
       {
-        id: 'name', numeric: false, padding: 'none', label: '客戶名稱',
+        id: 'name', numeric: false, padding: 'none', label: '商品編號',
       },
-      { id: 'calories', numeric: false, label: '帳號' },
-      { id: 'fat', numeric: false, label: '訂閱方案' },
-      { id: 'carbs', numeric: false, label: '到期日' },
+      { id: 'calories', numeric: false, label: '商品名稱' },
+      // { id: 'fat', numeric: false, label: '商品名稱' },
+      { id: 'carbs', numeric: false, label: ' 更新日' },
       { id: 'protein', numeric: false, label: '備註' },
     ];
   }
@@ -73,7 +73,7 @@ class SubContent03 extends React.PureComponent { // eslint-disable-line react/pr
         <TableAppBar>
           <div className={classes.flex1} />
           <Chip
-            label={`訂閱中客戶`}
+            label={`分類：外衣`}
             onDelete={() => {}}
             className={classes.appBarChip}
           />
