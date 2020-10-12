@@ -42,24 +42,32 @@ class SimpleTabs extends React.PureComponent {
       <div className={classes.root}>
         <AppBar position="static">
           <Tabs value={value} onChange={this.handleChange}>
-            <Tab label="Item One" />
-            <Tab label="Item Two" />
-            <Tab label="Item Three" />
+            <Tab label="客戶基本資料" />
+            <Tab label="客戶訂閱資訊" />
+            <Tab label="產出/發送報吿" />
           </Tabs>
         </AppBar>
         {value === 0 && (
-          <TabContainer>
-Item One
-          </TabContainer>
+          <React.Fragment>
+            <Typography component="div" style={{ padding: 8 * 3 }}>
+              客戶名：思序網路有限公司
+            </Typography>
+            <Typography component="div" style={{ padding: 8 * 3 }}>
+              連絡信箱：rick.chen@vaxal.io
+            </Typography>
+            <Typography component="div" style={{ padding: 8 * 3 }}>
+              聯絡人：陳宗麟
+            </Typography>
+          </React.Fragment>
         )}
         {value === 1 && (
           <TabContainer>
-Item Two
+            客戶資料
           </TabContainer>
         )}
         {value === 2 && (
           <TabContainer>
-Item Three
+            客戶資料
           </TabContainer>
         )}
       </div>

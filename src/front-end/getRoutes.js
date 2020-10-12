@@ -277,15 +277,7 @@ const globalRouteConfig = {
               path: '/management/organization',
               component: OrganizationManagement,
               navbar: {
-                title: '組織管理',
-              },
-            },
-            {
-              name: 'project',
-              path: '/management/project',
-              component: ProjectManagement,
-              navbar: {
-                title: '專案管理',
+                title: '訂閱管理',
               },
             },
             {
@@ -293,93 +285,9 @@ const globalRouteConfig = {
               path: '/management/user',
               component: UserManagementDemo,
               navbar: {
-                title: '使用者管理(範例)',
+                title: '使用者管理',
               },
             }],
-          }],
-        },
-        {
-          name: 'idle',
-          path: '/idle',
-          component: Idle,
-          navbar: true,
-          routeViews: [{
-            routes: [{
-              name: 'idle-index',
-              path: '/idle',
-              component: () => <Redirect to={{ pathname: '/idle/stats' }} />,
-              exact: true,
-            },
-            {
-              name: 'stats',
-              path: '/idle/stats',
-              component: Stats,
-              navbar: {
-                title: 'Stats',
-              },
-            },
-            {
-              name: 'bots',
-              path: '/idle/bots',
-              component: Bots,
-              navbar: {
-                title: 'Bots',
-              },
-            },
-            {
-              name: 'schedules',
-              path: '/idle/schedules',
-              component: Schedules,
-              navbar: {
-                title: 'Schedules',
-              },
-            }],
-          }],
-        },
-        {
-          name: 'memo',
-          path: '/memo',
-          component: Memo,
-          navbar: true,
-          routeViews: [{
-            routes: [{
-              name: 'memo-index',
-              path: '/memo',
-              component: () => <Redirect to={{ pathname: '/memo/memos' }} />,
-              exact: true,
-            },
-            {
-              name: 'memos',
-              path: '/memo/memos',
-              component: Memos,
-              navbar: {
-                title: 'Stats',
-              },
-            },
-            {
-              name: 'schedules',
-              path: '/memo/schedules',
-              component: MemoSchedules,
-              navbar: {
-                title: 'Schedules',
-              },
-            }],
-          }],
-        },
-        {
-          name: 'test',
-          path: '/test',
-          component: Test,
-          navbar: true,
-          routeViews: [{
-            routes: [{
-              name: 'test-index',
-              path: '/test',
-              component: () => <Redirect to={{ pathname: '/test/case001' }} />,
-              exact: true,
-            },
-            ...getTestCaseRoutes(),
-            ],
           }],
         },
         {
