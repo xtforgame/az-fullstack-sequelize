@@ -1,10 +1,11 @@
 import Sequelize from 'sequelize';
-import { getAssociationIncludes } from './common';
+import AmmOrm, { AssociationModelNameAsToInclude } from 'az-model-manager/core';
+import { ProjectI, UserProjectI } from '../../amm-schemas/interfaces';
 import { createNewUser } from './user';
 
-export const findProject = async (resourceManager, userId, projectId, includes = []) => {
-  const UserProject = resourceManager.getSqlzAssociationModel('userProject');
-  const Project = resourceManager.getSqlzModel('project');
+export const findProject = async (resourceManager : AmmOrm, userId, projectId, includes : AssociationModelNameAsToInclude[] = []) => {
+  const UserProject = resourceManager.getSqlzAssociationModel<UserProjectI>('userProject')!;
+  const Project = resourceManager.getSqlzModel<ProjectI>('project')!;
 
   const userProject = await UserProject.findOne({
     where: {
@@ -15,26 +16,24 @@ export const findProject = async (resourceManager, userId, projectId, includes =
   if (!userProject) {
     return null;
   }
-  const include = getAssociationIncludes(resourceManager, 'project', includes);
   return Project.findOne({
     where: {
       id: projectId,
     },
-    include,
+    include: Project.ammIncloud(includes),
   });
 };
 
-export const findAllProject = async (resourceManager, where, includes = []) => {
-  const Project = resourceManager.getSqlzModel('project');
+export const findAllProject = async (resourceManager : AmmOrm, where, includes : AssociationModelNameAsToInclude[] = []) => {
+  const Project = resourceManager.getSqlzModel<ProjectI>('project')!;
 
-  const include = getAssociationIncludes(resourceManager, 'project', includes);
   return Project.findAll({
     where,
-    include,
+    include: Project.ammIncloud(includes),
   });
 };
 
-export const findProjectMembers = async (resourceManager, userId, projectId) => {
+export const findProjectMembers = async (resourceManager : AmmOrm, userId, projectId) => {
   const project = await findProject(resourceManager, userId, projectId, [
     {
       as: 'users',
@@ -53,8 +52,8 @@ export const findProjectMembers = async (resourceManager, userId, projectId) => 
   return project.users;
 };
 
-export const patchProject = async (resourceManager, projectId, data = {}) => {
-  const Project = resourceManager.getSqlzModel('project');
+export const patchProject = async (resourceManager : AmmOrm, projectId, data = {}) => {
+  const Project = resourceManager.getSqlzModel<ProjectI>('project')!;
   await Project.update({
     data: Sequelize.literal(`data || '${JSON.stringify(data)}'::jsonb`),
   }, {
@@ -69,10 +68,10 @@ export const patchProject = async (resourceManager, projectId, data = {}) => {
   });
 };
 
-export const addProjectMember = async (resourceManager, ownerId, projectId, targetData) => {
+export const addProjectMember = async (resourceManager : AmmOrm, ownerId, projectId, targetData) => {
   // const User = resourceManager.getSqlzModel('user');
-  const UserProject = resourceManager.getSqlzAssociationModel('userProject');
-  // const Project = resourceManager.getSqlzModel('project');
+  const UserProject = resourceManager.getSqlzAssociationModel<UserProjectI>('userProject')!;
+  // const Project = resourceManager.getSqlzModel<ProjectI>('project')!;
 
   const owner = await UserProject.findOne({
     where: {
@@ -108,10 +107,10 @@ export const addProjectMember = async (resourceManager, ownerId, projectId, targ
   }
 };
 
-export const removeProjectMember = async (resourceManager, ownerId, projectId, memberId) => {
+export const removeProjectMember = async (resourceManager : AmmOrm, ownerId, projectId, memberId) => {
   // const User = resourceManager.getSqlzModel('user');
-  const UserProject = resourceManager.getSqlzAssociationModel('userProject');
-  // const Project = resourceManager.getSqlzModel('project');
+  const UserProject = resourceManager.getSqlzAssociationModel<UserProjectI>('userProject')!;
+  // const Project = resourceManager.getSqlzModel<ProjectI>('project')!;
 
   const owner = await UserProject.findOne({
     where: {
@@ -132,10 +131,10 @@ export const removeProjectMember = async (resourceManager, ownerId, projectId, m
   return u;
 };
 
-export const createProjectMember = async (resourceManager, ownerId, projectId, targetData) => {
+export const createProjectMember = async (resourceManager : AmmOrm, ownerId, projectId, targetData) => {
   // const User = resourceManager.getSqlzModel('user');
-  const UserProject = resourceManager.getSqlzAssociationModel('userProject');
-  // const Project = resourceManager.getSqlzModel('project');
+  const UserProject = resourceManager.getSqlzAssociationModel<UserProjectI>('userProject')!;
+  // const Project = resourceManager.getSqlzModel<ProjectI>('project')!;
 
   const owner = await UserProject.findOne({
     where: {
@@ -179,10 +178,10 @@ export const createProjectMember = async (resourceManager, ownerId, projectId, t
   }
 };
 
-export const patchProjectMember = async (resourceManager, ownerId, projectId, targetId, targetData) => {
+export const patchProjectMember = async (resourceManager : AmmOrm, ownerId, projectId, targetId, targetData) => {
   // const User = resourceManager.getSqlzModel('user');
-  const UserProject = resourceManager.getSqlzAssociationModel('userProject');
-  // const Project = resourceManager.getSqlzModel('project');
+  const UserProject = resourceManager.getSqlzAssociationModel<UserProjectI>('userProject')!;
+  // const Project = resourceManager.getSqlzModel<ProjectI>('project')!;
 
   const owner = await UserProject.findOne({
     where: {
@@ -194,7 +193,7 @@ export const patchProjectMember = async (resourceManager, ownerId, projectId, ta
   if (!owner) {
     return null;
   }
-  const labels = { identifier: targetData.identifier };
+  const labels : any = { identifier: targetData.identifier };
   const extras = targetData.role ? { role: targetData.role } : {};
   if (targetData.disabled != null) {
     labels.disabled = targetData.disabled;

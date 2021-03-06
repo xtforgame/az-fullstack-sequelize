@@ -1,4 +1,3 @@
-export * from './resourceHelpers/common';
 export * from './resourceHelpers/accountLink';
 export * from './resourceHelpers/recoveryToken';
 export * from './resourceHelpers/user';

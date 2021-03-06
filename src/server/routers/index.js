@@ -1,4 +1,5 @@
 import SystemInfoRouter from '~/routers/SystemInfoRouter';
+import GraphQLRouter from '~/routers/GraphQLRouter';
 import FileRouter from '~/routers/FileRouter';
 import MainRouter from '~/routers/MainRouter';
 import SessionRouter from '~/routers/SessionRouter';
@@ -14,6 +15,7 @@ import ContactUsMessageRouter from '~/routers/ContactUsMessageRouter';
 
 export default [
   SystemInfoRouter,
+  GraphQLRouter,
   FileRouter,
   MainRouter,
   SessionRouter,

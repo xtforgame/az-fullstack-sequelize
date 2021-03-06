@@ -48,12 +48,16 @@ export default class RecoveryRouter extends RouterBase {
     });
 
     router.post('/api/challengeRecoveryTokens', async (ctx, next) => {
-      const recoveryInfo = await challengeRecoveryTokens(this.resourceManager, ctx.request.body.username, ctx.request.body.token);
+      const recoveryInfo = await challengeRecoveryTokens(
+        this.resourceManager, ctx.request.body.username, ctx.request.body.token
+      );
       ctx.body = { passed: recoveryInfo.passed };
     });
 
     router.post('/api/resetPasswordRequests', async (ctx, next) => {
-      const recoveryInfo = await challengeRecoveryTokens(this.resourceManager, ctx.request.body.username, ctx.request.body.token);
+      const recoveryInfo = await challengeRecoveryTokens(
+        this.resourceManager, ctx.request.body.username, ctx.request.body.token
+      );
       if (!recoveryInfo.passed) {
         return ctx.body = { passed: recoveryInfo.passed };
       }
@@ -70,11 +74,14 @@ export default class RecoveryRouter extends RouterBase {
           provider_user_access_info,
         } = paramsArrayForCreate;
 
-        const passed = await resetUserAccessInfo(this.resourceManager, recoveryInfo.accountLink, provider_user_access_info);
+        const passed = await resetUserAccessInfo(
+          this.resourceManager, recoveryInfo.accountLink, provider_user_access_info
+        );
         ctx.body = { passed };
       } catch (error) {
         ctx.body = { passed: false };
       }
+      return ctx.body;
     });
   }
 }

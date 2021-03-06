@@ -1,3 +1,6 @@
+import AmmOrm from 'az-model-manager/core';
+import { RecoveryTokenI, AccountLinkI } from '../../amm-schemas/interfaces';
+
 export const getTokenUpdatedTimeFromAccountLink = (accountLink) => {
   const token = accountLink.get('recoveryToken');
   if (!token) {
@@ -10,10 +13,10 @@ export const getTokenUpdatedTimeFromAccountLink = (accountLink) => {
   return updated_at || created_at;
 };
 
-export const challengeRecoveryTokens = async (resourceManager, username, token) => {
+export const challengeRecoveryTokens = async (resourceManager : AmmOrm, username, token) => {
   // console.log('ctx.request.body :', ctx.request.body);
-  const AccountLink = resourceManager.getSqlzModel('accountLink');
-  const RecoveryToken = resourceManager.getSqlzModel('recoveryToken');
+  const AccountLink = resourceManager.getSqlzModel<AccountLinkI>('accountLink')!;
+  const RecoveryToken = resourceManager.getSqlzModel<RecoveryTokenI>('recoveryToken')!;
 
   const accountLink = await AccountLink.findOne({
     where: {
@@ -25,7 +28,7 @@ export const challengeRecoveryTokens = async (resourceManager, username, token) 
       as: 'recoveryToken',
     }],
   });
-  const recoveryInfo = {
+  const recoveryInfo : any = {
     passed: false,
     accountLink,
   };
@@ -40,7 +43,7 @@ export const challengeRecoveryTokens = async (resourceManager, username, token) 
   return recoveryInfo;
 };
 
-export const resetUserAccessInfo = async (resourceManager, accountLink, provider_user_access_info) => {
+export const resetUserAccessInfo = async (resourceManager : AmmOrm, accountLink, provider_user_access_info) => {
   const transaction = await resourceManager.db.transaction();
   try {
     await accountLink.recoveryToken.destroy({
@@ -60,17 +63,17 @@ export const resetUserAccessInfo = async (resourceManager, accountLink, provider
   }
 };
 
-export const upsertRecoveryToken = async (resourceManager, type, key, token, accountLinkId) => {
-  const RecoveryToken = resourceManager.getSqlzModel('recoveryToken');
+export const upsertRecoveryToken = async (resourceManager : AmmOrm, type, key, token, accountLinkId) => {
+  const RecoveryToken = resourceManager.getSqlzModel<RecoveryTokenI>('recoveryToken')!;
   const [tokenInfo] = await RecoveryToken.upsert({
     type,
     key,
     token,
     account_link_id: accountLinkId,
   }, {
-    where: {
-      account_link_id: accountLinkId,
-    },
+    // where: {
+    //   account_link_id: accountLinkId,
+    // },
     returning: true,
   });
   return tokenInfo;

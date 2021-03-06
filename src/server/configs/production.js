@@ -29,6 +29,8 @@ const jwtSecretFiles = {
 const httpPort = 80;
 const httpsPort = 443;
 
+const webpackHotClientPort = 18080;
+
 const sendRecoveryTokenInterval = 2 * 60 * 1000;
 
 const mailerConfig = {
@@ -63,6 +65,8 @@ export {
   jwtSecretFiles,
   httpPort,
   httpsPort,
+
+  webpackHotClientPort,
 
   sendRecoveryTokenInterval,
 

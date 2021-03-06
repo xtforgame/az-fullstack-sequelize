@@ -2,13 +2,7 @@ import {
   // RestfulResponse,
   RestfulError,
 } from 'az-restful-helpers';
-import { externalUrl, sendRecoveryTokenInterval } from 'config';
 import {
-  findAccountLink,
-  getTokenUpdatedTimeFromAccountLink,
-  challengeRecoveryTokens,
-  resetUserAccessInfo,
-  upsertRecoveryToken,
   updateAccessLink,
 } from '~/domain-logic';
 import RouterBase from '../core/router-base';
@@ -16,7 +10,7 @@ import RouterBase from '../core/router-base';
 export default class AccountLinkRouter extends RouterBase {
   setupRoutes({ router }) {
     router.patch('/api/users/:userId/accountLinks/basic', async (ctx, next) => {
-      await this.authKit.koaHelper.authenticate(ctx, next);
+      await this.authKit.koaHelperEx.ｘ(ctx, next);
       if (ctx.body.error) {
         return RestfulError.koaThrowWith(ctx, 400, 'Wrong Password');
       }
@@ -46,10 +40,10 @@ export default class AccountLinkRouter extends RouterBase {
           username,
           provider_user_access_info,
         );
-        ctx.body = { passed };
+        return ctx.body = { passed };
       } catch (error) {
-        console.log('error :', error);
-        ctx.body = { passed: false };
+        // console.log('error :', error);
+        return ctx.body = { passed: false };
       }
     });
   }

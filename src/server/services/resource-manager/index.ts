@@ -1,5 +1,10 @@
 // ========================================
-import AsuOrm from 'az-sequelize-utils';
+import fs from 'fs';
+import path from 'path';
+import appRootPath from 'app-root-path';
+import { Sequelize } from 'sequelize';
+import AmmOrm from 'az-model-manager/core';
+import { JsonSchemasX } from 'az-model-manager';
 import {
   AuthCore,
   AuthProviderManager,
@@ -14,12 +19,23 @@ import ServiceBase from '../ServiceBase';
 
 import SequelizeStore from './SequelizeStore';
 
-import createAsuModelDefs from '../../asu-model';
+import createAsuModelDefs, { getJsonSchema } from '../../amm-schemas';
 
 import initDatabase from './initDatabase';
+import KoaHelperEx from './KoaHelperEx';
+import { AuthKit } from './insterfaces';
+
+const liquidRoot = appRootPath.resolve('./node_modules/az-model-manager/liquids');
 
 // ========================================
 
+const logFiles = {};
+
+const write = (file, data) => {
+  logFiles[file] = logFiles[file] || fs.createWriteStream(file, { flags: 'w' });
+  const logFile = logFiles[file];
+  logFile.write(data);
+};
 export default class ResourceManager extends ServiceBase {
   static $name = 'resourceManager';
 
@@ -31,13 +47,19 @@ export default class ResourceManager extends ServiceBase {
     start: ['sequelizeDb'],
   };
 
+  jwtSecrets : any;
+  database : Sequelize;
+  resourceManager : AmmOrm;
+  AuthProviders : any[];
+  authKit: AuthKit;
+
   constructor(envCfg, sequelizeDb) {
     super();
     this.jwtSecrets = envCfg.jwtSecrets;
     this.database = sequelizeDb.database;
 
     this.AuthProviders = AuthProviders;
-    this.authKit = {
+    this.authKit = <any>{
       authCore: new AuthCore(this.jwtSecrets, { algorithm: 'RS256', issuer: jwtIssuer }),
       sequelizeStore: new SequelizeStore({}),
       authProviderManager: new AuthProviderManager(
@@ -51,8 +73,17 @@ export default class ResourceManager extends ServiceBase {
       ),
     };
     this.authKit.koaHelper = new KoaHelper(this.authKit.authCore, this.authKit.authProviderManager);
+    this.authKit.koaHelperEx = new KoaHelperEx(this.authKit.koaHelper);
 
-    this.resourceManager = new AsuOrm(this.database, createAsuModelDefs());
+    // const jsonSchemaX = new JsonSchemasX('public', <any>getJsonSchema());
+    // jsonSchemaX.parseRawSchemas();
+    // jsonSchemaX.buildModelTsFile({
+    //   liquidRoot: liquidRoot,
+    // }).then((tsFile) => {
+    //   write(path.resolve('models.ts'), tsFile);
+    // });
+
+    this.resourceManager = new AmmOrm(this.database, createAsuModelDefs());
   }
 
   onStart() {

@@ -2,10 +2,8 @@ import {
   // RestfulResponse,
   RestfulError,
 } from 'az-restful-helpers';
-import { externalUrl, sendRecoveryTokenInterval } from 'config';
 import {
   findOrCreateNonregisteredUser,
-  updateAccessLink,
 } from '~/domain-logic';
 import RouterBase from '../core/router-base';
 
@@ -24,7 +22,7 @@ export default class ContactUsMessageRouter extends RouterBase {
       const user = await findOrCreateNonregisteredUser(this.resourceManager, `email:${email}`, { name, data: { email } });
       // hardcoded organization id
       await user.addOrganization('1', { through: { role: 'member' } });
-      ctx.body = user;
+      return ctx.body = user;
     });
   }
 }

@@ -1,10 +1,13 @@
 import Sequelize from 'sequelize';
-import { getAssociationIncludes } from './common';
+import AmmOrm, { AssociationModelNameAsToInclude } from 'az-model-manager/core';
+import { OrganizationI, UserOrganizationI } from '../../amm-schemas/interfaces';
 import { createNewUser } from './user';
 
-export const findOrganization = async (resourceManager, userId, organizationId, includes = []) => {
-  const UserOrganization = resourceManager.getSqlzAssociationModel('userOrganization');
-  const Organization = resourceManager.getSqlzModel('organization');
+
+
+export const findOrganization = async (resourceManager : AmmOrm, userId, organizationId, includes : AssociationModelNameAsToInclude[] = []) => {
+  const UserOrganization = resourceManager.getSqlzAssociationModel<UserOrganizationI>('userOrganization')!;
+  const Organization = resourceManager.getSqlzModel<OrganizationI>('organization')!;
 
   const userOrganization = await UserOrganization.findOne({
     where: {
@@ -15,16 +18,15 @@ export const findOrganization = async (resourceManager, userId, organizationId, 
   if (!userOrganization) {
     return null;
   }
-  const include = getAssociationIncludes(resourceManager, 'organization', includes);
   return Organization.findOne({
     where: {
       id: organizationId,
     },
-    include,
+    include: Organization.ammIncloud(includes),
   });
 };
 
-export const findOrganizationMembers = async (resourceManager, userId, organizationId) => {
+export const findOrganizationMembers = async (resourceManager : AmmOrm, userId, organizationId) => {
   const organization = await findOrganization(resourceManager, userId, organizationId, [
     {
       as: 'users',
@@ -39,8 +41,8 @@ export const findOrganizationMembers = async (resourceManager, userId, organizat
   return organization.users;
 };
 
-export const patchOrganization = async (resourceManager, organizationId, data = {}) => {
-  const Organization = resourceManager.getSqlzModel('organization');
+export const patchOrganization = async (resourceManager : AmmOrm, organizationId, data = {}) => {
+  const Organization = resourceManager.getSqlzModel<OrganizationI>('organization')!;
   await Organization.update({
     data: Sequelize.literal(`data || '${JSON.stringify(data)}'::jsonb`),
   }, {
@@ -55,9 +57,9 @@ export const patchOrganization = async (resourceManager, organizationId, data = 
   });
 };
 
-export const addOrganizationMember = async (resourceManager, ownerId, organizationId, targetData) => {
+export const addOrganizationMember = async (resourceManager : AmmOrm, ownerId, organizationId, targetData) => {
   // const User = resourceManager.getSqlzModel('user');
-  const UserOrganization = resourceManager.getSqlzAssociationModel('userOrganization');
+  const UserOrganization = resourceManager.getSqlzAssociationModel<UserOrganizationI>('userOrganization')!;
   // const Organization = resourceManager.getSqlzModel('organization');
 
   const owner = await UserOrganization.findOne({
@@ -94,9 +96,9 @@ export const addOrganizationMember = async (resourceManager, ownerId, organizati
   }
 };
 
-export const removeOrganizationMember = async (resourceManager, ownerId, organizationId, memberId) => {
+export const removeOrganizationMember = async (resourceManager : AmmOrm, ownerId, organizationId, memberId) => {
   // const User = resourceManager.getSqlzModel('user');
-  const UserOrganization = resourceManager.getSqlzAssociationModel('userOrganization');
+  const UserOrganization = resourceManager.getSqlzAssociationModel<UserOrganizationI>('userOrganization')!;
   // const Organization = resourceManager.getSqlzModel('organization');
 
   const owner = await UserOrganization.findOne({
@@ -126,9 +128,9 @@ export const removeOrganizationMember = async (resourceManager, ownerId, organiz
   }
 };
 
-export const createOrganizationMember = async (resourceManager, ownerId, organizationId, targetData) => {
+export const createOrganizationMember = async (resourceManager : AmmOrm, ownerId, organizationId, targetData) => {
   // const User = resourceManager.getSqlzModel('user');
-  const UserOrganization = resourceManager.getSqlzAssociationModel('userOrganization');
+  const UserOrganization = resourceManager.getSqlzAssociationModel<UserOrganizationI>('userOrganization')!;
   // const Organization = resourceManager.getSqlzModel('organization');
 
   const owner = await UserOrganization.findOne({
@@ -175,9 +177,9 @@ export const createOrganizationMember = async (resourceManager, ownerId, organiz
   }
 };
 
-export const patchOrganizationMember = async (resourceManager, ownerId, organizationId, targetId, targetData) => {
+export const patchOrganizationMember = async (resourceManager : AmmOrm, ownerId, organizationId, targetId, targetData) => {
   // const User = resourceManager.getSqlzModel('user');
-  const UserOrganization = resourceManager.getSqlzAssociationModel('userOrganization');
+  const UserOrganization = resourceManager.getSqlzAssociationModel<UserOrganizationI>('userOrganization')!;
   // const Organization = resourceManager.getSqlzModel('organization');
 
   const owner = await UserOrganization.findOne({
@@ -190,7 +192,7 @@ export const patchOrganizationMember = async (resourceManager, ownerId, organiza
   if (!owner) {
     return null;
   }
-  const labels = { identifier: targetData.identifier };
+  const labels : any = { identifier: targetData.identifier };
   if (targetData.disabled != null) {
     labels.disabled = targetData.disabled;
   }

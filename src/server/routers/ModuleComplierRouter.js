@@ -1,13 +1,10 @@
-/* eslint-disable no-param-reassign */
+/* eslint-disable no-param-reassign, import/no-extraneous-dependencies */
 // import Sequelize from 'sequelize';
 import {
   // RestfulResponse,
   RestfulError,
 } from 'az-restful-helpers';
 import * as babel from '@babel/core';
-import {
-  promiseReduce,
-} from 'common/utils';
 import RouterBase from '../core/router-base';
 
 const options = {
@@ -32,7 +29,7 @@ const options = {
 
 export default class ModuleComplierRouter extends RouterBase {
   setupRoutes({ router }) {
-    router.post('/api/compile', this.authKit.koaHelper.getIdentity, (ctx, next) => {
+    router.post('/api/compile', this.authKit.koaHelperEx.getIdentity, (ctx, next) => {
       // if (!ctx.local.userSession || !ctx.local.exposedUser) {
       //   RestfulError.koaThrowWith(ctx, 404, 'User not found');
       // }

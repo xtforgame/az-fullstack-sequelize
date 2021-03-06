@@ -1,6 +1,7 @@
-import { getAssociationIncludes } from './common';
+import AmmOrm, { AssociationModelNameAsToInclude } from 'az-model-manager/core';
+import { AccountLinkI } from '../../amm-schemas/interfaces';
 
-export const addInitDataToAccountLink = alParams => ({
+export const addInitDataToAccountLink = (alParams) => ({
   ...alParams,
   data: {
     confirmed: false,
@@ -8,16 +9,16 @@ export const addInitDataToAccountLink = alParams => ({
   },
 });
 
-export const createAccountLink = async (resourceManager, paramsForCreate, userId) => {
-  const AccountLink = resourceManager.getSqlzModel('accountLink');
-  const transaction = resourceManager.db.transaction();
+export const createAccountLink = async (resourceManager : AmmOrm, paramsForCreate, userId) => {
+  const AccountLink = resourceManager.getSqlzModel<AccountLinkI>('accountLink')!;
+  const transaction = await resourceManager.db.transaction();
   try {
     const accountLink = await AccountLink.create(addInitDataToAccountLink({
       ...paramsForCreate,
       user_id: userId,
-    }, {
+    }), {
       transaction,
-    }));
+    });
     await transaction.commit();
     return accountLink;
   } catch (error) {
@@ -44,15 +45,13 @@ export const updateAccessLink = async (
   return true;
 };
 
-export const findAccountLink = async (resourceManager, provider_id, provider_user_id, includes = []) => {
-  const AccountLink = resourceManager.getSqlzModel('accountLink');
-
-  const include = getAssociationIncludes(resourceManager, 'accountLink', includes);
+export const findAccountLink = async (resourceManager : AmmOrm, provider_id, provider_user_id, includes : AssociationModelNameAsToInclude[] = []) => {
+  const AccountLink = resourceManager.getSqlzModel<AccountLinkI>('accountLink')!;
   return AccountLink.findOne({
     where: {
       provider_id,
       provider_user_id,
     },
-    include,
+    include: AccountLink.ammIncloud(includes),
   });
 };

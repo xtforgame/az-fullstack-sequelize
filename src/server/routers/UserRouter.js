@@ -13,14 +13,14 @@ import RouterBase from '../core/router-base';
 
 export default class UserRouter extends RouterBase {
   setupRoutes({ router }) {
-    router.param('userId', (userId, ctx, next) => this.authKit.koaHelper.getIdentity(ctx, next));
+    router.param('userId', (userId, ctx, next) => this.authKit.koaHelperEx.getIdentity(ctx, next));
 
     router.get('/api/users/:userId', async (ctx, next) => {
       if (!ctx.local.userSession || !ctx.local.userSession.user_id) {
         return RestfulError.koaThrowWith(ctx, 404, 'User not found');
       }
       const user = await findUser(this.resourceManager, ctx.local.userSession.user_id);
-      ctx.body = user;
+      return ctx.body = user;
     });
 
     router.post('/api/users', async (ctx) => {
@@ -67,10 +67,10 @@ export default class UserRouter extends RouterBase {
         return RestfulError.koaThrowWith(ctx, 404, 'User not found');
       }
       const user = await patchUser(this.resourceManager, ctx.local.userSession.user_id, ctx.request.body);
-      ctx.body = user;
+      return ctx.body = user;
     });
 
-    router.get('/api/users', this.authKit.koaHelper.getIdentity, async (ctx) => {
+    router.get('/api/users', this.authKit.koaHelperEx.getIdentity, async (ctx) => {
       if (!ctx.local.userSession
         || !ctx.local.userSession.user_id
         || ctx.local.userSession.privilege !== 'admin'
@@ -79,7 +79,7 @@ export default class UserRouter extends RouterBase {
       }
 
       const users = await findAllUser(this.resourceManager);
-      ctx.body = users;
+      return ctx.body = users;
     });
   }
 }

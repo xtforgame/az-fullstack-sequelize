@@ -1,6 +1,7 @@
+import AmmOrm, { AssociationModelNameAsToInclude } from 'az-model-manager/core';
+import { UserI, AccountLinkI, UserOrganizationI } from '../../amm-schemas/interfaces';
 import { sha512gen_salt, crypt } from 'az-authn-kit-v2';
 import drawIcon from '~/utils/drawIcon';
-import { getAssociationIncludes } from './common';
 import { addInitDataToAccountLink } from './accountLink';
 
 export const createInitialUserSettingsData = () => ([
@@ -36,7 +37,7 @@ export const createInitialUserData = ({
   data,
   labels,
   accountLinks,
-}, extraColumns) => ({
+} : any, extraColumns : any = {}) : any => ({
   id,
   name,
   type,
@@ -55,10 +56,10 @@ export const createInitialUserData = ({
   ...extraColumns,
 });
 
-export const createNewUser = (resourceManager, {
+export const createNewUser = (resourceManager : AmmOrm, {
   username, password, name, privilege = 'user', ...rest
 }, extraColumns, transaction) => {
-  const User = resourceManager.getSqlzModel('user');
+  const User = resourceManager.getSqlzModel<UserI>('user')!;
 
   return User.create(createInitialUserData({
     ...rest,
@@ -74,10 +75,10 @@ export const createNewUser = (resourceManager, {
   });
 };
 
-export const createUser = async (resourceManager, data = {}) => {
+export const createUser = async (resourceManager : AmmOrm, data = {}) => {
   const transaction = await resourceManager.db.transaction();
   try {
-    const User = resourceManager.getSqlzModel('user');
+    const User = resourceManager.getSqlzModel<UserI>('user')!;
     const user = await User.create(createInitialUserData(data), {
       transaction,
     });
@@ -89,9 +90,9 @@ export const createUser = async (resourceManager, data = {}) => {
   }
 };
 
-export const findUserWithAccountLink = async (resourceManager, userId) => {
-  const User = resourceManager.getSqlzModel('user');
-  const AccountLink = resourceManager.getSqlzModel('accountLink');
+export const findUserWithAccountLink = async (resourceManager : AmmOrm, userId) => {
+  const User = resourceManager.getSqlzModel<UserI>('user')!;
+  const AccountLink = resourceManager.getSqlzModel<AccountLinkI>('accountLink')!;
   // const pp = getAssociationIncludeData('user', 'accountLinks')
   // console.log('pp :', pp);
   return User.findOne({
@@ -105,30 +106,28 @@ export const findUserWithAccountLink = async (resourceManager, userId) => {
   });
 };
 
-export const findUser = async (resourceManager, userId, includes = []) => {
-  const User = resourceManager.getSqlzModel('user');
+export const findUser = async (resourceManager : AmmOrm, userId, includes : AssociationModelNameAsToInclude[] = []) => {
+  const User = resourceManager.getSqlzModel<UserI>('user')!;
 
-  const include = getAssociationIncludes(resourceManager, 'user', includes);
   return User.findOne({
     where: {
       id: userId,
     },
-    include,
+    include: User.ammIncloud(includes),
   });
 };
 
-export const findAllUser = async (resourceManager, includes = []) => {
-  const User = resourceManager.getSqlzModel('user');
+export const findAllUser = async (resourceManager : AmmOrm, includes : AssociationModelNameAsToInclude[] = []) => {
+  const User = resourceManager.getSqlzModel<UserI>('user')!;
 
-  const include = getAssociationIncludes(resourceManager, 'user', includes);
   return User.findAll({
     attributes: { exclude: ['picture', /* 'created_at', */ 'updated_at', 'deleted_at'] },
     // attributes: ['id', , 'name', 'labels', /*'picture',*/ 'data'],
-    include,
+    include: User.ammIncloud(includes),
   });
 };
 
-export const userCreateMemo = async (resourceManager, userId, memoData) => {
+export const userCreateMemo = async (resourceManager : AmmOrm, userId, memoData) => {
   const user = await findUser(resourceManager, userId);
   if (!user) {
     return Promise.resolve(new Error('user not found'));
@@ -138,7 +137,7 @@ export const userCreateMemo = async (resourceManager, userId, memoData) => {
   }, { through: { role: 'owner' } });
 };
 
-export const userCreateOrganization = async (resourceManager, userId, organizationName) => {
+export const userCreateOrganization = async (resourceManager : AmmOrm, userId, organizationName) => {
   const user = await findUser(resourceManager, userId);
   if (!user) {
     return Promise.resolve(new Error('user not found'));
@@ -148,8 +147,8 @@ export const userCreateOrganization = async (resourceManager, userId, organizati
   }, { through: { role: 'owner' } });
 };
 
-export const patchUser = async (resourceManager, userId, data = {}) => {
-  const User = resourceManager.getSqlzModel('user');
+export const patchUser = async (resourceManager : AmmOrm, userId, data = {}) => {
+  const User = resourceManager.getSqlzModel<UserI>('user')!;
   await User.update(data, {
     where: {
       id: userId,
@@ -164,18 +163,18 @@ export const patchUser = async (resourceManager, userId, data = {}) => {
 
 
 // create project
-export const userInstCreateProject = async (user, projectName, organization_id, transaction, extras) => {
-  return user.createProject({
-    name: projectName,
-    data: {},
-    organization_id,
-    ...extras,
-  }, { through: { role: 'owner' }, transaction });
-};
+export const userInstCreateProject = async (
+  user, projectName, organization_id, transaction, extras,
+) => user.createProject({
+  name: projectName,
+  data: {},
+  organization_id,
+  ...extras,
+}, { through: { role: 'owner' }, transaction });
 
-export const userCreateProject = async (resourceManager, userId, projectName, organization_id, transaction, extras) => {
-  const User = resourceManager.getSqlzModel('user');
-  const UserOrganization = resourceManager.getSqlzAssociationModel('userOrganization');
+export const userCreateProject = async (resourceManager : AmmOrm, userId, projectName, organization_id, transaction, extras) => {
+  const User = resourceManager.getSqlzModel<UserI>('user')!;
+  const UserOrganization = resourceManager.getSqlzAssociationModel<UserOrganizationI>('userOrganization')!;
   // const Organization = resourceManager.getSqlzModel('organization');
 
   if (!organization_id) {
@@ -206,8 +205,10 @@ export const userCreateProject = async (resourceManager, userId, projectName, or
   return porject;
 };
 
-export const findOrCreateNonregisteredUser = async (resourceManager, provider_user_id, { name, data }, includes = []) => {
-  const AccountLink = resourceManager.getSqlzModel('accountLink');
+export const findOrCreateNonregisteredUser = async (
+  resourceManager : AmmOrm, provider_user_id, { name, data }, includes = [],
+) => {
+  const AccountLink = resourceManager.getSqlzModel<AccountLinkI>('accountLink')!;
   const accountLink = await AccountLink.findOne({
     where: {
       provider_id: 'non-registered',

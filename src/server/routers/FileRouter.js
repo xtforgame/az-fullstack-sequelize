@@ -1,4 +1,4 @@
-/* eslint-disable no-param-reassign */
+/* eslint-disable no-param-reassign, no-console */
 // import Sequelize from 'sequelize';
 import axios from 'axios';
 import {
@@ -45,25 +45,21 @@ export default class FileRouter extends RouterBase {
     if (!this.minioApi) {
       return;
     }
-    router.options('/api/files/:filename', this.authKit.koaHelper.getIdentity, (ctx, next) => {
-      return this.minioApi.statFile(ctx.params.filename)
+    router.options('/api/files/:filename', this.authKit.koaHelperEx.getIdentity, (ctx, next) => this.minioApi.statFile(ctx.params.filename)
       .then(({ headers }) => {
         ctx.set(headers);
         ctx.body = headers;
       })
       .catch(() => {
         ctx.body = {};
-      });
-    });
-    router.get('/api/files/:filename', this.authKit.koaHelper.getIdentity, (ctx, next) => {
-      return this.minioApi.getFile(ctx.params.filename)
+      }));
+    router.get('/api/files/:filename', this.authKit.koaHelperEx.getIdentity, (ctx, next) => this.minioApi.getFile(ctx.params.filename)
       .then(({ dataStream, headers }) => {
         ctx.set(headers);
         ctx.body = dataStream;
-      });
-    });
+      }));
 
-    router.post('/api/files', mdUpload, this.authKit.koaHelper.getIdentity, (ctx, next) => {
+    router.post('/api/files', mdUpload, this.authKit.koaHelperEx.getIdentity, (ctx, next) => {
       if (!ctx.local.userSession || !ctx.local.userSession.user_id) {
         return RestfulError.koaThrowWith(ctx, 403, 'Forbidden');
       }
@@ -74,7 +70,7 @@ export default class FileRouter extends RouterBase {
       // console.log('ctx.req.body :', ctx.req.body);
       const file = files[0];
       const metadata = metadatas[0];
-      console.log('metadata :', metadata);
+      // console.log('metadata :', metadata);
       console.log('file.mimetype, file.encoding, file.originalname :', file.mimetype, file.encoding, file.originalname);
       return this.minioApi.saveFile({
         creatorIp: ctx.request.ip,
@@ -96,7 +92,7 @@ export default class FileRouter extends RouterBase {
       });
     });
 
-    router.post('/api/fileUrls', this.authKit.koaHelper.getIdentity, async (ctx, next) => {
+    router.post('/api/fileUrls', this.authKit.koaHelperEx.getIdentity, async (ctx, next) => {
       if (!ctx.local.userSession || !ctx.local.userSession.user_id) {
         return RestfulError.koaThrowWith(ctx, 403, 'Forbidden');
       }
@@ -104,40 +100,34 @@ export default class FileRouter extends RouterBase {
         url: ctx.request.body.url,
         responseType: 'arraybuffer',
       })
-      .then(({ headers, data }) => {
-        return this.minioApi.saveFile({
-          creatorIp: ctx.request.ip,
-          userId: ctx.local.userSession.user_id,
-          encoding: '',
-          contentType: headers['content-type'] || '',
-          buffer: data,
-          originalName: ctx.request.body.url,
-        })
-        .then((result) => {
-          return ctx.body = {
-            ...result,
-            success: 1,
-            file: {
-              url: `/api/files/${result.hash}`,
-            },
-          };
+      .then(({ headers, data }) => this.minioApi.saveFile({
+        creatorIp: ctx.request.ip,
+        userId: ctx.local.userSession.user_id,
+        encoding: '',
+        contentType: headers['content-type'] || '',
+        buffer: data,
+        originalName: ctx.request.body.url,
+      })
+        .then(result => ctx.body = {
+          ...result,
+          success: 1,
+          file: {
+            url: `/api/files/${result.hash}`,
+          },
         })
         .catch((e) => {
           console.log('e :', e);
           return RestfulError.koaThrowWith(ctx, 400, 'Invalid Image Url');
-        });
-      })
-      .catch(() => {
-        return RestfulError.koaThrowWith(ctx, 400, 'Invalid Image Url');
-      });
+        }))
+      .catch(() => RestfulError.koaThrowWith(ctx, 400, 'Invalid Image Url'));
     });
 
-    router.get('/api/fetchUrl', this.authKit.koaHelper.getIdentity, async (ctx, next) => {
+    router.get('/api/fetchUrl', this.authKit.koaHelperEx.getIdentity, async (ctx, next) => {
       let title = 'Link';
       let description = ctx.request.query.url;
       let imageUrl = './mail-assets/logo.png';
       try {
-        const resp = await linkPreview(ctx.request.query.url)
+        const resp = await linkPreview(ctx.request.query.url);
         // console.log(resp);
         /* { image: 'https://static.npmjs.com/338e4905a2684ca96e08c7780fc68412.png',
             title: 'npm | build amazing things',

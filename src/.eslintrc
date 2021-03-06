@@ -1,10 +1,13 @@
 {
   "rules": {
+    // "no-use-before-define": ["error", "nofunc"], // do not check class and function
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error"],
+    
     // vanilla
     "no-console": ["warn", { "allow": ["warn", "error"] }],
     "max-len": ["warn", { "code": 120, "ignoreUrls": true, "ignoreStrings": true, "ignoreTemplateLiterals": true }],
     "camelcase": "off", // => maybe enable later
-    "no-use-before-define": ["error", "nofunc"], // do not check class and function
     "no-unused-vars": ["error", { "args": "none" }],
     "class-methods-use-this": "off",
     // "no-return-assign": ["error", "except-parens"],
@@ -37,5 +40,7 @@
     "mocha": true,
     "jest": true
   },
+  "plugins": ["@typescript-eslint"],
+  "parser": "@typescript-eslint/parser",
   "extends": "airbnb-base"
 }
