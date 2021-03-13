@@ -16,7 +16,7 @@ module.exports = (serviceName, defaultExposePort = null) => async ({ prompter },
     name: 'selectedValue',
     message: `${step}. Docker ${capitalizeServiceName}:`,
     choices: [
-      { message: 'deploy my own postgres', value: 'mine' },
+      { message: `deploy my own ${capitalizeServiceName}`, value: 'mine' },
       { message: 'use docker external_url', value: 'external_link' },
       { message: 'use external service', value: 'external' },
     ],

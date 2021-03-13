@@ -1,0 +1,17 @@
+agjc-placeholder:only-child {
+  display: block;
+  height: 20px;
+}
+
+agjc-slot {
+  display: block;
+  padding: 2px;
+}
+
+.az-slot-bg1 {
+  background-color:rgba(0, 128, 128, 0.3);
+}
+
+.az-slot-bg2 {
+  background-color:rgba(128, 0, 128, 0.3);
+}

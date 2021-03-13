@@ -1,4 +1,4 @@
-FROM node:10-alpine
+FROM node:14-alpine
 
 RUN mkdir -p /usr/volumes/src /usr/volumes/share /usr/volumes/output
 VOLUME ["/usr/volumes/src", "/usr/volumes/share", "/usr/volumes/output"]

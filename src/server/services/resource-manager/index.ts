@@ -19,7 +19,7 @@ import ServiceBase from '../ServiceBase';
 
 import SequelizeStore from './SequelizeStore';
 
-import createAsuModelDefs, { getJsonSchema } from '../../amm-schemas';
+import { getJsonSchema, getJsonSchemasX } from '../../amm-schemas';
 
 import initDatabase from './initDatabase';
 import KoaHelperEx from './KoaHelperEx';
@@ -49,6 +49,7 @@ export default class ResourceManager extends ServiceBase {
 
   jwtSecrets : any;
   database : Sequelize;
+  jsonSchemasX: JsonSchemasX;
   resourceManager : AmmOrm;
   AuthProviders : any[];
   authKit: AuthKit;
@@ -83,7 +84,16 @@ export default class ResourceManager extends ServiceBase {
     //   write(path.resolve('models.ts'), tsFile);
     // });
 
-    this.resourceManager = new AmmOrm(this.database, createAsuModelDefs());
+    this.jsonSchemasX = getJsonSchemasX();
+    const ammSchemas = this.jsonSchemasX.toCoreSchemas();
+    if (ammSchemas instanceof Error) {
+      throw ammSchemas;
+    }
+    const { schemas } = this.jsonSchemasX
+    if (schemas.associationModels!['userUserGroup']) {
+      fs.writeFileSync('schemas.json', JSON.stringify(schemas, null, 2), { encoding: 'utf-8' });
+    }
+    this.resourceManager = new AmmOrm(this.database, ammSchemas);
   }
 
   onStart() {

@@ -66,7 +66,7 @@ export default class HttpApp extends ServiceBase {
   onStart() {
     // ======================================================
     let p = Promise.resolve();
-    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+    if (process.env.NODE_ENV === 'development'/* || process.env.NODE_ENV === 'test'*/) {
       const { middlewarePromise, compileDonePromise } = getWebpackService();
       p = middlewarePromise
       .then((middleware) => {

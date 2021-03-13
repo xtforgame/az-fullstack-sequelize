@@ -26,7 +26,7 @@ services:
     command: server /data
 
   pg-master:
-    image: postgres:9.6
+    image: postgres:12
 
     container_name: ${AZ_CONTAINER_NS:-azinternal}-${AZ_CONTAINER_PROJ:-default}-afs-pg-master
     environment:

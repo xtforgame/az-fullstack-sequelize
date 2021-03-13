@@ -13,6 +13,11 @@ import NativeThemeDemo from '~/containers/Home/NativeThemeDemo';
 import BigCalendarDemo from '~/containers/Home/BigCalendarDemo';
 import EditorJsDemo from '~/containers/Home/EditorJsDemo';
 import ImagesInputDemo from '~/containers/Home/ImagesInputDemo';
+import GrapesJs from '~/containers/Home/GrapesJs';
+import GrapesJsEditor from '~/containers/Home/GrapesJs/Editor';
+import GrapesFragmentList from '~/containers/Home/GrapesJs/FragmentList';
+import FileManagerDemo from '~/containers/Home/FileManagerDemo';
+import FileManagerDemoV2 from '~/containers/Home/FileManagerDemoV2';
 import SubContent01 from '~/containers/Home/SubContent01';
 import SubContent02 from '~/containers/Home/SubContent02';
 import SubContent03 from '~/containers/Home/SubContent03';
@@ -39,28 +44,28 @@ import Memo from '~/containers/Memo';
 import Memos from '~/containers/Memo/tabs/Memos';
 import MemoSchedules from '~/containers/Memo/tabs/Schedules';
 
-import Test from '~/containers/Test';
-import TestContent from '~/containers/Test/TestContent';
-import testCase00 from '~/test-cases/test-case-00';
-import testCase01 from '~/test-cases/test-case-01';
+// import Test from '~/containers/Test';
+// import TestContent from '~/containers/Test/TestContent';
+// import testCase00 from '~/test-cases/test-case-00';
+// import testCase01 from '~/test-cases/test-case-01';
 
 import Login from '~/containers/Login';
 import Recovery from '~/containers/Recovery';
 
 import getListHierarchy from '~/containers/MainFrame/getListHierarchy';
 
-const testCases = [testCase00, testCase01];
-const getTestCaseRoutes = () => testCases.map((testCase, i) => {
-  const ii = ('0'.repeat(3) + i).slice(-3);
-  return {
-    name: `case${ii}`,
-    path: `/test/case${ii}`,
-    component: props => (<TestContent testCase={testCase} />),
-    navbar: {
-      title: `Case ${ii}`,
-    },
-  };
-});
+// const testCases = [testCase00, testCase01];
+// const getTestCaseRoutes = () => testCases.map((testCase, i) => {
+//   const ii = ('0'.repeat(3) + i).slice(-3);
+//   return {
+//     name: `case${ii}`,
+//     path: `/test/case${ii}`,
+//     component: props => (<TestContent testCase={testCase} />),
+//     navbar: {
+//       title: `Case ${ii}`,
+//     },
+//   };
+// });
 
 const defaultName = 'default';
 
@@ -171,6 +176,51 @@ const globalRouteConfig = {
               component: ImagesInputDemo,
               navbar: {
                 title: 'ImagesInputDemo',
+              },
+            },
+            {
+              name: 'grapesjs',
+              path: '/home/grapesjs',
+              component: GrapesJs,
+              navbar: {
+                title: 'GrapesJs',
+              },
+              routeViews: [{
+                routes: [
+                  {
+                    name: 'grapesjs-fragment-list',
+                    path: '/home/grapesjs',
+                    component: GrapesFragmentList,
+                    navbar: {
+                      title: 'Grapes Fragment List',
+                    },
+                    exact: true,
+                  },
+                  {
+                    name: 'grapesjs-editor',
+                    path: '/home/grapesjs/:pType/:pId/*',
+                    component: GrapesJsEditor,
+                    navbar: {
+                      title: 'Editor',
+                    },
+                  },
+                ],
+              }],
+            },
+            {
+              name: 'file-manager-demo',
+              path: '/home/file-manager-demo',
+              component: FileManagerDemo,
+              navbar: {
+                title: 'FileManagerDemo',
+              },
+            },
+            {
+              name: 'file-manager-demo-v2',
+              path: '/home/file-manager-demo-v2',
+              component: FileManagerDemoV2,
+              navbar: {
+                title: 'FileManagerDemoV2',
               },
             },
             {
@@ -361,22 +411,22 @@ const globalRouteConfig = {
             }],
           }],
         },
-        {
-          name: 'test',
-          path: '/test',
-          component: Test,
-          navbar: true,
-          routeViews: [{
-            routes: [{
-              name: 'test-index',
-              path: '/test',
-              component: () => <Redirect to={{ pathname: '/test/case001' }} />,
-              exact: true,
-            },
-            ...getTestCaseRoutes(),
-            ],
-          }],
-        },
+        // {
+        //   name: 'test',
+        //   path: '/test',
+        //   component: Test,
+        //   navbar: true,
+        //   routeViews: [{
+        //     routes: [{
+        //       name: 'test-index',
+        //       path: '/test',
+        //       component: () => <Redirect to={{ pathname: '/test/case001' }} />,
+        //       exact: true,
+        //     },
+        //     ...getTestCaseRoutes(),
+        //     ],
+        //   }],
+        // },
         {
           name: 'user-profile',
           path: '/user-profile',

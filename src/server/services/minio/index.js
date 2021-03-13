@@ -78,7 +78,7 @@ export default class MinioApi extends ServiceBase {
     this.isReady = false;
   }
 
-  onStart() {
+  async onStart() {
     let retryCounter = 0;
     const init = () => initProject()
     .then(() => { this.isReady = true; })
@@ -95,20 +95,21 @@ export default class MinioApi extends ServiceBase {
       await promiseWait(minioInfoConfig.retryInterval);
       return init();
     });
+    // await init();
+    // await this.listObjectsWithMetadata();
     return init();
   }
 
   onDestroy() {
   }
 
-  saveFile({
+  async simpleSaveFile(filename, {
     creatorIp,
     userId,
     encoding,
     contentType,
     buffer,
     originalName,
-    metadata,
   }) {
     const metaData = {
       'Content-Type': encodeURI(contentType),
@@ -121,46 +122,76 @@ export default class MinioApi extends ServiceBase {
       // example: 5678,
     };
 
+    const etag = minioClient.putObject(bucketName, filename, buffer, metaData);
+
+    return {
+      etag,
+      filename,
+    };
+  }
+
+  async saveFile(fileInfo) {
+    const {
+      buffer,
+      metadata,
+    } = fileInfo;
+
     const hash = crypto.createHash('sha256')
     .update(buffer, 'binary')
     .digest('hex');
 
-    const p = metadata
-      ? minioClient.putObject(bucketName, `${hash}.metadata`, metadata.buffer, {
+    if (metadata) {
+      await minioClient.putObject(bucketName, `${hash}.metadata`, metadata.buffer, {
         'Content-Type': 'application/json',
-      })
-      : Promise.resolve();
+      });
+    }
 
-    return p.then(() => minioClient.putObject(bucketName, hash, buffer, metaData))
-    .then(etag => ({
+    const { etag, filename } = this.simpleSaveFile(hash, fileInfo);
+    return {
       etag,
-      hash,
-    }));
+      hash: filename,
+    };
   }
 
-  statFile(filename) {
-    return minioClient.statObject(bucketName, filename)
-    .then(({ metaData = {}, etag }) => {
-      const headers = {
-        'Content-Type': metaData['content-type'],
-        ETag: etag,
-      };
-      return {
-        metaData,
-        etag,
-        headers,
-      };
+  async statFile(filename) {
+    const { metaData = {}, etag } = await minioClient.statObject(bucketName, filename);
+    const headers = {
+      'Content-Type': metaData['content-type'],
+      ETag: etag,
+    };
+    return {
+      metaData,
+      etag,
+      headers,
+    };
+  }
+
+  async getFile(filename) {
+    const stat = await this.statFile(filename);
+    const dataStream = await minioClient.getObject(bucketName, filename);
+    return {
+      ...stat,
+      dataStream,
+    };
+  }
+
+  async listObjects(objectPath = '', recursive = false) {
+    return new Promise((res, rej) => {
+      const stream = minioClient.listObjectsV2(bucketName, objectPath, recursive, '');
+      const result = [];
+      stream.on('data', (obj) => { result.push(obj); });
+      stream.on('error', rej);
+      stream.on('end', () => res(result));
     });
   }
 
-  getFile(filename) {
-    return this.statFile(filename)
-    .then(
-      stat => minioClient.getObject(bucketName, filename)
-      .then(dataStream => ({
-        ...stat,
-        dataStream,
-      }))
-    );
+  async listObjectsWithMetadata(objectPath = '', recursive = false) {
+    return new Promise((res, rej) => {
+      const stream = minioClient.extensions.listObjectsV2WithMetadata(bucketName, objectPath, recursive, '');
+      const result = [];
+      stream.on('data', (obj) => { result.push(obj); });
+      stream.on('error', rej);
+      stream.on('end', () => res(result));
+    });
   }
 }

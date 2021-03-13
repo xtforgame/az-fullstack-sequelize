@@ -9,6 +9,7 @@ import Services from '~/services';
 
 class Server {
   ioc : any;
+
   constructor() {
     this.ioc = new Azldi();
     this.ioc.register(Services);

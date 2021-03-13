@@ -1,24 +1,7 @@
 // ========================================
-import { Sequelize } from 'sequelize';
-import AmmOrm from 'az-model-manager/core';
 import {
-  AuthCore,
-  AuthProviderManager,
   KoaHelper,
-  BasicProvider,
 } from 'az-authn-kit-v2';
-import {
-  jwtIssuer,
-} from 'config';
-import AuthProviders from './AuthProviders';
-import ServiceBase from '../ServiceBase';
-
-import SequelizeStore from './SequelizeStore';
-
-import createAsuModelDefs from '../../amm-schemas';
-
-import initDatabase from './initDatabase';
-import { AuthKit } from './insterfaces';
 
 // ========================================
 

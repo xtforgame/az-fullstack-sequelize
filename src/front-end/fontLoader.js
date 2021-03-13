@@ -3,7 +3,7 @@ import { toSeqPromise } from 'common/utils';
 
 
 const loadMin = () => toSeqPromise([
-  ['FontAwesome', undefined],
+  // ['FontAwesome', undefined],
   // ['Noto Sans TC', 400],
   // ['Noto Sans TC', 500],
   // ['Noto Sans TC', 700],

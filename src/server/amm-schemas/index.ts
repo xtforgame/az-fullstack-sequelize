@@ -86,6 +86,7 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           through: {
             unique: false,
             ammModelName: 'userUserGroup',
+            ammThroughTableColumnAs: 'user',
             ammThroughAs: 'relation',
           },
           foreignKey: 'user_id',
@@ -95,15 +96,27 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           through: {
             unique: false,
             ammModelName: 'groupInvitation',
+            ammThroughTableColumnAs: 'invitee',
             ammThroughAs: 'state',
           },
           foreignKey: 'invitee_id',
+          otherKey: 'group_id',
+        }],
+        invitedGroupUsers: ['belongsToMany', 'userGroup', {
+          through: {
+            unique: false,
+            ammModelName: 'groupInvitation',
+            ammThroughTableColumnAs: 'inviter',
+            ammThroughAs: 'state',
+          },
+          foreignKey: 'inviter_id',
           otherKey: 'group_id',
         }],
         organizations: ['belongsToMany', 'organization', {
           through: {
             unique: false,
             ammModelName: 'userOrganization',
+            ammThroughTableColumnAs: 'user',
             ammThroughAs: 'relation',
           },
           foreignKey: 'user_id',
@@ -113,15 +126,27 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           through: {
             unique: false,
             ammModelName: 'organizationInvitation',
+            ammThroughTableColumnAs: 'invitee',
             ammThroughAs: 'state',
           },
           foreignKey: 'invitee_id',
+          otherKey: 'organization_id',
+        }],
+        invitedOrganizationUsers: ['belongsToMany', 'organization', {
+          through: {
+            unique: false,
+            ammModelName: 'organizationInvitation',
+            ammThroughTableColumnAs: 'inviter',
+            ammThroughAs: 'state',
+          },
+          foreignKey: 'inviter_id',
           otherKey: 'organization_id',
         }],
         projects: ['belongsToMany', 'project', {
           through: {
             unique: false,
             ammModelName: 'userProject',
+            ammThroughTableColumnAs: 'user',
             ammThroughAs: 'relation',
           },
           foreignKey: 'user_id',
@@ -131,10 +156,27 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           through: {
             unique: false,
             ammModelName: 'projectInvitation',
+            ammThroughTableColumnAs: 'invitee',
             ammThroughAs: 'state',
           },
           foreignKey: 'invitee_id',
           otherKey: 'project_id',
+        }],
+        invitedProjectUsers: ['belongsToMany', 'project', {
+          through: {
+            unique: false,
+            ammModelName: 'projectInvitation',
+            ammThroughTableColumnAs: 'inviter',
+            ammThroughAs: 'state',
+          },
+          foreignKey: 'inviter_id',
+          otherKey: 'project_id',
+        }],
+        leftMessages: ['hasMany', 'contactUsMessage', {
+          foreignKey: 'author_id',
+        }],
+        assignedMessage: ['hasMany', 'contactUsMessage', {
+          foreignKey: 'assignee_id',
         }],
         userSettings: ['hasMany', 'userSetting', {
           foreignKey: 'user_id',
@@ -143,6 +185,7 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           through: {
             unique: false,
             ammModelName: 'userMemo',
+            ammThroughTableColumnAs: 'user',
             ammThroughAs: 'relation',
           },
           foreignKey: 'user_id',
@@ -166,7 +209,7 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           afterSync(options : any) {
             // this = Model
             // console.log('afterSync');
-            return options.sequelize.query('SELECT start_value, last_value, is_called FROM tbl_user_id_seq', { type: sequelize.QueryTypes.SELECT })
+            return options.sequelize.query('SELECT last_value, is_called FROM public.tbl_user_id_seq', { type: sequelize.QueryTypes.SELECT })
               .then(([result]) => {
                 if (!result.is_called) {
                   return options.sequelize.query('ALTER SEQUENCE tbl_user_id_seq RESTART WITH 1000000001', { type: sequelize.QueryTypes.SELECT })
@@ -264,6 +307,7 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           through: {
             unique: false,
             ammModelName: 'userUserGroup',
+            ammThroughTableColumnAs: 'group',
             ammThroughAs: 'relation',
           },
           foreignKey: 'group_id',
@@ -273,6 +317,7 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           through: {
             unique: false,
             ammModelName: 'groupInvitation',
+            ammThroughTableColumnAs: 'group',
             ammThroughAs: 'state',
           },
           foreignKey: 'group_id',
@@ -282,6 +327,7 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           through: {
             unique: false,
             ammModelName: 'groupInvitation',
+            ammThroughTableColumnAs: 'group',
             ammThroughAs: 'state',
           },
           foreignKey: 'group_id',
@@ -301,10 +347,14 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           through: {
             unique: false,
             ammModelName: 'userOrganization',
+            ammThroughTableColumnAs: 'organization',
             ammThroughAs: 'relation',
           },
           foreignKey: 'organization_id',
           otherKey: 'user_id',
+        }],
+        ownedUser: ['hasMany', 'user', {
+          foreignKey: 'org_mgr_id',
         }],
         projects: ['hasMany', 'project', {
           foreignKey: 'organization_id',
@@ -313,6 +363,7 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           through: {
             unique: false,
             ammModelName: 'organizationInvitation',
+            ammThroughTableColumnAs: 'organization',
             ammThroughAs: 'state',
           },
           foreignKey: 'organization_id',
@@ -322,6 +373,7 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           through: {
             unique: false,
             ammModelName: 'organizationInvitation',
+            ammThroughTableColumnAs: 'organization',
             ammThroughAs: 'state',
           },
           foreignKey: 'organization_id',
@@ -346,6 +398,7 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           through: {
             unique: false,
             ammModelName: 'userProject',
+            ammThroughTableColumnAs: 'project',
             ammThroughAs: 'relation',
           },
           foreignKey: 'project_id',
@@ -358,6 +411,7 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           through: {
             unique: false,
             ammModelName: 'projectInvitation',
+            ammThroughTableColumnAs: 'project',
             ammThroughAs: 'state',
           },
           foreignKey: 'project_id',
@@ -367,6 +421,7 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           through: {
             unique: false,
             ammModelName: 'projectInvitation',
+            ammThroughTableColumnAs: 'project',
             ammThroughAs: 'state',
           },
           foreignKey: 'project_id',
@@ -389,6 +444,7 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           through: {
             unique: false,
             ammModelName: 'userMemo',
+            ammThroughTableColumnAs: 'memo',
             ammThroughAs: 'relation',
           },
           foreignKey: 'memo_id',
@@ -595,7 +651,13 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
   },
 });
 
-const getAmmAmmSchemas : () => AmmSchemas = () => {
+export const getJsonSchemasX : () => JsonSchemasX = () => {
+  const result = new JsonSchemasX('public', <any>getJsonSchema())
+  result.toCoreSchemas();
+  return result;
+};
+
+const getAmmSchemas : () => AmmSchemas = () => {
   const result = new JsonSchemasX('public', <any>getJsonSchema()).toCoreSchemas();
   if (result instanceof Error) {
     throw result;
@@ -603,4 +665,4 @@ const getAmmAmmSchemas : () => AmmSchemas = () => {
   return result;
 };
 
-export default getAmmAmmSchemas;
+export default getAmmSchemas;

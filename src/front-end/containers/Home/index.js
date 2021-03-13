@@ -14,10 +14,11 @@ const styles = theme => ({
     height: 40,
   },
   mainContainer: {
-    margin: 8,
-    [theme.breakpoints.up('sm')]: {
-      margin: 40,
-    },
+    // margin: 8,
+    // [theme.breakpoints.up('sm')]: {
+    //   margin: 40,
+    // },
+    height: '100%',
   },
   cardContainer: {
     display: 'flex',

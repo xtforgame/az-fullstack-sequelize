@@ -5,4 +5,5 @@
 /local_config
 **/vaxalonly
 /env-vars.sh
+/schemas.json
 .DS_Store
