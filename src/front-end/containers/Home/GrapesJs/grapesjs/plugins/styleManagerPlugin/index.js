@@ -1,4 +1,5 @@
 // https://github.com/artf/grapesjs/issues/324
+import grapesjs from 'grapesjs';
 import styleManagerCfg from './styleManagerCfg';
 
 export const azStyleManagerPlugin = (editor, options = {}) => {

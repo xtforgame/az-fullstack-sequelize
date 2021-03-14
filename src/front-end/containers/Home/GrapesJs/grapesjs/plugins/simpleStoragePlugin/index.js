@@ -1,3 +1,4 @@
+import grapesjs from 'grapesjs';
 import LocalStorageProvider from './LocalStorageProvider';
 import ProviderBase from './ProviderBase';
 

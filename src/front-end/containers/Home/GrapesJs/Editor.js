@@ -1,4 +1,5 @@
 import React, { useState, useLayoutEffect, useEffect, useRef } from 'react';
+import grapesjs from 'grapesjs';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import axios from 'axios';
@@ -8,6 +9,8 @@ import MinioFolderApiEx from './ui/MinioFolderApiEx';
 import FilePicker from './ui/FilePicker';
 import FileSaver from './ui/FileSaver';
 
+import 'grapesjs-blocks-basic';
+import 'grapesjs-preset-webpage';
 import './grapesjs/plugins/styleManagerPlugin';
 import './grapesjs/plugins/assetManagerPlugin';
 import { ProviderBase } from './grapesjs/plugins/simpleStoragePlugin';

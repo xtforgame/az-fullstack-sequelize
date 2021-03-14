@@ -1,3 +1,5 @@
+import grapesjs from 'grapesjs';
+
 export const azComponentsPlugin = (editor, options) => {
   const defaultType = editor.DomComponents.getType('default');
   const createCommonCompTypeOptions = (editor, name, config = {}) => {

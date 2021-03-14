@@ -1,4 +1,6 @@
 // https://github.com/artf/grapesjs/issues/324
+import grapesjs from 'grapesjs';
+
 export const azEditCodePlugin = (editor, options = {}) => {
   const pfx = editor.getConfig().stylePrefix;
   const modal = editor.Modal;

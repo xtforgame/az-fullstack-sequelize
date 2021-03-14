@@ -1,4 +1,6 @@
 // https://github.com/artf/grapesjs/issues/324
+import grapesjs from 'grapesjs';
+
 import getComponentHtmlCss from '../../utils/getComponentHtmlCss';
 
 export const azCreateCustomBlockPlugin = (editor, options = {}) => {

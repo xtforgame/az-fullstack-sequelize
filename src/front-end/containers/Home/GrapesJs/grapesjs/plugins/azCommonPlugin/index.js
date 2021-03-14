@@ -1,3 +1,4 @@
+import grapesjs from 'grapesjs';
 import gtb from './grapesjs-html-block';
 import addTraits from './addTraits';
 import hacks from './some-hacks';

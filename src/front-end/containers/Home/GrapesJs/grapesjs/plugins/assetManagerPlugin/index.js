@@ -1,3 +1,5 @@
+import grapesjs from 'grapesjs';
+
 export const azAssetManagerPlugin = (editor, options = {}) => {
   // https://github.com/artf/grapesjs/issues/491#issuecomment-342813486
   // const am = editor.AssetManager;
