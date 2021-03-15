@@ -78,7 +78,7 @@ const globalRouteConfig = {
     routes: [{
       name: 'redirect',
       path: '/',
-      component: () => <Redirect to={{ pathname: '/home' }} />,
+      component: () => <Redirect to={{ pathname: '/home/grapesjs' }} />,
       exact: true,
     },
     {

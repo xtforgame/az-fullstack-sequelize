@@ -1,5 +1,5 @@
 {
-  "name": "az-fullstack-sequelize",
+  "name": "nopg",
   "version": "1.0.0",
   "description": "A fullstack sequelize seed project",
   "main": "dist/server/index.js",

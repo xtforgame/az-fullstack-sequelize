@@ -1,9 +1,9 @@
 # EnvironmentVariableList:
 #   Global:
-#     AZ_IMAGE_NS: azinternal
-#     AZ_IMAGE_PROJ: default
-#     AZ_CONTAINER_NS: azinternal
-#     AZ_CONTAINER_PROJ: default
+#     VXL_IMAGE_NS: vxlinternal
+#     VXL_IMAGE_PROJ: default
+#     VXL_CONTAINER_NS: vxlinternal
+#     VXL_CONTAINER_PROJ: default
 #   Project:
 
 version: '3'
@@ -11,13 +11,13 @@ services:
   minio1:
     image: minio/minio:RELEASE.2019-04-09T01-22-30Z
 
-    container_name: ${AZ_CONTAINER_NS:-azinternal}-${AZ_CONTAINER_PROJ:-default}-afs-minio1
+    container_name: ${VXL_CONTAINER_NS:-vxlinternal}-${VXL_CONTAINER_PROJ:-default}-afs-minio1
 
     volumes:
       - ../minio_data:/data
 
     ports:
-      - "${AZ_MINIO_PORT:-9000}:9000"
+      - "${VXL_MINIO_PORT:-17001}:9000"
 
     environment:
       MINIO_ACCESS_KEY: minioxxxak
@@ -26,16 +26,16 @@ services:
     command: server /data
 
   pg-master:
-    image: postgres:12
+    image: postgres:9.6
 
-    container_name: ${AZ_CONTAINER_NS:-azinternal}-${AZ_CONTAINER_PROJ:-default}-afs-pg-master
+    container_name: ${VXL_CONTAINER_NS:-vxlinternal}-${VXL_CONTAINER_PROJ:-default}-afs-pg-master
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: xxxx1234
       PGDATA: /var/lib/postgresql/data/pgdata
 
     ports:
-      - "${AZ_PG_PORT:-5432}:5432"
+      - "${VXL_PG_PORT:-17002}:5432"
 
     volumes:
       - "../pgdata:/var/lib/postgresql/data/pgdata"
@@ -59,11 +59,11 @@ services:
       HASURA_GRAPHQL_ADMIN_SECRET: xxxxhsr
 
   webserver:
-    image: ${AZ_IMAGE_NS:-azinternal}/${AZ_IMAGE_PROJ:-default}/afswebserver
+    image: ${VXL_IMAGE_NS:-vxlinternal}/${VXL_IMAGE_PROJ:-default}/afswebserver
     build:
       context: .
 
-    container_name: ${AZ_CONTAINER_NS:-azinternal}-${AZ_CONTAINER_PROJ:-default}-afs-webserver
+    container_name: ${VXL_CONTAINER_NS:-vxlinternal}-${VXL_CONTAINER_PROJ:-default}-afs-webserver
 
     links:
       - "minio1:minio1"
@@ -85,3 +85,8 @@ services:
     # ports:
     #   - "443:443"
     #   - "80:80"
+
+networks:
+  default:
+    external:
+      name: mainginx_net
