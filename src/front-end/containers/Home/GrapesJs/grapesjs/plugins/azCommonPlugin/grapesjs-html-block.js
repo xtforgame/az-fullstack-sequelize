@@ -86,7 +86,7 @@ export default (editor, options) => {
 
   function addHTMLCodeBlock() {
     editor.BlockManager.add('html-code', {
-      category: 'Custom',
+      category: 'Built-in',
       attributes: { class: 'fa fa-code' },
       label: 'HTML Code',
       content: '<div data-html-code>Edit my HTML content</div>',

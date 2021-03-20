@@ -109,7 +109,7 @@ module.exports = function({ mode }) {
       new HtmlWebpackPlugin({
         chunks: ['app'],
         template: path.resolve(projRoot, frontEndJsEntryFolder, 'index.html'),
-        filename: 'index.html',
+        filename: 'azadmin/index.html',
       }),
     ],
   };

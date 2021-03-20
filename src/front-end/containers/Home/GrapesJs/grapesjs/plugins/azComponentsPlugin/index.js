@@ -1,4 +1,5 @@
 import grapesjs from 'grapesjs';
+import agc1 from './agc1';
 
 export const azComponentsPlugin = (editor, options) => {
   const defaultType = editor.DomComponents.getType('default');
@@ -38,8 +39,13 @@ export const azComponentsPlugin = (editor, options) => {
     view: defaultType.view,
   });
 
+  agc1.forEach((c) => {
+    console.log('c :', c);
+    editor.BlockManager.add(c.name, c.grapesjsData);
+  });
+
   editor.BlockManager.add('agjc-box', {
-    category: 'Basic',
+    category: 'Built-in',
     attributes: { class: 'gjs-fonts gjs-f-b1' },
     label: 'Box',
     content: '<div data-azbox><agjc-placeholder></agjc-placeholder></div>',

@@ -8,6 +8,16 @@ export const azEditCodePlugin = (editor, options = {}) => {
   const pnm = editor.Panels;
   const container = document.createElement('div');
   const btnEdit = document.createElement('button');
+  const topContainer = document.createElement('div');
+  topContainer.style.display = 'flex';
+  container.appendChild(topContainer);
+  const leftContainer = document.createElement('div');
+  leftContainer.style.flex = 1;
+  topContainer.appendChild(leftContainer);
+  const rightContainer = document.createElement('div');
+  rightContainer.style.flex = 1;
+  topContainer.appendChild(rightContainer);
+
 
   const cssCodeViewer = editor.CodeManager.getViewer('CodeMirror').clone();
   cssCodeViewer.set({
@@ -65,17 +75,19 @@ export const azEditCodePlugin = (editor, options = {}) => {
         let txtarea;
         if (!options.cssOnly) {
           txtarea = document.createElement('textarea');
-          container.appendChild(txtarea);
+          leftContainer.appendChild(txtarea);
         }
         const cssarea = document.createElement('textarea');
-        container.appendChild(cssarea);
+        rightContainer.appendChild(cssarea);
         container.appendChild(btnEdit);
         if (!options.cssOnly) {
           htmlCodeViewer.init(txtarea);
           htmlViewer = htmlCodeViewer.editor;
+          htmlViewer.setSize(null, 700);
         }
         cssCodeViewer.init(cssarea);
         cssViewer = cssCodeViewer.editor;
+        cssViewer.setSize(null, 700);
       }
       modal.setContent('');
       modal.setContent(container);
