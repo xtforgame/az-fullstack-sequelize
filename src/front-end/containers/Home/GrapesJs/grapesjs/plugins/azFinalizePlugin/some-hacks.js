@@ -155,10 +155,7 @@ export default (editor, options) => {
   const cmdDeviceMobile = 'set-device-mobile';
   const cmdClear = 'canvas-clear';
 
-  editor.on('load', () => {
-    editor.Panels.getButton('options', 'sw-visibility').set('active', true);
-  });
-
+  editor.Panels.getButton('options', 'sw-visibility').set('active', true);
   editor.Panels.removeButton('options', cmdImport);
 
   // editor.Panels.removeButton('options', swv);

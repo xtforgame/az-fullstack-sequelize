@@ -6,4 +6,5 @@
 **/vaxalonly
 /env-vars.sh
 /schemas.json
+/models.ts
 .DS_Store

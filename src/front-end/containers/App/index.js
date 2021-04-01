@@ -1,14 +1,30 @@
 import React from 'react';
+
+import { ApolloClient, InMemoryCache, HttpLink } from 'apollo-boost';
+import { ApolloProvider } from 'react-apollo';
+
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { ConnectedRouter } from 'connected-react-router';
 import useStylesByNs from 'azrmui/styles/useStylesByNs';
+import { hasuraEndpoint } from 'common/config';
 import ThemeContainer from '~/containers/core/ThemeContainer';
-
 import {
   makeUiThemeSelector,
 } from './selectors';
+
+
+// This setup is only needed once per application;
+const apolloClient = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: new HttpLink({
+    uri: hasuraEndpoint,
+    headers: {
+      'x-hasura-admin-secret': 'xxxxhsr',
+    },
+  }),
+});
 
 const AppInternal = ({ history, routes }) => {
   useStylesByNs(['global']);
@@ -20,9 +36,11 @@ const AppInternal = ({ history, routes }) => {
 };
 
 const App = props => (
-  <ThemeContainer uiTheme={props.uiTheme}>
-    <AppInternal {...props} />
-  </ThemeContainer>
+  <ApolloProvider client={apolloClient}>
+    <ThemeContainer uiTheme={props.uiTheme}>
+      <AppInternal {...props} />
+    </ThemeContainer>
+  </ApolloProvider>
 );
 
 const mapStateToProps = createStructuredSelector({

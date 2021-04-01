@@ -87,12 +87,20 @@ export type UserCreationAttributes = {
   managedBy?: OrganizationCreationAttributes;
   userGroups?: UserGroupCreationAttributes[];
   groupInvitations?: UserGroupCreationAttributes[];
+  invitedGroupUsers?: UserGroupCreationAttributes[];
   organizations?: OrganizationCreationAttributes[];
   organizationInvitations?: OrganizationCreationAttributes[];
+  invitedOrganizationUsers?: OrganizationCreationAttributes[];
   projects?: ProjectCreationAttributes[];
   projectInvitations?: ProjectCreationAttributes[];
+  invitedProjectUsers?: ProjectCreationAttributes[];
+  leftMessages?: ContactUsMessageCreationAttributes[];
+  assignedMessage?: ContactUsMessageCreationAttributes[];
   userSettings?: UserSettingCreationAttributes[];
   memos?: MemoCreationAttributes[];
+  ordererInfo?: OrdererDataCreationAttributes[];
+  recipientInfo?: RecipientDataCreationAttributes[];
+  orders?: OrderCreationAttributes[];
 };
 
 export type UserAttributes = {
@@ -108,12 +116,20 @@ export type UserAttributes = {
   managedBy?: ExtendedModel<OrganizationI>;
   userGroups?: ExtendedModel<UserGroupI>[];
   groupInvitations?: ExtendedModel<UserGroupI>[];
+  invitedGroupUsers?: ExtendedModel<UserGroupI>[];
   organizations?: ExtendedModel<OrganizationI>[];
   organizationInvitations?: ExtendedModel<OrganizationI>[];
+  invitedOrganizationUsers?: ExtendedModel<OrganizationI>[];
   projects?: ExtendedModel<ProjectI>[];
   projectInvitations?: ExtendedModel<ProjectI>[];
+  invitedProjectUsers?: ExtendedModel<ProjectI>[];
+  leftMessages?: ExtendedModel<ContactUsMessageI>[];
+  assignedMessage?: ExtendedModel<ContactUsMessageI>[];
   userSettings?: ExtendedModel<UserSettingI>[];
   memos?: ExtendedModel<MemoI>[];
+  ordererInfo?: ExtendedModel<OrdererDataI>[];
+  recipientInfo?: ExtendedModel<RecipientDataI>[];
+  orders?: ExtendedModel<OrderI>[];
 };
 
 export type UserI = UserAttributes & {
@@ -166,6 +182,19 @@ export type UserI = UserAttributes & {
   createGroupInvitation: BelongsToManyCreateAssociationMixin<UserGroupI>;
 
 
+  // association: invitedGroupUsers
+  countInvitedGroupUsers: BelongsToManyCountAssociationsMixin;
+  hasInvitedGroupUser: BelongsToManyHasAssociationMixin<UserGroupI, string>;
+  hasInvitedGroupUsers: BelongsToManyHasAssociationsMixin<UserGroupI, string>;
+  getInvitedGroupUsers: BelongsToManyGetAssociationsMixin<UserGroupI>;
+  setInvitedGroupUsers: BelongsToManySetAssociationsMixin<UserGroupI, string>;
+  addInvitedGroupUser: BelongsToManyAddAssociationMixin<UserGroupI, string>;
+  addInvitedGroupUsers: BelongsToManyAddAssociationsMixin<UserGroupI, string>;
+  removeInvitedGroupUser: BelongsToManyRemoveAssociationMixin<UserGroupI, string>;
+  removeInvitedGroupUsers: BelongsToManyRemoveAssociationsMixin<UserGroupI, string>;
+  createInvitedGroupUser: BelongsToManyCreateAssociationMixin<UserGroupI>;
+
+
   // association: organizations
   countOrganizations: BelongsToManyCountAssociationsMixin;
   hasOrganization: BelongsToManyHasAssociationMixin<OrganizationI, string>;
@@ -190,6 +219,19 @@ export type UserI = UserAttributes & {
   removeOrganizationInvitation: BelongsToManyRemoveAssociationMixin<OrganizationI, string>;
   removeOrganizationInvitations: BelongsToManyRemoveAssociationsMixin<OrganizationI, string>;
   createOrganizationInvitation: BelongsToManyCreateAssociationMixin<OrganizationI>;
+
+
+  // association: invitedOrganizationUsers
+  countInvitedOrganizationUsers: BelongsToManyCountAssociationsMixin;
+  hasInvitedOrganizationUser: BelongsToManyHasAssociationMixin<OrganizationI, string>;
+  hasInvitedOrganizationUsers: BelongsToManyHasAssociationsMixin<OrganizationI, string>;
+  getInvitedOrganizationUsers: BelongsToManyGetAssociationsMixin<OrganizationI>;
+  setInvitedOrganizationUsers: BelongsToManySetAssociationsMixin<OrganizationI, string>;
+  addInvitedOrganizationUser: BelongsToManyAddAssociationMixin<OrganizationI, string>;
+  addInvitedOrganizationUsers: BelongsToManyAddAssociationsMixin<OrganizationI, string>;
+  removeInvitedOrganizationUser: BelongsToManyRemoveAssociationMixin<OrganizationI, string>;
+  removeInvitedOrganizationUsers: BelongsToManyRemoveAssociationsMixin<OrganizationI, string>;
+  createInvitedOrganizationUser: BelongsToManyCreateAssociationMixin<OrganizationI>;
 
 
   // association: projects
@@ -218,6 +260,43 @@ export type UserI = UserAttributes & {
   createProjectInvitation: BelongsToManyCreateAssociationMixin<ProjectI>;
 
 
+  // association: invitedProjectUsers
+  countInvitedProjectUsers: BelongsToManyCountAssociationsMixin;
+  hasInvitedProjectUser: BelongsToManyHasAssociationMixin<ProjectI, string>;
+  hasInvitedProjectUsers: BelongsToManyHasAssociationsMixin<ProjectI, string>;
+  getInvitedProjectUsers: BelongsToManyGetAssociationsMixin<ProjectI>;
+  setInvitedProjectUsers: BelongsToManySetAssociationsMixin<ProjectI, string>;
+  addInvitedProjectUser: BelongsToManyAddAssociationMixin<ProjectI, string>;
+  addInvitedProjectUsers: BelongsToManyAddAssociationsMixin<ProjectI, string>;
+  removeInvitedProjectUser: BelongsToManyRemoveAssociationMixin<ProjectI, string>;
+  removeInvitedProjectUsers: BelongsToManyRemoveAssociationsMixin<ProjectI, string>;
+  createInvitedProjectUser: BelongsToManyCreateAssociationMixin<ProjectI>;
+
+
+  // association: leftMessages
+  countLeftMessages: HasManyCountAssociationsMixin;
+  hasLeftMessage: HasManyHasAssociationMixin<ContactUsMessageI, string>;
+  hasLeftMessages: HasManyHasAssociationsMixin<ContactUsMessageI, string>;
+  getLeftMessages: HasManyGetAssociationsMixin<ContactUsMessageI>;
+  setLeftMessages: HasManySetAssociationsMixin<ContactUsMessageI, string>;
+  addLeftMessage: HasManyAddAssociationMixin<ContactUsMessageI, string>;
+  addLeftMessages: HasManyAddAssociationsMixin<ContactUsMessageI, string>;
+  removeLeftMessage: HasManyRemoveAssociationMixin<ContactUsMessageI, string>;
+  removeLeftMessages: HasManyRemoveAssociationsMixin<ContactUsMessageI, string>;
+  createLeftMessage: HasManyCreateAssociationMixin<ContactUsMessageI>;
+
+  // association: assignedMessage
+  countAssignedMessages: HasManyCountAssociationsMixin;
+  hasAssignedMessage: HasManyHasAssociationMixin<ContactUsMessageI, string>;
+  hasAssignedMessages: HasManyHasAssociationsMixin<ContactUsMessageI, string>;
+  getAssignedMessages: HasManyGetAssociationsMixin<ContactUsMessageI>;
+  setAssignedMessages: HasManySetAssociationsMixin<ContactUsMessageI, string>;
+  addAssignedMessage: HasManyAddAssociationMixin<ContactUsMessageI, string>;
+  addAssignedMessages: HasManyAddAssociationsMixin<ContactUsMessageI, string>;
+  removeAssignedMessage: HasManyRemoveAssociationMixin<ContactUsMessageI, string>;
+  removeAssignedMessages: HasManyRemoveAssociationsMixin<ContactUsMessageI, string>;
+  createAssignedMessage: HasManyCreateAssociationMixin<ContactUsMessageI>;
+
   // association: userSettings
   countUserSettings: HasManyCountAssociationsMixin;
   hasUserSetting: HasManyHasAssociationMixin<UserSettingI, string>;
@@ -242,6 +321,42 @@ export type UserI = UserAttributes & {
   removeMemos: BelongsToManyRemoveAssociationsMixin<MemoI, string>;
   createMemo: BelongsToManyCreateAssociationMixin<MemoI>;
 
+
+  // association: ordererInfo
+  countOrdererData: HasManyCountAssociationsMixin;
+  hasOrdererDatum: HasManyHasAssociationMixin<OrdererDataI, string>;
+  hasOrdererData: HasManyHasAssociationsMixin<OrdererDataI, string>;
+  getOrdererData: HasManyGetAssociationsMixin<OrdererDataI>;
+  setOrdererData: HasManySetAssociationsMixin<OrdererDataI, string>;
+  addOrdererDatum: HasManyAddAssociationMixin<OrdererDataI, string>;
+  addOrdererData: HasManyAddAssociationsMixin<OrdererDataI, string>;
+  removeOrdererDatum: HasManyRemoveAssociationMixin<OrdererDataI, string>;
+  removeOrdererData: HasManyRemoveAssociationsMixin<OrdererDataI, string>;
+  createOrdererDatum: HasManyCreateAssociationMixin<OrdererDataI>;
+
+  // association: recipientInfo
+  countRecipientData: HasManyCountAssociationsMixin;
+  hasRecipientDatum: HasManyHasAssociationMixin<RecipientDataI, string>;
+  hasRecipientData: HasManyHasAssociationsMixin<RecipientDataI, string>;
+  getRecipientData: HasManyGetAssociationsMixin<RecipientDataI>;
+  setRecipientData: HasManySetAssociationsMixin<RecipientDataI, string>;
+  addRecipientDatum: HasManyAddAssociationMixin<RecipientDataI, string>;
+  addRecipientData: HasManyAddAssociationsMixin<RecipientDataI, string>;
+  removeRecipientDatum: HasManyRemoveAssociationMixin<RecipientDataI, string>;
+  removeRecipientData: HasManyRemoveAssociationsMixin<RecipientDataI, string>;
+  createRecipientDatum: HasManyCreateAssociationMixin<RecipientDataI>;
+
+  // association: orders
+  countOrders: HasManyCountAssociationsMixin;
+  hasOrder: HasManyHasAssociationMixin<OrderI, string>;
+  hasOrders: HasManyHasAssociationsMixin<OrderI, string>;
+  getOrders: HasManyGetAssociationsMixin<OrderI>;
+  setOrders: HasManySetAssociationsMixin<OrderI, string>;
+  addOrder: HasManyAddAssociationMixin<OrderI, string>;
+  addOrders: HasManyAddAssociationsMixin<OrderI, string>;
+  removeOrder: HasManyRemoveAssociationMixin<OrderI, string>;
+  removeOrders: HasManyRemoveAssociationsMixin<OrderI, string>;
+  createOrder: HasManyCreateAssociationMixin<OrderI>;
 };
 // ============== end model: User ==============
 
@@ -395,6 +510,7 @@ export type UserGroupI = UserGroupAttributes & {
 export type OrganizationCreationAttributes = {
   name?: string;
   users?: UserCreationAttributes[];
+  ownedUser?: UserCreationAttributes[];
   projects?: ProjectCreationAttributes[];
   inviters?: UserCreationAttributes[];
   invitees?: UserCreationAttributes[];
@@ -404,6 +520,7 @@ export type OrganizationAttributes = {
   id: string;
   name?: string;
   users?: ExtendedModel<UserI>[];
+  ownedUser?: ExtendedModel<UserI>[];
   projects?: ExtendedModel<ProjectI>[];
   inviters?: ExtendedModel<UserI>[];
   invitees?: ExtendedModel<UserI>[];
@@ -428,6 +545,18 @@ export type OrganizationI = OrganizationAttributes & {
   removeUsers: BelongsToManyRemoveAssociationsMixin<UserI, string>;
   createUser: BelongsToManyCreateAssociationMixin<UserI>;
 
+
+  // association: ownedUser
+  countOwnedUsers: HasManyCountAssociationsMixin;
+  hasOwnedUser: HasManyHasAssociationMixin<UserI, string>;
+  hasOwnedUsers: HasManyHasAssociationsMixin<UserI, string>;
+  getOwnedUsers: HasManyGetAssociationsMixin<UserI>;
+  setOwnedUsers: HasManySetAssociationsMixin<UserI, string>;
+  addOwnedUser: HasManyAddAssociationMixin<UserI, string>;
+  addOwnedUsers: HasManyAddAssociationsMixin<UserI, string>;
+  removeOwnedUser: HasManyRemoveAssociationMixin<UserI, string>;
+  removeOwnedUsers: HasManyRemoveAssociationsMixin<UserI, string>;
+  createOwnedUser: HasManyCreateAssociationMixin<UserI>;
 
   // association: projects
   countProjects: HasManyCountAssociationsMixin;
@@ -621,13 +750,162 @@ export type ContactUsMessageI = ContactUsMessageAttributes & {
 };
 // ============== end model: ContactUsMessage ==============
 
+// ============== start model: Product ==============
+export type ProductCreationAttributes = {
+  thumbnail?: string;
+  pictures?: any;
+  name?: string;
+  price?: number;
+  weight?: number;
+  description?: any;
+  data?: any;
+};
+
+export type ProductAttributes = {
+  id: string;
+  thumbnail?: string;
+  pictures?: any;
+  name?: string;
+  price?: number;
+  weight?: number;
+  description?: any;
+  data?: any;
+};
+
+export type ProductI = ProductAttributes & {
+
+  // timestamps
+  readonly created_at: Date;
+  readonly updated_at: Date;
+  readonly deleted_at: Date;
+};
+// ============== end model: Product ==============
+
+// ============== start model: OrdererData ==============
+export type OrdererDataCreationAttributes = {
+  name?: string;
+  mobile?: string;
+  phone1?: string;
+  phone2?: string;
+  zipcode?: string;
+  address?: string;
+  memo?: string;
+  area?: string;
+  user_id?: string;
+  user?: UserCreationAttributes;
+};
+
+export type OrdererDataAttributes = {
+  id: string;
+  name?: string;
+  mobile?: string;
+  phone1?: string;
+  phone2?: string;
+  zipcode?: string;
+  address?: string;
+  memo?: string;
+  area?: string;
+  user_id?: string;
+  user?: ExtendedModel<UserI>;
+};
+
+export type OrdererDataI = OrdererDataAttributes & {
+
+  // timestamps
+  readonly created_at: Date;
+  readonly updated_at: Date;
+  readonly deleted_at: Date;
+
+  // association: user
+  getUser: BelongsToGetAssociationMixin<UserI>;
+  setUser: BelongsToSetAssociationMixin<UserI, string>;
+  createUser: BelongsToCreateAssociationMixin<UserI>;
+};
+// ============== end model: OrdererData ==============
+
+// ============== start model: RecipientData ==============
+export type RecipientDataCreationAttributes = {
+  name?: string;
+  mobile?: string;
+  phone1?: string;
+  phone2?: string;
+  zipcode?: string;
+  address?: string;
+  memo?: string;
+  area?: string;
+  user_id?: string;
+  user?: UserCreationAttributes;
+};
+
+export type RecipientDataAttributes = {
+  id: string;
+  name?: string;
+  mobile?: string;
+  phone1?: string;
+  phone2?: string;
+  zipcode?: string;
+  address?: string;
+  memo?: string;
+  area?: string;
+  user_id?: string;
+  user?: ExtendedModel<UserI>;
+};
+
+export type RecipientDataI = RecipientDataAttributes & {
+
+  // timestamps
+  readonly created_at: Date;
+  readonly updated_at: Date;
+  readonly deleted_at: Date;
+
+  // association: user
+  getUser: BelongsToGetAssociationMixin<UserI>;
+  setUser: BelongsToSetAssociationMixin<UserI, string>;
+  createUser: BelongsToCreateAssociationMixin<UserI>;
+};
+// ============== end model: RecipientData ==============
+
+// ============== start model: Order ==============
+export type OrderCreationAttributes = {
+  memo?: string;
+  orderer?: any;
+  recipient?: any;
+  data?: any;
+  user_id?: string;
+  user?: UserCreationAttributes;
+};
+
+export type OrderAttributes = {
+  id: string;
+  memo?: string;
+  orderer?: any;
+  recipient?: any;
+  data?: any;
+  user_id?: string;
+  user?: ExtendedModel<UserI>;
+};
+
+export type OrderI = OrderAttributes & {
+
+  // timestamps
+  readonly created_at: Date;
+  readonly updated_at: Date;
+  readonly deleted_at: Date;
+
+  // association: user
+  getUser: BelongsToGetAssociationMixin<UserI>;
+  setUser: BelongsToSetAssociationMixin<UserI, string>;
+  createUser: BelongsToCreateAssociationMixin<UserI>;
+};
+// ============== end model: Order ==============
+
 // ============== start model: UserUserGroup ==============
 export type UserUserGroupCreationAttributes = {
   role?: string;
   user_id?: string;
   user?: UserCreationAttributes;
   group_id?: string;
-  userGroup?: UserGroupCreationAttributes;
+  group?: UserGroupCreationAttributes;
 };
 
 export type UserUserGroupAttributes = {
@@ -636,7 +914,7 @@ export type UserUserGroupAttributes = {
   user_id?: string;
   user?: ExtendedModel<UserI>;
   group_id?: string;
-  userGroup?: ExtendedModel<UserGroupI>;
+  group?: ExtendedModel<UserGroupI>;
 };
 
 export type UserUserGroupI = UserUserGroupAttributes & {
@@ -651,10 +929,10 @@ export type UserUserGroupI = UserUserGroupAttributes & {
   setUser: BelongsToSetAssociationMixin<UserI, string>;
   createUser: BelongsToCreateAssociationMixin<UserI>;
 
-  // association: userGroup
-  getUserGroup: BelongsToGetAssociationMixin<UserGroupI>;
-  setUserGroup: BelongsToSetAssociationMixin<UserGroupI, string>;
-  createUserGroup: BelongsToCreateAssociationMixin<UserGroupI>;
+  // association: group
+  getGroup: BelongsToGetAssociationMixin<UserGroupI>;
+  setGroup: BelongsToSetAssociationMixin<UserGroupI, string>;
+  createGroup: BelongsToCreateAssociationMixin<UserGroupI>;
 };
 // ============== end model: UserUserGroup ==============
 
@@ -662,18 +940,22 @@ export type UserUserGroupI = UserUserGroupAttributes & {
 export type GroupInvitationCreationAttributes = {
   state?: number;
   invitee_id?: string;
-  user?: UserCreationAttributes;
+  invitee?: UserCreationAttributes;
+  inviter_id?: string;
+  inviter?: UserCreationAttributes;
   group_id?: string;
-  userGroup?: UserGroupCreationAttributes;
+  group?: UserGroupCreationAttributes;
 };
 
 export type GroupInvitationAttributes = {
   id: string;
   state?: number;
   invitee_id?: string;
-  user?: ExtendedModel<UserI>;
+  invitee?: ExtendedModel<UserI>;
+  inviter_id?: string;
+  inviter?: ExtendedModel<UserI>;
   group_id?: string;
-  userGroup?: ExtendedModel<UserGroupI>;
+  group?: ExtendedModel<UserGroupI>;
 };
 
 export type GroupInvitationI = GroupInvitationAttributes & {
@@ -683,15 +965,20 @@ export type GroupInvitationI = GroupInvitationAttributes & {
   readonly updated_at: Date;
   readonly deleted_at: Date;
 
-  // association: user
-  getUser: BelongsToGetAssociationMixin<UserI>;
-  setUser: BelongsToSetAssociationMixin<UserI, string>;
-  createUser: BelongsToCreateAssociationMixin<UserI>;
+  // association: invitee
+  getInvitee: BelongsToGetAssociationMixin<UserI>;
+  setInvitee: BelongsToSetAssociationMixin<UserI, string>;
+  createInvitee: BelongsToCreateAssociationMixin<UserI>;
 
-  // association: userGroup
-  getUserGroup: BelongsToGetAssociationMixin<UserGroupI>;
-  setUserGroup: BelongsToSetAssociationMixin<UserGroupI, string>;
-  createUserGroup: BelongsToCreateAssociationMixin<UserGroupI>;
+  // association: inviter
+  getInviter: BelongsToGetAssociationMixin<UserI>;
+  setInviter: BelongsToSetAssociationMixin<UserI, string>;
+  createInviter: BelongsToCreateAssociationMixin<UserI>;
+
+  // association: group
+  getGroup: BelongsToGetAssociationMixin<UserGroupI>;
+  setGroup: BelongsToSetAssociationMixin<UserGroupI, string>;
+  createGroup: BelongsToCreateAssociationMixin<UserGroupI>;
 };
 // ============== end model: GroupInvitation ==============
 
@@ -740,7 +1027,9 @@ export type UserOrganizationI = UserOrganizationAttributes & {
 export type OrganizationInvitationCreationAttributes = {
   state?: number;
   invitee_id?: string;
-  user?: UserCreationAttributes;
+  invitee?: UserCreationAttributes;
+  inviter_id?: string;
+  inviter?: UserCreationAttributes;
   organization_id?: string;
   organization?: OrganizationCreationAttributes;
 };
@@ -749,7 +1038,9 @@ export type OrganizationInvitationAttributes = {
   id: string;
   state?: number;
   invitee_id?: string;
-  user?: ExtendedModel<UserI>;
+  invitee?: ExtendedModel<UserI>;
+  inviter_id?: string;
+  inviter?: ExtendedModel<UserI>;
   organization_id?: string;
   organization?: ExtendedModel<OrganizationI>;
 };
@@ -761,10 +1052,15 @@ export type OrganizationInvitationI = OrganizationInvitationAttributes & {
   readonly updated_at: Date;
   readonly deleted_at: Date;
 
-  // association: user
-  getUser: BelongsToGetAssociationMixin<UserI>;
-  setUser: BelongsToSetAssociationMixin<UserI, string>;
-  createUser: BelongsToCreateAssociationMixin<UserI>;
+  // association: invitee
+  getInvitee: BelongsToGetAssociationMixin<UserI>;
+  setInvitee: BelongsToSetAssociationMixin<UserI, string>;
+  createInvitee: BelongsToCreateAssociationMixin<UserI>;
+
+  // association: inviter
+  getInviter: BelongsToGetAssociationMixin<UserI>;
+  setInviter: BelongsToSetAssociationMixin<UserI, string>;
+  createInviter: BelongsToCreateAssociationMixin<UserI>;
 
   // association: organization
   getOrganization: BelongsToGetAssociationMixin<OrganizationI>;
@@ -818,7 +1114,9 @@ export type UserProjectI = UserProjectAttributes & {
 export type ProjectInvitationCreationAttributes = {
   state?: number;
   invitee_id?: string;
-  user?: UserCreationAttributes;
+  invitee?: UserCreationAttributes;
+  inviter_id?: string;
+  inviter?: UserCreationAttributes;
   project_id?: string;
   project?: ProjectCreationAttributes;
 };
@@ -827,7 +1125,9 @@ export type ProjectInvitationAttributes = {
   id: string;
   state?: number;
   invitee_id?: string;
-  user?: ExtendedModel<UserI>;
+  invitee?: ExtendedModel<UserI>;
+  inviter_id?: string;
+  inviter?: ExtendedModel<UserI>;
   project_id?: string;
   project?: ExtendedModel<ProjectI>;
 };
@@ -839,10 +1139,15 @@ export type ProjectInvitationI = ProjectInvitationAttributes & {
   readonly updated_at: Date;
   readonly deleted_at: Date;
 
-  // association: user
-  getUser: BelongsToGetAssociationMixin<UserI>;
-  setUser: BelongsToSetAssociationMixin<UserI, string>;
-  createUser: BelongsToCreateAssociationMixin<UserI>;
+  // association: invitee
+  getInvitee: BelongsToGetAssociationMixin<UserI>;
+  setInvitee: BelongsToSetAssociationMixin<UserI, string>;
+  createInvitee: BelongsToCreateAssociationMixin<UserI>;
+
+  // association: inviter
+  getInviter: BelongsToGetAssociationMixin<UserI>;
+  setInviter: BelongsToSetAssociationMixin<UserI, string>;
+  createInviter: BelongsToCreateAssociationMixin<UserI>;
 
   // association: project
   getProject: BelongsToGetAssociationMixin<ProjectI>;

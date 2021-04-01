@@ -9,6 +9,7 @@ import UserSettingRouter from '~/routers/UserSettingRouter';
 import RecoveryRouter from '~/routers/RecoveryRouter';
 import OrganizationRouter from '~/routers/OrganizationRouter';
 import ProjectRouter from '~/routers/ProjectRouter';
+import OrderRouter from '~/routers/OrderRouter';
 import MemoRouter from '~/routers/MemoRouter';
 import ModuleComplierRouter from '~/routers/ModuleComplierRouter';
 import ContactUsMessageRouter from '~/routers/ContactUsMessageRouter';
@@ -27,6 +28,7 @@ export default [
   RecoveryRouter,
   OrganizationRouter,
   ProjectRouter,
+  OrderRouter,
   MemoRouter,
   ModuleComplierRouter,
   ContactUsMessageRouter,

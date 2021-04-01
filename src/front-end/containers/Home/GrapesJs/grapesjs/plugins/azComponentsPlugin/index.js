@@ -1,5 +1,9 @@
 import grapesjs from 'grapesjs';
 import agc1 from './agc1';
+import {
+  addTypes,
+  addBlocks,
+} from './azwcPlugin';
 
 export const azComponentsPlugin = (editor, options) => {
   const defaultType = editor.DomComponents.getType('default');
@@ -72,6 +76,10 @@ export const azComponentsPlugin = (editor, options) => {
       removable: false,
     },
   }));
+
+  addTypes(editor, { category: 'Agc1' });
+
+  addBlocks(editor, { category: 'Agc1' });
 };
 
 export default azComponentsPlugin;

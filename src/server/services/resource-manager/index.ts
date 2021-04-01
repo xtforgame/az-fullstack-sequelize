@@ -76,13 +76,13 @@ export default class ResourceManager extends ServiceBase {
     this.authKit.koaHelper = new KoaHelper(this.authKit.authCore, this.authKit.authProviderManager);
     this.authKit.koaHelperEx = new KoaHelperEx(this.authKit.koaHelper);
 
-    // const jsonSchemaX = new JsonSchemasX('public', <any>getJsonSchema());
-    // jsonSchemaX.parseRawSchemas();
-    // jsonSchemaX.buildModelTsFile({
-    //   liquidRoot: liquidRoot,
-    // }).then((tsFile) => {
-    //   write(path.resolve('models.ts'), tsFile);
-    // });
+    const jsonSchemaX = new JsonSchemasX('public', <any>getJsonSchema());
+    jsonSchemaX.parseRawSchemas();
+    jsonSchemaX.buildModelTsFile({
+      liquidRoot,
+    }).then((tsFile) => {
+      write(path.resolve('models.ts'), tsFile);
+    });
 
     this.jsonSchemasX = getJsonSchemasX();
     const ammSchemas = this.jsonSchemasX.toCoreSchemas();

@@ -191,6 +191,24 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           foreignKey: 'user_id',
           otherKey: 'memo_id',
         }],
+        defaultOrdererInfo: ['hasOne', 'ordererInfo', {
+          foreignKey: 'as_default_to',
+        }],
+        defaultRecipientInfo: ['hasOne', 'recipientInfo', {
+          foreignKey: 'as_default_to',
+        }],
+        ordererInfos: ['hasMany', 'ordererInfo', {
+          foreignKey: 'user_id',
+        }],
+        recipientInfos: ['hasMany', 'recipientInfo', {
+          foreignKey: 'user_id',
+        }],
+        orders: ['hasMany', 'order', {
+          foreignKey: 'user_id',
+        }],
+        subscriptionOrders: ['hasMany', 'subscriptionOrder', {
+          foreignKey: 'user_id',
+        }],
       },
       options: {
         name: {
@@ -476,6 +494,151 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
         },
       },
     },
+    product: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        thumbnail: 'string',
+        pictures: {
+          type: 'jsonb',
+          defaultValue: [],
+        },
+        name: ['string', 900],
+        price: ['integer'],
+        weight: 'float',
+        description: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+        orders: ['belongsToMany', 'order', {
+          through: {
+            unique: false,
+            ammModelName: 'orderProduct',
+            ammThroughTableColumnAs: 'product',
+            ammThroughAs: 'relation',
+          },
+          foreignKey: 'product_id',
+          otherKey: 'order_id',
+        }],
+      },
+    },
+    ordererInfo: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        name: 'string',
+        mobile: 'string',
+        phone1: 'string',
+        phone2: 'string',
+        zipcode: 'string',
+        address: 'string',
+        area: 'string',
+        email1: 'string',
+        email2: 'string',
+        user: ['belongsTo', 'user', {
+          foreignKey: 'user_id',
+        }],
+        asDefaultTo: ['belongsTo', 'user', {
+          foreignKey: 'as_default_to',
+        }],
+      },
+    },
+    recipientInfo: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        name: 'string',
+        mobile: 'string',
+        phone1: 'string',
+        phone2: 'string',
+        zipcode: 'string',
+        address: 'string',
+        area: 'string',
+        email1: 'string',
+        email2: 'string',
+        user: ['belongsTo', 'user', {
+          foreignKey: 'user_id',
+        }],
+        asDefaultTo: ['belongsTo', 'user', {
+          foreignKey: 'as_default_to',
+        }],
+      },
+    },
+    order: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        memo: 'text',
+        shipmentId: 'text',
+        orderer: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+        recipient: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+        user: ['belongsTo', 'user', {
+          foreignKey: 'user_id',
+        }],
+        products: ['belongsToMany', 'product', {
+          through: {
+            unique: false,
+            ammModelName: 'orderProduct',
+            ammThroughTableColumnAs: 'order',
+            ammThroughAs: 'relation',
+          },
+          foreignKey: 'order_id',
+          otherKey: 'product_id',
+        }],
+      },
+    },
+    subscriptionOrder: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        memo: 'text',
+        shipmentId: 'text',
+        orderer: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+        recipient: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+        user: ['belongsTo', 'user', {
+          foreignKey: 'user_id',
+        }],
+      },
+    },
   },
   associationModels: {
     userUserGroup: {
@@ -641,6 +804,34 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
             name: 'user_memo_uniqueness',
             unique: true,
             fields: ['user_id', 'memo_id'],
+            where: {
+              deleted_at: null,
+            },
+          },
+        ],
+      },
+    },
+    orderProduct: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        quantity: 'integer',
+        price: 'integer',
+        totalPrice: 'integer',
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+      },
+      options: {
+        indexes: [
+          {
+            name: 'order_product_uniqueness',
+            unique: true,
+            fields: ['order_id', 'product_id'],
             where: {
               deleted_at: null,
             },

@@ -52,6 +52,28 @@ export const createInitialUserData = ({
     ...labels,
   },
   accountLinks,
+  ordererInfos: [
+    {
+      name,
+      mobile: '0987654321',
+      phone1: '+886987654321',
+      phone2: '+886223456789',
+      zipcode: '11031',
+      address: '台北市市府路一號',
+      area: 'Taiwan',
+    },
+  ],
+  recipientInfos: [
+    {
+      name,
+      mobile: '0987654321',
+      phone1: '+886987654321',
+      phone2: '+886223456789',
+      zipcode: '11031',
+      address: '台北市市府路一號',
+      area: 'Taiwan',
+    },
+  ],
   userSettings: createInitialUserSettingsData(),
   ...extraColumns,
 });
