@@ -11,6 +11,7 @@ import appRootPath from 'app-root-path';
 import getWebpackService from './webpack-service';
 import runServer from './runServer';
 import ServiceBase from '../ServiceBase';
+import addProxy from './addProxy';
 
 const appRoot = appRootPath.resolve('./');
 const methods = http.METHODS.map(method => method.toLowerCase());
@@ -63,31 +64,29 @@ export default class HttpApp extends ServiceBase {
     };
   }
 
-  onStart() {
+  async onStart() {
     // ======================================================
-    let p = Promise.resolve();
     if (process.env.NODE_ENV === 'development'/* || process.env.NODE_ENV === 'test'*/) {
       const { middlewarePromise, compileDonePromise } = getWebpackService();
-      p = middlewarePromise
-      .then((middleware) => {
-        this.app.use(middleware);
-        this.closeWebpack = () => Promise.resolve()
-        .then(() => new Promise((resolve, reject) => {
-          middleware.close(resolve);
-        }));
-      });
+      const middleware = await middlewarePromise;
+      this.app.use(middleware);
+      this.closeWebpack = () => Promise.resolve()
+      .then(() => new Promise((resolve, reject) => {
+        middleware.close(resolve);
+      }));
       if (process.env.NODE_ENV === 'test') {
-        p = p.then(() => compileDonePromise);
+        await compileDonePromise;
       }
     } else {
       this.closeWebpack = Promise.resolve();
       this.app.use(koaStatic(path.join(appRoot, 'dist', 'front-end')));
     }
+    // addProxy(this.app);
     // ========================================
-    return p.then(() => new Promise((resolve) => {
+    return new Promise((resolve) => {
       const cb = (httpServer, httpsServer) => resolve({ httpServer, httpsServer });
       runServer(this.app, this.credentials, cb, httpPort, httpsPort);
-    }))
+    })
     .then(({ httpServer, httpsServer }) => {
       this.httpServer = httpServer;
       this.httpsServer = httpsServer;
