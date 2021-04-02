@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zh-TW" ng-app="recipes_index" xmlns="https://www.w3.org/1999/xhtml" xmlns:fb="https://www.facebook.com/2008/fbml" xmlns:og="https://ogp.me/ns#">
+  {% capture head_main %}
+    <title>Petit Fleur</title>
+    <meta name="description" content="azazazaz">
+    <link rel="canonical" href="http://localhost:3000/">
+    <meta property="og:site_name" content="as">
+    <meta property="og:title" content="as">
+    <meta property="og:description" content="azazazaz">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:3000/">
+    <meta property="og:image" content="xxxx.jpg">
+  {% endcapture %}
+  {% render "parts/head-layout.liquid", content: head_main %}
+  {% capture body_main %}
+  <main class="main" role="main">
+    <section class="section">
+      <div class="top-swiper-container">
+        <azwc-swiper
+          id="swr"
+          class="my-slider"
+          loop="true"
+          speed="500"
+        >
+          <div class="swiper-slide my-slider__slide">Slide 1</div>
+          <div class="swiper-slide my-slider__slide">Slide 2</div>
+          <div class="swiper-slide my-slider__slide">Slide 3</div>
+          <div slot="ui"></div>
+        </azwc-swiper>
+      </div>
+    </section>
+  </main>
+  {% endcapture %}
+  {% capture body_extra %}
+    <script data-html-code="">
+      window.__on_azwc_init = function(azwc_classes) {
+        console.log('azwc_classes :', azwc_classes);
+        var AzwcSwiper = azwc_classes.AzwcSwiper;
+        var Swiper = azwc_classes.thirdParty.Swiper;
+        AzwcSwiper.componentDidLoad = (inst) => {
+          console.log('inst :', inst);
+          console.log('inst.host.id :', inst.host.id);
+        }
+        AzwcSwiper.createSwiper = (inst) => {
+          return new Swiper(inst.container, {
+            ...AzwcSwiper.getDefaultOptions(inst),
+            // effect: 'fade',
+            autoplay: false,
+            // direction: 'vertical',
+            // mousewheel: true,
+          }
+          );
+        }
+        var AzwcDialog = azwc_classes.AzwcDialog;
+        // var btn = document.querySelector('#open-dialog-btn');
+        // btn.addEventListener("click", function () {
+        //   console.log('AzwcDialog.open');
+        //   console.log('AzwcDialog.allInstances :', AzwcDialog.allInstances);
+        //   AzwcDialog.open('d1');
+        // }
+        // );
+        // var Canvi = azwc_classes.thirdParty.Canvi;
+        // var t = new Canvi({
+        //   // content: ".js-canvi-content",
+        //   content: "body",
+        //   isDebug: !1,
+        //   navbar: ".myCanvasNav",
+        //   openButton: ".js-canvi-open-button--left",
+        //   position: "left",
+        //   pushContent: !1,
+        //   speed: "0.2s",
+        //   width: "100vw",
+        //   responsiveWidths: [{
+        //     breakpoint: "600px",
+        //     width: "280px"
+        //   }
+        //     , {
+        //     breakpoint: "1280px",
+        //     width: "320px"
+        //   }
+        //     , {
+        //     breakpoint: "1600px",
+        //     width: "380px"
+        //   }
+        //   ]
+        // }
+        // );
+        // var canviCloseBtn = document.querySelector('.canvi-user-info__close');
+        // console.log('canviCloseBtn :', canviCloseBtn);
+        // canviCloseBtn.addEventListener("click", function () {
+        //   t.close();
+        // }
+        // );
+      }
+    </script>
+  {% endcapture %}
+  {% render "parts/body-layout.liquid", content: body_main, extra: body_extra %}
+</html>
