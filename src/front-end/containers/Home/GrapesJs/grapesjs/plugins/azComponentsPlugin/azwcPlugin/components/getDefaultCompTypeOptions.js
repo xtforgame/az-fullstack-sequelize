@@ -38,7 +38,7 @@ export default (editor, config = {}) => {
       //   return defaultType.model.prototype.toJSON.call(this, opt);
       // },
       init() {
-        console.log('this :', this);
+        console.log('init this :', this);
         // console.log('Local hook: model.init');
         this.listenTo(this, 'change:testprop', this.handlePropChange);
         // Here we can listen global hooks with editor.on('...')
@@ -47,6 +47,7 @@ export default (editor, config = {}) => {
         // console.log('Local hook: model.updated', 'property', property, 'value', value, 'prevValue', prevValue);
       },
       removed() {
+        console.log('removed this :', this);
         // console.log('Local hook: model.removed');
       },
       handlePropChange() {

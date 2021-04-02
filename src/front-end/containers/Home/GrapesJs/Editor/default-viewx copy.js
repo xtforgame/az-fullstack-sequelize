@@ -579,12 +579,11 @@ export const defaultHtml = `
       console.log('inst.host.id :', inst.host.id);
     }
     AzwcSwiper.createSwiper = (inst) => {
-      return new Swiper(inst.container, {
-        ...AzwcSwiper.getDefaultOptions(inst),
+      return new Swiper(inst.container, Object.assign({}, AzwcSwiper.getDefaultOptions(inst), {
         effect: 'fade',
         // direction: 'vertical',
         mousewheel: true,
-      }
+      })
       );
     }
     var AzwcDialog = azwc_classes.AzwcDialog;

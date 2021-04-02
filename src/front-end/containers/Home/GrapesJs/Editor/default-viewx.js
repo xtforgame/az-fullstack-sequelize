@@ -97,7 +97,7 @@ export const defaultHtml = `
     Content<br />
   </azwc-dialog>
 </section>
-<script data-html-code="">
+<script data-global-script="">
   {
     var azwc_classes = window.__azwc_classes;
     console.log('azwc_classes :', azwc_classes);
@@ -108,12 +108,11 @@ export const defaultHtml = `
       console.log('inst.host.id :', inst.host.id);
     }
     AzwcSwiper.createSwiper = (inst) => {
-      return new Swiper(inst.container, {
-        ...AzwcSwiper.getDefaultOptions(inst),
+      return new Swiper(inst.container, Object.assign({}, AzwcSwiper.getDefaultOptions(inst), {
         effect: 'fade',
         // direction: 'vertical',
         mousewheel: true,
-      }
+      })
       );
     }
     var AzwcDialog = azwc_classes.AzwcDialog;

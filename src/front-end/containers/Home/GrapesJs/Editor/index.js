@@ -14,6 +14,7 @@ import FileSaver from '../ui/FileSaver';
 import { defaultCss, defaultHtml } from './default-view';
 
 import 'grapesjs-blocks-basic';
+import '../grapesjs/plugins/azGlobalScriptPlugin';
 import '../grapesjs/plugins/azCommonPlugin';
 import '../grapesjs/plugins/createCustomBlockPlugin';
 import 'grapesjs-preset-webpage';
@@ -116,11 +117,13 @@ const GrapesJsEditor = (props) => {
     },
   });
 
+  const allowScripts = 0;
+
   useLayoutEffect(() => {
     const editor = grapesjs.init({
       height: '100%',
       forceClass: true,
-      allowScripts: 1,
+      allowScripts,
       showOffsets: 1,
       noticeOnUnload: 0,
       storageManager: {
@@ -186,6 +189,7 @@ const GrapesJsEditor = (props) => {
       },
 
       plugins: [
+        'az-global-script',
         'az-common',
         'az-create-custom-block',
         'gjs-preset-webpage',
@@ -197,6 +201,9 @@ const GrapesJsEditor = (props) => {
         // 'az-finalize',
       ],
       pluginsOpts: {
+        'az-global-script': {
+          allowScripts,
+        },
         'az-common': {
           withCategory: true,
         },
