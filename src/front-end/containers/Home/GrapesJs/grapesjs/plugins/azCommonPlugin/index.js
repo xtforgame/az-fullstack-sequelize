@@ -8,6 +8,7 @@ export const azCommonPlugin = (editor, options) => {
 
   gtb(editor, options);
 
+  console.log('editor.globalScriptManager :', editor.globalScriptManager);
 
   editor.on('component:mount', (component) => {
     const domElement = component.getEl();
