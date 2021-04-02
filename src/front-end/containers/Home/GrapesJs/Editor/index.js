@@ -117,13 +117,11 @@ const GrapesJsEditor = (props) => {
     },
   });
 
-  const allowScripts = 0;
-
   useLayoutEffect(() => {
     const editor = grapesjs.init({
       height: '100%',
       forceClass: true,
-      allowScripts,
+      allowScripts: 0,
       showOffsets: 1,
       noticeOnUnload: 0,
       storageManager: {
@@ -201,9 +199,7 @@ const GrapesJsEditor = (props) => {
         // 'az-finalize',
       ],
       pluginsOpts: {
-        'az-global-script': {
-          allowScripts,
-        },
+        'az-global-script': {},
         'az-common': {
           withCategory: true,
         },

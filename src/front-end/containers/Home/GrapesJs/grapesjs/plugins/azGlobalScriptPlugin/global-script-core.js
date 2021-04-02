@@ -7,7 +7,7 @@ export class GlobalScriptManager {
   constructor(editor, options = {}) {
     this.editor = editor;
     this.options = options;
-    this.allowScripts = this.options.allowScripts;
+    this.allowScripts = this.editor.getConfig().allowScripts;
     this.components = new Map();
     this.mainComponent = null;
     this.hasRunOnce = false;
