@@ -33,7 +33,6 @@ window.waitAzwcLoaded((azwc_export) => {
     ],
   });
   const canviCloseBtn = document.querySelector('.canvi-user-info__close');
-  console.log('canviCloseBtn :', canviCloseBtn);
   canviCloseBtn.addEventListener('click', () => {
     t.close();
   });

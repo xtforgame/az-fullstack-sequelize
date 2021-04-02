@@ -2,7 +2,7 @@ export default (editor, options) => {
   const traverseComponent = (component, i, a) => {
     const cb = (component, i, a) => {
       if (component.type === 'textnode') {
-        console.log('component.content :', component.content);
+        // console.log('component.content :', component.content);
         return { tagName: 'azxxx', components: [] };
       }
       return traverseComponent(component, i, a);
@@ -36,7 +36,7 @@ export default (editor, options) => {
   // do not select any class by default
 
   const sm = editor.SelectorManager;
-  console.log('sm :', sm.selectorTags);
+  // console.log('sm :', sm.selectorTags);
 
   sm.prevCids = [];
 
@@ -83,10 +83,10 @@ export default (editor, options) => {
     widthMedia: '600px', // the width that will be used for the CSS media
   });
 
-  editor.Panels.getPanels().forEach(item => console.log(item.get('id')));
+  // editor.Panels.getPanels().forEach(item => console.log(item.get('id')));
   const pnm = editor.Panels;
   const panelDevices = pnm.getPanel('devices-c');
-  console.log('panelDevices :', panelDevices);
+  // console.log('panelDevices :', panelDevices);
   const deviceBtns = panelDevices.get('buttons');
   deviceBtns.reset();
   deviceBtns.add([{

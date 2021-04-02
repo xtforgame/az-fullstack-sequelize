@@ -3,7 +3,7 @@ import gtb from './grapesjs-html-block';
 import addTraits from './addTraits';
 
 export const azCommonPlugin = (editor, options) => {
-  console.log('options :', options);
+  // console.log('options :', options);
   // azCommonPluginComponents(config, editor);
 
   gtb(editor, options);
