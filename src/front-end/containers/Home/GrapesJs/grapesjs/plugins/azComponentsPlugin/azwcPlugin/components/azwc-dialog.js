@@ -1,10 +1,12 @@
 import getDefaultCompTypeOptions from './getDefaultCompTypeOptions';
 
 export function addAzwcDialogType(editor, config = {}) {
-  editor.DomComponents.addType('azwc-dialog-gjc', getDefaultCompTypeOptions(editor, {
+  editor.DomComponents.addType('AgDialog', getDefaultCompTypeOptions(editor, {
     defaults: {
       droppable: '.nothing',
     },
+    tagName: 'azwc-dialog',
+    typeName: 'AgDialog',
   }));
 }
 
@@ -12,11 +14,11 @@ export function addAzwcDialogType(editor, config = {}) {
 export function addAzwcDialogBlock(editor, config = {}) {
   const bm = editor.BlockManager;
   const category = config.category || 'Basic';
-  bm.add('azwc-dialog-gjc', {
+  bm.add('AgDialog', {
     category,
     attributes: { class: 'fa fa-link' },
-    label: 'Azwc Dialog',
-    content: `<azwc-dialog class="az-dialog" data-gjs-type="azwc-dialog-gjc">
+    label: 'AgDialog',
+    content: `<azwc-dialog class="az-dialog">
       <agjc-slot class="az-slot-bg1" slot="top">
       </agjc-slot>
       <agjc-slot class="az-slot-bg2" slot="body">

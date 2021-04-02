@@ -6,7 +6,22 @@ export default (editor, config = {}) => {
   };
   const defaultType = editor.DomComponents.getType('default');
   const defaults = config.defaults || {};
+  const extraProps = {};
+  if (config.tagName && config.typeName) {
+    const tagName = config.tagName.toUpperCase();
+    extraProps.isComponent = function isComponent(el) {
+      let result;
+      const tag = el.tagName;
+      if (tag === tagName) {
+        result = {
+          type: config.typeName,
+        };
+      }
+      return result;
+    };
+  }
   return {
+    ...extraProps,
     model: {
       defaults,
       // defaults: {
@@ -23,16 +38,16 @@ export default (editor, config = {}) => {
       //   return defaultType.model.prototype.toJSON.call(this, opt);
       // },
       init() {
-        console.log('Local hook: model.init');
+        console.log('this :', this);
+        // console.log('Local hook: model.init');
         this.listenTo(this, 'change:testprop', this.handlePropChange);
         // Here we can listen global hooks with editor.on('...')
       },
       updated(property, value, prevValue) {
-        console.log('Local hook: model.updated',
-          'property', property, 'value', value, 'prevValue', prevValue);
+        // console.log('Local hook: model.updated', 'property', property, 'value', value, 'prevValue', prevValue);
       },
       removed() {
-        console.log('Local hook: model.removed');
+        // console.log('Local hook: model.removed');
       },
       handlePropChange() {
         console.log('The value of testprop', this.get('testprop'));
@@ -40,27 +55,28 @@ export default (editor, config = {}) => {
     },
     view: {
       init() {
-        console.log('Local hook: view.init');
+        // console.log('Local hook: view.init');
       },
       onRender({ el }) {
-        customElements.whenDefined('azwc-dialog')
-        .then((x) => {
-          console.log('x :', x);
-          let c = el.querySelector('azwc-dialog');
-          c = el;
-          console.log('c :', c);
-          c.componentOnReady()
-          .then(() => {
-            // setInterval(() => {
-            //   c.togglePadding()
-            // }, 10000);
-            c.setAttribute('first', 'Rick');
-            c.setAttribute('middle', 'X');
-            c.setAttribute('last', 'Chen');
-          });
-        });
+        // customElements.whenDefined('azwc-dialog')
+        // .then((x) => {
+        //   console.log('x :', x);
+        //   let c = el.querySelector('azwc-dialog');
+        //   c = el;
+        //   c.componentOnReady()
+        //   .then(() => {
+        //     // setInterval(() => {
+        //     //   c.togglePadding()
+        //     // }, 10000);
+        //     c.setAttribute('first', 'Rick');
+        //     c.setAttribute('middle', 'X');
+        //     c.setAttribute('last', 'Chen');
+        //   });
+        // });
+
+
         // console.log('el :', el.childNodes[0].togglePadding);
-        console.log('Local hook: view.onRender');
+        // console.log('Local hook: view.onRender');
       },
     },
   };

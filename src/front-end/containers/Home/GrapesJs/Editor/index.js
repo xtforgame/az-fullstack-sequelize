@@ -137,7 +137,7 @@ const GrapesJsEditor = (props) => {
       canvas: {
         scripts: [
           // 'https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js',
-          'grapesjs/canvi-master/canvi.js',
+          // 'grapesjs/canvi-master/canvi.js',
           // { type: 'module', 'data-stencil': '', 'data-resources-url': '/build/', 'data-stencil-namespace': 'xbase' },
           { type: 'module', src: 'https://rick.cloud/chatbotmate/assets/xbase/xbase.esm.js' },
           // { nomodule: '', src: 'https://rick.cloud/chatbotmate/assets/xbase/xbase.js', 'data-stencil': '' },
@@ -145,7 +145,7 @@ const GrapesJsEditor = (props) => {
         styles: [
           'css/grapesjs-canvas.css',
           'css/style.css',
-          'grapesjs/canvi-master/canvi.css',
+          // 'grapesjs/canvi-master/canvi.css',
           'https://rick.cloud/chatbotmate/assets/xbase/xbase.css',
         ],
       },
