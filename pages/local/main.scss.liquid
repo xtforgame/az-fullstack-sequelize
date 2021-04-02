@@ -1,5 +1,10 @@
 {% capture scss %}
 
+// eng https://fonts.adobe.com/fonts/orator?src=GoogleFonts#fonts-section
+
+// 46, 40
+// 24, 18
+
 @mixin transform($property) {
   -webkit-transform: $property;
   -ms-transform: $property;
@@ -22,8 +27,8 @@
   background-color: var(--azg-theme-surface);
   padding-top: 24px;
   padding-bottom: 24px;
-  padding-left: 24px;
-  padding-right: 24px;
+  padding-left: 60px;
+  padding-right: 60px;
 }
 
 /* ================================= */
@@ -48,9 +53,10 @@
 /* ================================= */
 :root{
   --azg-theme-primary: #faefe3; /* rgb(250, 239, 227); */
-  --azg-theme-on-primary: #8f7150; /* rgb(143, 113, 80); */
-  --azg-theme-surface: #faefe3; /* rgb(250, 239, 227); */
-  --azg-theme-background: #fcf8f4; /* rgb(252, 248, 244); */
+  --azg-theme-on-primary: #936f4a; /* rgb(143, 113, 80); */
+  --azg-theme-on-primary-header: #3c260f; /* rgb(143, 113, 80); */
+  --azg-theme-surface: #fceee0; /* rgb(250, 239, 227); */
+  --azg-theme-background: #fef8f3; /* rgb(252, 248, 244); */
   --azg-section-padding-top: 50px;
   --azg-section-padding-bottom: 50px;
 }
@@ -148,16 +154,16 @@ body {
 }
 
 .nav-item-title {
-  color: var(--azg-theme-on-primary);
-  font-size: 14px;
-  font-weight: 400;
+  color: var(--azg-theme-on-primary-header);
+  font-size: 16px;
+  font-weight: 300;
 }
 
 .nav-item-subtitle {
   color: var(--azg-theme-on-primary);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 20px;
-  font-weight: 200;
+  font-weight: 400;
   text-transform: uppercase;
 }
 
@@ -169,14 +175,14 @@ body {
 
 .section-title {
   color: var(--azg-theme-on-primary);
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 400;
   font-style: italic;
 }
 
 .section-subtitle {
   color: var(--azg-theme-on-primary);
-  font-size: 20px;
+  font-size: 18px;
   line-height: 30px;
   font-weight: 200;
   text-transform: uppercase;
