@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="no-js" lang="zh-TW" ng-app="recipes_index" xmlns="https://www.w3.org/1999/xhtml" xmlns:fb="https://www.facebook.com/2008/fbml" xmlns:og="https://ogp.me/ns#">
-  <head>
-    <title>Az</title>
+  {% capture head_main %}
+    <title>Petit Fleur</title>
     <meta name="description" content="azazazaz">
     <link rel="canonical" href="http://localhost:3000/">
     <meta property="og:site_name" content="as">
@@ -10,7 +10,116 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="http://localhost:3000/">
     <meta property="og:image" content="xxxx.jpg">
-  </head>
-  <body>
-  </body>
+  {% endcapture %}
+  {% render "parts/head-layout.liquid", content: head_main %}
+  {% capture body_main %}
+  <main class="main" role="main">
+    <section class="section">
+      <div class="top-swiper-container">
+        <azwc-swiper
+          id="swr"
+          class="my-slider"
+          loop="true"
+          speed="500"
+        >
+          <div class="swiper-slide my-slider__slide">Slide 1</div>
+          <div class="swiper-slide my-slider__slide">Slide 2</div>
+          <div class="swiper-slide my-slider__slide">Slide 3</div>
+          <div slot="ui"></div>
+        </azwc-swiper>
+      </div>
+    </section>
+    <section class="section-full">
+      <div class="flex-container" style="height: 50vw;">
+        <div class="image-container" style="width: 50%; background-image: url('http://placehold.it/350x250/78c5d6/fff/image1.jpg');"></div>
+        <div class="image-container" style="width: 50%; background-image: url('http://placehold.it/350x250/459ba8/fff/image2.jpg');"></div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="flex-container-v-center">
+        <span class="section-title">讓花走入你的生活</span>
+        <span class="section-subtitle">Life With Flowers</span>
+      </div>
+    </section>
+    <section class="section-full">
+      <div class="flex-container" style="height: 50vw;">
+        <div class="image-container" style="width: 50%; background-image: url('http://placehold.it/350x250/79c267/fff/image3.jpg');"></div>
+        <div class="image-container" style="width: 50%; background-image: url('http://placehold.it/350x250/78c5d6/fff/image1.jpg');"></div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="flex-container-v-center">
+        <span class="section-title">關於小花小草</span>
+        <span class="section-subtitle">About Us</span>
+      </div>
+    </section>
+  </main>
+  {% endcapture %}
+  {% capture body_extra %}
+    <script data-html-code="">
+      window.__on_azwc_init = function(azwc_classes) {
+        console.log('azwc_classes :', azwc_classes);
+        var AzwcSwiper = azwc_classes.AzwcSwiper;
+        var Swiper = azwc_classes.thirdParty.Swiper;
+        AzwcSwiper.componentDidLoad = (inst) => {
+          console.log('inst :', inst);
+          console.log('inst.host.id :', inst.host.id);
+        }
+        AzwcSwiper.createSwiper = (inst) => {
+          return new Swiper(inst.container, {
+            ...AzwcSwiper.getDefaultOptions(inst),
+            // effect: 'fade',
+            autoplay: {
+              delay: 2500,
+              disableOnInteraction: false,
+            },
+            // direction: 'vertical',
+            // mousewheel: true,
+          }
+          );
+        }
+        var AzwcDialog = azwc_classes.AzwcDialog;
+        // var btn = document.querySelector('#open-dialog-btn');
+        // btn.addEventListener("click", function () {
+        //   console.log('AzwcDialog.open');
+        //   console.log('AzwcDialog.allInstances :', AzwcDialog.allInstances);
+        //   AzwcDialog.open('d1');
+        // }
+        // );
+        // var Canvi = azwc_classes.thirdParty.Canvi;
+        // var t = new Canvi({
+        //   // content: ".js-canvi-content",
+        //   content: "body",
+        //   isDebug: !1,
+        //   navbar: ".myCanvasNav",
+        //   openButton: ".js-canvi-open-button--left",
+        //   position: "left",
+        //   pushContent: !1,
+        //   speed: "0.2s",
+        //   width: "100vw",
+        //   responsiveWidths: [{
+        //     breakpoint: "600px",
+        //     width: "280px"
+        //   }
+        //     , {
+        //     breakpoint: "1280px",
+        //     width: "320px"
+        //   }
+        //     , {
+        //     breakpoint: "1600px",
+        //     width: "380px"
+        //   }
+        //   ]
+        // }
+        // );
+        // var canviCloseBtn = document.querySelector('.canvi-user-info__close');
+        // console.log('canviCloseBtn :', canviCloseBtn);
+        // canviCloseBtn.addEventListener("click", function () {
+        //   t.close();
+        // }
+        // );
+      }
+    </script>
+  {% endcapture %}
+  {% render "parts/body-layout.liquid", content: body_main, extra: body_extra %}
 </html>

@@ -489,63 +489,18 @@ export const defaultHtml = `
     </div>
   </div>
   <azwc-accordion>
-    <!-- 一個 .collapse 是一組-->
-    <div class="collapse active">
-      <!-- title，加入 data-expanded="true"，預設就會開啟-->
-      <div data-expanded="true" class="title-box">
-        <div class="title">collapse-title-1
-        </div>
-        <div class="icons">
-          <span></span>
-          <span></span>
-        </div>
-      </div>
-      <!-- contents-->
-      <div class="contents-box">
-        <div class="contents">
-          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aliquam ducimus, illum vitae nam officia quidem
-            iste maxime provident! Temporibus repellat nulla blanditiis at accusamus minima delectus aut doloribus
-            officia deserunt.
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="collapse">
-      <div class="title-box">
-        <div class="title">collapse-title-2
-        </div>
-        <div class="icons">
-          <span></span>
-          <span></span>
-        </div>
-      </div>
-      <div class="contents-box">
-        <div class="contents">
-          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aliquam ducimus, illum vitae nam officia quidem
-            iste maxime provident! Temporibus repellat nulla blanditiis at accusamus minima delectus aut doloribus
-            officia deserunt.
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="collapse">
-      <div class="title-box">
-        <div class="title">collapse-title-3
-        </div>
-        <div class="icons">
-          <span></span>
-          <span></span>
-        </div>
-      </div>
-      <div class="contents-box">
-        <div class="contents">
-          <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aliquam ducimus, illum vitae nam officia quidem
-            iste maxime provident! Temporibus repellat nulla blanditiis at accusamus minima delectus aut doloribus
-            officia deserunt.
-          </p>
-        </div>
-      </div>
-    </div>
+    <azwc-collapse-t1 active>
+      <div slot="title">collapse-title-1</div>
+      <p slot="contents">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aliquam ducimus, illum vitae nam officia quidem iste maxime provident! Temporibus repellat nulla blanditiis at accusamus minima delectus aut doloribus officia deserunt.</p>
+    </azwc-collapse-t1>
+    <azwc-collapse-t1>
+      <div slot="title">collapse-title-2</div>
+      <p slot="contents">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aliquam ducimus, illum vitae nam officia quidem iste maxime provident! Temporibus repellat nulla blanditiis at accusamus minima delectus aut doloribus officia deserunt.</p>
+    </azwc-collapse-t1>
+    <azwc-collapse-t1>
+      <div slot="title">collapse-title-3</div>
+      <p slot="contents">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aliquam ducimus, illum vitae nam officia quidem iste maxime provident! Temporibus repellat nulla blanditiis at accusamus minima delectus aut doloribus officia deserunt.</p>
+    </azwc-collapse-t1>
   </azwc-accordion>
   <ul class="canvi-navigation">
     <li>
