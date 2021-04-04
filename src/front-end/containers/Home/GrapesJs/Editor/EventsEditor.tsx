@@ -91,7 +91,14 @@ export default (p) => {
   };
 
   const [selectedExEvent, setSelectedExEvent] = useState({ id: 0 });
-  const [exEventsArray, setExEventArray] = useState([]);
+  const [exEventsArray, setExEventArray] = useState([
+    { id: 1, name: 'click' },
+    { id: 2, name: 'onoff' },
+    { id: 3, name: 'textinput' },
+    { id: 4, name: 'selectinput' },
+    { id: 5, name: 'arrayinput' },
+    { id: 6, name: 'objectinput' },
+  ]);
 
 
   const getMenuItem = ({
