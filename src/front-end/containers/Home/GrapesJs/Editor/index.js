@@ -24,6 +24,7 @@ import { ProviderBase } from '../grapesjs/plugins/simpleStoragePlugin';
 import '../grapesjs/plugins/editCodePlugin';
 import '../grapesjs/plugins/azComponentsPlugin';
 import azFinalizePlugin from '../grapesjs/plugins/azFinalizePlugin';
+import EventsEditor from './EventsEditor';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -98,6 +99,7 @@ const GrapesJsEditor = (props) => {
 
   const [dialogState, setDialogState] = useState(null);
   const [dialogValue, setDialogValue] = useState([]);
+  const [editingData, setEditingData] = useState(null);
 
 
   const [{
@@ -111,6 +113,23 @@ const GrapesJsEditor = (props) => {
     dialogProps: {},
     open: (v) => {
       console.log('v :', v);
+    },
+    close: (v2) => {
+      console.log('v2 :', v2);
+    },
+  });
+
+  const [{
+    exited: eventsEditorExited,
+    dialogProps: eventsEditorDialogProps,
+  }, {
+    handleOpen: eventsEditorHandleOpen,
+    // handleClose,
+    // handleExited,
+  }] = useDialogState({
+    dialogProps: {},
+    open: (v) => {
+      console.log('eventsEditor v :', v);
     },
     close: (v2) => {
       console.log('v2 :', v2);
@@ -201,6 +220,7 @@ const GrapesJsEditor = (props) => {
       pluginsOpts: {
         'az-global-script': {},
         'az-common': {
+          openEventEditor: eventsEditorHandleOpen,
           withCategory: true,
         },
         'az-create-custom-block': {
@@ -268,7 +288,9 @@ const GrapesJsEditor = (props) => {
         'az-edit-code': {
           // cssOnly: true,
         },
-        'az-components': {},
+        'az-components': {
+          openEventEditor: eventsEditorHandleOpen,
+        },
         // 'az-finalize': {},
       },
     });
@@ -288,6 +310,7 @@ const GrapesJsEditor = (props) => {
         editor.setStyle(css);
       } else {
         editor.load((res) => {
+          eventsEditorHandleOpen('sxcsc');
           // console.log('res :', res);
           console.log('Load callback');
         });
@@ -346,6 +369,16 @@ const GrapesJsEditor = (props) => {
           api={fragmentMinioApi}
           defaultFileName="save-data-1-10.js"
           dialogProps={dialogProps}
+          value={dialogValue}
+          onChange={setDialogValue}
+        />
+      )}
+      {!eventsEditorExited && (
+        <EventsEditor
+          editingData={editingData}
+          api={fragmentMinioApi}
+          defaultFileName="save-data-1-10.js"
+          dialogProps={eventsEditorDialogProps}
           value={dialogValue}
           onChange={setDialogValue}
         />

@@ -1,9 +1,4 @@
 export default (editor, config = {}) => {
-  const script = function () {
-    // alert('Hi');
-    // `this` is bound to the component element
-    console.log('the element', this);
-  };
   const defaultType = editor.DomComponents.getType('default');
   const defaults = config.defaults || {};
   const extraProps = {};
@@ -40,6 +35,11 @@ export default (editor, config = {}) => {
       init() {
         // console.log('init this :', this);
         // console.log('Local hook: model.init');
+        const attrs = this.getAttributes();
+        if (!attrs.id) {
+          attrs.id = editor.DomComponents.Component.createId(this);
+          this.setAttributes(attrs);
+        }
         this.listenTo(this, 'change:testprop', this.handlePropChange);
         // Here we can listen global hooks with editor.on('...')
       },
