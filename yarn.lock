@@ -13154,7 +13154,7 @@ ws@^6.0.0:
 
 "xbase@git+https://github.com/xtforgame/xbase.git#master":
   version "0.0.1"
-  resolved "git+https://github.com/xtforgame/xbase.git#8cd6192aeb2c27d804124ad3268826d823b0fab5"
+  resolved "git+https://github.com/xtforgame/xbase.git#e977b4299f97a95a7efb20892baf066a6e158e23"
   dependencies:
     "@stencil/core" "^2.0.1"
     "@stencil/sass" "^1.4.1"

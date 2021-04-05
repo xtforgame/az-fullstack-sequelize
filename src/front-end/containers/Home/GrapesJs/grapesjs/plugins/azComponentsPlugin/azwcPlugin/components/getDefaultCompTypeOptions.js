@@ -24,11 +24,13 @@ export default (editor, config = {}) => {
         originalInitToolbar.apply(this, args);
 
         const toolbar = this.get('toolbar');
-        toolbar.push({
-          attributes: { class: 'fa fa-plug' },
-          command: 'open-event-binder',
-        });
-        this.set('toolbar', toolbar);
+        if (!toolbar.find(item => item.command === 'open-event-binder')) {
+          toolbar.push({
+            attributes: { class: 'fa fa-plug' },
+            command: 'open-event-binder',
+          });
+          this.set('toolbar', toolbar);
+        }
       },
       defaults,
       // defaults: {

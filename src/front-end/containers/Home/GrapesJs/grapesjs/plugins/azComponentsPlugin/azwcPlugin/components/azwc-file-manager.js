@@ -4,9 +4,9 @@ export function addAzwcFileManagerType(editor, config = {}) {
   editor.DomComponents.addType('AgFileManager', getDefaultCompTypeOptions(editor, {
     defaults: {
       droppable: '.nothing',
-      tagName: 'azwc-file-manager',
-      typeName: 'AgFileManager',
     },
+    tagName: 'azwc-file-manager',
+    typeName: 'AgFileManager',
   }));
 }
 
