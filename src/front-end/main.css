@@ -24,3 +24,8 @@ rt {
   user-select: none;
 }
 rt::selection { display: none; }
+
+
+.gjs-pn-buttons {
+  justify-content: space-evenly;
+}

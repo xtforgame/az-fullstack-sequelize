@@ -14,12 +14,12 @@ import FilePicker from '../ui/FilePicker';
 import FileSaver from '../ui/FileSaver';
 import { defaultCss, defaultHtml } from './default-view';
 
-import 'grapesjs-blocks-basic';
+// import 'grapesjs-blocks-basic';
 import '../grapesjs/plugins/azGlobalScriptPlugin';
 import '../grapesjs/plugins/azCommonPlugin';
 import '../grapesjs/plugins/createCustomBlockPlugin';
-import 'grapesjs-preset-webpage';
-import '../grapesjs/plugins/styleManagerPlugin';
+// import 'grapesjs-preset-webpage';
+import '../grapesjs/plugins/webPresetPlugin';
 import '../grapesjs/plugins/assetManagerPlugin';
 import { ProviderBase } from '../grapesjs/plugins/simpleStoragePlugin';
 import '../grapesjs/plugins/editCodePlugin';
@@ -218,7 +218,6 @@ const GrapesJsEditor = (props) => {
         'az-common',
         'az-create-custom-block',
         'gjs-preset-webpage',
-        'az-style-manager',
         'az-asset-manager',
         'az-edit-code',
         'az-simple-storage',
@@ -278,20 +277,8 @@ const GrapesJsEditor = (props) => {
           },
         },
         'gjs-preset-webpage': {
-          blocks: [],
           // blocksBasicOpts: { blocks: [] },
-          navbarOpts: { blocks: [] },
-          countdownOpts: { blocks: [] },
-          formsOpts: { blocks: [] },
-          // customStyleManager: [
-          //   {
-          //     name: 'General',
-          //     open: false,
-          //     buildProps: ['float', 'display', 'position', 'top', 'right', 'left', 'bottom'],
-          //   },
-          // ],
         },
-        'az-style-manager': {},
         'az-asset-manager': {},
         'az-simple-storage': {
           provider: storageProvider,

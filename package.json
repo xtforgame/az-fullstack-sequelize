@@ -84,7 +84,7 @@
     "googleapis": "27",
     "grapesjs": "^0.16.44",
     "grapesjs-blocks-basic": "^0.1.8",
-    "grapesjs-preset-webpage": "^0.1.11",
+    "grapesjs-plugin-forms": "^2.0.1",
     "graphql": "^14.2.1",
     "graphql-tag": "^2.10.0",
     "history": "^4.9.0",
