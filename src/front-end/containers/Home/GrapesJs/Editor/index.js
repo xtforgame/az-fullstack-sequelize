@@ -212,7 +212,9 @@ const GrapesJsEditor = (props) => {
           },
         ],
       },
-
+      layerManager: {
+        appendTo: '.layers-container',
+      },
       plugins: [
         'az-global-script',
         'az-common',
@@ -278,6 +280,7 @@ const GrapesJsEditor = (props) => {
         },
         'gjs-preset-webpage': {
           // blocksBasicOpts: { blocks: [] },
+          formsOpts: { blocks: [] },
         },
         'az-asset-manager': {},
         'az-simple-storage': {
@@ -346,8 +349,15 @@ const GrapesJsEditor = (props) => {
 
   return (
     <React.Fragment>
-      <div style={{ height: '100%' }}>
-        <div id={id} style={{ height: '0px', overflow: 'hidden' }} />
+      <div style={{ height: '700px', overflowY: 'hidden' }}>
+        <div className="editor-row" style={{ height: '100%', overflowY: 'scroll' }}>
+          <div className="panel-left">
+            <div className="layers-container" />
+          </div>
+          <div className="editor-canvas">
+            <div id={id} style={{ height: '0px', overflow: 'hidden' }} />
+          </div>
+        </div>
       </div>
       {!exited && false && (
         <FilePicker

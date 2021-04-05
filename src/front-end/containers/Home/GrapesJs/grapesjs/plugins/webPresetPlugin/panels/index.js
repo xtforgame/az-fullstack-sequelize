@@ -178,15 +178,15 @@ export default (editor, config) => {
     swvBtn && swvBtn.set('active', 1);
   });
 
-  // On component change show the Style Manager
-  config.showStylesOnChange && editor.on('component:selected', () => {
-    const openSmBtn = pn.getButton('views', osm);
-    const openLayersBtn = pn.getButton('views', ola);
+  // // On component change show the Style Manager
+  // config.showStylesOnChange && editor.on('component:selected', () => {
+  //   const openSmBtn = pn.getButton('views', osm);
+  //   const openLayersBtn = pn.getButton('views', ola);
 
-    // Don't switch when the Layer Manager is on or
-    // there is no selected component
-    if ((!openLayersBtn || !openLayersBtn.get('active')) && editor.getSelected()) {
-      openSmBtn && openSmBtn.set('active', 1);
-    }
-  });
+  //   // Don't switch when the Layer Manager is on or
+  //   // there is no selected component
+  //   if ((!openLayersBtn || !openLayersBtn.get('active')) && editor.getSelected()) {
+  //     openSmBtn && openSmBtn.set('active', 1);
+  //   }
+  // });
 };
