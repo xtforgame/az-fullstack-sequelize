@@ -215,9 +215,74 @@ export default (editor, options) => {
     });
   }
 
+
+  function addCustomScriptComponent() {
+    const defaultType = editor.DomComponents.getType('default');
+
+    // const _initToolbar = defaultType.model.prototype.initToolbar;
+    editor.DomComponents.addType('custom-script', {
+      model: defaultType.model.extend({
+        defaults: Object.assign({}, defaultType.model.prototype.defaults, {
+          // layerable: false,
+        }),
+        toHTML(opt = {}) {
+          // console.log('toHTML');
+          // return `<script data-custom-script>${getScripts()}</script>`;
+          return defaultType.model.prototype.toHTML
+          .call(this, opt)
+          .replace(/[\n\s]*<agjc-placeholder[^<]*<\/agjc-placeholder>[\n\s]*/g, '');
+        },
+        toJSON(opt = {}) {
+          // console.log('toJSON');
+          const json = defaultType.model.prototype.toJSON.call(this, opt);
+          // json.attributes['data-custom-script-content'] = getScripts();// json.content;
+          // json.content = '';
+          return json;
+        },
+        init() {
+          // console.log('globalScript init', this.cid);
+          // console.log('this.content :', this.get('content'));
+          // this.set('content', '');
+          const attrs = this.getAttributes();
+          if (attrs['data-custom-script-content']) {
+            console.log('from data-custom-script-content');
+            this.set('content', attrs['data-custom-script-content']);
+          }
+          attrs['data-custom-script'] = '';
+          delete attrs['data-custom-script-content'];
+          this.listenTo(this, 'change:testprop', this.handlePropChange);
+        },
+        updated(property, value, prevValue) {
+        },
+        removed() {
+          // console.log('globalScript removed', this.cid);
+          globalScriptManager.unregisterComponent(this);
+        },
+        handlePropChange() {
+          // console.log('The value of testprop', this.get('testprop'));
+        },
+      }, {
+        isComponent(el) {
+          if (typeof el.hasAttribute === 'function' && el.hasAttribute('data-custom-script')) {
+            // https://github.com/artf/grapesjs/issues/774
+            return {
+              type: 'custom-script',
+              content: el.innerHTML,
+              components: [], // this will avoid parsing children
+            };
+          }
+          return undefined;
+        },
+      }),
+      view: defaultType.view,
+    });
+  }
+
   // addGlobalScriptEditor();
   addGlobalScriptComponent();
   // addGlobalScriptBlock();
+
+  addCustomScriptComponent();
 
   // ============================
 

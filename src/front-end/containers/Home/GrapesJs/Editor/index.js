@@ -227,7 +227,7 @@ const GrapesJsEditor = (props) => {
       ],
       pluginsOpts: {
         'az-global-script': {
-          runOnceScript: `window.customRunOnceFuncs.push(() => { console.log('Xxxxxx'); });`,
+          runOnceScript: `window.customRunOnceFuncs.push(() => { console.log('custom runOnceScript'); });`,
           updateScript,
           openEventsBinder: eventsBinderHandleOpen,
         },

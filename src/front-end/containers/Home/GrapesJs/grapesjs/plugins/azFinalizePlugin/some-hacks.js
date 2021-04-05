@@ -1,8 +1,9 @@
 export default (editor, options) => {
   const traverseComponent = (component, i, a) => {
     const cb = (component, i, a) => {
-      if (component.tagName === 'script') {
+      if (component.tagName === 'script' && component.type !== 'custom-script') {
         // console.log('component :', component);
+        // console.log('component.components :', component.components);
         return undefined;
       }
       // if (component.type === 'textnode') {
