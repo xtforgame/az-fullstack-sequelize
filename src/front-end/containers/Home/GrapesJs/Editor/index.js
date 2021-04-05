@@ -8,12 +8,14 @@ import axios from 'axios';
 import useDialogState, { Cancel } from 'azrmui/hooks/useDialogState';
 import useEffectIgnoreFirstRun from 'azrmui/hooks/useEffectIgnoreFirstRun';
 import { getHeaders } from 'azrmui/utils/HeaderManager';
+import updateScript from 'raw-loader!./update-script';
 import MinioFolderApiEx from '../ui/MinioFolderApiEx';
 import FilePicker from '../ui/FilePicker';
 import FileSaver from '../ui/FileSaver';
 import { defaultCss, defaultHtml } from './default-view';
 
 import 'grapesjs-blocks-basic';
+import '../grapesjs/plugins/azGlobalScriptPlugin';
 import '../grapesjs/plugins/azCommonPlugin';
 import '../grapesjs/plugins/createCustomBlockPlugin';
 import 'grapesjs-preset-webpage';
@@ -23,6 +25,7 @@ import { ProviderBase } from '../grapesjs/plugins/simpleStoragePlugin';
 import '../grapesjs/plugins/editCodePlugin';
 import '../grapesjs/plugins/azComponentsPlugin';
 import azFinalizePlugin from '../grapesjs/plugins/azFinalizePlugin';
+import EventsBinder from './EventsBinder';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -97,6 +100,7 @@ const GrapesJsEditor = (props) => {
 
   const [dialogState, setDialogState] = useState(null);
   const [dialogValue, setDialogValue] = useState([]);
+  const [editingData, setEditingData] = useState(null);
 
 
   const [{
@@ -116,11 +120,35 @@ const GrapesJsEditor = (props) => {
     },
   });
 
+  const [{
+    exited: eventsBinderExited,
+    dialogProps: eventsBinderDialogProps,
+  }, {
+    handleOpen: eventsBinderHandleOpen_,
+    // handleClose,
+    // handleExited,
+  }] = useDialogState({
+    dialogProps: {},
+    open: (v) => {
+      console.log('eventsBinder v :', v);
+      setEditingData(v);
+    },
+    close: (v2) => {
+      console.log('v2 :', v2);
+      setEditingData(null);
+    },
+  });
+
+  const eventsBinderHandleOpen = (data) => {
+    setEditingData(data);
+    eventsBinderHandleOpen_(data);
+  };
+
   useLayoutEffect(() => {
     const editor = grapesjs.init({
       height: '100%',
       forceClass: true,
-      allowScripts: 1,
+      allowScripts: 1, // will remove by some-hack scripts
       showOffsets: 1,
       noticeOnUnload: 0,
       storageManager: {
@@ -137,7 +165,7 @@ const GrapesJsEditor = (props) => {
       canvas: {
         scripts: [
           // 'https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js',
-          'grapesjs/canvi-master/canvi.js',
+          // 'grapesjs/canvi-master/canvi.js',
           // { type: 'module', 'data-stencil': '', 'data-resources-url': '/build/', 'data-stencil-namespace': 'xbase' },
           { type: 'module', src: 'https://rick.cloud/chatbotmate/assets/xbase/xbase.esm.js' },
           // { nomodule: '', src: 'https://rick.cloud/chatbotmate/assets/xbase/xbase.js', 'data-stencil': '' },
@@ -145,7 +173,7 @@ const GrapesJsEditor = (props) => {
         styles: [
           'css/grapesjs-canvas.css',
           'css/style.css',
-          'grapesjs/canvi-master/canvi.css',
+          // 'grapesjs/canvi-master/canvi.css',
           'https://rick.cloud/chatbotmate/assets/xbase/xbase.css',
         ],
       },
@@ -186,6 +214,7 @@ const GrapesJsEditor = (props) => {
       },
 
       plugins: [
+        'az-global-script',
         'az-common',
         'az-create-custom-block',
         'gjs-preset-webpage',
@@ -197,6 +226,11 @@ const GrapesJsEditor = (props) => {
         // 'az-finalize',
       ],
       pluginsOpts: {
+        'az-global-script': {
+          runOnceScript: `window.customRunOnceFuncs.push(() => { console.log('Xxxxxx'); });`,
+          updateScript,
+          openEventsBinder: eventsBinderHandleOpen,
+        },
         'az-common': {
           withCategory: true,
         },
@@ -343,6 +377,16 @@ const GrapesJsEditor = (props) => {
           api={fragmentMinioApi}
           defaultFileName="save-data-1-10.js"
           dialogProps={dialogProps}
+          value={dialogValue}
+          onChange={setDialogValue}
+        />
+      )}
+      {!eventsBinderExited && (
+        <EventsBinder
+          editingData={editingData}
+          api={fragmentMinioApi}
+          defaultFileName="save-data-1-10.js"
+          dialogProps={eventsBinderDialogProps}
           value={dialogValue}
           onChange={setDialogValue}
         />

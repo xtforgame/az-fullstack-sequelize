@@ -29,30 +29,6 @@
         </azwc-swiper>
       </div>
     </section>
-    <section class="section-full">
-      <div class="flex-container" style="height: 50vw;">
-        <div class="image-container" style="width: 50%; background-image: url('http://placehold.it/350x250/78c5d6/fff/image1.jpg');"></div>
-        <div class="image-container" style="width: 50%; background-image: url('http://placehold.it/350x250/459ba8/fff/image2.jpg');"></div>
-      </div>
-    </section>
-    <section class="section">
-      <div class="flex-container-v-center">
-        <span class="section-title">讓花走入你的生活</span>
-        <span class="section-subtitle">Life With Flowers</span>
-      </div>
-    </section>
-    <section class="section-full">
-      <div class="flex-container" style="height: 50vw;">
-        <div class="image-container" style="width: 50%; background-image: url('http://placehold.it/350x250/79c267/fff/image3.jpg');"></div>
-        <div class="image-container" style="width: 50%; background-image: url('http://placehold.it/350x250/78c5d6/fff/image1.jpg');"></div>
-      </div>
-    </section>
-    <section class="section">
-      <div class="flex-container-v-center">
-        <span class="section-title">關於小花小草</span>
-        <span class="section-subtitle">About Us</span>
-      </div>
-    </section>
   </main>
   {% endcapture %}
   {% capture body_extra %}
@@ -69,10 +45,7 @@
           return new Swiper(inst.container, {
             ...AzwcSwiper.getDefaultOptions(inst),
             // effect: 'fade',
-            autoplay: {
-              delay: 2500,
-              disableOnInteraction: false,
-            },
+            autoplay: false,
             // direction: 'vertical',
             // mousewheel: true,
           }

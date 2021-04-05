@@ -1,16 +1,23 @@
 export default (editor, options) => {
   const traverseComponent = (component, i, a) => {
     const cb = (component, i, a) => {
-      if (component.type === 'textnode') {
-        console.log('component.content :', component.content);
-        return { tagName: 'azxxx', components: [] };
+      if (component.tagName === 'script') {
+        // console.log('component :', component);
+        return undefined;
       }
+      // if (component.type === 'textnode') {
+      //   // console.log('component.content :', component.content);
+      //   return { tagName: 'azxxx', components: [] };
+      // }
       return traverseComponent(component, i, a);
     };
+    if (Array.isArray(component)) {
+      return component.map(cb).filter(c => c);
+    }
     const newComponent = { ...component };
     if (newComponent.components) {
       if (Array.isArray(newComponent.components)) {
-        newComponent.components = newComponent.components.map(cb);
+        newComponent.components = newComponent.components.map(cb).filter(c => c);
       } else {
         newComponent.components = cb(newComponent.components);
       }
@@ -28,7 +35,7 @@ export default (editor, options) => {
     // console.log('str :', str);
     parserHtml.compTypes = em ? em.get('DomComponents').getTypes() : compTypes;
     const result = parserHtml.parse(str, parserCss);
-    // result.html = traverseComponent(result.html);
+    result.html = traverseComponent(result.html);
     return result;
   };
 
@@ -36,7 +43,7 @@ export default (editor, options) => {
   // do not select any class by default
 
   const sm = editor.SelectorManager;
-  console.log('sm :', sm.selectorTags);
+  // console.log('sm :', sm.selectorTags);
 
   sm.prevCids = [];
 
@@ -83,10 +90,10 @@ export default (editor, options) => {
     widthMedia: '600px', // the width that will be used for the CSS media
   });
 
-  editor.Panels.getPanels().forEach(item => console.log(item.get('id')));
+  // editor.Panels.getPanels().forEach(item => console.log(item.get('id')));
   const pnm = editor.Panels;
   const panelDevices = pnm.getPanel('devices-c');
-  console.log('panelDevices :', panelDevices);
+  // console.log('panelDevices :', panelDevices);
   const deviceBtns = panelDevices.get('buttons');
   deviceBtns.reset();
   deviceBtns.add([{

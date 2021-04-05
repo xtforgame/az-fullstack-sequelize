@@ -44,7 +44,7 @@ export const azComponentsPlugin = (editor, options) => {
   });
 
   agc1.forEach((c) => {
-    console.log('c :', c);
+    // console.log('c :', c);
     editor.BlockManager.add(c.name, c.grapesjsData);
   });
 
