@@ -1,6 +1,11 @@
+import { AzwcDialog, AzwcGlobal } from 'xbase/dist/custom-elements';
+// import { exportData } from 'xbase/dist/types/global';
 import getDefaultCompTypeOptions from './getDefaultCompTypeOptions';
 
 export function addAzwcDialogType(editor, config = {}) {
+  console.log('AzwcDialog.allInstances :', AzwcDialog.allInstances);
+  console.log('AzwcDialog.DestinationInfoMap :', AzwcDialog.DestinationInfoMap);
+  console.log('AzwcGlobal.exports :', AzwcGlobal.exports);
   editor.DomComponents.addType('AgDialog', getDefaultCompTypeOptions(editor, {
     defaults: {
       droppable: '.nothing',

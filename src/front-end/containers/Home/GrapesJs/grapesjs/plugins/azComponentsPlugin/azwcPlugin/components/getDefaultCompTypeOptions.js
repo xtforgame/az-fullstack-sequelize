@@ -15,9 +15,21 @@ export default (editor, config = {}) => {
       return result;
     };
   }
+
+  const originalInitToolbar = defaultType.model.prototype.initToolbar;
   return {
     ...extraProps,
     model: {
+      initToolbar(args) {
+        originalInitToolbar.apply(this, args);
+
+        const toolbar = this.get('toolbar');
+        toolbar.push({
+          attributes: { class: 'fa fa-plug' },
+          command: 'open-event-binder',
+        });
+        this.set('toolbar', toolbar);
+      },
       defaults,
       // defaults: {
       //   // script,

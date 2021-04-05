@@ -38,6 +38,7 @@ export default (p) => {
   const {
     defaultFileName = '',
     title = 'Save As...',
+    editingData,
     dialogProps,
 
     value,
@@ -45,6 +46,9 @@ export default (p) => {
     api,
     saverProps = {},
   } = p;
+
+  const { component } = editingData || {};
+  console.log('component :', component);
 
   const [filename, setFilename, filenameError, setFilenameError] = useStateWithError(defaultFileName || '');
   const [viewCallbacks, updateViewCallbacks] = useState({

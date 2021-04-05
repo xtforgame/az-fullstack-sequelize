@@ -24,7 +24,7 @@ import { ProviderBase } from '../grapesjs/plugins/simpleStoragePlugin';
 import '../grapesjs/plugins/editCodePlugin';
 import '../grapesjs/plugins/azComponentsPlugin';
 import azFinalizePlugin from '../grapesjs/plugins/azFinalizePlugin';
-import EventsEditor from './EventsEditor';
+import EventsBinder from './EventsBinder';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -120,21 +120,28 @@ const GrapesJsEditor = (props) => {
   });
 
   const [{
-    exited: eventsEditorExited,
-    dialogProps: eventsEditorDialogProps,
+    exited: eventsBinderExited,
+    dialogProps: eventsBinderDialogProps,
   }, {
-    handleOpen: eventsEditorHandleOpen,
+    handleOpen: eventsBinderHandleOpen_,
     // handleClose,
     // handleExited,
   }] = useDialogState({
     dialogProps: {},
     open: (v) => {
-      console.log('eventsEditor v :', v);
+      console.log('eventsBinder v :', v);
+      setEditingData(v);
     },
     close: (v2) => {
       console.log('v2 :', v2);
+      setEditingData(null);
     },
   });
+
+  const eventsBinderHandleOpen = (data) => {
+    setEditingData(data);
+    eventsBinderHandleOpen_(data);
+  };
 
   useLayoutEffect(() => {
     const editor = grapesjs.init({
@@ -218,9 +225,10 @@ const GrapesJsEditor = (props) => {
         // 'az-finalize',
       ],
       pluginsOpts: {
-        'az-global-script': {},
+        'az-global-script': {
+          openEventsBinder: eventsBinderHandleOpen,
+        },
         'az-common': {
-          openEventEditor: eventsEditorHandleOpen,
           withCategory: true,
         },
         'az-create-custom-block': {
@@ -288,9 +296,7 @@ const GrapesJsEditor = (props) => {
         'az-edit-code': {
           // cssOnly: true,
         },
-        'az-components': {
-          openEventEditor: eventsEditorHandleOpen,
-        },
+        'az-components': {},
         // 'az-finalize': {},
       },
     });
@@ -310,7 +316,6 @@ const GrapesJsEditor = (props) => {
         editor.setStyle(css);
       } else {
         editor.load((res) => {
-          eventsEditorHandleOpen('sxcsc');
           // console.log('res :', res);
           console.log('Load callback');
         });
@@ -373,12 +378,12 @@ const GrapesJsEditor = (props) => {
           onChange={setDialogValue}
         />
       )}
-      {!eventsEditorExited && (
-        <EventsEditor
+      {!eventsBinderExited && (
+        <EventsBinder
           editingData={editingData}
           api={fragmentMinioApi}
           defaultFileName="save-data-1-10.js"
-          dialogProps={eventsEditorDialogProps}
+          dialogProps={eventsBinderDialogProps}
           value={dialogValue}
           onChange={setDialogValue}
         />
