@@ -28,6 +28,7 @@ import SubContent07 from '~/containers/Home/SubContent07';
 import SubContent08 from '~/containers/Home/SubContent08';
 import SubContent09 from '~/containers/Home/SubContent09';
 
+import OrderPages from '~/containers/OrderPages';
 import AdminPages from '~/containers/AdminPages';
 import OrganizationManagement from '~/containers/AdminPages/OrganizationManagement';
 import ProjectManagement from '~/containers/AdminPages/ProjectManagement';
@@ -296,6 +297,14 @@ const globalRouteConfig = {
               },
             }],
           }],
+        },
+        {
+          name: 'order',
+          path: '/order',
+          component: OrderPages,
+          navbar: {
+            title: '訂單管理',
+          },
         },
         {
           name: 'management',

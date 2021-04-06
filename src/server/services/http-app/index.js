@@ -11,6 +11,7 @@ import appRootPath from 'app-root-path';
 import getWebpackService from './webpack-service';
 import runServer from './runServer';
 import ServiceBase from '../ServiceBase';
+import addHasuraProxy from './addHasuraProxy';
 import addProxy from './addProxy';
 
 const appRoot = appRootPath.resolve('./');
@@ -58,6 +59,7 @@ export default class HttpApp extends ServiceBase {
     this.app
     .use(this.router.routes())
     .use(this.router.allowedMethods());
+    addHasuraProxy(this.app);
 
     this.appConfig = {
       router: this.router, /* , app: this.app, azLrApp, credentials */

@@ -2851,9 +2851,9 @@ axobject-query@^2.2.0:
     mjml "^4.0.5"
     nodemailer "^4.6.4"
 
-"az-model-manager@git+https://github.com/xtforgame/az-model-manager.git#v0.2.4":
-  version "0.2.4"
-  resolved "git+https://github.com/xtforgame/az-model-manager.git#fe81430569feb78a332800adad363c7d37fec17e"
+"az-model-manager@git+https://github.com/xtforgame/az-model-manager.git#v0.2.5":
+  version "0.2.5"
+  resolved "git+https://github.com/xtforgame/az-model-manager.git#4d1b69c1deee4f0cbda304bcb5ec27720f76cdfa"
   dependencies:
     app-root-path "^1.0.0"
     liquidjs "^9.16.1"

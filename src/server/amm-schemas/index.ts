@@ -2,7 +2,15 @@
 import sequelize from 'sequelize';
 import { AmmOrm, AmmSchemas, IJsonSchemas, JsonSchemasX } from 'az-model-manager';
 
-export const getJsonSchema : () => IJsonSchemas = () => ({
+export type ModelExtraOptions = {
+  hasura: {
+    publicColumns?: string[],
+    privateColumns?: string[],
+    restrictedColumns?: string[],
+  },
+}
+
+export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
   models: {
     accountLink: {
       columns: {
@@ -46,6 +54,16 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
             },
           },
         ],
+      },
+      extraOptions: {
+        hasura: {
+          publicColumns: [
+            'id', 'provider_id',
+          ],
+          restrictedColumns: [
+            'provider_user_access_info',
+          ],
+        },
       },
     },
     user: {
@@ -238,6 +256,13 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           },
         },
       },
+      extraOptions: {
+        hasura: {
+          publicColumns: [
+            'id', 'name', 'type', 'privilege', 'picture',
+          ],
+        },
+      },
     },
     userSetting: {
       columns: {
@@ -266,6 +291,11 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
             fields: ['user_id', 'type'],
           },
         ],
+      },
+      extraOptions: {
+        hasura: {
+          restrictedColumns: [],
+        },
       },
     },
     log: {
@@ -352,6 +382,11 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           otherKey: 'invitee_id',
         }],
       },
+      extraOptions: {
+        hasura: {
+          restrictedColumns: [],
+        },
+      },
     },
     organization: {
       columns: {
@@ -361,6 +396,10 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           autoIncrement: true,
         },
         name: ['string', 900],
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
         users: ['belongsToMany', 'user', {
           through: {
             unique: false,
@@ -397,6 +436,16 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           foreignKey: 'organization_id',
           otherKey: 'invitee_id',
         }],
+      },
+      extraOptions: {
+        hasura: {
+          publicColumns: [
+            'id', 'name',
+          ],
+          privateColumns: [
+            'data',
+          ],
+        },
       },
     },
     project: {
@@ -446,6 +495,16 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           otherKey: 'invitee_id',
         }],
       },
+      extraOptions: {
+        hasura: {
+          publicColumns: [
+            'id', 'name',
+          ],
+          privateColumns: [
+            'data',
+          ],
+        },
+      },
     },
     memo: {
       columns: {
@@ -468,6 +527,16 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           foreignKey: 'memo_id',
           otherKey: 'user_id',
         }],
+      },
+      extraOptions: {
+        hasura: {
+          publicColumns: [
+            'id',
+          ],
+          privateColumns: [
+            'data',
+          ],
+        },
       },
     },
     contactUsMessage: {
@@ -528,6 +597,20 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           otherKey: 'order_id',
         }],
       },
+      extraOptions: {
+        hasura: {
+          publicColumns: [
+            'id',
+            'thumbnail',
+            'pictures',
+            'name',
+            'price',
+            'weight',
+            'description',
+            'data',
+          ],
+        },
+      },
     },
     ordererInfo: {
       columns: {
@@ -552,6 +635,11 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           foreignKey: 'as_default_to',
         }],
       },
+      extraOptions: {
+        hasura: {
+          restrictedColumns: [],
+        },
+      },
     },
     recipientInfo: {
       columns: {
@@ -575,6 +663,11 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
         asDefaultTo: ['belongsTo', 'user', {
           foreignKey: 'as_default_to',
         }],
+      },
+      extraOptions: {
+        hasura: {
+          restrictedColumns: [],
+        },
       },
     },
     order: {
@@ -612,6 +705,11 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           otherKey: 'product_id',
         }],
       },
+      extraOptions: {
+        hasura: {
+          restrictedColumns: [],
+        },
+      },
     },
     subscriptionOrder: {
       columns: {
@@ -638,6 +736,11 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           foreignKey: 'user_id',
         }],
       },
+      extraOptions: {
+        hasura: {
+          restrictedColumns: [],
+        },
+      },
     },
   },
   associationModels: {
@@ -662,6 +765,11 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           },
         ],
       },
+      extraOptions: {
+        hasura: {
+          restrictedColumns: [],
+        },
+      },
     },
     groupInvitation: {
       columns: {
@@ -683,6 +791,11 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
             },
           },
         ],
+      },
+      extraOptions: {
+        hasura: {
+          restrictedColumns: [],
+        },
       },
     },
     userOrganization: {
@@ -714,6 +827,11 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           },
         ],
       },
+      extraOptions: {
+        hasura: {
+          restrictedColumns: [],
+        },
+      },
     },
     organizationInvitation: {
       columns: {
@@ -735,6 +853,11 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
             },
           },
         ],
+      },
+      extraOptions: {
+        hasura: {
+          restrictedColumns: [],
+        },
       },
     },
     userProject: {
@@ -766,6 +889,11 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           },
         ],
       },
+      extraOptions: {
+        hasura: {
+          restrictedColumns: [],
+        },
+      },
     },
     projectInvitation: {
       columns: {
@@ -788,6 +916,11 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           },
         ],
       },
+      extraOptions: {
+        hasura: {
+          restrictedColumns: [],
+        },
+      },
     },
     userMemo: {
       columns: {
@@ -809,6 +942,11 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
             },
           },
         ],
+      },
+      extraOptions: {
+        hasura: {
+          restrictedColumns: [],
+        },
       },
     },
     orderProduct: {
@@ -838,12 +976,17 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           },
         ],
       },
+      extraOptions: {
+        hasura: {
+          restrictedColumns: [],
+        },
+      },
     },
   },
 });
 
 export const getJsonSchemasX : () => JsonSchemasX = () => {
-  const result = new JsonSchemasX('public', <any>getJsonSchema())
+  const result = new JsonSchemasX('public', <any>getJsonSchema());
   result.toCoreSchemas();
   return result;
 };
