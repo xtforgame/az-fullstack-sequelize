@@ -56,7 +56,7 @@ export default (editor, config) => {
     }, {
       name: 'Dimension',
       open: false,
-      buildProps: ['width', 'height', 'max-width', 'min-height', 'margin', 'padding'],
+      buildProps: ['width', 'height', 'min-width', 'max-width', 'min-height', 'max-height', 'margin', 'padding'],
     }, {
       name: 'Typography',
       open: false,

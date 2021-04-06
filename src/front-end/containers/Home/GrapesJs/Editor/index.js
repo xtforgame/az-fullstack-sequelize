@@ -281,6 +281,7 @@ const GrapesJsEditor = (props) => {
         'gjs-preset-webpage': {
           // blocksBasicOpts: { blocks: [] },
           formsOpts: { blocks: [] },
+          // showStylesOnChange: 0,
         },
         'az-asset-manager': {},
         'az-simple-storage': {
