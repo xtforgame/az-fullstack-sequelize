@@ -350,7 +350,7 @@ const GrapesJsEditor = (props) => {
 
   return (
     <React.Fragment>
-      <div style={{ height: '700px', overflowY: 'hidden' }}>
+      <div style={{ height: '100%', overflowY: 'hidden' }}>
         <div className="editor-row" style={{ height: '100%', overflowY: 'scroll' }}>
           <div className="panel-left">
             <div className="layers-container" />

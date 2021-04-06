@@ -19,6 +19,11 @@ const styles = theme => ({
       margin: 40,
     },
     height: '100%',
+    overflowY: 'hidden',
+  },
+  mainContainerFullSize: {
+    height: '100%',
+    overflowY: 'hidden',
   },
   cardContainer: {
     display: 'flex',
@@ -39,11 +44,12 @@ const styles = theme => ({
 class Home extends React.PureComponent {
   render() {
     const {
-      routeView, t, greetName, classes,
+      routeView, t, greetName, classes, location,
     } = this.props;
 
+    const isFullsize = location.pathname.indexOf('/home/grapesjs/') !== -1;
     return (
-      <div className={classes.mainContainer}>
+      <div className={isFullsize ? classes.mainContainerFullSize : classes.mainContainer}>
         { routeView }
       </div>
     );
