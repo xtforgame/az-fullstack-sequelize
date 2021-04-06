@@ -102,48 +102,99 @@ export default (editor, config) => {
   const cmdAzDeviceTablet = 'set-device-tablet';
   const cmdAzDeviceMobile = 'set-device-mobile';
 
+  const cmdAzDeviceDesktopWithMedia = 'set-device-desktop-with-media';
+  const cmdAzDeviceSmallDesktopWithMedia = 'set-device-small-desktop-with-media';
+  const cmdAzDeviceTabletWithMedia = 'set-device-tablet-with-media';
+  const cmdAzDeviceMobileWithMedia = 'set-device-mobile-with-media';
+
   const deviceManager = editor.DeviceManager;
   deviceManager.add('az-desktop', '', {
     name: 'AzDesktop',
   });
   deviceManager.add('az-small-desktop', '1200px', {
     name: 'AzSmallDesktop',
-    widthMedia: '1280px', // the width that will be used for the CSS media
+    widthMedia: 0,
   });
   deviceManager.add('az-tablet', '768px', {
     height: '1024px',
-    name: 'AzTablet',
-    widthMedia: '960px', // the width that will be used for the CSS media
+    name: 'AzTabletp',
+    widthMedia: 0,
   });
   deviceManager.add('az-mobile', '375px', {
     height: '667px',
-    name: 'AzMobile',
+    name: 'AzMobilep',
+    widthMedia: 0,
+  });
+  deviceManager.add('az-desktop-with-media', '', {
+    name: 'AzDesktopWithMedia',
+  });
+  deviceManager.add('az-small-desktop-with-media', '1200px', {
+    name: 'AzSmallDesktopWithMedia',
+    widthMedia: '1280px', // the width that will be used for the CSS media
+  });
+  deviceManager.add('az-tablet-with-media', '768px', {
+    height: '1024px',
+    name: 'AzTabletpWithMedia',
+    widthMedia: '960px', // the width that will be used for the CSS media
+  });
+  deviceManager.add('az-mobile-with-media', '375px', {
+    height: '667px',
+    name: 'AzMobilepWithMedia',
     widthMedia: '600px', // the width that will be used for the CSS media
   });
 
   // Add devices buttons
   const panelDevices = pn.addPanel({ id: 'devices-c' });
-  panelDevices.get('buttons').add([{
-    id: cmdAzDeviceDesktop,
-    command: cmdAzDeviceDesktop,
-    className: 'fa fa-desktop',
-    active: 1,
-  }, {
-    id: cmdAzDeviceSmallDesktop,
-    command: cmdAzDeviceSmallDesktop,
-    className: 'fa fa-desktop',
-    active: 0,
-  }, {
-    id: cmdAzDeviceTablet,
-    command: cmdAzDeviceTablet,
-    className: 'fa fa-tablet',
-    active: 0,
-  }, {
-    id: cmdAzDeviceMobile,
-    command: cmdAzDeviceMobile,
-    className: 'fa fa-mobile',
-    active: 0,
-  }]);
+  panelDevices.get('buttons').add([
+    {
+      id: cmdAzDeviceDesktop,
+      command: cmdAzDeviceDesktop,
+      className: 'fa fa-desktop',
+      active: 1,
+    },
+    {
+      id: cmdAzDeviceSmallDesktop,
+      command: cmdAzDeviceSmallDesktop,
+      className: 'fa fa-desktop',
+      active: 0,
+    },
+    {
+      id: cmdAzDeviceTablet,
+      command: cmdAzDeviceTablet,
+      className: 'fa fa-tablet',
+      active: 0,
+    },
+    {
+      id: cmdAzDeviceMobile,
+      command: cmdAzDeviceMobile,
+      className: 'fa fa-mobile',
+      active: 0,
+    },
+    {
+      id: cmdAzDeviceDesktopWithMedia,
+      command: cmdAzDeviceDesktopWithMedia,
+      className: 'fa fa-desktop',
+      active: 0,
+    },
+    {
+      id: cmdAzDeviceSmallDesktopWithMedia,
+      command: cmdAzDeviceSmallDesktopWithMedia,
+      className: 'fa fa-desktop',
+      active: 0,
+    },
+    {
+      id: cmdAzDeviceTabletWithMedia,
+      command: cmdAzDeviceTabletWithMedia,
+      className: 'fa fa-tablet',
+      active: 0,
+    },
+    {
+      id: cmdAzDeviceMobileWithMedia,
+      command: cmdAzDeviceMobileWithMedia,
+      className: 'fa fa-mobile',
+      active: 0,
+    },
+  ]);
 
   const cm = editor.Commands;
   cm.add(cmdAzDeviceDesktop, {
@@ -160,13 +211,37 @@ export default (editor, config) => {
   });
   cm.add(cmdAzDeviceTablet, {
     run(e) {
-      e.setDevice('AzTablet');
+      e.setDevice('AzTabletp');
     },
     stop() {},
   });
   cm.add(cmdAzDeviceMobile, {
     run(e) {
-      e.setDevice('AzMobile');
+      e.setDevice('AzMobilep');
+    },
+    stop() {},
+  });
+  cm.add(cmdAzDeviceDesktopWithMedia, {
+    run(e) {
+      e.setDevice('AzDesktopWithMedia');
+    },
+    stop() {},
+  });
+  cm.add(cmdAzDeviceSmallDesktopWithMedia, {
+    run(e) {
+      e.setDevice('AzSmallDesktopWithMedia');
+    },
+    stop() {},
+  });
+  cm.add(cmdAzDeviceTabletWithMedia, {
+    run(e) {
+      e.setDevice('AzTabletpWithMedia');
+    },
+    stop() {},
+  });
+  cm.add(cmdAzDeviceMobileWithMedia, {
+    run(e) {
+      e.setDevice('AzMobilepWithMedia');
     },
     stop() {},
   });
