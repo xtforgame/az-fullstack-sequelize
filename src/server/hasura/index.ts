@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import sequelize, { Sequelize } from 'sequelize';
 import axios from 'axios';
-import { toCamel, capitalizeFirstLetter } from 'common/utils';
+import { toCamel, capitalizeFirstLetter, toUnderscore } from 'common/utils';
 import {
   AmmOrm,
   AmmSchemas,
@@ -679,7 +679,7 @@ class HasuraMgr {
           associationType,
         } = typeConfigs[column.type[0]];
         if (!associationType) {
-          return k;
+          return toUnderscore(k);
           // return null;
         }
         if (associationType === 'belongsTo') {
@@ -699,7 +699,7 @@ class HasuraMgr {
       const tableName = `${modelInfo.tableName.replace(tablePrefix, 'view_')}_private`;
       // CREATE VIEW view_user_private AS SELECT "id" as "id" FROM tbl_user;
       const dropScript = `DROP VIEW IF EXISTS ${tableName};`;
-      const createScript = `CREATE VIEW ${tableName} AS SELECT id as id FROM ${modelInfo.tableName};`;
+      const createScript = `CREATE VIEW ${tableName} AS SELECT ${pc.map(c => `"${c}" as "${c}"`).join(', ')} FROM ${modelInfo.tableName};`;
       a.push({
         modelName: key,
         publicColumns,
@@ -711,7 +711,7 @@ class HasuraMgr {
     }, <any[]>[]);
 
     const modelScripts = getScripts('tbl_', this.jsonSchemasX.schemas.models, this.ammOrm.tableInfo);
-    // console.log('modelScripts :', modelScripts);
+    console.log('modelScripts :', modelScripts);
     const associationScripts = getScripts('mn_', this.jsonSchemasX.schemas.associationModels, <any>(this.ammOrm.associationModelInfo));
     // console.log('associationScripts :', associationScripts);
     const { data } = await axios({
