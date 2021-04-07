@@ -18,6 +18,10 @@ import {
   ThroughOptions,
   JsonModelAttributeInOptionsForm,
   typeConfigs,
+  JsonModelAttributeBelongsTo,
+  JsonModelAttributeHasOne,
+  JsonModelAttributeHasMany,
+  JsonModelAttributeBelongsToMany,
 } from 'az-model-manager';
 import {
   postgresHost,
@@ -368,27 +372,32 @@ class HasuraMgr extends HasuraMgrBase {
         source: 'db_rick_data',
         args: relationships.reduce((a, relationship) => {
           const relatedModelsWithColumn = this.findRelatedModelsForRelationship(relationship);
-          const { foreignKey, ammAs: sourceAs } = (relatedModelsWithColumn.table!.column!.type[2] as BelongsToOptions);
+
+          const tableColumn = relatedModelsWithColumn.table!.column!;
+          const refTableColumn = relatedModelsWithColumn.refTable!.column!;
+          const tableModelTableName = relatedModelsWithColumn.table?.model!.tableName;
+          const refTableModelTableName = relatedModelsWithColumn.refTable?.model!.tableName;
+
+          const { foreignKey, ammAs: sourceAs } = (tableColumn.type[2] as BelongsToOptions);
           let targetAs = '';
-          const c = relatedModelsWithColumn.refTable!.column!;
-          if (c.type[0] === 'hasOne') {
-            targetAs = (c.type[2] as HasOneOptions).ammAs as string;
-          } else if (c.type[0] === 'hasMany') {
-            targetAs = (c.type[2] as HasManyOptions).ammAs as string;
-          } else if (c.type[0] === 'belongsToMany') {
-            targetAs = (c.type[2] as BelongsToManyOptions).ammAs as string;
+          if (refTableColumn.type[0] === 'hasOne') {
+            targetAs = (refTableColumn.type[2] as HasOneOptions).ammAs as string;
+          } else if (refTableColumn.type[0] === 'hasMany') {
+            targetAs = (refTableColumn.type[2] as HasManyOptions).ammAs as string;
+          } else if (refTableColumn.type[0] === 'belongsToMany') {
+            targetAs = (refTableColumn.type[2] as BelongsToManyOptions).ammAs as string;
           }
+
 
           // if (foreignKey === 'account_link_id') {
           //   console.log('sourceAs :', sourceAs);
 
           //   console.log('targetAs :', targetAs);
 
-          //   console.log('relatedModelsWithColumn.table!.column :', relatedModelsWithColumn.table!.column);
-          //   console.log('relatedModelsWithColumn.table?.model.tableName :', relatedModelsWithColumn.table?.model.tableName);
+          //   console.log('tableColumn :', tableColumn);
+          //   console.log('tableModelTableName :', tableModelTableName);
           //   console.log('foreignKey :', foreignKey);
-          //   console.log('relatedModelsWithColumn.refTable!.column :', relatedModelsWithColumn.refTable!.column);
-          //   console.log('relatedModelsWithColumn.refTable?.model.tableName :', relatedModelsWithColumn.refTable?.model.tableName);
+          //   console.log('refTableModelTableName :', refTableModelTableName);
           // }
 
           const newArray = [
@@ -398,7 +407,7 @@ class HasuraMgr extends HasuraMgrBase {
               args: {
                 name: sourceAs,
                 table: {
-                  name: relatedModelsWithColumn.table?.model.tableName,
+                  name: tableModelTableName,
                   schema: 'public',
                 },
                 using: {
@@ -412,13 +421,13 @@ class HasuraMgr extends HasuraMgrBase {
               args: {
                 name: targetAs,
                 table: {
-                  name: relatedModelsWithColumn.refTable?.model.tableName,
+                  name: refTableModelTableName,
                   schema: 'public',
                 },
                 using: {
                   foreign_key_constraint_on: {
                     table: {
-                      name: relatedModelsWithColumn.table?.model.tableName,
+                      name: tableModelTableName,
                       schema: 'public',
                     },
                     column: foreignKey,
@@ -436,13 +445,17 @@ class HasuraMgr extends HasuraMgrBase {
     return data;
   }
 
-  async createViews() {
+  getAllPrivateViewInfos() {
     const modelPrivateViewInfos : PrivateViewInfo[] = Object.values(this.tableParsedHasuraModelInfo)
     .map(info => info.privateViewInfo!).filter(info => info);
     // console.log('modelPrivateViewInfos :', modelPrivateViewInfos);
     const associationPrivateViewInfos = Object.values(this.associationTableParsedHasuraModelInfo)
     .map(info => info.privateViewInfo!).filter(info => info);
     // console.log('associationPrivateViewInfos :', associationPrivateViewInfos);
+    return modelPrivateViewInfos.concat(associationPrivateViewInfos);
+  }
+
+  async createViews() {
     const { data } = await axios({
       url: 'http://localhost:8081/v2/query',
       method: 'post',
@@ -450,7 +463,7 @@ class HasuraMgr extends HasuraMgrBase {
       data: {
         type: 'bulk',
         source: 'db_rick_data',
-        args: modelPrivateViewInfos.concat(associationPrivateViewInfos).reduce((a, { dropScript, createScript }) => [
+        args: this.getAllPrivateViewInfos().reduce((a, { dropScript, createScript }) => [
           ...a,
           {
             type: 'run_sql',
@@ -478,6 +491,208 @@ class HasuraMgr extends HasuraMgrBase {
     return data;
   }
 
+  async addRelationshipsForViews() {
+    const privateViewInfos = this.getAllPrivateViewInfos();
+    const { data } = await axios({
+      url: 'http://localhost:8081/v1/metadata',
+      method: 'post',
+      headers: this.getHeaders(),
+      data: {
+        type: 'bulk',
+        source: 'db_rick_data',
+        args: privateViewInfos.reduce((a, privateViewInfo) => {
+          let model : IJsonSchema;
+          if (privateViewInfo.isAssociationTable) {
+            model = this.jsonSchemasX.schemas.associationModels[privateViewInfo.modelName];
+          } else {
+            model = this.jsonSchemasX.schemas.models[privateViewInfo.modelName];
+          }
+          if (!model) {
+            return a;
+          }
+
+          const args = privateViewInfo.privateColumns.map(columnName => ({
+            columnName,
+            associationType: this.getAssociationType(model.columns[columnName] as JsonModelAttributeInOptionsForm),
+          }))
+          .filter(({ associationType }) => associationType)
+          .reduce((a2, { associationType, columnName }) => {
+            let tableModelName = privateViewInfo.modelName;
+            let tableColumn : JsonModelAttributeColumnOptions = model.columns[columnName] as JsonModelAttributeColumnOptions;
+            // if (tableColumn.type[0] !== 'belongsToMany' || tableColumn.type[1] !== 'userGroup') {
+            //   return;
+            // }
+            let refTableModelName = privateViewInfo.modelName;
+            let refTableColumn = tableColumn;
+            let foreignKey: string = '';
+            let sourceAs: string = '';
+            let targetAs: string = '';
+            let swapped = false;
+
+            const tryParse = (tModelName: string, tC : JsonModelAttributeColumnOptions) => {
+              const tCt = (tC.type as JsonModelAttributeBelongsTo);
+              const refModelName = tCt[1];
+              const { jsonSchema } = this.getJsonSchema(refModelName);
+              Object.keys(jsonSchema.columns).find((key) => {
+                const column = jsonSchema.columns[key] as JsonModelAttributeColumnOptions;
+                const refAssociationType = this.getAssociationType(column);
+                if (!refAssociationType || column.type[0] === 'belongsTo') {
+                  return false;
+                }
+                if (column.type[0] === 'hasOne' && column.type[1] === tModelName && (column.type[2] as HasOneOptions).foreignKey === tCt[2].foreignKey) {
+                  tableModelName = tModelName;
+                  refTableModelName = refModelName;
+                  tableColumn = tC;
+                  sourceAs = (tC.type[2] as BelongsToOptions).ammAs!;
+                  foreignKey = tCt[2].foreignKey! as string;
+                  refTableColumn = column;
+                  targetAs = (column.type[2] as HasOneOptions).ammAs as string;
+                  return true;
+                } else if (column.type[0] === 'hasMany' && column.type[1] === tModelName && (column.type[2] as HasManyOptions).foreignKey === tCt[2].foreignKey) {
+                  tableModelName = tModelName;
+                  refTableModelName = refModelName;
+                  tableColumn = tC;
+                  sourceAs = (tC.type[2] as BelongsToOptions).ammAs!;
+                  foreignKey = tCt[2].foreignKey! as string;
+                  refTableColumn = column;
+                  targetAs = (column.type[2] as HasManyOptions).ammAs as string;
+                  return true;
+                } else if (
+                  column.type[0] === 'belongsToMany'
+                  && (column.type[2] as BelongsToManyOptions).through.ammModelName === tModelName
+                  && (column.type[2] as BelongsToManyOptions).foreignKey === tCt[2].foreignKey
+                ) {
+                  tableModelName = tModelName;
+                  refTableModelName = refModelName;
+                  tableColumn = tC;
+                  sourceAs = (tC.type[2] as BelongsToOptions).ammAs!;
+                  foreignKey = tCt[2].foreignKey! as string;
+                  refTableColumn = column;
+                  targetAs = (column.type[2] as BelongsToManyOptions).ammAs as string;
+                  return true;
+                }
+                return false;
+              });
+            };
+
+            const swapAndTryParse = (refModelName: string, tC : JsonModelAttributeColumnOptions) => {
+              swapped = true;
+              // //// console.log('refModelName :', refModelName);
+              const { jsonSchema } = this.getJsonSchema(refModelName);
+              // //// console.log('jsonSchema :', jsonSchema);
+              Object.keys(jsonSchema.columns).find((key) => {
+                // //// console.log('key :', key);
+                const column = jsonSchema.columns[key] as JsonModelAttributeColumnOptions;
+                const refAssociationType = this.getAssociationType(column);
+                // //// console.log('refAssociationType :', refAssociationType);
+                if (!refAssociationType || column.type[0] !== 'belongsTo') {
+                  return false;
+                }
+                // //// console.log('column.type :', column.type);
+                // //// console.log('tableColumn :', tableColumn);
+                if (column.type[0] === 'belongsTo' && column.type[1] === privateViewInfo.modelName && (column.type[2] as BelongsToOptions).foreignKey === (<any>tableColumn).type[2].foreignKey) {
+                  tableColumn = column;
+                  return true;
+                }
+                return false;
+              });
+              tryParse(refModelName, tableColumn);
+            };
+
+            if (associationType === 'belongsTo') {
+              tryParse(privateViewInfo.modelName, tableColumn);
+            } else if (associationType === 'hasOne' || associationType === 'hasMany') {
+              swapAndTryParse(tableColumn.type[1] as string, tableColumn);
+            } else if (associationType === 'belongsToMany') {
+              swapAndTryParse((<any>tableColumn.type[2] as BelongsToManyOptions).through.ammModelName, tableColumn);
+            }
+
+            if (
+              !tableColumn
+              || !refTableColumn
+              || !foreignKey
+              || !sourceAs
+              || !targetAs
+            ) {
+              console.log('tableColumn, refTableColumn, foreignKey, sourceAs, targetAs :', tableColumn, refTableColumn, foreignKey, sourceAs, targetAs);
+            }
+
+            const tableModelTableName = (<any> this.ammOrm.tableInfo[tableModelName] || this.ammOrm.associationModelInfo[tableModelName]).sqlzOptions.tableName!;
+            const refTableModelTableName = (<any> this.ammOrm.tableInfo[refTableModelName] || this.ammOrm.associationModelInfo[refTableModelName]).sqlzOptions.tableName!;
+            if (swapped) {
+              if (privateViewInfo.tableName === 'view_user_group_private') {
+                console.log('privateViewInfo.tableName, tableModelTableName :', privateViewInfo.tableName, tableModelTableName);
+                console.log('targetAs, foreignKey :', targetAs, foreignKey);
+                return [
+                  ...a2,
+                  {
+                    type: 'pg_create_array_relationship',
+                    args: {
+                      source: 'db_rick_data',
+                      name: targetAs,
+                      table: {
+                        name: privateViewInfo.tableName,
+                        schema: 'public',
+                      },
+                      using: {
+                        manual_configuration: {
+                          remote_table: {
+                            name: tableModelTableName,
+                            schema: 'public',
+                          },
+                          column_mapping: {
+                            id: foreignKey,
+                          },
+                        },
+                      },
+                    },
+                  },
+                ];
+              }
+              return [
+                ...a2,
+              ];
+            } else {
+              return [
+                ...a2,
+                {
+                  type: 'pg_create_object_relationship',
+                  args: {
+                    source: 'db_rick_data',
+                    name: sourceAs,
+                    table: {
+                      name: privateViewInfo.tableName,
+                      schema: 'public',
+                    },
+                    using: {
+                      manual_configuration: {
+                        remote_table: {
+                          name: refTableModelTableName,
+                          schema: 'public',
+                        },
+                        column_mapping: {
+                          [foreignKey]: 'id',
+                        },
+                      },
+                    },
+                  },
+                },
+              ];
+            }
+          }, <any>[]);
+
+          const newArray = [
+            ...a,
+            ...args,
+          ];
+          return newArray;
+        }, <any>[]),
+      },
+    });
+    console.log('data :', data);
+    return data;
+  }
+
   async test() {
     await this.getMetadata();
     await this.addSource();
@@ -486,6 +701,7 @@ class HasuraMgr extends HasuraMgrBase {
     await this.createViews();
     await this.trackTables();
     await this.addRelationships();
+    await this.addRelationshipsForViews();
     await this.getTables();
     // const tables = await this.getTables();
     // tables.forEach(console.log);

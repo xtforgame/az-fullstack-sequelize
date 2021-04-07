@@ -18,6 +18,7 @@ import {
   ThroughOptions,
   JsonModelAttributeInOptionsForm,
   typeConfigs,
+  AmmSchema,
 } from 'az-model-manager';
 
 import { getJsonSchemasX, ModelExtraOptions } from '../amm-schemas/index';
@@ -39,6 +40,9 @@ export type RelationshipRelatedModelsWithColumn = {
 }
 
 export type PrivateViewInfo = {
+  isAssociationTable: boolean;
+  modelName: string;
+  tableName: string;
   publicColumns: string[];
   privateColumns: string[];
   privateColumnNames: string[];
@@ -96,21 +100,48 @@ class HasuraMgrBase {
     this.tableParsedHasuraModelInfo = {};
     this.associationTableParsedHasuraModelInfo = {};
     this.parsePrivateViewInfos(false, this.jsonSchemasX.schemas.models, this.ammOrm.tableInfo)
-    .forEach((r) => {
-      this.tableParsedHasuraModelInfo[r.modelName] = {
-        privateViewInfo: r.privateViewInfo,
+    .forEach((privateViewInfo) => {
+      this.tableParsedHasuraModelInfo[privateViewInfo.modelName] = {
+        privateViewInfo,
       };
     });
     // console.log('modelScripts :', modelScripts);
     this.parsePrivateViewInfos(true, this.jsonSchemasX.schemas.associationModels, <any>(this.ammOrm.associationModelInfo))
-    .forEach((r) => {
-      this.associationTableParsedHasuraModelInfo[r.modelName] = {
-        privateViewInfo: r.privateViewInfo,
+    .forEach((privateViewInfo) => {
+      this.associationTableParsedHasuraModelInfo[privateViewInfo.modelName] = {
+        privateViewInfo,
       };
     });
     // console.log('associationScripts :', associationScripts);
     // console.log('this.associationTableNameToAmmModel :', this.associationTableNameToAmmModel);
   }
+
+  getAssociationType = (column : JsonModelAttributeInOptionsForm) => {
+    const {
+      associationType,
+    } = typeConfigs[column.type[0]];
+    return associationType;
+  };
+
+  getForeignKey = (k: string, column : JsonModelAttributeInOptionsForm) => {
+    const associationType = this.getAssociationType(column);
+    if (!associationType) {
+      return toUnderscore(k);
+      // return null;
+    }
+    if (associationType === 'belongsTo') {
+      // console.log('column.type[1] :', column.type[1]);
+      const option = column.type[2] as BelongsToOptions;
+      // console.log('option :', option);
+      if (option.foreignKey) {
+        if (typeof option.foreignKey === 'string') {
+          return option.foreignKey;
+        }
+        return option.foreignKey.name!;
+      }
+    }
+    return null;
+  };
 
   parsePrivateViewInfo = (
     isAssociationTable,
@@ -159,33 +190,15 @@ class HasuraMgrBase {
       Object.keys(model.columns)
       .forEach(pushPrivate);
     }
-    const getForeignKey = (k: string, column : JsonModelAttributeInOptionsForm) => {
-      const {
-        associationType,
-      } = typeConfigs[column.type[0]];
-      if (!associationType) {
-        return toUnderscore(k);
-        // return null;
-      }
-      if (associationType === 'belongsTo') {
-        // console.log('column.type[1] :', column.type[1]);
-        const option = column.type[2] as BelongsToOptions;
-        // console.log('option :', option);
-        if (option.foreignKey) {
-          if (typeof option.foreignKey === 'string') {
-            return option.foreignKey;
-          }
-          return option.foreignKey.name!;
-        }
-      }
-      return null;
-    };
-    const privateColumnNames : string[] = privateColumns.map(k => ({ k, c: model.columns[k] })).map(({ k, c }) => getForeignKey(k, <any>c)).filter(c => c);
+    const privateColumnNames : string[] = privateColumns.map(k => ({ k, c: model.columns[k] })).map(({ k, c }) => this.getForeignKey(k, <any>c)).filter(c => c);
     const tableName = `${modelInfo.tableName.replace(tablePrefix, 'view_')}_private`;
     // CREATE VIEW view_user_private AS SELECT "id" as "id" FROM tbl_user;
     const dropScript = `DROP VIEW IF EXISTS ${tableName};`;
     const createScript = `CREATE VIEW ${tableName} AS SELECT ${privateColumnNames.map(c => `"${c}" as "${c}"`).join(', ')} FROM ${modelInfo.tableName};`;
     return <PrivateViewInfo>{
+      isAssociationTable,
+      modelName,
+      tableName,
       publicColumns,
       privateColumns,
       privateColumnNames,
@@ -210,16 +223,41 @@ class HasuraMgrBase {
       modelInfo
     );
     if (privateViewInfo) {
-      a.push({
-        modelName,
-        privateViewInfo,
-      });
+      a.push(privateViewInfo);
     }
     return a;
-  }, <{ modelName: string, privateViewInfo: PrivateViewInfo }[]>[]);
+  }, <PrivateViewInfo[]>[]);
 
   getHeaders() : any {
     return {};
+  }
+
+  getAmmSchema(modelName: string) : { ammSchema: AmmSchema, isAssociationModel: boolean } {
+    let ammSchema : AmmSchema;
+    let isAssociationModel : boolean = false;
+    ammSchema = this.ammSchemas.models[modelName];
+    if (!ammSchema) {
+      isAssociationModel = true;
+      ammSchema = this.ammSchemas.associationModels![modelName];
+    }
+    return {
+      isAssociationModel,
+      ammSchema,
+    };
+  }
+
+  getJsonSchema(modelName: string) : { jsonSchema: IJsonSchema, isAssociationModel: boolean } {
+    let jsonSchema : IJsonSchema;
+    let isAssociationModel : boolean = false;
+    jsonSchema = this.jsonSchemasX.schemas.models[modelName];
+    if (!jsonSchema) {
+      isAssociationModel = true;
+      jsonSchema = this.jsonSchemasX.schemas.associationModels[modelName];
+    }
+    return {
+      isAssociationModel,
+      jsonSchema,
+    };
   }
 
   findRelatedModelByPgTableName(tableName : string) : RelationshipRelatedModel {
