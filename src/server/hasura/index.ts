@@ -362,10 +362,15 @@ class HasuraMgr {
           if (!this.tableNameToAmmModel[table.table_name]
             && !this.associationTableNameToAmmModel[table.table_name]
           ) {
-            console.log('table.table_name :', table.table_name);
-            return null;
+            const modelName = table.table_name.replace('_private', '').replace('view_', 'tbl_');
+            const associationModelName = table.table_name.replace('_private', '').replace('view_', 'mn_');
+            if (!this.tableNameToAmmModel[modelName]
+              && !this.associationTableNameToAmmModel[associationModelName]
+            ) {
+              return null;
+            }
           }
-          const resName = toCamel(table.table_name.replace(/^mn_/g, '').replace(/^tbl_/g, ''));
+          const resName = toCamel(table.table_name.replace(/^mn_/g, '').replace(/^tbl_/g, '').replace(/^view_/g, ''));
           const pluralResName = sequelize.Utils.pluralize(resName);
           const resNameC = capitalizeFirstLetter(resName);
           const pluralResNameC = capitalizeFirstLetter(pluralResName);
@@ -375,6 +380,7 @@ class HasuraMgr {
               source: 'db_rick_data',
               table: table.table_name,
               configuration: {
+                custom_name: resName,
                 custom_root_fields: {
                   select: pluralResName,
                   select_by_pk: resName,
@@ -668,12 +674,13 @@ class HasuraMgr {
         Object.keys(model.columns)
         .forEach(pushPrivate);
       }
-      const getForeignKey = (column : JsonModelAttributeInOptionsForm) => {
+      const getForeignKey = (k: string, column : JsonModelAttributeInOptionsForm) => {
         const {
           associationType,
         } = typeConfigs[column.type[0]];
         if (!associationType) {
-          return null;
+          return k;
+          // return null;
         }
         if (associationType === 'belongsTo') {
           // console.log('column.type[1] :', column.type[1]);
@@ -688,20 +695,25 @@ class HasuraMgr {
         }
         return null;
       };
+      const pc = privateColumns.map(k => ({ k, c: model.columns[k] })).map(({ k, c }) => getForeignKey(k, <any>c)).filter(c => c);
+      const tableName = `${modelInfo.tableName.replace(tablePrefix, 'view_')}_private`;
+      // CREATE VIEW view_user_private AS SELECT "id" as "id" FROM tbl_user;
+      const dropScript = `DROP VIEW IF EXISTS ${tableName};`;
+      const createScript = `CREATE VIEW ${tableName} AS SELECT id as id FROM ${modelInfo.tableName};`;
       a.push({
         modelName: key,
-        pushPublic,
+        publicColumns,
         privateColumns,
-        xx: privateColumns.map(k => model.columns[k]).map(c => getForeignKey(<any>c)),
-        script: modelInfo.tableName.replace(tablePrefix, 'view_'),
+        dropScript,
+        createScript,
       });
       return a;
     }, <any[]>[]);
 
-    const x = getScripts('tbl_', this.jsonSchemasX.schemas.models, this.ammOrm.tableInfo);
-    console.log('x :', x);
-    const y = getScripts('mn_', this.jsonSchemasX.schemas.associationModels, <any>(this.ammOrm.associationModelInfo));
-    console.log('y :', y);
+    const modelScripts = getScripts('tbl_', this.jsonSchemasX.schemas.models, this.ammOrm.tableInfo);
+    // console.log('modelScripts :', modelScripts);
+    const associationScripts = getScripts('mn_', this.jsonSchemasX.schemas.associationModels, <any>(this.ammOrm.associationModelInfo));
+    // console.log('associationScripts :', associationScripts);
     const { data } = await axios({
       url: 'http://localhost:8081/v2/query',
       method: 'post',
@@ -710,22 +722,25 @@ class HasuraMgr {
         type: 'bulk',
         source: 'db_rick_data',
         args: [
-          {
-            type: 'run_sql',
-            args: {
-              source: 'db_rick_data',
-              sql: 'DROP VIEW IF EXISTS view_user_private;',
-              cascade: false,
+          ...modelScripts.concat(associationScripts).reduce((a, { dropScript, createScript }) => [
+            ...a,
+            {
+              type: 'run_sql',
+              args: {
+                source: 'db_rick_data',
+                sql: dropScript,
+                cascade: false,
+              },
             },
-          },
-          {
-            type: 'run_sql',
-            args: {
-              source: 'db_rick_data',
-              sql: 'CREATE VIEW view_user_private AS SELECT id AS id FROM tbl_user;',
-              cascade: false,
+            {
+              type: 'run_sql',
+              args: {
+                source: 'db_rick_data',
+                sql: createScript,
+                cascade: false,
+              },
             },
-          },
+          ], []),
         ],
       },
     });
