@@ -342,7 +342,7 @@ class HasuraMgr extends HasuraMgrBase {
                   select_by_pk: resName,
                   select_aggregate: `${resName}Aggregate`,
                   insert: `add${pluralResNameC}`,
-                  insert_one: `add${resName}`,
+                  insert_one: `add${resNameC}`,
                   update: `update${pluralResNameC}`,
                   update_by_pk: `update${resNameC}`,
                   delete: `delete${pluralResNameC}`,
@@ -519,8 +519,11 @@ class HasuraMgr extends HasuraMgrBase {
           .reduce((a2, { associationType, columnName }) => {
             let tableModelName = privateViewInfo.modelName;
             let tableColumn : JsonModelAttributeColumnOptions = model.columns[columnName] as JsonModelAttributeColumnOptions;
+            // if (privateViewInfo.tableName !== 'view_user_group_private') {
+            //   return a2;
+            // }
             // if (tableColumn.type[0] !== 'belongsToMany' || tableColumn.type[1] !== 'userGroup') {
-            //   return;
+            //   return a2;
             // }
             let refTableModelName = privateViewInfo.modelName;
             let refTableColumn = tableColumn;
@@ -529,7 +532,7 @@ class HasuraMgr extends HasuraMgrBase {
             let targetAs: string = '';
             let swapped = false;
 
-            const tryParse = (tModelName: string, tC : JsonModelAttributeColumnOptions) => {
+            const tryParse = (tModelName: string, tC : JsonModelAttributeColumnOptions, mnAs = '') => {
               const tCt = (tC.type as JsonModelAttributeBelongsTo);
               const refModelName = tCt[1];
               const { jsonSchema } = this.getJsonSchema(refModelName);
@@ -561,6 +564,7 @@ class HasuraMgr extends HasuraMgrBase {
                   column.type[0] === 'belongsToMany'
                   && (column.type[2] as BelongsToManyOptions).through.ammModelName === tModelName
                   && (column.type[2] as BelongsToManyOptions).foreignKey === tCt[2].foreignKey
+                  && (mnAs === '' || mnAs === (column.type[2] as BelongsToManyOptions).ammAs as string)
                 ) {
                   tableModelName = tModelName;
                   refTableModelName = refModelName;
@@ -575,7 +579,7 @@ class HasuraMgr extends HasuraMgrBase {
               });
             };
 
-            const swapAndTryParse = (refModelName: string, tC : JsonModelAttributeColumnOptions) => {
+            const swapAndTryParse = (refModelName: string, tC : JsonModelAttributeColumnOptions, mnAs = '') => {
               swapped = true;
               // //// console.log('refModelName :', refModelName);
               const { jsonSchema } = this.getJsonSchema(refModelName);
@@ -596,7 +600,7 @@ class HasuraMgr extends HasuraMgrBase {
                 }
                 return false;
               });
-              tryParse(refModelName, tableColumn);
+              tryParse(refModelName, tableColumn, mnAs);
             };
 
             if (associationType === 'belongsTo') {
@@ -604,7 +608,8 @@ class HasuraMgr extends HasuraMgrBase {
             } else if (associationType === 'hasOne' || associationType === 'hasMany') {
               swapAndTryParse(tableColumn.type[1] as string, tableColumn);
             } else if (associationType === 'belongsToMany') {
-              swapAndTryParse((<any>tableColumn.type[2] as BelongsToManyOptions).through.ammModelName, tableColumn);
+              const options = (<any>tableColumn.type[2] as BelongsToManyOptions);
+              swapAndTryParse(options.through.ammModelName, tableColumn, options.ammAs);
             }
 
             if (
@@ -619,42 +624,39 @@ class HasuraMgr extends HasuraMgrBase {
 
             const tableModelTableName = (<any> this.ammOrm.tableInfo[tableModelName] || this.ammOrm.associationModelInfo[tableModelName]).sqlzOptions.tableName!;
             const refTableModelTableName = (<any> this.ammOrm.tableInfo[refTableModelName] || this.ammOrm.associationModelInfo[refTableModelName]).sqlzOptions.tableName!;
+            let result = [
+              ...a2,
+            ];
+
             if (swapped) {
-              if (privateViewInfo.tableName === 'view_user_group_private') {
-                console.log('privateViewInfo.tableName, tableModelTableName :', privateViewInfo.tableName, tableModelTableName);
-                console.log('targetAs, foreignKey :', targetAs, foreignKey);
-                return [
-                  ...a2,
-                  {
-                    type: 'pg_create_array_relationship',
-                    args: {
-                      source: 'db_rick_data',
-                      name: targetAs,
-                      table: {
-                        name: privateViewInfo.tableName,
-                        schema: 'public',
-                      },
-                      using: {
-                        manual_configuration: {
-                          remote_table: {
-                            name: tableModelTableName,
-                            schema: 'public',
-                          },
-                          column_mapping: {
-                            id: foreignKey,
-                          },
+              result = [
+                ...result,
+                {
+                  type: 'pg_create_array_relationship',
+                  args: {
+                    source: 'db_rick_data',
+                    name: targetAs,
+                    table: {
+                      name: privateViewInfo.tableName,
+                      schema: 'public',
+                    },
+                    using: {
+                      manual_configuration: {
+                        remote_table: {
+                          name: tableModelTableName,
+                          schema: 'public',
+                        },
+                        column_mapping: {
+                          id: foreignKey,
                         },
                       },
                     },
                   },
-                ];
-              }
-              return [
-                ...a2,
+                },
               ];
             } else {
-              return [
-                ...a2,
+              result = [
+                ...result,
                 {
                   type: 'pg_create_object_relationship',
                   args: {
@@ -679,11 +681,57 @@ class HasuraMgr extends HasuraMgrBase {
                 },
               ];
             }
+            return result;
           }, <any>[]);
 
+          const originalTableModelTableName = (<any> this.ammOrm.tableInfo[privateViewInfo.modelName] || this.ammOrm.associationModelInfo[privateViewInfo.modelName]).sqlzOptions.tableName!;
           const newArray = [
             ...a,
             ...args,
+            {
+              type: 'pg_create_object_relationship',
+              args: {
+                source: 'db_rick_data',
+                name: 'publicData',
+                table: {
+                  name: privateViewInfo.tableName,
+                  schema: 'public',
+                },
+                using: {
+                  manual_configuration: {
+                    remote_table: {
+                      name: originalTableModelTableName,
+                      schema: 'public',
+                    },
+                    column_mapping: {
+                      id: 'id',
+                    },
+                  },
+                },
+              },
+            },
+            {
+              type: 'pg_create_object_relationship',
+              args: {
+                source: 'db_rick_data',
+                name: 'privateData',
+                table: {
+                  name: originalTableModelTableName,
+                  schema: 'public',
+                },
+                using: {
+                  manual_configuration: {
+                    remote_table: {
+                      name: privateViewInfo.tableName,
+                      schema: 'public',
+                    },
+                    column_mapping: {
+                      id: 'id',
+                    },
+                  },
+                },
+              },
+            },
           ];
           return newArray;
         }, <any>[]),
