@@ -30,6 +30,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 
+import FilterSection from './FilterSection';
 import EnhancedTable from '../../components/EnhancedTable';
 import DetailTable from './DetailTable';
 
@@ -72,7 +73,7 @@ const styles = theme => ({
 });
 
 
-class CustomerServiceEditBase extends React.PureComponent {
+class OrderListBase extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -199,6 +200,7 @@ class CustomerServiceEditBase extends React.PureComponent {
 
     return (
       <React.Fragment>
+        <FilterSection />
         <EnhancedTable
           rows={rows}
           selected={selected}
@@ -218,9 +220,9 @@ class CustomerServiceEditBase extends React.PureComponent {
   }
 }
 
-const CustomerServiceEdit = compose(
+const OrderList = compose(
   withStyles(styles)
-)(CustomerServiceEditBase);
+)(OrderListBase);
 
 
 const MY_QUERY_QUERY = gql`
@@ -247,7 +249,7 @@ const MyQueryQuery = props => (
       }
 
       if (data) {
-        return <CustomerServiceEdit rows={data.orders} />;
+        return <OrderList rows={data.orders} />;
       }
     }}
   </Query>
