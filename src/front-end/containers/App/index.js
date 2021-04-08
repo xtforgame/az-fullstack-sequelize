@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { ConnectedRouter } from 'connected-react-router';
 import useStylesByNs from 'azrmui/styles/useStylesByNs';
-import { hasuraEndpoint } from 'common/config';
 import ThemeContainer from '~/containers/core/ThemeContainer';
 import {
   makeUiThemeSelector,
@@ -19,7 +18,7 @@ import {
 const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
   link: new HttpLink({
-    uri: hasuraEndpoint,
+    uri: 'v1/graphql',
     headers: {
       'x-hasura-admin-secret': 'xxxxhsr',
     },

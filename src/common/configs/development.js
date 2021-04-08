@@ -13,8 +13,8 @@ please DO NOT put any sensitive information here.
 export { jwtIssuer } from './codegen/development';
 
 const runningMode = 'Development';
-// const hasuraEndpoint = 'http://localhost:8081/v1/graphql';
-const hasuraEndpoint = 'v1/graphql';
+const hasuraEndpoint = 'http://localhost:8081/v1/graphql';
+// const hasuraEndpoint = 'v1/graphql';
 
 export {
   runningMode,
