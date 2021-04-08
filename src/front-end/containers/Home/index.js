@@ -19,7 +19,6 @@ const styles = theme => ({
       margin: 40,
     },
     height: '100%',
-    overflowY: 'hidden',
   },
   mainContainerFullSize: {
     height: '100%',
