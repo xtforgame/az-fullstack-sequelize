@@ -39,19 +39,27 @@ export type RelationshipRelatedModelsWithColumn = {
   refTable?: RelationshipRelatedModelWithColumn;
 }
 
-export type PrivateViewInfo = {
-  isAssociationTable: boolean;
+export type ViewInfo = {
   modelName: string;
-  tableName: string;
-  publicColumns: string[];
-  privateColumns: string[];
-  privateColumnNames: string[];
+  viewLevelName: string;
+  viewTableName: string;
+  columns: string[];
+  columnNames: string[];
   dropScript: string;
   createScript: string;
 };
 
+export type ViewsInfo = {
+  isAssociationTable: boolean;
+  modelName: string;
+  publicColumns: string[];
+  views: {
+    [viewLevelName: string]: ViewInfo;
+  };
+};
+
 export type ParsedHasuraModelInfo = {
-  privateViewInfo?: PrivateViewInfo,
+  viewsInfo?: ViewsInfo,
 };
 
 class HasuraMgrBase {
@@ -99,17 +107,17 @@ class HasuraMgrBase {
 
     this.tableParsedHasuraModelInfo = {};
     this.associationTableParsedHasuraModelInfo = {};
-    this.parsePrivateViewInfos(false, this.jsonSchemasX.schemas.models, this.ammOrm.tableInfo)
-    .forEach((privateViewInfo) => {
-      this.tableParsedHasuraModelInfo[privateViewInfo.modelName] = {
-        privateViewInfo,
+    this.parseViewsInfos(false, this.jsonSchemasX.schemas.models, this.ammOrm.tableInfo)
+    .forEach((viewsInfo) => {
+      this.tableParsedHasuraModelInfo[viewsInfo.modelName] = {
+        viewsInfo,
       };
     });
     // console.log('modelScripts :', modelScripts);
-    this.parsePrivateViewInfos(true, this.jsonSchemasX.schemas.associationModels, <any>(this.ammOrm.associationModelInfo))
-    .forEach((privateViewInfo) => {
-      this.associationTableParsedHasuraModelInfo[privateViewInfo.modelName] = {
-        privateViewInfo,
+    this.parseViewsInfos(true, this.jsonSchemasX.schemas.associationModels, <any>(this.ammOrm.associationModelInfo))
+    .forEach((viewsInfo) => {
+      this.associationTableParsedHasuraModelInfo[viewsInfo.modelName] = {
+        viewsInfo,
       };
     });
     // console.log('associationScripts :', associationScripts);
@@ -143,7 +151,7 @@ class HasuraMgrBase {
     return null;
   };
 
-  parsePrivateViewInfo = (
+  parseViewsInfo = (
     isAssociationTable,
     modelName: string,
     model: IJsonSchema<ModelExtraOptions>,
@@ -154,60 +162,75 @@ class HasuraMgrBase {
     if (!hasuraOptions || !modelInfo || !model) {
       return null;
     }
-    const privateColumns : string[] = [];
-    const pushPrivate = (columnName : string) => {
-      if (
-        model.columns[columnName]
-        && !privateColumns.find(c => c === columnName)
-      ) {
-        privateColumns.push(columnName);
-      }
-    };
+    const restrictedColumnsFromOprions : string[] = hasuraOptions.restrictedColumns || [];
+    const publicColumnsFromOprions : string[] = hasuraOptions.publicColumns || [];
+
     const publicColumns : string[] = [];
     const pushPublic = (columnName : string) => {
       if (
         model.columns[columnName]
+        && !restrictedColumnsFromOprions.find(c => c === columnName)
         && !publicColumns.find(c => c === columnName)
       ) {
         publicColumns.push(columnName);
       }
     };
-    if (model.columns.id) {
-      pushPrivate('id');
+    const privateColumns : string[] = [];
+    const pushPrivate = (columnName : string) => {
+      if (
+        model.columns[columnName]
+        && !restrictedColumnsFromOprions.find(c => c === columnName)
+        && !privateColumns.find(c => c === columnName)
+      ) {
+        privateColumns.push(columnName);
+      }
+    };
+    const primaryKey = isAssociationTable
+      ? this.jsonSchemasX.schemasMetadata.associationModels[modelName].primaryKey
+      : this.jsonSchemasX.schemasMetadata.models[modelName].primaryKey;
+    if (primaryKey) {
+      pushPublic(primaryKey);
+      pushPrivate(primaryKey);
     }
-    if (hasuraOptions.publicColumns) {
-      hasuraOptions.publicColumns.forEach(pushPublic);
-      hasuraOptions.publicColumns.forEach(pushPrivate);
-    }
+    publicColumnsFromOprions.forEach(pushPublic);
+    publicColumnsFromOprions.forEach(pushPrivate);
+
     if (hasuraOptions.privateColumns) {
       hasuraOptions.privateColumns.forEach(pushPrivate);
     }
-    if (hasuraOptions.restrictedColumns) {
+    if (restrictedColumnsFromOprions) {
       Object.keys(model.columns)
-      .filter(k => !hasuraOptions.restrictedColumns!.includes(k))
+      .filter(k => !restrictedColumnsFromOprions.includes(k))
       .forEach(pushPrivate);
     } else {
       Object.keys(model.columns)
       .forEach(pushPrivate);
     }
     const privateColumnNames : string[] = privateColumns.map(k => ({ k, c: model.columns[k] })).map(({ k, c }) => this.getForeignKey(k, <any>c)).filter(c => c);
-    const tableName = `${modelInfo.tableName.replace(tablePrefix, 'view_')}_private`;
+    const viewTableName = `${modelInfo.tableName.replace(tablePrefix, 'view_')}_private`;
     // CREATE VIEW view_user_private AS SELECT "id" as "id" FROM tbl_user;
-    const dropScript = `DROP VIEW IF EXISTS ${tableName};`;
-    const createScript = `CREATE VIEW ${tableName} AS SELECT ${privateColumnNames.map(c => `"${c}" as "${c}"`).join(', ')} FROM ${modelInfo.tableName};`;
-    return <PrivateViewInfo>{
+    const dropScript = `DROP VIEW IF EXISTS ${viewTableName};`;
+    const createScript = `CREATE VIEW ${viewTableName} AS SELECT ${privateColumnNames.map(c => `"${c}" as "${c}"`).join(', ')} FROM ${modelInfo.tableName};`;
+    return <ViewsInfo>{
       isAssociationTable,
       modelName,
-      tableName,
       publicColumns,
-      privateColumns,
-      privateColumnNames,
-      dropScript,
-      createScript,
+      restrictedColumns: restrictedColumnsFromOprions,
+      views: {
+        private: {
+          modelName,
+          viewLevelName: 'private',
+          viewTableName,
+          columns: privateColumns,
+          columnNames: privateColumnNames,
+          dropScript,
+          createScript,
+        },
+      },
     };
   }
 
-  parsePrivateViewInfos = (
+  parseViewsInfos = (
     isAssociationTable,
     models: { [s: string]: IJsonSchema<ModelExtraOptions>;},
     modelInfoMap: {
@@ -216,17 +239,17 @@ class HasuraMgrBase {
   ) => Object.keys(models).reduce((a, modelName) => {
     const model = models[modelName];
     const modelInfo = modelInfoMap[modelName];
-    const privateViewInfo = this.parsePrivateViewInfo(
+    const viewsInfo = this.parseViewsInfo(
       isAssociationTable,
       modelName,
       model,
       modelInfo
     );
-    if (privateViewInfo) {
-      a.push(privateViewInfo);
+    if (viewsInfo) {
+      a.push(viewsInfo);
     }
     return a;
-  }, <PrivateViewInfo[]>[]);
+  }, <ViewsInfo[]>[]);
 
   getHeaders() : any {
     return {};
