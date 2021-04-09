@@ -30,7 +30,7 @@ import {
   postgresDbName,
   postgresPassword,
 } from 'config';
-import { getJsonSchemasX, ModelExtraOptions } from '../amm-schemas/index';
+import { supportedHasuraRoles } from '../amm-schemas/index';
 import HasuraMgrBase, { ViewsInfo } from './HasuraMgrBase';
 
 function databaseLogger(...args) { // eslint-disable-line no-unused-vars
@@ -55,8 +55,8 @@ class HasuraMgr extends HasuraMgrBase {
 
   getHeaders() : any {
     return {
-      'x-hasura-role': 'admin',
-      'x-hasura-admin-secret': 'xxxxhsr',
+      'X-Hasura-Role': 'admin',
+      'X-Hasura-Admin-Secret': 'xxxxhsr',
       'Content-Type': 'application/json',
     };
   }
@@ -279,7 +279,7 @@ class HasuraMgr extends HasuraMgrBase {
         },
       },
     });
-    console.log('data :', data);
+    console.log('trackTable data :', data);
     return data;
   }
 
@@ -323,8 +323,8 @@ class HasuraMgr extends HasuraMgrBase {
             for (let index = 0; index < viewsInfos.length; index++) {
               const viewsInfo = viewsInfos[index];
               foundView = Object.values(viewsInfo.views).find((viewInfo) => {
-                const modelName = table.table_name.replace(`_${viewInfo.viewLevelName}`, '').replace('view_', 'tbl_');
-                const associationModelName = table.table_name.replace(`_${viewInfo.viewLevelName}`, '').replace('view_', 'mn_');
+                const modelName = table.table_name.replace(toUnderscore(`_${viewInfo.viewLevelName}`), '').replace('view_', 'tbl_');
+                const associationModelName = table.table_name.replace(toUnderscore(`_${viewInfo.viewLevelName}`), '').replace('view_', 'mn_');
                 if (this.tableNameToAmmModel[modelName]
                   || this.associationTableNameToAmmModel[associationModelName]
                 ) {
@@ -372,7 +372,7 @@ class HasuraMgr extends HasuraMgrBase {
         }).filter(t => t),
       },
     });
-    console.log('data :', data);
+    console.log('trackTables data :', data);
     return data;
   }
 
@@ -456,7 +456,7 @@ class HasuraMgr extends HasuraMgrBase {
         }, []),
       },
     });
-    console.log('data :', data);
+    console.log('addRelationships data :', data);
     return data;
   }
 
@@ -505,17 +505,24 @@ class HasuraMgr extends HasuraMgrBase {
         ], <any>[]),
       ], <any>[]),
     };
-    const { data } = await axios({
-      url: 'http://localhost:8081/v2/query',
-      method: 'post',
-      headers: this.getHeaders(),
-      data: requestData,
-    });
-    // const tables = JSON.parse(data[0].result[1][0]);
-    // console.log('tables :', tables.map(s => s.table_name));
-    // const x = JSON.parse(data[1].result[1][0]);
-    // console.log('x :', x);
-    return data;
+
+    try {
+      const { data } = await axios({
+        url: 'http://localhost:8081/v2/query',
+        method: 'post',
+        headers: this.getHeaders(),
+        data: requestData,
+      });
+      // const tables = JSON.parse(data[0].result[1][0]);
+      // console.log('tables :', tables.map(s => s.table_name));
+      // const x = JSON.parse(data[1].result[1][0]);
+      // console.log('x :', x);
+      console.log('createViews data :', data);
+      return data;
+    } catch (e) {
+      console.log('createViews e :', e);
+      throw e;
+    }
   }
 
   addRelationshipsForView = (viewsInfo : ViewsInfo) => {
@@ -783,10 +790,10 @@ class HasuraMgr extends HasuraMgrBase {
           args: viewsInfos.reduce((a, vi) => a.concat(this.addRelationshipsForView(vi)), <any>[]),
         },
       });
-      console.log('data :', data);
+      console.log('addRelationshipsForViews data :', data);
       return data;
     } catch (e) {
-      console.log('e :', e);
+      console.log('addRelationshipsForViews e :', e);
       throw e;
     }
 
@@ -801,6 +808,64 @@ class HasuraMgr extends HasuraMgrBase {
     const source = await this.getMainSource();
     const table = source.tables.find(t => t.table.name === tableName);
     return (table || {}).select_permissions || [];
+  }
+
+  async addPermissions() {
+    const args = <any>[];
+    const add = (model : AmmModel) => {
+      supportedHasuraRoles.forEach((supportedHasuraRole) => {
+        args.push({
+          type: 'pg_create_select_permission',
+          args: {
+            table: {
+              name: model.sqlzOptions.tableName!,
+              schema: 'public',
+            },
+            role: supportedHasuraRole,
+            permission: {
+              filter: {},
+              columns: this.getViewsInfoForModel(model.modelName)?.publicColumns || [],
+              limit: 25,
+              allow_aggregations: true,
+            },
+            source: 'db_rick_data',
+          },
+        });
+      });
+    };
+    Object.keys(this.ammOrm.tableInfo).forEach((k) => {
+      const model = this.ammOrm.tableInfo[k];
+      add(model);
+    });
+    this.associationTableNameToAmmModel = {};
+    Object.keys(this.ammOrm.associationModelInfo).forEach((k) => {
+      const model = this.ammOrm.associationModelInfo[k] as AssociationModel;
+      add(model);
+    });
+
+    try {
+      const { data } = await axios({
+        url: 'http://localhost:8081/v1/metadata',
+        method: 'post',
+        headers: this.getHeaders(),
+        data: {
+          type: 'bulk',
+          source: 'db_rick_data',
+          args,
+        },
+      });
+      console.log('addPermissions data :', data);
+      return data;
+    } catch (e) {
+      console.log('addPermissions e :', e);
+      throw e;
+    }
+
+    // return (await Promise.all(
+    //   viewsInfos.map(
+    //     async viewsInfo => this.addRelationshipsForView(viewsInfo),
+    //   ),
+    // )).reduce((a, v) => a.concat(v), []);
   }
 
   async addPermissionsForViews() {
@@ -896,10 +961,10 @@ class HasuraMgr extends HasuraMgrBase {
           args,
         },
       });
-      console.log('data :', data);
+      console.log('addPermissionsForViews data :', data);
       return data;
     } catch (e) {
-      console.log('e :', e);
+      console.log('addPermissionsForViews e :', e);
       throw e;
     }
 
@@ -917,11 +982,14 @@ class HasuraMgr extends HasuraMgrBase {
     // await this.trackTable('tbl_account_link', 'accountLinks');
     await this.createViews();
     await this.trackTables();
-    await this.addRelationships();
-    await this.addRelationshipsForViews();
-    await this.addPermissionsForViews();
-    await this.getTables();
-    await this.getMetadata();
+    // await this.addRelationships();
+    // await this.addRelationshipsForViews();
+    // await this.addPermissions();
+    // await this.addPermissionsForViews();
+    // await this.getTables();
+    // await this.getMetadata();
+
+
     // const tables = await this.getTables();
     // tables.forEach(console.log);
   }
