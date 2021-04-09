@@ -82,7 +82,7 @@
     "generic-router": "git+https://github.com/xtforgame/generic-router.git#v1.2.0",
     "google-libphonenumber": "^3.1.5",
     "googleapis": "27",
-    "grapesjs": "^0.16.44",
+    "grapesjs": "^0.16.45",
     "grapesjs-blocks-basic": "^0.1.8",
     "grapesjs-plugin-forms": "^2.0.1",
     "graphql": "^14.2.1",

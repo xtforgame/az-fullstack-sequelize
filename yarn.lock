@@ -6239,7 +6239,7 @@ grapesjs-plugin-forms@^2.0.1:
   resolved "https://registry.yarnpkg.com/grapesjs-plugin-forms/-/grapesjs-plugin-forms-2.0.1.tgz#8ecb3b30c074f5aac9cef7d0218987f315888bd2"
   integrity sha512-TNzy6bSBPocPvYjZr4Jtc3eRKZsbRpin8w0vGlfhgoaCd7q2uMUYyq2ziAKYCjQalByz3Kia9SMWmwh9NsLRpA==
 
-grapesjs@^0.16.44:
+grapesjs@^0.16.45:
   version "0.16.45"
   resolved "https://registry.yarnpkg.com/grapesjs/-/grapesjs-0.16.45.tgz#4df8ae2943b3647c9aea9b1a03952a93e2814906"
   integrity sha512-QAov+IHYGyAHuGYnpv4MK9xKzI5HJflKblxa0+DoHipLStk/yeMIlPlevpggbBjXw/qQ3+gqqj88z82JcGg/GA==

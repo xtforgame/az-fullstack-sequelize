@@ -21,7 +21,7 @@ import {
   AmmSchema,
 } from 'az-model-manager';
 
-import { getJsonSchemasX, ModelExtraOptions } from '../amm-schemas/index';
+import { getJsonSchemasX, ModelExtraOptions, Permissions } from '../amm-schemas/index';
 
 export type RelationshipRelatedModel = {
   jsonSchema : IJsonSchema;
@@ -45,6 +45,7 @@ export type ViewInfo = {
   viewTableName: string;
   columns: string[];
   columnNames: string[];
+  permissions: Permissions;
   dropScript: string;
   createScript: string;
 };
@@ -237,6 +238,7 @@ class HasuraMgrBase {
         ...result.views[viewLevelName],
         viewTableName,
         columnNames,
+        permissions: { ...views[viewLevelName].permissions },
         dropScript,
         createScript,
       };

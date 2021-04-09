@@ -71,7 +71,7 @@ class HasuraMgr extends HasuraMgrBase {
         args: {},
       },
     });
-    // console.log('data :', data);
+    // console.log('metadata :', JSON.stringify(data, null, 2));
     return data;
   }
 
@@ -797,6 +797,119 @@ class HasuraMgr extends HasuraMgrBase {
     // )).reduce((a, v) => a.concat(v), []);
   }
 
+  async getMainSourceTableSelectPermissions(tableName: string = 'view_user_private') {
+    const source = await this.getMainSource();
+    const table = source.tables.find(t => t.table.name === tableName);
+    return (table || {}).select_permissions || [];
+  }
+
+  async addPermissionsForViews() {
+    const viewsInfos = this.getAllViewsInfos();
+    const args = <any>[];
+
+    // const permissions = await this.getMainSourceTableSelectPermissions();
+    // const permission = permissions.find(p => p.role === 'user');
+    // if (permission) {
+    //   args.push({
+    //     type: 'pg_drop_select_permission',
+    //     args: {
+    //       table: {
+    //         name: 'view_user_private',
+    //         schema: 'public',
+    //       },
+    //       role: 'user',
+    //       source: 'db_rick_data',
+    //     },
+    //   });
+    // }
+    // args.push({
+    //   type: 'pg_create_select_permission',
+    //   args: {
+    //     table: {
+    //       name: 'view_user_private',
+    //       schema: 'public',
+    //     },
+    //     role: 'user',
+    //     permission: {
+    //       columns: [
+    //         'id',
+    //         'name',
+    //         'type',
+    //         'privilege',
+    //         'picture',
+    //         'labels',
+    //         'data',
+    //         'org_mgr_id',
+    //         'created_at',
+    //         'updated_at',
+    //         'deleted_at',
+    //       ],
+    //       filter: {
+    //         id: {
+    //           _eq: 'X-Hasura-User-Id',
+    //         },
+    //       },
+    //       limit: 25,
+    //       allow_aggregations: true,
+    //     },
+    //     source: 'db_rick_data',
+    //   },
+    // });
+
+    Object.values(viewsInfos).forEach((viewsInfo) => {
+      Object.values(viewsInfo.views).forEach((view) => {
+        Object.values(view.permissions).forEach((permission) => {
+          const p = <any>{
+            columns: view.columnNames,
+            filter: permission!.filter,
+          };
+          if (permission!.limit != null) {
+            p.limit = permission!.limit;
+          }
+          if (permission!.allow_aggregations != null) {
+            p.allow_aggregations = permission!.allow_aggregations;
+          }
+          args.push({
+            type: 'pg_create_select_permission',
+            args: {
+              table: {
+                name: view.viewTableName,
+                schema: 'public',
+              },
+              role: permission!.role,
+              permission: p,
+              source: 'db_rick_data',
+            },
+          });
+        });
+      });
+    });
+
+    try {
+      const { data } = await axios({
+        url: 'http://localhost:8081/v1/metadata',
+        method: 'post',
+        headers: this.getHeaders(),
+        data: {
+          type: 'bulk',
+          source: 'db_rick_data',
+          args,
+        },
+      });
+      console.log('data :', data);
+      return data;
+    } catch (e) {
+      console.log('e :', e);
+      throw e;
+    }
+
+    // return (await Promise.all(
+    //   viewsInfos.map(
+    //     async viewsInfo => this.addRelationshipsForView(viewsInfo),
+    //   ),
+    // )).reduce((a, v) => a.concat(v), []);
+  }
+
   async test() {
     await this.getMetadata();
     await this.addSource();
@@ -806,7 +919,9 @@ class HasuraMgr extends HasuraMgrBase {
     await this.trackTables();
     await this.addRelationships();
     await this.addRelationshipsForViews();
+    await this.addPermissionsForViews();
     await this.getTables();
+    await this.getMetadata();
     // const tables = await this.getTables();
     // tables.forEach(console.log);
   }

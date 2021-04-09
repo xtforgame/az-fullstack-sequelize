@@ -1,18 +1,65 @@
+/* eslint-disable no-shadow */
+
 // model for az RDBMS ORM
 import sequelize from 'sequelize';
-import { AmmOrm, AmmSchemas, IJsonSchemas, JsonSchemasX } from 'az-model-manager';
+import {
+  AmmOrm, AmmSchemas, IJsonSchemas, JsonSchemasX,
+} from 'az-model-manager';
+
+
+export enum SupportedHasuraRoles {
+   user= 'user',
+   manager= 'manager',
+}
+
+type SupportedHasuraRoleNames = keyof typeof SupportedHasuraRoles;
+
+export type PermissionOptions = {
+  role: SupportedHasuraRoleNames;
+  filter: any;
+  limit?: number;
+  allow_aggregations?: boolean;
+}
+
+export type Permissions = {
+  [name in SupportedHasuraRoleNames]?: PermissionOptions;
+}
 
 export type ModelExtraOptions = {
   hasura: {
     views?: {
       [viewLevelName: string]: {
         columns?: string[] | 'all',
+        permissions: Permissions,
       },
     },
     publicColumns?: string[],
     restrictedColumns?: string[],
   },
 }
+
+const getPrivatePermissions : () => Permissions = () => ({
+  user: {
+    role: SupportedHasuraRoles.user,
+    filter: {
+      id: {
+        _eq: 'X-Hasura-User-Id',
+      },
+    },
+    limit: 25,
+    allow_aggregations: true,
+  },
+  manager: {
+    role: SupportedHasuraRoles.manager,
+    filter: {
+      id: {
+        _eq: 'X-Hasura-User-Id',
+      },
+    },
+    limit: 25,
+    allow_aggregations: true,
+  },
+});
 
 export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
   models: {
@@ -61,7 +108,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: 'all' } },
+          views: {
+            private: {
+              columns: 'all',
+              permissions: getPrivatePermissions(),
+            },
+          },
           publicColumns: [
             'id', 'provider_id',
           ],
@@ -263,7 +315,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: 'all' } },
+          views: {
+            private: {
+              columns: 'all',
+              permissions: getPrivatePermissions(),
+            },
+          },
           publicColumns: [
             'id', 'name', 'type', 'privilege', 'picture',
           ],
@@ -300,7 +357,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: 'all' } },
+          views: {
+            private: {
+              columns: 'all',
+              permissions: getPrivatePermissions(),
+            },
+          },
           restrictedColumns: [],
         },
       },
@@ -391,7 +453,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: 'all' } },
+          views: {
+            private: {
+              columns: 'all',
+              permissions: getPrivatePermissions(),
+            },
+          },
           restrictedColumns: [],
         },
       },
@@ -447,7 +514,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: ['data'] } },
+          views: {
+            private: {
+              columns: ['data'],
+              permissions: getPrivatePermissions(),
+            },
+          },
           publicColumns: [
             'id', 'name',
           ],
@@ -503,7 +575,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: ['data'] } },
+          views: {
+            private: {
+              columns: ['data'],
+              permissions: getPrivatePermissions(),
+            },
+          },
           publicColumns: [
             'id', 'name',
           ],
@@ -534,7 +611,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: ['data'] } },
+          views: {
+            private: {
+              columns: ['data'],
+              permissions: getPrivatePermissions(),
+            },
+          },
           publicColumns: [
             'id',
           ],
@@ -601,7 +683,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: 'all' } },
+          views: {
+            private: {
+              columns: 'all',
+              permissions: getPrivatePermissions(),
+            },
+          },
           publicColumns: [
             'id',
             'thumbnail',
@@ -640,7 +727,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: 'all' } },
+          views: {
+            private: {
+              columns: 'all',
+              permissions: getPrivatePermissions(),
+            },
+          },
           restrictedColumns: [],
         },
       },
@@ -670,7 +762,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: 'all' } },
+          views: {
+            private: {
+              columns: 'all',
+              permissions: getPrivatePermissions(),
+            },
+          },
           restrictedColumns: [],
         },
       },
@@ -712,7 +809,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: 'all' } },
+          views: {
+            private: {
+              columns: 'all',
+              permissions: getPrivatePermissions(),
+            },
+          },
           restrictedColumns: [],
         },
       },
@@ -744,7 +846,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: 'all' } },
+          views: {
+            private: {
+              columns: 'all',
+              permissions: getPrivatePermissions(),
+            },
+          },
           restrictedColumns: [],
         },
       },
@@ -774,7 +881,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: 'all' } },
+          views: {
+            private: {
+              columns: 'all',
+              permissions: getPrivatePermissions(),
+            },
+          },
           restrictedColumns: [],
         },
       },
@@ -802,7 +914,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: 'all' } },
+          views: {
+            private: {
+              columns: 'all',
+              permissions: getPrivatePermissions(),
+            },
+          },
           restrictedColumns: [],
         },
       },
@@ -838,7 +955,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: 'all' } },
+          views: {
+            private: {
+              columns: 'all',
+              permissions: getPrivatePermissions(),
+            },
+          },
           restrictedColumns: [],
         },
       },
@@ -866,7 +988,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: 'all' } },
+          views: {
+            private: {
+              columns: 'all',
+              permissions: getPrivatePermissions(),
+            },
+          },
           restrictedColumns: [],
         },
       },
@@ -902,7 +1029,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: 'all' } },
+          views: {
+            private: {
+              columns: 'all',
+              permissions: getPrivatePermissions(),
+            },
+          },
           restrictedColumns: [],
         },
       },
@@ -930,7 +1062,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: 'all' } },
+          views: {
+            private: {
+              columns: 'all',
+              permissions: getPrivatePermissions(),
+            },
+          },
           restrictedColumns: [],
         },
       },
@@ -958,7 +1095,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: 'all' } },
+          views: {
+            private: {
+              columns: 'all',
+              permissions: getPrivatePermissions(),
+            },
+          },
           restrictedColumns: [],
         },
       },
@@ -992,7 +1134,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
-          views: { private: { columns: 'all' } },
+          views: {
+            private: {
+              columns: 'all',
+              permissions: getPrivatePermissions(),
+            },
+          },
           restrictedColumns: [],
         },
       },

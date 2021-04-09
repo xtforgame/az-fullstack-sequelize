@@ -49,6 +49,10 @@ export default (editor, config = {}) => {
       init() {
         // console.log('init this :', this);
         // console.log('Local hook: model.init');
+        // setTimeout(() => {
+        //   this.set('name', 'Xxxxxxxx');
+        //   editor.refresh();
+        // }, 3000);
         const attrs = this.getAttributes();
         if (!attrs.id) {
           attrs.id = editor.DomComponents.Component.createId(this);
