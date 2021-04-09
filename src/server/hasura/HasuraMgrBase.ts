@@ -53,6 +53,7 @@ export type ViewsInfo = {
   isAssociationTable: boolean;
   modelName: string;
   publicColumns: string[];
+  restrictedColumns: string[];
   views: {
     [viewLevelName: string]: ViewInfo;
   };
@@ -162,72 +163,86 @@ class HasuraMgrBase {
     if (!hasuraOptions || !modelInfo || !model) {
       return null;
     }
-    const restrictedColumnsFromOprions : string[] = hasuraOptions.restrictedColumns || [];
-    const publicColumnsFromOprions : string[] = hasuraOptions.publicColumns || [];
+    const restrictedColumnsFromOptions : string[] = hasuraOptions.restrictedColumns || [];
+    const publicColumnsFromOptions : string[] = hasuraOptions.publicColumns || [];
+    const views = hasuraOptions.views || {};
 
-    const publicColumns : string[] = [];
+    const result : ViewsInfo = {
+      isAssociationTable,
+      modelName,
+      publicColumns: [],
+      restrictedColumns: restrictedColumnsFromOptions,
+      views: {},
+    };
+    Object.keys(views).map(viewLevelName => result.views[viewLevelName] = <any>{
+      modelName,
+      viewLevelName,
+      columns: [],
+    });
+
     const pushPublic = (columnName : string) => {
       if (
         model.columns[columnName]
-        && !restrictedColumnsFromOprions.find(c => c === columnName)
-        && !publicColumns.find(c => c === columnName)
+        && !restrictedColumnsFromOptions.find(c => c === columnName)
+        && !result.publicColumns.find(c => c === columnName)
       ) {
-        publicColumns.push(columnName);
+        result.publicColumns.push(columnName);
       }
     };
-    const privateColumns : string[] = [];
-    const pushPrivate = (columnName : string) => {
+    const pushToView = (viewLevelName: string, columnName : string) => {
       if (
         model.columns[columnName]
-        && !restrictedColumnsFromOprions.find(c => c === columnName)
-        && !privateColumns.find(c => c === columnName)
+        && !restrictedColumnsFromOptions.find(c => c === columnName)
+        && !result.views[viewLevelName].columns.find(c => c === columnName)
       ) {
-        privateColumns.push(columnName);
+        result.views[viewLevelName].columns.push(columnName);
       }
+    };
+    const pushToAllViews = (columnName : string) => {
+      Object.keys(views).map(viewLevelName => pushToView(viewLevelName, columnName));
     };
     const primaryKey = isAssociationTable
       ? this.jsonSchemasX.schemasMetadata.associationModels[modelName].primaryKey
       : this.jsonSchemasX.schemasMetadata.models[modelName].primaryKey;
     if (primaryKey) {
       pushPublic(primaryKey);
-      pushPrivate(primaryKey);
+      pushToAllViews(primaryKey);
     }
-    publicColumnsFromOprions.forEach(pushPublic);
-    publicColumnsFromOprions.forEach(pushPrivate);
+    publicColumnsFromOptions.forEach(pushPublic);
+    publicColumnsFromOptions.forEach(pushToAllViews);
 
-    if (hasuraOptions.privateColumns) {
-      hasuraOptions.privateColumns.forEach(pushPrivate);
-    }
-    if (restrictedColumnsFromOprions) {
-      Object.keys(model.columns)
-      .filter(k => !restrictedColumnsFromOprions.includes(k))
-      .forEach(pushPrivate);
-    } else {
-      Object.keys(model.columns)
-      .forEach(pushPrivate);
-    }
-    const privateColumnNames : string[] = privateColumns.map(k => ({ k, c: model.columns[k] })).map(({ k, c }) => this.getForeignKey(k, <any>c)).filter(c => c);
-    const viewTableName = `${modelInfo.tableName.replace(tablePrefix, 'view_')}_private`;
-    // CREATE VIEW view_user_private AS SELECT "id" as "id" FROM tbl_user;
-    const dropScript = `DROP VIEW IF EXISTS ${viewTableName};`;
-    const createScript = `CREATE VIEW ${viewTableName} AS SELECT ${privateColumnNames.map(c => `"${c}" as "${c}"`).join(', ')} FROM ${modelInfo.tableName};`;
-    return <ViewsInfo>{
-      isAssociationTable,
-      modelName,
-      publicColumns,
-      restrictedColumns: restrictedColumnsFromOprions,
-      views: {
-        private: {
-          modelName,
-          viewLevelName: 'private',
-          viewTableName,
-          columns: privateColumns,
-          columnNames: privateColumnNames,
-          dropScript,
-          createScript,
-        },
-      },
-    };
+
+    Object.keys(views).forEach((viewLevelName) => {
+      const cols = views[viewLevelName].columns || 'all';
+      if (views[viewLevelName] && Array.isArray(cols)) {
+        cols.forEach(c => pushToView(viewLevelName, c));
+      } else if (restrictedColumnsFromOptions) {
+        Object.keys(model.columns)
+        .filter(k => !restrictedColumnsFromOptions.includes(k))
+        .forEach(c => pushToView(viewLevelName, c));
+      } else {
+        Object.keys(model.columns)
+        .forEach(c => pushToView(viewLevelName, c));
+      }
+    });
+
+    Object.keys(views).forEach((viewLevelName) => {
+      const columnNames : string[] = result.views[viewLevelName].columns.map(k => ({ k, c: model.columns[k] })).map(({ k, c }) => this.getForeignKey(k, <any>c)).filter(c => c)
+      .concat(['created_at', 'updated_at', 'deleted_at']);
+      const viewTableName = toUnderscore(`${modelInfo.tableName.replace(tablePrefix, 'view_')}_${viewLevelName}`);
+      // CREATE VIEW view_user_private AS SELECT "id" as "id" FROM tbl_user;
+      const dropScript = `DROP VIEW IF EXISTS ${viewTableName};`;
+      const createScript = `CREATE VIEW ${viewTableName} AS SELECT ${columnNames.map(c => `"${c}" as "${c}"`).join(', ')} FROM ${modelInfo.tableName};`;
+      result.views[viewLevelName] = {
+        ...result.views[viewLevelName],
+        viewTableName,
+        columnNames,
+        dropScript,
+        createScript,
+      };
+    });
+    // console.log('result :', result);
+    return result;
   }
 
   parseViewsInfos = (
