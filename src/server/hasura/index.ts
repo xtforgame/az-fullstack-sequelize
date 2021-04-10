@@ -505,9 +505,9 @@ class HasuraMgr extends HasuraMgrBase {
         this.updateTableInSource(source, a.table.name, (table) => {
           if (type === 'pg_create_object_relationship') {
             table.object_relationships = table.object_relationships || [];
-            if (table.object_relationships.find(r => r.using.foreign_key_constraint_on === a.using.foreign_key_constraint_on)) {
-              return table;
-            }
+            // if (table.object_relationships.find(r => r.using.foreign_key_constraint_on === a.using.foreign_key_constraint_on)) {
+            //   return table;
+            // }
             table.object_relationships.push({
               name: a.name,
               using: a.using,
@@ -621,6 +621,9 @@ class HasuraMgr extends HasuraMgrBase {
       }))
       .filter(({ associationType }) => associationType)
       .reduce((a2, { associationType, columnName }) => {
+        // if (viewInfo.viewTableName === 'view_project_org_public') {
+        //   console.log('columnName :', columnName);
+        // }
         let tableModelName = viewsInfo.modelName;
         let tableColumn : JsonModelAttributeColumnOptions = model.columns[columnName] as JsonModelAttributeColumnOptions;
         // if (viewsInfo.tableName !== 'view_user_group_private') {
@@ -841,6 +844,7 @@ class HasuraMgr extends HasuraMgrBase {
       ];
       return newArray;
     }, <any>[]);
+    // fs.writeFileSync('requestData.json', JSON.stringify(requestData, null, 2), { encoding: 'utf-8' });
     return requestData;
     // const { data } = await axios({
     //   url: 'http://localhost:8081/v1/metadata',
@@ -865,9 +869,9 @@ class HasuraMgr extends HasuraMgrBase {
         this.updateTableInSource(source, a.table.name, (table) => {
           if (type === 'pg_create_object_relationship') {
             table.object_relationships = table.object_relationships || [];
-            if (table.object_relationships.find(r => r.using.foreign_key_constraint_on === a.using.foreign_key_constraint_on)) {
-              return table;
-            }
+            // if (table.object_relationships.find(r => r.using.foreign_key_constraint_on === a.using.foreign_key_constraint_on)) {
+            //   return table;
+            // }
             table.object_relationships.push({
               name: a.name,
               using: a.using,

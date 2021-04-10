@@ -54,8 +54,18 @@ const userIdF : (userIdColumnName : string) => any = (userIdColumnName : string)
   };
 };
 
+const belongsToManyUser : (asName : string, userIdName : string) => any = (asName : string, userIdName : string) => {
+  if (!asName || !userIdName) {
+    return null;
+  }
+  return {
+    [asName]: {
+      [userIdName]: { _eq: 'X-Hasura-User-Id' },
+    },
+  };
+};
 
-const getPrivatePermissions : (filter : any) => Permissions = (filter : any) => {
+const getViewPermissions : (filter : any) => Permissions = (filter : any) => {
   if (!filter) {
     return {};
   }
@@ -125,11 +135,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
             orgPublic: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
           },
           publicColumns: [
@@ -336,11 +346,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('id')),
+              permissions: getViewPermissions(userIdF('id')),
             },
             orgPublic: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('id')),
+              permissions: getViewPermissions(userIdF('id')),
             },
           },
           publicColumns: [
@@ -382,11 +392,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
             orgPublic: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
           },
           restrictedColumns: [],
@@ -482,11 +492,15 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: 'all',
-              permissions: getPrivatePermissions(null),
+              permissions: getViewPermissions(null),
+            },
+            relatedUserReadable: {
+              columns: 'all',
+              permissions: getViewPermissions(belongsToManyUser('users', 'user_id')),
             },
             orgPublic: {
               columns: 'all',
-              permissions: getPrivatePermissions(null),
+              permissions: getViewPermissions(null),
             },
           },
           restrictedColumns: [],
@@ -547,11 +561,15 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: ['data'],
-              permissions: getPrivatePermissions(null),
+              permissions: getViewPermissions(null),
+            },
+            relatedUserReadable: {
+              columns: 'all',
+              permissions: getViewPermissions(belongsToManyUser('users', 'user_id')),
             },
             orgPublic: {
-              columns: ['data'],
-              permissions: getPrivatePermissions(null),
+              columns: ['data', 'ownedUser', 'users', 'projects'],
+              permissions: getViewPermissions(null),
             },
           },
           publicColumns: [
@@ -612,11 +630,15 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: ['data'],
-              permissions: getPrivatePermissions(null),
+              permissions: getViewPermissions(null),
+            },
+            relatedUserReadable: {
+              columns: 'all',
+              permissions: getViewPermissions(belongsToManyUser('users', 'user_id')),
             },
             orgPublic: {
-              columns: ['data'],
-              permissions: getPrivatePermissions(null),
+              columns: ['data', 'users'],
+              permissions: getViewPermissions(null),
             },
           },
           publicColumns: [
@@ -652,11 +674,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: ['data'],
-              permissions: getPrivatePermissions(null),
+              permissions: getViewPermissions(null),
             },
             orgPublic: {
-              columns: ['data'],
-              permissions: getPrivatePermissions(null),
+              columns: ['data', 'users'],
+              permissions: getViewPermissions(null),
             },
           },
           publicColumns: [
@@ -728,11 +750,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: 'all',
-              permissions: getPrivatePermissions(null),
+              permissions: getViewPermissions(null),
             },
             orgPublic: {
               columns: 'all',
-              permissions: getPrivatePermissions(null),
+              permissions: getViewPermissions(null),
             },
           },
           publicColumns: [
@@ -776,11 +798,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
             orgPublic: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
           },
           restrictedColumns: [],
@@ -815,11 +837,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
             orgPublic: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
           },
           restrictedColumns: [],
@@ -866,11 +888,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
             orgPublic: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
           },
           restrictedColumns: [],
@@ -907,11 +929,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
             orgPublic: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
           },
           restrictedColumns: [],
@@ -946,11 +968,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
             orgPublic: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
           },
           restrictedColumns: [],
@@ -983,11 +1005,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: 'all',
-              permissions: getPrivatePermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
+              permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
             },
             orgPublic: {
               columns: 'all',
-              permissions: getPrivatePermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
+              permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
             },
           },
           restrictedColumns: [],
@@ -1028,11 +1050,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
             orgPublic: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
           },
           restrictedColumns: [],
@@ -1065,11 +1087,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: 'all',
-              permissions: getPrivatePermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
+              permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
             },
             orgPublic: {
               columns: 'all',
-              permissions: getPrivatePermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
+              permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
             },
           },
           restrictedColumns: [],
@@ -1110,11 +1132,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
             orgPublic: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
           },
           restrictedColumns: [],
@@ -1147,11 +1169,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: 'all',
-              permissions: getPrivatePermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
+              permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
             },
             orgPublic: {
               columns: 'all',
-              permissions: getPrivatePermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
+              permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
             },
           },
           restrictedColumns: [],
@@ -1184,11 +1206,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
             orgPublic: {
               columns: 'all',
-              permissions: getPrivatePermissions(userIdF('user_id')),
+              permissions: getViewPermissions(userIdF('user_id')),
             },
           },
           restrictedColumns: [],
@@ -1227,11 +1249,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           views: {
             private: {
               columns: 'all',
-              permissions: getPrivatePermissions(null),
+              permissions: getViewPermissions(null),
             },
             orgPublic: {
               columns: 'all',
-              permissions: getPrivatePermissions(null),
+              permissions: getViewPermissions(null),
             },
           },
           restrictedColumns: [],

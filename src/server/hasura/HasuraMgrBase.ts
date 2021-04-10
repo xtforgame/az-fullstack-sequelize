@@ -171,8 +171,6 @@ class HasuraMgrBase {
     };
 
     permission.filter = traverseFilter(permission.filter, '', null, options, (node, nodeKey, parent, op, t) => {
-      console.log('op :', op);
-      console.log('node :', node);
       return node;
     });
     return permission;
@@ -259,6 +257,10 @@ class HasuraMgrBase {
       }
     });
 
+    // if (modelName === 'project') {
+    //   console.log('result.views :', result.views);
+    // }
+
     Object.keys(views).forEach((viewLevelName) => {
       const columnNames : string[] = result.views[viewLevelName].columns.map(k => ({ k, c: model.columns[k] })).map(({ k, c }) => this.getForeignKey(k, <any>c)).filter(c => c)
       .concat(['created_at', 'updated_at', 'deleted_at']);
@@ -291,7 +293,6 @@ class HasuraMgrBase {
     return Object.keys(mdls).reduce((a, modelName) => {
       const model = mdls[modelName];
       const modelInfo = modelInfoMap[modelName];
-      console.log('model :', model);
       const viewsInfo = this.parseViewsInfo(
         isAssociationTable,
         models,
