@@ -111,14 +111,15 @@ class HasuraMgrBase {
 
     this.tableParsedHasuraModelInfo = {};
     this.associationTableParsedHasuraModelInfo = {};
-    this.parseViewsInfos(false, this.jsonSchemasX.schemas.models, this.ammOrm.tableInfo)
+    const { models, associationModels } = this.jsonSchemasX.schemas;
+    this.parseViewsInfos(false, models, associationModels, this.ammOrm.tableInfo)
     .forEach((viewsInfo) => {
       this.tableParsedHasuraModelInfo[viewsInfo.modelName] = {
         viewsInfo,
       };
     });
     // console.log('modelScripts :', modelScripts);
-    this.parseViewsInfos(true, this.jsonSchemasX.schemas.associationModels, <any>(this.ammOrm.associationModelInfo))
+    this.parseViewsInfos(true, models, associationModels, <any>(this.ammOrm.associationModelInfo))
     .forEach((viewsInfo) => {
       this.associationTableParsedHasuraModelInfo[viewsInfo.modelName] = {
         viewsInfo,
@@ -155,28 +156,37 @@ class HasuraMgrBase {
     return null;
   };
 
-  parsePermission = (model: IJsonSchema<ModelExtraOptions>, permission: PermissionOptions) => {
-    const traverseFilter = (node, nodeKey, parent, cb : Function = (n => n)) => {
+  parsePermission = (model: IJsonSchema<ModelExtraOptions>, permission: PermissionOptions, options: {
+    models: { [s: string]: IJsonSchema<ModelExtraOptions>;},
+    associationModels: { [s: string]: IJsonSchema<ModelExtraOptions>;},
+  }) => {
+    const traverseFilter = (node, nodeKey, parent, op, cb : Function = (n => n)) => {
       if (node !== null && typeof node === 'object') {
         Object.entries(node).forEach(([key, value]) => {
           // key is either an array index or object key
-          node[key] = traverseFilter(value, key, node, cb);
+          node[key] = traverseFilter(value, key, node, op, cb);
         });
       }
-      return cb(node, nodeKey, parent, traverseFilter);
+      return cb(node, nodeKey, parent, op, traverseFilter);
     };
 
-    permission.filter = traverseFilter(permission.filter, '', null, (node, nodeKey, parent, t) => {
+    permission.filter = traverseFilter(permission.filter, '', null, options, (node, nodeKey, parent, op, t) => {
+      console.log('op :', op);
       console.log('node :', node);
       return node;
     });
     return permission;
   }
 
-  parsePermissions = (model: IJsonSchema<ModelExtraOptions>, permissions: Permissions) => Object.keys(permissions).reduce((o, k) => ({ ...o, [k]: this.parsePermission(model, permissions[k]) }), {});
+  parsePermissions = (model: IJsonSchema<ModelExtraOptions>, permissions: Permissions, options: {
+    models: { [s: string]: IJsonSchema<ModelExtraOptions>;},
+    associationModels: { [s: string]: IJsonSchema<ModelExtraOptions>;},
+  }) => Object.keys(permissions).reduce((o, k) => ({ ...o, [k]: this.parsePermission(model, permissions[k], options) }), {});
 
   parseViewsInfo = (
     isAssociationTable,
+    models: { [s: string]: IJsonSchema<ModelExtraOptions>;},
+    associationModels: { [s: string]: IJsonSchema<ModelExtraOptions>;},
     modelName: string,
     model: IJsonSchema<ModelExtraOptions>,
     modelInfo: AmmModel,
@@ -260,7 +270,7 @@ class HasuraMgrBase {
         ...result.views[viewLevelName],
         viewTableName,
         columnNames,
-        permissions: this.parsePermissions(model, { ...views[viewLevelName].permissions }),
+        permissions: this.parsePermissions(model, { ...views[viewLevelName].permissions }, { models, associationModels }),
         dropScript,
         createScript,
       };
@@ -272,23 +282,30 @@ class HasuraMgrBase {
   parseViewsInfos = (
     isAssociationTable,
     models: { [s: string]: IJsonSchema<ModelExtraOptions>;},
+    associationModels: { [s: string]: IJsonSchema<ModelExtraOptions>;},
     modelInfoMap: {
       [name: string]: AmmModel;
     },
-  ) => Object.keys(models).reduce((a, modelName) => {
-    const model = models[modelName];
-    const modelInfo = modelInfoMap[modelName];
-    const viewsInfo = this.parseViewsInfo(
-      isAssociationTable,
-      modelName,
-      model,
-      modelInfo
-    );
-    if (viewsInfo) {
-      a.push(viewsInfo);
-    }
-    return a;
-  }, <ViewsInfo[]>[]);
+  ) => {
+    const mdls = isAssociationTable ? associationModels : models;
+    return Object.keys(mdls).reduce((a, modelName) => {
+      const model = mdls[modelName];
+      const modelInfo = modelInfoMap[modelName];
+      console.log('model :', model);
+      const viewsInfo = this.parseViewsInfo(
+        isAssociationTable,
+        models,
+        associationModels,
+        modelName,
+        model,
+        modelInfo
+      );
+      if (viewsInfo) {
+        a.push(viewsInfo);
+      }
+      return a;
+    }, <ViewsInfo[]>[])
+  };
 
   getHeaders() : any {
     return {};
