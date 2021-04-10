@@ -21,7 +21,9 @@ import {
   AmmSchema,
 } from 'az-model-manager';
 
-import { getJsonSchemasX, ModelExtraOptions, Permissions } from '../amm-schemas/index';
+import {
+  getJsonSchemasX, ModelExtraOptions, Permissions, PermissionOptions,
+} from '../amm-schemas/index';
 
 export type RelationshipRelatedModel = {
   jsonSchema : IJsonSchema;
@@ -153,6 +155,26 @@ class HasuraMgrBase {
     return null;
   };
 
+  parsePermission = (model: IJsonSchema<ModelExtraOptions>, permission: PermissionOptions) => {
+    const traverseFilter = (node, nodeKey, parent, cb : Function = (n => n)) => {
+      if (node !== null && typeof node === 'object') {
+        Object.entries(node).forEach(([key, value]) => {
+          // key is either an array index or object key
+          node[key] = traverseFilter(value, key, node, cb);
+        });
+      }
+      return cb(node, nodeKey, parent, traverseFilter);
+    };
+
+    permission.filter = traverseFilter(permission.filter, '', null, (node, nodeKey, parent, t) => {
+      console.log('node :', node);
+      return node;
+    });
+    return permission;
+  }
+
+  parsePermissions = (model: IJsonSchema<ModelExtraOptions>, permissions: Permissions) => Object.keys(permissions).reduce((o, k) => ({ ...o, [k]: this.parsePermission(model, permissions[k]) }), {});
+
   parseViewsInfo = (
     isAssociationTable,
     modelName: string,
@@ -238,7 +260,7 @@ class HasuraMgrBase {
         ...result.views[viewLevelName],
         viewTableName,
         columnNames,
-        permissions: { ...views[viewLevelName].permissions },
+        permissions: this.parsePermissions(model, { ...views[viewLevelName].permissions }),
         dropScript,
         createScript,
       };

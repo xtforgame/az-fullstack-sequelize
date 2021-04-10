@@ -403,6 +403,8 @@ class HasuraMgr extends HasuraMgrBase {
     }).filter(t => t);
     if (metadata) {
       const source = metadata.sources.find(s => s.name === 'db_rick_data');
+      // // reset all traced tables
+      // source.tables = [];
       args.forEach(({ args: a }) => {
         this.updateTableInSource(source, a.table, table => ({
           ...table,
