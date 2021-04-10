@@ -409,7 +409,7 @@ class HasuraMgr extends HasuraMgrBase {
           configuration: a.configuration,
         }), true);
       });
-      return;
+      return null;
     }
 
     const { data } = await axios({
@@ -520,7 +520,7 @@ class HasuraMgr extends HasuraMgrBase {
           return table;
         }, false);
       });
-      return;
+      return null;
     }
     const { data } = await axios({
       url: 'http://localhost:8081/v1/metadata',
@@ -880,7 +880,7 @@ class HasuraMgr extends HasuraMgrBase {
           return table;
         }, false);
       });
-      return;
+      return null;
     }
     try {
       const { data } = await axios({
@@ -962,7 +962,7 @@ class HasuraMgr extends HasuraMgrBase {
           return table;
         }, false);
       });
-      return;
+      return null;
     }
 
     try {
@@ -1088,7 +1088,7 @@ class HasuraMgr extends HasuraMgrBase {
           return table;
         }, false);
       });
-      return;
+      return null;
     }
 
     try {
