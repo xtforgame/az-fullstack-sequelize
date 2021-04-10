@@ -133,11 +133,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
+            privateVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgPublic: {
+            orgSharedVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
@@ -344,11 +344,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
+            privateVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('id')),
             },
-            orgPublic: {
+            orgSharedVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('id')),
             },
@@ -390,11 +390,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
+            privateVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgPublic: {
+            orgSharedVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
@@ -490,15 +490,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
-              columns: 'all',
-              permissions: getViewPermissions(null),
-            },
-            relatedUserReadable: {
+            privateVd: {
               columns: 'all',
               permissions: getViewPermissions(belongsToManyUser('users', 'user_id')),
             },
-            orgPublic: {
+            orgSharedVd: {
               columns: 'all',
               permissions: getViewPermissions(null),
             },
@@ -559,15 +555,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
-              columns: ['data'],
-              permissions: getViewPermissions(null),
-            },
-            relatedUserReadable: {
-              columns: 'all',
+            privateVd: {
+              columns: ['data', 'ownedUser', 'users', 'projects'],
               permissions: getViewPermissions(belongsToManyUser('users', 'user_id')),
             },
-            orgPublic: {
+            orgSharedVd: {
               columns: ['data', 'ownedUser', 'users', 'projects'],
               permissions: getViewPermissions(null),
             },
@@ -628,16 +620,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
-              columns: ['data'],
-              permissions: getViewPermissions(null),
-            },
-            relatedUserReadable: {
-              columns: 'all',
+            privateVd: {
+              columns: ['type', 'data', 'users', 'organization'],
               permissions: getViewPermissions(belongsToManyUser('users', 'user_id')),
             },
-            orgPublic: {
-              columns: ['data', 'users'],
+            orgSharedVd: {
+              columns: ['type', 'data', 'users', 'organization'],
               permissions: getViewPermissions(null),
             },
           },
@@ -672,11 +660,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
+            privateVd: {
               columns: ['data'],
               permissions: getViewPermissions(null),
             },
-            orgPublic: {
+            orgSharedVd: {
               columns: ['data', 'users'],
               permissions: getViewPermissions(null),
             },
@@ -748,11 +736,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
+            privateVd: {
               columns: 'all',
               permissions: getViewPermissions(null),
             },
-            orgPublic: {
+            orgSharedVd: {
               columns: 'all',
               permissions: getViewPermissions(null),
             },
@@ -796,11 +784,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
+            privateVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgPublic: {
+            orgSharedVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
@@ -835,11 +823,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
+            privateVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgPublic: {
+            orgSharedVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
@@ -886,11 +874,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
+            privateVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgPublic: {
+            orgSharedVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
@@ -927,11 +915,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
+            privateVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgPublic: {
+            orgSharedVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
@@ -966,11 +954,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
+            privateVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgPublic: {
+            orgSharedVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
@@ -1003,11 +991,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
+            privateVd: {
               columns: 'all',
               permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
             },
-            orgPublic: {
+            orgSharedVd: {
               columns: 'all',
               permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
             },
@@ -1048,11 +1036,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
+            privateVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgPublic: {
+            orgSharedVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
@@ -1085,11 +1073,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
+            privateVd: {
               columns: 'all',
               permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
             },
-            orgPublic: {
+            orgSharedVd: {
               columns: 'all',
               permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
             },
@@ -1130,11 +1118,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
+            privateVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgPublic: {
+            orgSharedVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
@@ -1167,11 +1155,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
+            privateVd: {
               columns: 'all',
               permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
             },
-            orgPublic: {
+            orgSharedVd: {
               columns: 'all',
               permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
             },
@@ -1204,11 +1192,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
+            privateVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgPublic: {
+            orgSharedVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
@@ -1247,11 +1235,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       extraOptions: {
         hasura: {
           views: {
-            private: {
+            privateVd: {
               columns: 'all',
               permissions: getViewPermissions(null),
             },
-            orgPublic: {
+            orgSharedVd: {
               columns: 'all',
               permissions: getViewPermissions(null),
             },

@@ -823,7 +823,7 @@ class HasuraMgr extends HasuraMgrBase {
           type: 'pg_create_object_relationship',
           args: {
             source: 'db_rick_data',
-            name: `${viewInfo.viewLevelName}Data`,
+            name: viewInfo.viewLevelName,
             table: {
               name: originalTableModelTableName,
               schema: 'public',
