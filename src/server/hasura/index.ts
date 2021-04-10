@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import sequelize, { Sequelize } from 'sequelize';
+import fs from 'fs';
 import axios from 'axios';
 import { toCamel, capitalizeFirstLetter, toUnderscore } from 'common/utils';
 import {
@@ -73,6 +74,26 @@ class HasuraMgr extends HasuraMgrBase {
     });
     // console.log('metadata :', JSON.stringify(data, null, 2));
     return data;
+  }
+
+  async replaceMetadata(metadata) {
+    // fs.writeFileSync('metadata.json', JSON.stringify(metadata, null, 2), { encoding: 'utf-8' });
+    try {
+      const { data } = await axios({
+        url: 'http://localhost:8081/v1/metadata',
+        method: 'post',
+        headers: this.getHeaders(),
+        data: {
+          type: 'replace_metadata',
+          args: metadata,
+        },
+      });
+      console.log('replaceMetadata data :', data);
+      return data;
+    } catch (e) {
+      console.log('replaceMetadata e :', e);
+      throw e;
+    }
   }
 
   async addSource() {
@@ -301,9 +322,96 @@ class HasuraMgr extends HasuraMgrBase {
     return tableMap;
   }
 
-  async trackTables() {
+  updateTableInSource(source: any, tableName: string, cb: Function, createTable: boolean = false) {
+    let table = source.tables.find(t => t.table.name === tableName);
+    if (!table) {
+      if (createTable) {
+        table = {
+          table: { schema: 'public', name: tableName },
+        };
+        source.tables.push(table);
+      } else {
+        throw new Error(`table not found: ${tableName}`);
+      }
+    }
+    table = cb(table) || table;
+    const index = source.tables.findIndex(t => t.table.name === tableName);
+    source.tables.splice(index, 1, table);
+  }
+
+  async trackTables(metadata?: any) {
     const tableMap = await this.getTrackedTableMap();
     const tables = await this.getTables();
+    const args = tables.map((table) => {
+      if (tableMap[table.table_name]) {
+        return null;
+      }
+      if (!this.tableNameToAmmModel[table.table_name]
+        && !this.associationTableNameToAmmModel[table.table_name]
+      ) {
+        const viewsInfos = this.getAllViewsInfos();
+        let foundView : any;
+        for (let index = 0; index < viewsInfos.length; index++) {
+          const viewsInfo = viewsInfos[index];
+          foundView = Object.values(viewsInfo.views).find((viewInfo) => {
+            const modelName = table.table_name.replace(toUnderscore(`_${viewInfo.viewLevelName}`), '').replace('view_', 'tbl_');
+            const associationModelName = table.table_name.replace(toUnderscore(`_${viewInfo.viewLevelName}`), '').replace('view_', 'mn_');
+            if (this.tableNameToAmmModel[modelName]
+              || this.associationTableNameToAmmModel[associationModelName]
+            ) {
+              return true;
+            }
+            return false;
+          });
+          if (foundView) {
+            break;
+          }
+        }
+
+        if (!foundView) {
+          return null;
+        }
+      }
+      const resName = toCamel(table.table_name.replace(/^mn_/g, '').replace(/^tbl_/g, '').replace(/^view_/g, ''));
+      const pluralResName = sequelize.Utils.pluralize(resName);
+      const resNameC = capitalizeFirstLetter(resName);
+      const pluralResNameC = capitalizeFirstLetter(pluralResName);
+      return {
+        type: 'pg_track_table',
+        args: {
+          source: 'db_rick_data',
+          table: table.table_name,
+          configuration: {
+            custom_name: resName,
+            custom_root_fields: {
+              select: pluralResName,
+              select_by_pk: resName,
+              select_aggregate: `${resName}Aggregate`,
+              insert: `add${pluralResNameC}`,
+              insert_one: `add${resNameC}`,
+              update: `update${pluralResNameC}`,
+              update_by_pk: `update${resNameC}`,
+              delete: `delete${pluralResNameC}`,
+              delete_by_pk: `delete${resNameC}`,
+            },
+            custom_column_names: {
+              id: 'id',
+            },
+          },
+        },
+      };
+    }).filter(t => t);
+    if (metadata) {
+      const source = metadata.sources.find(s => s.name === 'db_rick_data');
+      args.forEach(({ args: a }) => {
+        this.updateTableInSource(source, a.table, table => ({
+          ...table,
+          configuration: a.configuration,
+        }), true);
+      });
+      return;
+    }
+
     const { data } = await axios({
       url: 'http://localhost:8081/v1/metadata',
       method: 'post',
@@ -311,73 +419,109 @@ class HasuraMgr extends HasuraMgrBase {
       data: {
         type: 'bulk',
         source: 'db_rick_data',
-        args: tables.map((table) => {
-          if (tableMap[table.table_name]) {
-            return null;
-          }
-          if (!this.tableNameToAmmModel[table.table_name]
-            && !this.associationTableNameToAmmModel[table.table_name]
-          ) {
-            const viewsInfos = this.getAllViewsInfos();
-            let foundView : any;
-            for (let index = 0; index < viewsInfos.length; index++) {
-              const viewsInfo = viewsInfos[index];
-              foundView = Object.values(viewsInfo.views).find((viewInfo) => {
-                const modelName = table.table_name.replace(toUnderscore(`_${viewInfo.viewLevelName}`), '').replace('view_', 'tbl_');
-                const associationModelName = table.table_name.replace(toUnderscore(`_${viewInfo.viewLevelName}`), '').replace('view_', 'mn_');
-                if (this.tableNameToAmmModel[modelName]
-                  || this.associationTableNameToAmmModel[associationModelName]
-                ) {
-                  return true;
-                }
-                return false;
-              });
-              if (foundView) {
-                break;
-              }
-            }
-
-            if (!foundView) {
-              return null;
-            }
-          }
-          const resName = toCamel(table.table_name.replace(/^mn_/g, '').replace(/^tbl_/g, '').replace(/^view_/g, ''));
-          const pluralResName = sequelize.Utils.pluralize(resName);
-          const resNameC = capitalizeFirstLetter(resName);
-          const pluralResNameC = capitalizeFirstLetter(pluralResName);
-          return {
-            type: 'pg_track_table',
-            args: {
-              source: 'db_rick_data',
-              table: table.table_name,
-              configuration: {
-                custom_name: resName,
-                custom_root_fields: {
-                  select: pluralResName,
-                  select_by_pk: resName,
-                  select_aggregate: `${resName}Aggregate`,
-                  insert: `add${pluralResNameC}`,
-                  insert_one: `add${resNameC}`,
-                  update: `update${pluralResNameC}`,
-                  update_by_pk: `update${resNameC}`,
-                  delete: `delete${pluralResNameC}`,
-                  delete_by_pk: `delete${resNameC}`,
-                },
-                custom_column_names: {
-                  id: 'id',
-                },
-              },
-            },
-          };
-        }).filter(t => t),
+        args,
       },
     });
     console.log('trackTables data :', data);
     return data;
   }
 
-  async addRelationships() {
+  async addRelationships(metadata?: any) {
     const relationships = await this.getRelationships();
+    const args = relationships.reduce((a, relationship) => {
+      const relatedModelsWithColumn = this.findRelatedModelsForRelationship(relationship);
+
+      const tableColumn = relatedModelsWithColumn.table!.column!;
+      const refTableColumn = relatedModelsWithColumn.refTable!.column!;
+      const tableModelTableName = relatedModelsWithColumn.table?.model!.tableName;
+      const refTableModelTableName = relatedModelsWithColumn.refTable?.model!.tableName;
+
+      const { foreignKey, ammAs: sourceAs } = (tableColumn.type[2] as BelongsToOptions);
+      let targetAs = '';
+      if (refTableColumn.type[0] === 'hasOne') {
+        targetAs = (refTableColumn.type[2] as HasOneOptions).ammAs as string;
+      } else if (refTableColumn.type[0] === 'hasMany') {
+        targetAs = (refTableColumn.type[2] as HasManyOptions).ammAs as string;
+      } else if (refTableColumn.type[0] === 'belongsToMany') {
+        targetAs = (refTableColumn.type[2] as BelongsToManyOptions).ammAs as string;
+      }
+
+
+      // if (foreignKey === 'account_link_id') {
+      //   console.log('sourceAs :', sourceAs);
+
+      //   console.log('targetAs :', targetAs);
+
+      //   console.log('tableColumn :', tableColumn);
+      //   console.log('tableModelTableName :', tableModelTableName);
+      //   console.log('foreignKey :', foreignKey);
+      //   console.log('refTableModelTableName :', refTableModelTableName);
+      // }
+
+      const newArray = [
+        ...a,
+        {
+          type: 'pg_create_object_relationship',
+          args: {
+            name: sourceAs,
+            table: {
+              name: tableModelTableName,
+              schema: 'public',
+            },
+            using: {
+              foreign_key_constraint_on: foreignKey,
+            },
+            source: 'db_rick_data',
+          },
+        },
+        {
+          type: 'pg_create_array_relationship',
+          args: {
+            name: targetAs,
+            table: {
+              name: refTableModelTableName,
+              schema: 'public',
+            },
+            using: {
+              foreign_key_constraint_on: {
+                table: {
+                  name: tableModelTableName,
+                  schema: 'public',
+                },
+                column: foreignKey,
+              },
+            },
+            source: 'db_rick_data',
+          },
+        },
+      ];
+      return newArray;
+    }, []);
+    if (metadata) {
+      const source = metadata.sources.find(s => s.name === 'db_rick_data');
+      args.forEach(({ type, args: a }) => {
+        this.updateTableInSource(source, a.table.name, (table) => {
+          if (type === 'pg_create_object_relationship') {
+            table.object_relationships = table.object_relationships || [];
+            if (table.object_relationships.find(r => r.using.foreign_key_constraint_on === a.using.foreign_key_constraint_on)) {
+              return table;
+            }
+            table.object_relationships.push({
+              name: a.name,
+              using: a.using,
+            });
+          } else if (type === 'pg_create_array_relationship') {
+            table.array_relationships = table.array_relationships || [];
+            table.array_relationships.push({
+              name: a.name,
+              using: a.using,
+            });
+          }
+          return table;
+        }, false);
+      });
+      return;
+    }
     const { data } = await axios({
       url: 'http://localhost:8081/v1/metadata',
       method: 'post',
@@ -385,75 +529,7 @@ class HasuraMgr extends HasuraMgrBase {
       data: {
         type: 'bulk',
         source: 'db_rick_data',
-        args: relationships.reduce((a, relationship) => {
-          const relatedModelsWithColumn = this.findRelatedModelsForRelationship(relationship);
-
-          const tableColumn = relatedModelsWithColumn.table!.column!;
-          const refTableColumn = relatedModelsWithColumn.refTable!.column!;
-          const tableModelTableName = relatedModelsWithColumn.table?.model!.tableName;
-          const refTableModelTableName = relatedModelsWithColumn.refTable?.model!.tableName;
-
-          const { foreignKey, ammAs: sourceAs } = (tableColumn.type[2] as BelongsToOptions);
-          let targetAs = '';
-          if (refTableColumn.type[0] === 'hasOne') {
-            targetAs = (refTableColumn.type[2] as HasOneOptions).ammAs as string;
-          } else if (refTableColumn.type[0] === 'hasMany') {
-            targetAs = (refTableColumn.type[2] as HasManyOptions).ammAs as string;
-          } else if (refTableColumn.type[0] === 'belongsToMany') {
-            targetAs = (refTableColumn.type[2] as BelongsToManyOptions).ammAs as string;
-          }
-
-
-          // if (foreignKey === 'account_link_id') {
-          //   console.log('sourceAs :', sourceAs);
-
-          //   console.log('targetAs :', targetAs);
-
-          //   console.log('tableColumn :', tableColumn);
-          //   console.log('tableModelTableName :', tableModelTableName);
-          //   console.log('foreignKey :', foreignKey);
-          //   console.log('refTableModelTableName :', refTableModelTableName);
-          // }
-
-          const newArray = [
-            ...a,
-            {
-              type: 'pg_create_object_relationship',
-              args: {
-                name: sourceAs,
-                table: {
-                  name: tableModelTableName,
-                  schema: 'public',
-                },
-                using: {
-                  foreign_key_constraint_on: foreignKey,
-                },
-                source: 'db_rick_data',
-              },
-            },
-            {
-              type: 'pg_create_array_relationship',
-              args: {
-                name: targetAs,
-                table: {
-                  name: refTableModelTableName,
-                  schema: 'public',
-                },
-                using: {
-                  foreign_key_constraint_on: {
-                    table: {
-                      name: tableModelTableName,
-                      schema: 'public',
-                    },
-                    column: foreignKey,
-                  },
-                },
-                source: 'db_rick_data',
-              },
-            },
-          ];
-          return newArray;
-        }, []),
+        args,
       },
     });
     console.log('addRelationships data :', data);
@@ -675,6 +751,7 @@ class HasuraMgr extends HasuraMgrBase {
                     column_mapping: {
                       id: foreignKey,
                     },
+                    insertion_order: null,
                   },
                 },
               },
@@ -701,6 +778,7 @@ class HasuraMgr extends HasuraMgrBase {
                     column_mapping: {
                       [foreignKey]: 'id',
                     },
+                    insertion_order: null,
                   },
                 },
               },
@@ -776,9 +854,34 @@ class HasuraMgr extends HasuraMgrBase {
     // return data;
   }
 
-  async addRelationshipsForViews() {
+  async addRelationshipsForViews(metadata?: any) {
     const viewsInfos = this.getAllViewsInfos();
-
+    const args = viewsInfos.reduce((a, vi) => a.concat(this.addRelationshipsForView(vi)), <any>[]);
+    if (metadata) {
+      const source = metadata.sources.find(s => s.name === 'db_rick_data');
+      args.forEach(({ type, args: a }) => {
+        this.updateTableInSource(source, a.table.name, (table) => {
+          if (type === 'pg_create_object_relationship') {
+            table.object_relationships = table.object_relationships || [];
+            if (table.object_relationships.find(r => r.using.foreign_key_constraint_on === a.using.foreign_key_constraint_on)) {
+              return table;
+            }
+            table.object_relationships.push({
+              name: a.name,
+              using: a.using,
+            });
+          } else if (type === 'pg_create_array_relationship') {
+            table.array_relationships = table.array_relationships || [];
+            table.array_relationships.push({
+              name: a.name,
+              using: a.using,
+            });
+          }
+          return table;
+        }, false);
+      });
+      return;
+    }
     try {
       const { data } = await axios({
         url: 'http://localhost:8081/v1/metadata',
@@ -787,7 +890,7 @@ class HasuraMgr extends HasuraMgrBase {
         data: {
           type: 'bulk',
           source: 'db_rick_data',
-          args: viewsInfos.reduce((a, vi) => a.concat(this.addRelationshipsForView(vi)), <any>[]),
+          args,
         },
       });
       console.log('addRelationshipsForViews data :', data);
@@ -810,7 +913,7 @@ class HasuraMgr extends HasuraMgrBase {
     return (table || {}).select_permissions || [];
   }
 
-  async addPermissions() {
+  async addPermissions(metadata?: any) {
     const args = <any>[];
     const add = (model : AmmModel) => {
       supportedHasuraRoles.forEach((supportedHasuraRole) => {
@@ -842,6 +945,25 @@ class HasuraMgr extends HasuraMgrBase {
       const model = this.ammOrm.associationModelInfo[k] as AssociationModel;
       add(model);
     });
+    if (metadata) {
+      const source = metadata.sources.find(s => s.name === 'db_rick_data');
+      args.forEach(({ type, args: a }) => {
+        this.updateTableInSource(source, a.table.name, (table) => {
+          if (type === 'pg_create_select_permission') {
+            table.select_permissions = table.select_permissions || [];
+            if (table.select_permissions.find(r => r.role === a.role)) {
+              return table;
+            }
+            table.select_permissions.push({
+              role: a.role,
+              permission: a.permission,
+            });
+          }
+          return table;
+        }, false);
+      });
+      return;
+    }
 
     try {
       const { data } = await axios({
@@ -868,7 +990,7 @@ class HasuraMgr extends HasuraMgrBase {
     // )).reduce((a, v) => a.concat(v), []);
   }
 
-  async addPermissionsForViews() {
+  async addPermissionsForViews(metadata?: any) {
     const viewsInfos = this.getAllViewsInfos();
     const args = <any>[];
 
@@ -949,6 +1071,25 @@ class HasuraMgr extends HasuraMgrBase {
         });
       });
     });
+    if (metadata) {
+      const source = metadata.sources.find(s => s.name === 'db_rick_data');
+      args.forEach(({ type, args: a }) => {
+        this.updateTableInSource(source, a.table.name, (table) => {
+          if (type === 'pg_create_select_permission') {
+            table.select_permissions = table.select_permissions || [];
+            if (table.select_permissions.find(r => r.role === a.role)) {
+              return table;
+            }
+            table.select_permissions.push({
+              role: a.role,
+              permission: a.permission,
+            });
+          }
+          return table;
+        }, false);
+      });
+      return;
+    }
 
     try {
       const { data } = await axios({
@@ -981,11 +1122,13 @@ class HasuraMgr extends HasuraMgrBase {
     // await this.trackTable('tbl_user', 'users');
     // await this.trackTable('tbl_account_link', 'accountLinks');
     await this.createViews();
-    await this.trackTables();
-    // await this.addRelationships();
-    // await this.addRelationshipsForViews();
-    // await this.addPermissions();
-    // await this.addPermissionsForViews();
+    const metadata = await this.getMetadata();
+    await this.trackTables(metadata);
+    await this.addRelationships(metadata);
+    await this.addRelationshipsForViews(metadata);
+    await this.addPermissions(metadata);
+    await this.addPermissionsForViews(metadata);
+    await this.replaceMetadata(metadata);
     // await this.getTables();
     // await this.getMetadata();
 
