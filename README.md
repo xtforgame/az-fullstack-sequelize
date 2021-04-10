@@ -140,3 +140,5 @@ X-Hasura-Allowed-Organizations {1,2,3}
     ]
 }
 ```
+
+apollo schema:download --endpoint http://localhost:8081/v1/graphql --header "X-Hasura-Admin-Secret: xxxxhsr"
