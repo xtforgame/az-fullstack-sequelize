@@ -116,6 +116,7 @@
     "pretty": "^2.0.0",
     "prop-types": "^15.6.0",
     "pure-epic": "git+https://github.com/xtforgame/pure-epic.git#v1.0.0",
+    "qrcode.react": "^1.0.1",
     "querchy": "git+https://github.com/xtforgame/querchy.git#v0.3.0",
     "react": "^16.8.2",
     "react-apollo": "^2.5.5",
