@@ -111,7 +111,7 @@ const getColumnConfig = () => {
 };
 
 const ORDER_LIST_QUERY = gql`
-  query OrderListQuery {
+  query OrderList {
     orders(order_by: {created_at: desc}) {
       id
       memo
