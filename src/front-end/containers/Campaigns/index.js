@@ -171,46 +171,43 @@ export default (props) => {
     );
   };
 
-  const renderActions = (numSelected) => {
-    console.log(numSelected);
-    return numSelected > 0 ? (
-      <React.Fragment>
-        <Tooltip title="核准">
-          <IconButton aria-label="accept" onClick={() => handleAccept()}>
-            <DoneIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="駁回">
-          <IconButton aria-label="reject" onClick={() => handleReject()}>
-            <ClearIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="下載報告">
-          <IconButton aria-label="download report" onClick={() => handleDownload()}>
-            <SaveAltIcon />
-          </IconButton>
-        </Tooltip>
-      </React.Fragment>
-    ) : (
-      <React.Fragment>
-        <Tooltip title="新增活動">
-          <IconButton color="primary" aria-label="新增活動">
-            <AddIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="重新整理">
-          <IconButton aria-label="重新整理" onClick={refresh}>
-            <RefreshIcon />
-          </IconButton>
-        </Tooltip>
-        {/* <Tooltip title="Filter list">
+  const renderActions = numSelected => (numSelected > 0 ? (
+    <React.Fragment>
+      <Tooltip title="核准">
+        <IconButton aria-label="accept" onClick={() => handleAccept()}>
+          <DoneIcon />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="駁回">
+        <IconButton aria-label="reject" onClick={() => handleReject()}>
+          <ClearIcon />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="下載報告">
+        <IconButton aria-label="download report" onClick={() => handleDownload()}>
+          <SaveAltIcon />
+        </IconButton>
+      </Tooltip>
+    </React.Fragment>
+  ) : (
+    <React.Fragment>
+      <Tooltip title="新增活動">
+        <IconButton color="primary" aria-label="新增活動">
+          <AddIcon />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="重新整理">
+        <IconButton aria-label="重新整理" onClick={refresh}>
+          <RefreshIcon />
+        </IconButton>
+      </Tooltip>
+      {/* <Tooltip title="Filter list">
           <IconButton aria-label="filter list">
             <FilterListIcon />
           </IconButton>
         </Tooltip> */}
-      </React.Fragment>
-    );
-  };
+    </React.Fragment>
+  ));
 
   useEffect(() => {
     if (data && data.campaigns) {
