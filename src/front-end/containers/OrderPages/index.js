@@ -123,7 +123,6 @@ export default (props) => {
   const [selected, setSelected] = useState([]);
   const classes = useStyles();
 
-
   const { loading, error, data } = useQuery(ORDER_LIST_QUERY);
 
   const refresh = async () => {

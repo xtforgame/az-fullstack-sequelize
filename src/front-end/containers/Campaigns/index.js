@@ -121,12 +121,14 @@ const CAMPAIGN_LIST_QUERY = gql`
 
 export default (props) => {
   const [selected, setSelected] = useState([]);
+  const [refreshCount, setRefreshCount] = useState(0);
   const classes = useStyles();
 
 
-  const { loading, error, data } = useQuery(CAMPAIGN_LIST_QUERY);
+  const { loading, error, data } = useQuery(CAMPAIGN_LIST_QUERY, { variables: { name: refreshCount.toString() }, fetchPolicy: 'network-only' });
 
   const refresh = async () => {
+    setRefreshCount(refreshCount + 1);
   };
 
   const handleAccept = async () => {
@@ -192,7 +194,7 @@ export default (props) => {
 
   const rows = createList();
 
-  if (loading || !data) return <pre>Loading</pre>;
+  // if (loading || !data) return <pre>Loading</pre>;
   if (error) {
     return (
       <pre>
@@ -201,13 +203,16 @@ export default (props) => {
       </pre>
     );
   }
-  console.log('data.campaigns :', data.campaigns);
+  if (data && data.campaigns) {
+    console.log('data.campaigns :', data.campaigns);
+  }
 
   return (
     <React.Fragment>
       <FilterSection />
       <EnhancedTable
         rows={rows}
+        loading={loading}
         selected={selected}
         setSelected={setSelected}
         {...getColumnConfig()}

@@ -7,6 +7,8 @@ import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import Fade from '@material-ui/core/Fade';
+import ProgressWithMask from 'azrmui/core/Progress/ProgressWithMask';
 import EnhancedTableToolbar from './EnhancedTableToolbar';
 import EnhancedTableHead from './EnhancedTableHead';
 import EnhancedRow from './EnhancedRow';
@@ -43,6 +45,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
   },
   paper: {
+    position: 'relative',
     width: '100%',
     marginBottom: theme.spacing(2),
   },
@@ -66,6 +69,7 @@ export default function EnhancedTable({
   rows,
   selected,
   setSelected,
+  loading,
 
   defaultSorting = {
     order: 'desc',
@@ -141,6 +145,7 @@ export default function EnhancedTable({
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
+  console.log('loading :', loading);
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -202,6 +207,20 @@ export default function EnhancedTable({
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
+        <Fade
+          in={loading}
+          timeout={{
+            enter: 0,
+            exit: 200,
+          }}
+          unmountOnExit
+        >
+          <ProgressWithMask
+            backgroundColor="rgba(255, 255, 255, 0.5)"
+            zIndex={1101}
+            delay={0}
+          />
+        </Fade>
       </Paper>
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
