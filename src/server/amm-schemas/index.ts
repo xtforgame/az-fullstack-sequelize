@@ -716,6 +716,43 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         },
       },
     },
+    productCategory: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        name: 'string',
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+        groups: ['hasMany', 'productGroup', {
+          foreignKey: 'category_id',
+        }],
+      },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(null),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(null),
+            // },
+          },
+          publicColumns: [
+            'id',
+            'name',
+            'data',
+            'groups',
+          ],
+        },
+      },
+    },
     product: {
       columns: {
         id: {
@@ -727,7 +764,7 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         color: 'string',
         size: 'string',
         ...productColumns,
-        productGroup: ['belongsTo', 'productGroup', {
+        group: ['belongsTo', 'productGroup', {
           foreignKey: 'group_id',
         }],
         orders: ['belongsToMany', 'order', {
@@ -765,6 +802,7 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
             'weight',
             'description',
             'data',
+            'group',
           ],
         },
       },
@@ -778,8 +816,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         },
         customId: 'string',
         ...productColumns,
-        productGroup: ['hasMany', 'product', {
+        products: ['hasMany', 'product', {
           foreignKey: 'group_id',
+        }],
+        category: ['belongsTo', 'productCategory', {
+          foreignKey: 'category_id',
         }],
         campaigns: ['belongsToMany', 'campaign', {
           through: {
@@ -804,18 +845,7 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
             //   permissions: getViewPermissions(null),
             // },
           },
-          publicColumns: [
-            'id',
-            'customId',
-            'thumbnail',
-            'pictures',
-            'name',
-            'price',
-            'weight',
-            'description',
-            'data',
-            'campaigns',
-          ],
+          publicColumns: 'all',
         },
       },
     },
