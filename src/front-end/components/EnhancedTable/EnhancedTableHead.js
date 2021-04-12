@@ -55,7 +55,7 @@ export default function EnhancedTableHead(props) {
             <TableCell
               key={column.id}
               align={column.align ? column.align : 'left'}
-              padding={column.disablePadding ? 'none' : 'default'}
+              padding={column.padding || 'default'}
               sortDirection={orderBy === column.id ? order : false}
               style={style}
             >

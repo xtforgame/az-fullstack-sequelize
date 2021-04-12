@@ -27,6 +27,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import DateRangeInput from '~/components/DateRangeInput';
 import BasicSection from '~/components/Section/Basic';
 import LoadingMask from '~/components/EnhancedTable/LoadingMask';
+import useRouterPush from '~/hooks/useRouterPush';
 import TagsAutocomplete from '../TagsAutocomplete';
 
 
@@ -72,19 +73,44 @@ const CampaignEditor = (props) => {
     editingData,
   } = props;
 
+  const isCreating = !editingData;
+
   const classes = useStyles();
 
-  const [name, setName, nameError, setNameError] = useStateWithError(editingData.name);
-  const [selectedType, setSelectedType] = useState({ id: editingData.type, name: campaignTypeNameFunc(editingData.type) });
+  const [name, setName, nameError, setNameError] = useStateWithError(isCreating ? '' : editingData.name);
+  const [selectedType, setSelectedType] = useState(isCreating ? campaignTypes[0] : { id: editingData.type, name: campaignTypeNameFunc(editingData.type) });
   const handleTypeMenuItemClick = (event, exEvent, i) => {
     setSelectedType(exEvent);
   };
 
-  const [dateRange, setDateRange] = useState([editingData.start, editingData.end]);
+  const [dateRange, setDateRange] = useState(isCreating ? [null, null] : [editingData.start, editingData.end]);
 
-  const [selectedState, setSelectedState] = useState({ id: editingData.state, name: campaignStateNameFunc(editingData.state) });
+  const [selectedState, setSelectedState] = useState(isCreating ? campaignStates[0] : { id: editingData.state, name: campaignStateNameFunc(editingData.state) });
   const handleStateMenuItemClick = (event, exEvent, i) => {
     setSelectedState(exEvent);
+  };
+
+  const push = useRouterPush();
+
+  const submit = async () => {
+    const data = {
+      name,
+      type: selectedType.id,
+      state: selectedState.id,
+    };
+    if (isCreating) {
+      await axios({
+        method: 'post',
+        url: 'api/campaigns',
+        data,
+      });
+    } else {
+      await axios({
+        method: 'patch',
+        url: `api/campaigns/${editingData.id}`,
+        data,
+      });
+    }
   };
 
   return (
@@ -171,8 +197,11 @@ const CampaignEditor = (props) => {
         </div>
       </DialogContent>
       <DialogActions>
-        <Button variant="contained" onClick={() => {}} color="primary">
-          搜尋
+        <Button onClick={() => { push('/campaign'); }} color="primary">
+          返回
+        </Button>
+        <Button variant="contained" onClick={submit} color="primary">
+          更新
         </Button>
       </DialogActions>
     </React.Fragment>

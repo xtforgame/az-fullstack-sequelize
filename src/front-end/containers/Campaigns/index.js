@@ -27,12 +27,14 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
+import EditIcon from '@material-ui/icons/Edit';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import ContentText from 'azrmui/core/Text/ContentText';
 import BasicSection from '~/components/Section/Basic';
 import EnhancedTable from '~/components/EnhancedTable';
 import useRouterQuery from '~/hooks/useRouterQuery';
+import useRouterPush from '~/hooks/useRouterPush';
 
 import FilterSection from './FilterSection';
 import DetailTable from './DetailTable';
@@ -124,6 +126,24 @@ const getColumnConfig = () => {
     //   renderRowCell,
     //   size: 200,
     // },
+    {
+      id: '__action__',
+      label: '',
+      sortable: false,
+      align: 'right',
+      padding: 'checkbox',
+      renderRowCell: (columnName, row, option) => {
+        const push = useRouterPush();
+        return (
+          <Tooltip title="修改">
+            <IconButton color="primary" aria-label="修改" onClick={() => push(`/campaign/edit/${row.id}`)}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+        );
+      },
+      size: 64,
+    },
   ];
 
   const data = {

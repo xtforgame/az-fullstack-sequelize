@@ -62,6 +62,7 @@ export default function EnhancedRow({
             return (
               <TableCell
                 key={column.id}
+                padding={column.padding || 'default'}
                 align={column.align ? column.align : 'left'}
                 style={style}
               >
