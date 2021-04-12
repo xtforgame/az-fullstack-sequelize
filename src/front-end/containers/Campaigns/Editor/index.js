@@ -20,11 +20,38 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
-import { FormDatePicker, FormFieldButtonSelect, FormTextField, FormSpace } from 'azrmui/core/FormInputs';
+import {
+  FormDatePicker, FormFieldButtonSelect, FormTextField, FormSpace,
+} from 'azrmui/core/FormInputs';
 import MenuItem from '@material-ui/core/MenuItem';
-import DateRangeInput from '../DateRangeInput';
-import TagsAutocomplete from '../TagsAutocomplete';
+import DateRangeInput from '~/components/DateRangeInput';
 import BasicSection from '~/components/Section/Basic';
+import LoadingMask from '~/components/EnhancedTable/LoadingMask';
+import TagsAutocomplete from '../TagsAutocomplete';
+
+
+const campaignTypeInfo = [
+  { id: 'seasonal', name: '季節活動' },
+  { id: 'permanent-discount', name: '折扣' },
+  { id: 'discount-total-price', name: '滿額折扣' },
+  { id: 'free-shipping-total-price', name: '滿額免運' },
+  { id: 'free-shipping-total-amount', name: '滿量免運' },
+];
+const campaignTypeNameMap = campaignTypeInfo.reduce((m, v) => ({ ...m, [v.id]: v.name }), {});
+const campaignTypeNameFunc = id => campaignTypeNameMap[id] || '<不明狀態>';
+const campaignTypes = campaignTypeInfo.map(({ id, name }) => ({ id, name: name || '<不明狀態>' }));
+
+const campaignStateInfo = [
+  { id: 'na', name: '<N/A>' },
+  { id: 'actived', name: '連線' },
+  { id: 'past_actived', name: '過季連線' },
+  { id: 'in_store', name: '店內' },
+  { id: 'expired', name: '過期(上架不可選)' },
+  { id: 'hide', name: '隱藏(前端不顯示)' },
+];
+const campaignStateNameMap = campaignStateInfo.reduce((m, v) => ({ ...m, [v.id]: v.name }), {});
+const campaignStateNameFunc = id => campaignStateNameMap[id] || '<不明狀態>';
+const campaignStates = campaignStateInfo.map(({ id, name }) => ({ id, name: name || '<不明狀態>' }));
 
 
 const useStyles = makeStyles(theme => ({
@@ -40,12 +67,127 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const CampaignEditor = (props) => {
+  const {
+    editingData,
+  } = props;
+
+  const classes = useStyles();
+
+  const [name, setName, nameError, setNameError] = useStateWithError(editingData.name);
+  const [selectedType, setSelectedType] = useState({ id: editingData.type, name: campaignTypeNameFunc(editingData.type) });
+  const handleTypeMenuItemClick = (event, exEvent, i) => {
+    setSelectedType(exEvent);
+  };
+
+  const [dateRange, setDateRange] = useState([editingData.start, editingData.end]);
+
+  const [selectedState, setSelectedState] = useState({ id: editingData.state, name: campaignStateNameFunc(editingData.state) });
+  const handleStateMenuItemClick = (event, exEvent, i) => {
+    setSelectedState(exEvent);
+  };
+
+  return (
+    <React.Fragment>
+      <DialogTitle id="alert-dialog-title">編輯活動</DialogTitle>
+      <DialogContent>
+        <div className={classes.flexContainer}>
+          <div className={classes.flex1}>
+            <FormTextField
+              label="活動名稱"
+              error={!!nameError}
+              helperText={nameError}
+              // label={label}
+              // onKeyPress={handleEnterForTextField}
+              value={name}
+              onChange={e => setName(e.target.value)}
+              margin="dense"
+              fullWidth
+            />
+            <FormSpace variant="content1" />
+            <FormFieldButtonSelect
+              id="type-selector"
+              label="活動類型"
+              value={selectedType}
+              options={campaignTypes}
+              onChange={handleTypeMenuItemClick}
+              toInputValue={v => (v && `${v.name}`) || '<未選取>'}
+              toButtonValue={v => `${(v && v.name) || '<未選取>'}`}
+              fullWidth
+              margin="dense"
+            />
+            <FormSpace variant="content1" />
+            {/* <FormDatePicker
+              label="搜尋文字"
+              margin="dense"
+              fullWidth
+            />
+            <FormSpace variant="content1" /> */}
+            <DateRangeInput
+              title="選取時間範圍"
+              value={dateRange}
+              onChange={setDateRange}
+              buttonProps={{
+                margin: 'dense',
+              }}
+            />
+            <FormSpace variant="content1" />
+            <FormFieldButtonSelect
+              id="state-selector"
+              label="狀態"
+              value={selectedState}
+              options={campaignStates}
+              onChange={handleStateMenuItemClick}
+              toInputValue={v => (v && `${v.name}`) || '<未選取>'}
+              toButtonValue={v => `${(v && v.name) || '<未選取>'}`}
+              fullWidth
+              margin="dense"
+            />
+            <FormSpace variant="content1" />
+            <TagsAutocomplete
+              label="搜尋包含商品"
+              error={!!nameError}
+              helperText={nameError}
+              // label={label}
+              // onKeyPress={handleEnterForTextField}
+              // value={name}
+              // onChange={e => setName(e.target.value)}
+              margin="dense"
+              fullWidth
+            />
+            <FormSpace variant="content1" />
+            <TagsAutocomplete
+              label="搜尋活動"
+              error={!!nameError}
+              helperText={nameError}
+              // label={label}
+              // onKeyPress={handleEnterForTextField}
+              // value={name}
+              // onChange={e => setName(e.target.value)}
+              margin="dense"
+              fullWidth
+            />
+          </div>
+        </div>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="contained" onClick={() => {}} color="primary">
+          搜尋
+        </Button>
+      </DialogActions>
+    </React.Fragment>
+  );
+};
+
+
 const CAMPAIGN_QUERY = gql`
-  query CampaignList($id: bigint! = 0) {
+  query Campaign($id: bigint! = 0) {
     campaign(id: $id){
       id
       name
+      type
       durationType
+      state
       start
       end
       data
@@ -57,8 +199,6 @@ const CAMPAIGN_QUERY = gql`
 `;
 
 export default (props) => {
-  const [rows, setRows] = useState([]);
-  const [selected, setSelected] = useState([]);
   const [refreshCount, setRefreshCount] = useState(0);
 
   const {
@@ -79,16 +219,6 @@ export default (props) => {
     fetchPolicy: 'network-only',
   });
 
-  const refresh = async () => {
-    setRefreshCount(refreshCount + 1);
-  };
-
-  useEffect(() => {
-    if (data && data.campaigns) {
-      setRows(data.campaigns);
-    }
-  }, [data]);
-
   // if (loading || !data) return <pre>Loading</pre>;
   if (error) {
     return (
@@ -99,114 +229,14 @@ export default (props) => {
     );
   }
 
-  const [searchText, setSearchText, searchTextError, setSearchTextError] = useStateWithError('');
-  const [dateRange, setDateRange] = useState([null, null]);
-
-  const [selectedState, setSelectedState] = useState({ id: 0, name: '<全部>' });
-  const [stateArray, setStateArray] = useState([
-    { id: 0, name: '<全部>' },
-    { id: 1, name: '已付款' },
-    { id: 2, name: '已取消' },
-    { id: 3, name: '已退款' },
-    { id: 4, name: '已出貨' },
-    { id: 5, name: '已完成' },
-  ]);
-  const getStateMenuItem = ({
-    option,
-    // selectedOption,
-    // isSelected,
-    handleOptionClick,
-  }) => (
-    <MenuItem
-      key={option.id}
-      selected={option.id === (selectedState && selectedState.id)}
-      onClick={handleOptionClick}
-    >
-      {`${option.name}`}
-    </MenuItem>
-  );
-  const handleStateMenuItemClick = (event, exEvent, i) => {
-    setSelectedState(exEvent);
-  };
-
   return (
     <BasicSection withMaxWith>
-      <DialogTitle id="alert-dialog-title">搜尋條件</DialogTitle>
-      <DialogContent>
-        <div className={classes.flexContainer}>
-          <div className={classes.flex1}>
-            <FormTextField
-              label="搜尋文字"
-              error={!!searchTextError}
-              helperText={searchTextError}
-              // label={label}
-              // onKeyPress={handleEnterForTextField}
-              value={searchText}
-              onChange={e => setSearchText(e.target.value)}
-              margin="dense"
-              fullWidth
-            />
-            <FormSpace variant="content1" />
-            {/* <FormDatePicker
-              label="搜尋文字"
-              margin="dense"
-              fullWidth
-            />
-            <FormSpace variant="content1" /> */}
-            <DateRangeInput
-              title="選取時間範圍"
-              value={dateRange}
-              onChange={setDateRange}
-              buttonProps={{
-                margin: 'dense',
-              }}
-            />
-            <FormSpace variant="content1" />
-            <FormFieldButtonSelect
-              id="state-selector"
-              label="訂單狀態"
-              value={selectedState}
-              options={stateArray}
-              getMenuItem={getStateMenuItem}
-              onChange={handleStateMenuItemClick}
-              toInputValue={state => (state && `${state.name}`) || '<未選取>'}
-              toButtonValue={state => `${(state && state.name) || '<未選取>'}`}
-              fullWidth
-              margin="dense"
-            />
-          </div>
-          <div className={classes.flex1}>
-            <TagsAutocomplete
-              label="搜尋包含商品"
-              error={!!searchTextError}
-              helperText={searchTextError}
-              // label={label}
-              // onKeyPress={handleEnterForTextField}
-              // value={searchText}
-              // onChange={e => setSearchText(e.target.value)}
-              margin="dense"
-              fullWidth
-            />
-            <FormSpace variant="content1" />
-            <TagsAutocomplete
-              label="搜尋活動"
-              error={!!searchTextError}
-              helperText={searchTextError}
-              // label={label}
-              // onKeyPress={handleEnterForTextField}
-              // value={searchText}
-              // onChange={e => setSearchText(e.target.value)}
-              margin="dense"
-              fullWidth
-            />
-          </div>
-        </div>
-      </DialogContent>
-      <DialogActions>
-        <Button variant="contained" onClick={() => {}} color="primary">
-          搜尋
-        </Button>
-      </DialogActions>
+      {(!loading && !error && data && data.campaign) && (
+        <CampaignEditor
+          editingData={data.campaign}
+        />
+      )}
+      <LoadingMask loading={loading || !data} />
     </BasicSection>
   );
 };

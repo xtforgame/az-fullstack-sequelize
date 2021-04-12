@@ -31,9 +31,10 @@ import RefreshIcon from '@material-ui/icons/Refresh';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import ContentText from 'azrmui/core/Text/ContentText';
 import BasicSection from '~/components/Section/Basic';
+import EnhancedTable from '~/components/EnhancedTable';
+import useRouterQuery from '~/hooks/useRouterQuery';
 
 import FilterSection from './FilterSection';
-import EnhancedTable from '../../components/EnhancedTable';
 import DetailTable from './DetailTable';
 
 const useStyles = makeStyles(theme => ({
@@ -64,8 +65,22 @@ const getColumnConfig = () => {
       size: 200,
     },
     {
-      id: 'durationType',
+      id: 'type',
       label: '活動類型',
+      sortable: false,
+      align: 'left',
+      size: 200,
+    },
+    // {
+    //   id: 'durationType',
+    //   label: '活動類型',
+    //   sortable: false,
+    //   align: 'left',
+    //   size: 200,
+    // },
+    {
+      id: 'state',
+      label: '活動狀態',
       sortable: false,
       align: 'left',
       size: 200,
@@ -93,22 +108,22 @@ const getColumnConfig = () => {
     //   align: 'left',
     //   size: 60,
     // },
-    {
-      id: 'created_at',
-      label: '建立時間',
-      sortable: false,
-      align: 'right',
-      renderRowCell,
-      size: 200,
-    },
-    {
-      id: 'updated_at',
-      label: '最後更新時間',
-      sortable: false,
-      align: 'right',
-      renderRowCell,
-      size: 200,
-    },
+    // {
+    //   id: 'created_at',
+    //   label: '建立時間',
+    //   sortable: false,
+    //   align: 'right',
+    //   renderRowCell,
+    //   size: 200,
+    // },
+    // {
+    //   id: 'updated_at',
+    //   label: '最後更新時間',
+    //   sortable: false,
+    //   align: 'right',
+    //   renderRowCell,
+    //   size: 200,
+    // },
   ];
 
   const data = {
@@ -123,11 +138,13 @@ const getColumnConfig = () => {
 };
 
 const CAMPAIGN_LIST_QUERY = gql`
-  query CampaignList($id: bigint! = 0) {
+  query CampaignList {
     campaigns(where: {deleted_at: {_is_null: true}}, order_by: {created_at: desc}) {
       id
       name
+      type
       durationType
+      state
       start
       end
       data
@@ -136,6 +153,21 @@ const CAMPAIGN_LIST_QUERY = gql`
       deleted_at
     }
     campaignAggregate(where: {deleted_at: {_is_null: true}}) {
+      aggregate {
+        count
+      }
+    }
+  }
+`;
+
+
+const CAMPAIGN_LIST_SEARCH_QUERY = gql`
+  query CampaignListSearch($id: bigint! = 0, $name: String!) {
+    campaigns(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}, order_by: {created_at: desc}) {
+      id
+      name
+    }
+    campaignAggregate(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}) {
       aggregate {
         count
       }
@@ -152,10 +184,12 @@ export default (props) => {
   const [refreshCount, setRefreshCount] = useState(0);
   const classes = useStyles();
 
+  const query = useRouterQuery();
+  console.log('query.get("text") :', query.get('text'));
+
   const { loading, error, data } = useQuery(CAMPAIGN_LIST_QUERY, {
     variables: {
       name: refreshCount.toString(),
-      id: 1,
     },
     fetchPolicy: 'network-only',
   });

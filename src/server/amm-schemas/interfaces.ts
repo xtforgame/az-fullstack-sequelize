@@ -950,9 +950,11 @@ export type ProductGroupI = ProductGroupAttributes & {
 // ============== start model: Campaign ==============
 export type CampaignCreationAttributes = {
   name?: string;
+  type?: string;
   durationType?: string;
   start?: Date;
   end?: Date;
+  state?: string;
   data?: any;
   productGroups?: ProductGroupCreationAttributes[];
 };
@@ -960,9 +962,11 @@ export type CampaignCreationAttributes = {
 export type CampaignAttributes = {
   id: string;
   name?: string;
+  type?: string;
   durationType?: string;
   start?: Date;
   end?: Date;
+  state?: string;
   data?: any;
   productGroups?: ExtendedModel<ProductGroupI>[];
 };

@@ -857,9 +857,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           autoIncrement: true,
         },
         name: ['string', 900],
+        type: ['string', 191],
         durationType: ['string', 900], // 'time-range', 'permanent'
         start: 'date',
         end: 'date',
+        state: 'string',
         data: {
           type: 'jsonb',
           defaultValue: {},

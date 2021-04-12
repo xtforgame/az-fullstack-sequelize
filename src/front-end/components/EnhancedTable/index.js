@@ -12,6 +12,7 @@ import ProgressWithMask from 'azrmui/core/Progress/ProgressWithMask';
 import EnhancedTableToolbar from './EnhancedTableToolbar';
 import EnhancedTableHead from './EnhancedTableHead';
 import EnhancedRow from './EnhancedRow';
+import LoadingMask from './LoadingMask';
 import useHalfControllable from '../../hooks/useHalfControllable';
 
 function descendingComparator(a, b, orderBy) {
@@ -206,20 +207,7 @@ export default function EnhancedTable({
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
-        <Fade
-          in={loading}
-          timeout={{
-            enter: 0,
-            exit: 200,
-          }}
-          unmountOnExit
-        >
-          <ProgressWithMask
-            backgroundColor="rgba(255, 255, 255, 0.5)"
-            zIndex={1101}
-            delay={0}
-          />
-        </Fade>
+        <LoadingMask loading={loading} />
       </Paper>
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}

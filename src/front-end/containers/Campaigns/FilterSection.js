@@ -8,7 +8,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import { FormDatePicker, FormFieldButtonSelect, FormTextField, FormSpace } from 'azrmui/core/FormInputs';
 import MenuItem from '@material-ui/core/MenuItem';
 
-import DateRangeInput from './DateRangeInput';
+import DateRangeInput from '~/components/DateRangeInput';
 import TagsAutocomplete from './TagsAutocomplete';
 
 import BasicSection from '~/components/Section/Basic';
