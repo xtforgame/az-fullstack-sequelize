@@ -53,6 +53,9 @@ export default function EnhancedRow({
         {
           columns.map((column, i) => {
             const style = (columnSizes && columnSizes[i] != null) ? { width: columnSizes[i] } : {};
+            if (column.size != null) {
+              style.width = column.size;
+            }
             const renderFunction = row.renderCell
               || column.renderRowCell
               || ((columnId, row) => row[columnId]);

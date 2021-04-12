@@ -48,6 +48,9 @@ export default function EnhancedTableHead(props) {
         </TableCell>
         {columns.map((column, i) => {
           const style = (columnSizes && columnSizes[i] != null) ? { width: columnSizes[i] } : {};
+          if (column.size != null) {
+            style.width = column.size;
+          }
           return (
             <TableCell
               key={column.id}

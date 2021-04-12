@@ -145,7 +145,6 @@ export default function EnhancedTable({
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
-  console.log('loading :', loading);
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
