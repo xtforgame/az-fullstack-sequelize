@@ -30,6 +30,7 @@ import SubContent09 from '~/containers/Home/SubContent09';
 
 import OrderPages from '~/containers/OrderPages';
 import Campaigns from '~/containers/Campaigns';
+import CampaignsEditor from '~/containers/Campaigns/Editor';
 
 import AdminPages from '~/containers/AdminPages';
 import OrganizationManagement from '~/containers/AdminPages/OrganizationManagement';
@@ -300,13 +301,45 @@ const globalRouteConfig = {
             }],
           }],
         },
+        // {
+        //   name: 'campaign',
+        //   path: '/campaign',
+        //   component: ({ routeView }) => routeView,
+        //   navbar: {
+        //     title: '活動管理',
+        //   },
+        //   routeViews: [{
+        //     routes: [
+        //       {
+        //         name: 'list',
+        //         path: '/campaign',
+        //         component: Campaigns,
+        //         navbar: {
+        //           title: '活動管理',
+        //         },
+        //         exact: true,
+        //       },
+        //       {
+        //         name: 'editor',
+        //         path: '/campaign/:pType/:pId/*',
+        //         component: CampaignsEditor,
+        //       },
+        //     ],
+        //   }],
+        // },
         {
-          name: 'campaign',
+          name: 'list',
           path: '/campaign',
           component: Campaigns,
           navbar: {
             title: '活動管理',
           },
+          exact: true,
+        },
+        {
+          name: 'editor',
+          path: '/campaign/:pType/:pId/*',
+          component: CampaignsEditor,
         },
         {
           name: 'order',

@@ -44,7 +44,7 @@ export default function EnhancedRow({
             checked={isItemSelected}
             inputProps={{ 'aria-labelledby': labelId }}
             onClick={event => event.stopPropagation()}
-            onChange={event => handleClick(event, row.name)}
+            onChange={event => handleClick(event, row.id)}
           />
         </TableCell>
         {/* <TableCell component="th" id={labelId} scope="row" padding="none">

@@ -32,9 +32,9 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import ContentText from 'azrmui/core/Text/ContentText';
 import BasicSection from '~/components/Section/Basic';
 
-import FilterSection from './FilterSection';
-import EnhancedTable from '../../components/EnhancedTable';
-import DetailTable from './DetailTable';
+import FilterSection from '../FilterSection';
+import EnhancedTable from '../../../components/EnhancedTable';
+import DetailTable from '../DetailTable';
 
 const useStyles = makeStyles(theme => ({
   root: {
