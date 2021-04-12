@@ -30,6 +30,7 @@ import AddIcon from '@material-ui/icons/Add';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import ContentText from 'azrmui/core/Text/ContentText';
+import BasicSection from '~/components/Section/Basic';
 
 import FilterSection from './FilterSection';
 import EnhancedTable from '../../components/EnhancedTable';
@@ -228,21 +229,23 @@ export default (props) => {
   return (
     <React.Fragment>
       <FilterSection />
-      <EnhancedTable
-        rows={rows}
-        loading={loading}
-        selected={selected}
-        setSelected={setSelected}
-        {...getColumnConfig()}
-        toolbarProps={{
-          title: '訂單管理',
-          renderActions,
-        }}
-        paginationProps={{
-          rowsPerPageOptions: [10, 25, 50, 75],
-        }}
-        renderRowDetail={row => (<DetailTable row={row} />)}
-      />
+      <BasicSection>
+        <EnhancedTable
+          rows={rows}
+          loading={loading}
+          selected={selected}
+          setSelected={setSelected}
+          {...getColumnConfig()}
+          toolbarProps={{
+            title: '活動管理',
+            renderActions,
+          }}
+          paginationProps={{
+            rowsPerPageOptions: [10, 25, 50, 75],
+          }}
+          renderRowDetail={row => (<DetailTable row={row} />)}
+        />
+      </BasicSection>
     </React.Fragment>
   );
 };

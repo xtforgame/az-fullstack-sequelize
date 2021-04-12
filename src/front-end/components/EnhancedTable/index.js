@@ -90,7 +90,7 @@ export default function EnhancedTable({
   const [order, setOrder] = useHalfControllable(defaultSorting.order);
   const [orderBy, setOrderBy] = useHalfControllable(defaultSorting.orderBy);
   const [page, setPage] = useHalfControllable(pageProp || 0);
-  const [dense, setDense] = useHalfControllable(denseProp || false);
+  const [dense, setDense] = useHalfControllable(denseProp != null ? denseProp : true);
   const [rowsPerPage, setRowsPerPage] = useHalfControllable(rowsPerPageProp || 10);
 
   const handleRequestSort = (event, property) => {
