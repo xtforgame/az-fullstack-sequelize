@@ -4,6 +4,7 @@
 import sequelize from 'sequelize';
 import {
   AmmOrm, AmmSchemas, IJsonSchemas, JsonSchemasX,
+  JsonModelAttributes,
 } from 'az-model-manager';
 
 
@@ -83,6 +84,25 @@ const getViewPermissions : (filter : any) => Permissions = (filter : any) => {
       allow_aggregations: true,
     },
   };
+};
+
+const productColumns : JsonModelAttributes = {
+  thumbnail: 'string',
+  pictures: {
+    type: 'jsonb',
+    defaultValue: [],
+  },
+  name: ['string', 900],
+  price: ['integer'],
+  weight: 'float',
+  description: {
+    type: 'jsonb',
+    defaultValue: {},
+  },
+  data: {
+    type: 'jsonb',
+    defaultValue: {},
+  },
 };
 
 export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
@@ -703,22 +723,13 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           primaryKey: true,
           autoIncrement: true,
         },
-        thumbnail: 'string',
-        pictures: {
-          type: 'jsonb',
-          defaultValue: [],
-        },
-        name: ['string', 900],
-        price: ['integer'],
-        weight: 'float',
-        description: {
-          type: 'jsonb',
-          defaultValue: {},
-        },
-        data: {
-          type: 'jsonb',
-          defaultValue: {},
-        },
+        customId: 'string',
+        color: 'string',
+        size: 'string',
+        ...productColumns,
+        productGroup: ['belongsTo', 'productGroup', {
+          foreignKey: 'group_id',
+        }],
         orders: ['belongsToMany', 'order', {
           through: {
             unique: false,
@@ -744,6 +755,9 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           },
           publicColumns: [
             'id',
+            'customId',
+            'color',
+            'size',
             'thumbnail',
             'pictures',
             'name',
@@ -751,6 +765,103 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
             'weight',
             'description',
             'data',
+          ],
+        },
+      },
+    },
+    productGroup: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        customId: 'string',
+        ...productColumns,
+        productGroup: ['hasMany', 'product', {
+          foreignKey: 'group_id',
+        }],
+        campaigns: ['belongsToMany', 'campaign', {
+          through: {
+            unique: false,
+            ammModelName: 'productGroupCampaign',
+            ammThroughTableColumnAs: 'productGroup',
+            ammThroughAs: 'relation',
+          },
+          foreignKey: 'product_group_id',
+          otherKey: 'campaign_id',
+        }],
+      },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(null),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(null),
+            // },
+          },
+          publicColumns: [
+            'id',
+            'customId',
+            'thumbnail',
+            'pictures',
+            'name',
+            'price',
+            'weight',
+            'description',
+            'data',
+            'campaigns',
+          ],
+        },
+      },
+    },
+    campaign: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        name: ['string', 900],
+        durationType: ['string', 900], // 'time-range', 'permanent'
+        start: 'date',
+        end: 'date',
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+        productGroups: ['belongsToMany', 'productGroup', {
+          through: {
+            unique: false,
+            ammModelName: 'productGroupCampaign',
+            ammThroughTableColumnAs: 'campaign',
+            ammThroughAs: 'relation',
+          },
+          foreignKey: 'campaign_id',
+          otherKey: 'product_group_id',
+        }],
+      },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(null),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(null),
+            // },
+          },
+          publicColumns: [
+            'id',
+            'name',
+            'data',
+            'productGroups',
           ],
         },
       },
@@ -950,6 +1061,7 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
+          publicColumns: ['id'],
           views: {
             privateVd: {
               columns: 'all',
@@ -987,6 +1099,7 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
+          publicColumns: ['id'],
           views: {
             privateVd: {
               columns: 'all',
@@ -1032,6 +1145,7 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
+          publicColumns: ['id'],
           views: {
             privateVd: {
               columns: 'all',
@@ -1069,6 +1183,7 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
+          publicColumns: ['id'],
           views: {
             privateVd: {
               columns: 'all',
@@ -1114,6 +1229,7 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
+          publicColumns: ['id'],
           views: {
             privateVd: {
               columns: 'all',
@@ -1151,6 +1267,7 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
+          publicColumns: ['id'],
           views: {
             privateVd: {
               columns: 'all',
@@ -1188,6 +1305,7 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
+          publicColumns: ['id'],
           views: {
             privateVd: {
               columns: 'all',
@@ -1231,6 +1349,48 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
       },
       extraOptions: {
         hasura: {
+          publicColumns: ['id'],
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(null),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(null),
+            // },
+          },
+          restrictedColumns: [],
+        },
+      },
+    },
+    productGroupCampaign: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+      },
+      options: {
+        indexes: [
+          {
+            name: 'product_group_campaign_uniqueness',
+            unique: true,
+            fields: ['product_group_id', 'campaign_id'],
+            where: {
+              deleted_at: null,
+            },
+          },
+        ],
+      },
+      extraOptions: {
+        hasura: {
+          publicColumns: ['id'],
           views: {
             privateVd: {
               columns: 'all',
