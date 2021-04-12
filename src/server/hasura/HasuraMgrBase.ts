@@ -56,6 +56,7 @@ export type ViewsInfo = {
   isAssociationTable: boolean;
   modelName: string;
   publicColumns: string[];
+  publicColumnNames: string[];
   restrictedColumns: string[];
   views: {
     [viewLevelName: string]: ViewInfo;
@@ -195,13 +196,14 @@ class HasuraMgrBase {
       return null;
     }
     const restrictedColumnsFromOptions : string[] = hasuraOptions.restrictedColumns || [];
-    const publicColumnsFromOptions : string[] = hasuraOptions.publicColumns || [];
+    const publicColumnsFromOptions : string[] = Array.isArray(hasuraOptions.publicColumns) ? hasuraOptions.publicColumns : [];
     const views = hasuraOptions.views || {};
 
     const result : ViewsInfo = {
       isAssociationTable,
       modelName,
       publicColumns: [],
+      publicColumnNames: [],
       restrictedColumns: restrictedColumnsFromOptions,
       views: {},
     };
@@ -236,7 +238,9 @@ class HasuraMgrBase {
       ? this.jsonSchemasX.schemasMetadata.associationModels[modelName].primaryKey
       : this.jsonSchemasX.schemasMetadata.models[modelName].primaryKey;
     if (primaryKey) {
-      pushPublic(primaryKey);
+      if (hasuraOptions.publicColumns && (hasuraOptions.publicColumns.length || hasuraOptions.publicColumns === 'all')) {
+        pushPublic(primaryKey);
+      }
       pushToAllViews(primaryKey);
     }
     publicColumnsFromOptions.forEach(pushPublic);
@@ -244,6 +248,11 @@ class HasuraMgrBase {
 
 
     Object.keys(views).forEach((viewLevelName) => {
+      if (hasuraOptions.publicColumns === 'all') {
+        Object.keys(model.columns)
+        .filter(k => !restrictedColumnsFromOptions.includes(k))
+        .forEach(pushPublic);
+      }
       const cols = views[viewLevelName].columns || 'all';
       if (views[viewLevelName] && Array.isArray(cols)) {
         cols.forEach(c => pushToView(viewLevelName, c));
@@ -260,6 +269,12 @@ class HasuraMgrBase {
     // if (modelName === 'project') {
     //   console.log('result.views :', result.views);
     // }
+
+
+    if (result.publicColumns.length) {
+      result.publicColumnNames = result.publicColumns.map(k => ({ k, c: model.columns[k] })).map(({ k, c }) => this.getForeignKey(k, <any>c)).filter(c => c)
+      .concat(['created_at', 'updated_at', 'deleted_at']);
+    }
 
     Object.keys(views).forEach((viewLevelName) => {
       const columnNames : string[] = result.views[viewLevelName].columns.map(k => ({ k, c: model.columns[k] })).map(({ k, c }) => this.getForeignKey(k, <any>c)).filter(c => c)
@@ -305,7 +320,7 @@ class HasuraMgrBase {
         a.push(viewsInfo);
       }
       return a;
-    }, <ViewsInfo[]>[])
+    }, <ViewsInfo[]>[]);
   };
 
   getHeaders() : any {

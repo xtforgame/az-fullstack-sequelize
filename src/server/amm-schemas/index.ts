@@ -38,7 +38,7 @@ export type ModelExtraOptions = {
         permissions: Permissions,
       },
     },
-    publicColumns?: string[],
+    publicColumns?: string[] | 'all',
     restrictedColumns?: string[],
   },
 }
@@ -137,14 +137,14 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgSharedVd: {
-              columns: 'all',
-              permissions: getViewPermissions(userIdF('user_id')),
-            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
           },
-          publicColumns: [
-            'id', 'provider_id',
-          ],
+          // publicColumns: [
+          //   'id', 'provider_id',
+          // ],
           restrictedColumns: [
             'provider_user_access_info',
           ],
@@ -348,10 +348,10 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: 'all',
               permissions: getViewPermissions(userIdF('id')),
             },
-            orgSharedVd: {
-              columns: 'all',
-              permissions: getViewPermissions(userIdF('id')),
-            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('id')),
+            // },
           },
           publicColumns: [
             'id', 'name', 'type', 'privilege', 'picture',
@@ -394,10 +394,10 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgSharedVd: {
-              columns: 'all',
-              permissions: getViewPermissions(userIdF('user_id')),
-            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
           },
           restrictedColumns: [],
         },
@@ -494,10 +494,10 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: 'all',
               permissions: getViewPermissions(belongsToManyUser('users', 'user_id')),
             },
-            orgSharedVd: {
-              columns: 'all',
-              permissions: getViewPermissions(null),
-            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(null),
+            // },
           },
           restrictedColumns: [],
         },
@@ -559,14 +559,14 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: ['data', 'ownedUser', 'users', 'projects'],
               permissions: getViewPermissions(belongsToManyUser('users', 'user_id')),
             },
-            orgSharedVd: {
-              columns: ['data', 'ownedUser', 'users', 'projects'],
-              permissions: getViewPermissions(null),
-            },
+            // orgSharedVd: {
+            //   columns: ['data', 'ownedUser', 'users', 'projects'],
+            //   permissions: getViewPermissions(null),
+            // },
           },
-          publicColumns: [
-            'id', 'name',
-          ],
+          // publicColumns: [
+          //   'id', 'name',
+          // ],
         },
       },
     },
@@ -624,14 +624,14 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: ['type', 'data', 'users', 'organization'],
               permissions: getViewPermissions(belongsToManyUser('users', 'user_id')),
             },
-            orgSharedVd: {
-              columns: ['type', 'data', 'users', 'organization'],
-              permissions: getViewPermissions(null),
-            },
+            // orgSharedVd: {
+            //   columns: ['type', 'data', 'users', 'organization'],
+            //   permissions: getViewPermissions(null),
+            // },
           },
-          publicColumns: [
-            'id', 'name',
-          ],
+          // publicColumns: [
+          //   'id', 'name',
+          // ],
         },
       },
     },
@@ -664,14 +664,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: ['data'],
               permissions: getViewPermissions(null),
             },
-            orgSharedVd: {
-              columns: ['data', 'users'],
-              permissions: getViewPermissions(null),
-            },
+            // orgSharedVd: {
+            //   columns: ['data', 'users'],
+            //   permissions: getViewPermissions(null),
+            // },
           },
-          publicColumns: [
-            'id',
-          ],
         },
       },
     },
@@ -740,10 +737,10 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: 'all',
               permissions: getViewPermissions(null),
             },
-            orgSharedVd: {
-              columns: 'all',
-              permissions: getViewPermissions(null),
-            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(null),
+            // },
           },
           publicColumns: [
             'id',
@@ -788,10 +785,10 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgSharedVd: {
-              columns: 'all',
-              permissions: getViewPermissions(userIdF('user_id')),
-            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
           },
           restrictedColumns: [],
         },
@@ -827,10 +824,10 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgSharedVd: {
-              columns: 'all',
-              permissions: getViewPermissions(userIdF('user_id')),
-            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
           },
           restrictedColumns: [],
         },
@@ -878,10 +875,10 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgSharedVd: {
-              columns: 'all',
-              permissions: getViewPermissions(userIdF('user_id')),
-            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
           },
           restrictedColumns: [],
         },
@@ -919,10 +916,10 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgSharedVd: {
-              columns: 'all',
-              permissions: getViewPermissions(userIdF('user_id')),
-            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
           },
           restrictedColumns: [],
         },
@@ -958,10 +955,10 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgSharedVd: {
-              columns: 'all',
-              permissions: getViewPermissions(userIdF('user_id')),
-            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
           },
           restrictedColumns: [],
         },
@@ -995,10 +992,10 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: 'all',
               permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
             },
-            orgSharedVd: {
-              columns: 'all',
-              permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
-            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
+            // },
           },
           restrictedColumns: [],
         },
@@ -1040,10 +1037,10 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgSharedVd: {
-              columns: 'all',
-              permissions: getViewPermissions(userIdF('user_id')),
-            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
           },
           restrictedColumns: [],
         },
@@ -1077,10 +1074,10 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: 'all',
               permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
             },
-            orgSharedVd: {
-              columns: 'all',
-              permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
-            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
+            // },
           },
           restrictedColumns: [],
         },
@@ -1122,10 +1119,10 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgSharedVd: {
-              columns: 'all',
-              permissions: getViewPermissions(userIdF('user_id')),
-            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
           },
           restrictedColumns: [],
         },
@@ -1159,10 +1156,10 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: 'all',
               permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
             },
-            orgSharedVd: {
-              columns: 'all',
-              permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
-            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
+            // },
           },
           restrictedColumns: [],
         },
@@ -1196,10 +1193,10 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
             },
-            orgSharedVd: {
-              columns: 'all',
-              permissions: getViewPermissions(userIdF('user_id')),
-            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
           },
           restrictedColumns: [],
         },
@@ -1239,10 +1236,10 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
               columns: 'all',
               permissions: getViewPermissions(null),
             },
-            orgSharedVd: {
-              columns: 'all',
-              permissions: getViewPermissions(null),
-            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(null),
+            // },
           },
           restrictedColumns: [],
         },

@@ -922,6 +922,10 @@ class HasuraMgr extends HasuraMgrBase {
   async addPermissions(metadata?: any) {
     const args = <any>[];
     const add = (model : AmmModel) => {
+      const columns = this.getViewsInfoForModel(model.modelName)?.publicColumnNames;
+      if (!columns || !columns.length) {
+        return;
+      }
       supportedHasuraRoles.forEach((supportedHasuraRole) => {
         args.push({
           type: 'pg_create_select_permission',
@@ -933,7 +937,7 @@ class HasuraMgr extends HasuraMgrBase {
             role: supportedHasuraRole,
             permission: {
               filter: {},
-              columns: this.getViewsInfoForModel(model.modelName)?.publicColumns || [],
+              columns: this.getViewsInfoForModel(model.modelName)?.publicColumnNames || [],
               limit: 25,
               allow_aggregations: true,
             },
