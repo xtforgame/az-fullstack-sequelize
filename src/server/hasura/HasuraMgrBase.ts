@@ -327,6 +327,20 @@ class HasuraMgrBase {
     return {};
   }
 
+  getAmmModelByTableName(tableName: string) : { ammModel: AmmModel, isAssociationModel: boolean } {
+    let ammModel : AmmModel;
+    let isAssociationModel : boolean = false;
+    ammModel = this.tableNameToAmmModel[tableName];
+    if (!ammModel) {
+      isAssociationModel = true;
+      ammModel = this.associationTableNameToAmmModel[tableName];
+    }
+    return {
+      isAssociationModel,
+      ammModel,
+    };
+  }
+
   getAmmSchema(modelName: string) : { ammSchema: AmmSchema, isAssociationModel: boolean } {
     let ammSchema : AmmSchema;
     let isAssociationModel : boolean = false;

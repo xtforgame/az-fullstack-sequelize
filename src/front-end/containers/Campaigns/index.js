@@ -124,7 +124,6 @@ export default (props) => {
   const [refreshCount, setRefreshCount] = useState(0);
   const classes = useStyles();
 
-
   const { loading, error, data } = useQuery(CAMPAIGN_LIST_QUERY, { variables: { name: refreshCount.toString() }, fetchPolicy: 'network-only' });
 
   const refresh = async () => {
@@ -221,7 +220,7 @@ export default (props) => {
           renderActions,
         }}
         paginationProps={{
-          rowsPerPageOptions: [5, 10, 25, 50],
+          rowsPerPageOptions: [10, 25, 50, 75],
         }}
         renderRowDetail={row => (<DetailTable row={row} />)}
       />

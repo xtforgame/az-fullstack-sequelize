@@ -23,6 +23,7 @@ import {
   JsonModelAttributeHasOne,
   JsonModelAttributeHasMany,
   JsonModelAttributeBelongsToMany,
+  isAssociationColumn,
 } from 'az-model-manager';
 import {
   postgresHost,
@@ -32,7 +33,7 @@ import {
   postgresPassword,
 } from 'config';
 import { supportedHasuraRoles } from '../amm-schemas/index';
-import HasuraMgrBase, { ViewsInfo } from './HasuraMgrBase';
+import HasuraMgrBase, { ViewsInfo, ViewInfo } from './HasuraMgrBase';
 
 function databaseLogger(...args) { // eslint-disable-line no-unused-vars
   // write('./db-debug.log', args[0] + '\n');
@@ -342,21 +343,25 @@ class HasuraMgr extends HasuraMgrBase {
   async trackTables(metadata?: any) {
     const tableMap = await this.getTrackedTableMap();
     const tables = await this.getTables();
+    let modelName = '';
     const args = tables.map((table) => {
       if (tableMap[table.table_name]) {
         return null;
       }
-      if (!this.tableNameToAmmModel[table.table_name]
-        && !this.associationTableNameToAmmModel[table.table_name]
-      ) {
+      const { ammModel } = this.getAmmModelByTableName(table.table_name);
+      let foundView : ViewInfo | undefined;
+      if (!ammModel) {
         const viewsInfos = this.getAllViewsInfos();
-        let foundView : any;
         for (let index = 0; index < viewsInfos.length; index++) {
           const viewsInfo = viewsInfos[index];
           foundView = Object.values(viewsInfo.views).find((viewInfo) => {
-            const modelName = table.table_name.replace(toUnderscore(`_${viewInfo.viewLevelName}`), '').replace('view_', 'tbl_');
-            const associationModelName = table.table_name.replace(toUnderscore(`_${viewInfo.viewLevelName}`), '').replace('view_', 'mn_');
-            if (this.tableNameToAmmModel[modelName]
+            const viewSuffix = toUnderscore(`_${viewInfo.viewLevelName}`);
+            if (table.table_name !== viewInfo.viewTableName) {
+              return false;
+            }
+            const modelName2 = table.table_name.replace(viewSuffix, '').replace('view_', 'tbl_');
+            const associationModelName = table.table_name.replace(viewSuffix, '').replace('view_', 'mn_');
+            if (this.tableNameToAmmModel[modelName2]
               || this.associationTableNameToAmmModel[associationModelName]
             ) {
               return true;
@@ -371,11 +376,28 @@ class HasuraMgr extends HasuraMgrBase {
         if (!foundView) {
           return null;
         }
+        ({ modelName } = foundView);
+      } else {
+        modelName = ammModel.sqlzOptions.modelName!;
       }
+
+      const { ammSchema } = this.getAmmSchema(modelName);
+      const { jsonSchema } = this.getJsonSchema(modelName);
+      const custom_column_names = {};
+      Object.keys(ammSchema.columns).map((k) => {
+        const c = ammSchema.columns[k];
+        if (!isAssociationColumn((<any>c).type)) {
+          if (!foundView || foundView.columnNames.includes((<any>c).field)) {
+            custom_column_names[(<any>c).field] = k;
+          }
+        }
+      });
+
       const resName = toCamel(table.table_name.replace(/^mn_/g, '').replace(/^tbl_/g, '').replace(/^view_/g, ''));
       const pluralResName = sequelize.Utils.pluralize(resName);
       const resNameC = capitalizeFirstLetter(resName);
       const pluralResNameC = capitalizeFirstLetter(pluralResName);
+      // console.log('table :', table.columns.map(c => c.column_name));
       return {
         type: 'pg_track_table',
         args: {
@@ -394,9 +416,7 @@ class HasuraMgr extends HasuraMgrBase {
               delete: `delete${pluralResNameC}`,
               delete_by_pk: `delete${resNameC}`,
             },
-            custom_column_names: {
-              id: 'id',
-            },
+            custom_column_names,
           },
         },
       };

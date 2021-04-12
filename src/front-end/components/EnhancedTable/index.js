@@ -91,7 +91,7 @@ export default function EnhancedTable({
   const [orderBy, setOrderBy] = useHalfControllable(defaultSorting.orderBy);
   const [page, setPage] = useHalfControllable(pageProp || 0);
   const [dense, setDense] = useHalfControllable(denseProp || false);
-  const [rowsPerPage, setRowsPerPage] = useHalfControllable(rowsPerPageProp || 5);
+  const [rowsPerPage, setRowsPerPage] = useHalfControllable(rowsPerPageProp || 10);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';

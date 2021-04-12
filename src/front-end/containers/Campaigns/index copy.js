@@ -195,7 +195,7 @@ class CustomerServiceEdit extends React.PureComponent {
             renderActions: this.renderActions,
           }}
           paginationProps={{
-            rowsPerPageOptions: [5, 10, 25, 50],
+            rowsPerPageOptions: [10, 25, 50, 75],
           }}
           renderRowDetail={row => (<DetailTable row={row} />)}
         />
