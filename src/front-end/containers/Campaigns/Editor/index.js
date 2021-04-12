@@ -10,121 +10,39 @@ to your service.
 */
 import React, { useEffect, useState } from 'react';
 import { useQuery, gql } from '@apollo/client';
-import moment from 'moment';
+import useStateWithError from 'azrmui/hooks/useStateWithError';
 /* eslint-disable react/sort-comp */
 import axios from 'axios';
-import { compose } from 'recompose';
-import FileSaver from 'file-saver';
 import { makeStyles } from '@material-ui/core/styles';
 // import { getDefaultBeforeDaysConfig, makeDaysFilter } from '~/utils/beforeDaysHelper';
 // import { compareString, formatTime } from '~/utils/tableUtils';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import SearchIcon from '@material-ui/icons/Search';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
-import DoneIcon from '@material-ui/icons/Done';
-import ClearIcon from '@material-ui/icons/Clear';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import DeleteIcon from '@material-ui/icons/Delete';
-import AddIcon from '@material-ui/icons/Add';
-import RefreshIcon from '@material-ui/icons/Refresh';
-import FilterListIcon from '@material-ui/icons/FilterList';
-import ContentText from 'azrmui/core/Text/ContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import Button from '@material-ui/core/Button';
+import DialogActions from '@material-ui/core/DialogActions';
+import { FormDatePicker, FormFieldButtonSelect, FormTextField, FormSpace } from 'azrmui/core/FormInputs';
+import MenuItem from '@material-ui/core/MenuItem';
+import DateRangeInput from '../DateRangeInput';
+import TagsAutocomplete from '../TagsAutocomplete';
 import BasicSection from '~/components/Section/Basic';
 
-import FilterSection from '../FilterSection';
-import EnhancedTable from '../../../components/EnhancedTable';
-import DetailTable from '../DetailTable';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    // maxWidth: 900,
+  flexContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    flexWrap: 'wrap',
+  },
+  flex1: {
+    maxWidth: 400,
+    flex: 1,
   },
 }));
 
-const renderRowCell = (columnName, row, option) => (
-  <ContentText>
-    {moment(row[columnName]).format('YYYY/MM/DD[\n]hh:mm:ss')}
-  </ContentText>
-);
-
-const getColumnConfig = () => {
-  const columns = [
-    {
-      id: 'id',
-      label: 'ID',
-      align: 'left',
-      size: 120,
-    },
-    {
-      id: 'name',
-      label: '活動名稱',
-      sortable: false,
-      align: 'left',
-      size: 200,
-    },
-    {
-      id: 'durationType',
-      label: '活動類型',
-      sortable: false,
-      align: 'left',
-      size: 200,
-    },
-    {
-      id: 'start',
-      label: '開始時間',
-      sortable: false,
-      align: 'right',
-      renderRowCell,
-      size: 200,
-    },
-    {
-      id: 'end',
-      label: '結束時間',
-      sortable: false,
-      align: 'right',
-      renderRowCell,
-      size: 200,
-    },
-    // {
-    //   id: 'data',
-    //   label: '客戶名稱',
-    //   sortable: false,
-    //   align: 'left',
-    //   size: 60,
-    // },
-    {
-      id: 'created_at',
-      label: '建立時間',
-      sortable: false,
-      align: 'right',
-      renderRowCell,
-      size: 200,
-    },
-    {
-      id: 'updated_at',
-      label: '最後更新時間',
-      sortable: false,
-      align: 'right',
-      renderRowCell,
-      size: 200,
-    },
-  ];
-
-  const data = {
-    columns,
-    defaultSorting: {
-      order: 'desc',
-      orderBy: 'date',
-    },
-    // columnSizes: [120, 120, 180, 150, null],
-  };
-  return data;
-};
-
-const CAMPAIGN_LIST_QUERY = gql`
+const CAMPAIGN_QUERY = gql`
   query CampaignList($id: bigint! = 0) {
-    campaigns(where: {deleted_at: {_is_null: true}}, order_by: {created_at: desc}) {
+    campaign(id: $id){
       id
       name
       durationType
@@ -135,14 +53,6 @@ const CAMPAIGN_LIST_QUERY = gql`
       updated_at
       deleted_at
     }
-    campaignAggregate(where: {deleted_at: {_is_null: true}}) {
-      aggregate {
-        count
-      }
-    }
-    campaign(id: $id){
-      id
-    }
   }
 `;
 
@@ -150,12 +60,21 @@ export default (props) => {
   const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState([]);
   const [refreshCount, setRefreshCount] = useState(0);
+
+  const {
+    match,
+  } = props;
+
+  const {
+    id,
+  } = match.params;
+
   const classes = useStyles();
 
-  const { loading, error, data } = useQuery(CAMPAIGN_LIST_QUERY, {
+  const { loading, error, data } = useQuery(CAMPAIGN_QUERY, {
     variables: {
       name: refreshCount.toString(),
-      id: 1,
+      id,
     },
     fetchPolicy: 'network-only',
   });
@@ -163,61 +82,6 @@ export default (props) => {
   const refresh = async () => {
     setRefreshCount(refreshCount + 1);
   };
-
-  const handleAccept = async () => {
-    await refresh();
-  };
-
-  const handleReject = async () => {
-
-  };
-
-  const handleDownload = async () => {
-    await Promise.all(
-      selected.map(i => rows[i - 1])
-      .map(async (row) => {
-        FileSaver.saveAs('rma.xls', `${row.shipmentId}.xls`);
-      })
-    );
-  };
-
-  const renderActions = numSelected => (numSelected > 0 ? (
-    <React.Fragment>
-      <Tooltip title="核准">
-        <IconButton aria-label="accept" onClick={() => handleAccept()}>
-          <DoneIcon />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="駁回">
-        <IconButton aria-label="reject" onClick={() => handleReject()}>
-          <ClearIcon />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="下載報告">
-        <IconButton aria-label="download report" onClick={() => handleDownload()}>
-          <SaveAltIcon />
-        </IconButton>
-      </Tooltip>
-    </React.Fragment>
-  ) : (
-    <React.Fragment>
-      <Tooltip title="新增活動">
-        <IconButton color="primary" aria-label="新增活動">
-          <AddIcon />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="重新整理">
-        <IconButton aria-label="重新整理" onClick={refresh}>
-          <RefreshIcon />
-        </IconButton>
-      </Tooltip>
-      {/* <Tooltip title="Filter list">
-          <IconButton aria-label="filter list">
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip> */}
-    </React.Fragment>
-  ));
 
   useEffect(() => {
     if (data && data.campaigns) {
@@ -229,32 +93,120 @@ export default (props) => {
   if (error) {
     return (
       <pre>
-        Error in CAMPAIGN_LIST_QUERY
+        Error in CAMPAIGN_QUERY
         {JSON.stringify(error, null, 2)}
       </pre>
     );
   }
 
+  const [searchText, setSearchText, searchTextError, setSearchTextError] = useStateWithError('');
+  const [dateRange, setDateRange] = useState([null, null]);
+
+  const [selectedState, setSelectedState] = useState({ id: 0, name: '<全部>' });
+  const [stateArray, setStateArray] = useState([
+    { id: 0, name: '<全部>' },
+    { id: 1, name: '已付款' },
+    { id: 2, name: '已取消' },
+    { id: 3, name: '已退款' },
+    { id: 4, name: '已出貨' },
+    { id: 5, name: '已完成' },
+  ]);
+  const getStateMenuItem = ({
+    option,
+    // selectedOption,
+    // isSelected,
+    handleOptionClick,
+  }) => (
+    <MenuItem
+      key={option.id}
+      selected={option.id === (selectedState && selectedState.id)}
+      onClick={handleOptionClick}
+    >
+      {`${option.name}`}
+    </MenuItem>
+  );
+  const handleStateMenuItemClick = (event, exEvent, i) => {
+    setSelectedState(exEvent);
+  };
+
   return (
-    <React.Fragment>
-      <FilterSection />
-      <BasicSection>
-        <EnhancedTable
-          rows={rows}
-          loading={loading}
-          selected={selected}
-          setSelected={setSelected}
-          {...getColumnConfig()}
-          toolbarProps={{
-            title: '活動管理',
-            renderActions,
-          }}
-          paginationProps={{
-            rowsPerPageOptions: [10, 25, 50, 75],
-          }}
-          renderRowDetail={row => (<DetailTable row={row} />)}
-        />
-      </BasicSection>
-    </React.Fragment>
+    <BasicSection withMaxWith>
+      <DialogTitle id="alert-dialog-title">搜尋條件</DialogTitle>
+      <DialogContent>
+        <div className={classes.flexContainer}>
+          <div className={classes.flex1}>
+            <FormTextField
+              label="搜尋文字"
+              error={!!searchTextError}
+              helperText={searchTextError}
+              // label={label}
+              // onKeyPress={handleEnterForTextField}
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+              margin="dense"
+              fullWidth
+            />
+            <FormSpace variant="content1" />
+            {/* <FormDatePicker
+              label="搜尋文字"
+              margin="dense"
+              fullWidth
+            />
+            <FormSpace variant="content1" /> */}
+            <DateRangeInput
+              title="選取時間範圍"
+              value={dateRange}
+              onChange={setDateRange}
+              buttonProps={{
+                margin: 'dense',
+              }}
+            />
+            <FormSpace variant="content1" />
+            <FormFieldButtonSelect
+              id="state-selector"
+              label="訂單狀態"
+              value={selectedState}
+              options={stateArray}
+              getMenuItem={getStateMenuItem}
+              onChange={handleStateMenuItemClick}
+              toInputValue={state => (state && `${state.name}`) || '<未選取>'}
+              toButtonValue={state => `${(state && state.name) || '<未選取>'}`}
+              fullWidth
+              margin="dense"
+            />
+          </div>
+          <div className={classes.flex1}>
+            <TagsAutocomplete
+              label="搜尋包含商品"
+              error={!!searchTextError}
+              helperText={searchTextError}
+              // label={label}
+              // onKeyPress={handleEnterForTextField}
+              // value={searchText}
+              // onChange={e => setSearchText(e.target.value)}
+              margin="dense"
+              fullWidth
+            />
+            <FormSpace variant="content1" />
+            <TagsAutocomplete
+              label="搜尋活動"
+              error={!!searchTextError}
+              helperText={searchTextError}
+              // label={label}
+              // onKeyPress={handleEnterForTextField}
+              // value={searchText}
+              // onChange={e => setSearchText(e.target.value)}
+              margin="dense"
+              fullWidth
+            />
+          </div>
+        </div>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="contained" onClick={() => {}} color="primary">
+          搜尋
+        </Button>
+      </DialogActions>
+    </BasicSection>
   );
 };

@@ -338,7 +338,7 @@ const globalRouteConfig = {
         },
         {
           name: 'editor',
-          path: '/campaign/:pType/:pId/*',
+          path: '/campaign/edit/:id',
           component: CampaignsEditor,
         },
         {
