@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { ApolloClient, InMemoryCache, HttpLink } from 'apollo-boost';
-import { ApolloProvider } from 'react-apollo';
+import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client/react';
 
 import { compose } from 'recompose';
 import { connect } from 'react-redux';

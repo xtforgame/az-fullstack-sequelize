@@ -110,11 +110,11 @@ const getColumnConfig = () => {
   return data;
 };
 
-const ORDER_LIST_QUERY = gql`
-  query OrderListQuery {
-    orders(order_by: {created_at: desc}) {
+const CAMPAIGN_LIST_QUERY = gql`
+  query CampaignList {
+    campaigns {
       id
-      memo
+      name
     }
   }
 `;
@@ -124,7 +124,7 @@ export default (props) => {
   const classes = useStyles();
 
 
-  const { loading, error, data } = useQuery(ORDER_LIST_QUERY);
+  const { loading, error, data } = useQuery(CAMPAIGN_LIST_QUERY);
 
   const refresh = async () => {
   };
@@ -196,12 +196,12 @@ export default (props) => {
   if (error) {
     return (
       <pre>
-        Error in ORDER_LIST_QUERY
+        Error in CAMPAIGN_LIST_QUERY
         {JSON.stringify(error, null, 2)}
       </pre>
     );
   }
-  console.log('data.orders :', data.orders);
+  console.log('data.campaigns :', data.campaigns);
 
   return (
     <React.Fragment>

@@ -29,6 +29,8 @@ import SubContent08 from '~/containers/Home/SubContent08';
 import SubContent09 from '~/containers/Home/SubContent09';
 
 import OrderPages from '~/containers/OrderPages';
+import Campaigns from '~/containers/Campaigns';
+
 import AdminPages from '~/containers/AdminPages';
 import OrganizationManagement from '~/containers/AdminPages/OrganizationManagement';
 import ProjectManagement from '~/containers/AdminPages/ProjectManagement';
@@ -297,6 +299,14 @@ const globalRouteConfig = {
               },
             }],
           }],
+        },
+        {
+          name: 'campaign',
+          path: '/campaign',
+          component: Campaigns,
+          navbar: {
+            title: '活動管理',
+          },
         },
         {
           name: 'order',
