@@ -30,8 +30,13 @@ import SubContent09 from '~/containers/Home/SubContent09';
 
 import OrderPages from '~/containers/OrderPages';
 import Campaigns from '~/containers/Campaigns';
-import CreateCampaigns from '~/containers/Campaigns/Editor/Create';
-import EditCampaigns from '~/containers/Campaigns/Editor/Edit';
+import CreateCampaign from '~/containers/Campaigns/Editor/Create';
+import EditCampaign from '~/containers/Campaigns/Editor/Edit';
+
+import ProductGroups from '~/containers/ProductGroups';
+import CreateProductGroup from '~/containers/ProductGroups/Editor/Create';
+import EditProductGroup from '~/containers/ProductGroups/Editor/Edit';
+
 
 import AdminPages from '~/containers/AdminPages';
 import OrganizationManagement from '~/containers/AdminPages/OrganizationManagement';
@@ -329,7 +334,7 @@ const globalRouteConfig = {
         //   }],
         // },
         {
-          name: 'list',
+          name: 'campaign-list',
           path: '/campaign',
           component: Campaigns,
           navbar: {
@@ -340,13 +345,34 @@ const globalRouteConfig = {
         {
           name: 'create-campaign',
           path: '/campaign/edit/new',
-          component: CreateCampaigns,
+          component: CreateCampaign,
           exact: true,
         },
         {
           name: 'edit-campaign',
           path: '/campaign/edit/:id',
-          component: EditCampaigns,
+          component: EditCampaign,
+        },
+
+        {
+          name: 'product-group-list',
+          path: '/product-group',
+          component: ProductGroups,
+          navbar: {
+            title: '商品群組管理',
+          },
+          exact: true,
+        },
+        {
+          name: 'create-product-group',
+          path: '/product-group/edit/new',
+          component: CreateProductGroup,
+          exact: true,
+        },
+        {
+          name: 'edit-product-group',
+          path: '/product-group/edit/:id',
+          component: EditProductGroup,
         },
         {
           name: 'order',
