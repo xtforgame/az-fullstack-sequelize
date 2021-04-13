@@ -4,9 +4,13 @@ import { makeStyles } from '@material-ui/core/styles';
 import FormDialogInput from 'azrmui/core/FormInputs/FormDialogInput';
 import {
   getDateDisplayFuncFromProps,
+  getTimeDisplayFuncFromProps,
+  getDateTimeDisplayFuncFromProps,
 } from 'azrmui/core/FormInputs/FormDateTimePicker/utils';
 import RangeDialog from 'azrmui/core/Range/RangeDialog';
 import DateRange from 'azrmui/core/Range/DateTime/DateRange';
+import TimeRange from 'azrmui/core/Range/DateTime/TimeRange';
+import DateTimeRange from 'azrmui/core/Range/DateTime/DateTimeRange';
 import {
   normalizeDateTime,
   getDateRangeDisplayFunc,
@@ -26,12 +30,17 @@ export default (props) => {
     value = [null, null],
     onChange,
     buttonProps,
+    rangeInpuProps = {
+      PickerProps: {},
+      Picker1Props: { initialFocusedDate: 1546272000000 },
+      Picker2Props: { initialFocusedDate: 1546272000000 },
+    },
   } = props;
   return (
     <FormDialogInput
       label={title}
       value={value}
-      displayValue={getDateRangeDisplayFunc(getDateDisplayFuncFromProps(props))}
+      displayValue={getDateRangeDisplayFunc(getDateTimeDisplayFuncFromProps(props))}
       onChange={onChange}
       buttonProps={{
         fullWidth: true,
@@ -50,7 +59,8 @@ export default (props) => {
           normalize={normalizeDateTime}
           open={open}
           value={value}
-          RangeInput={DateRange}
+          RangeInput={DateTimeRange}
+          rangeInpuProps={rangeInpuProps}
           {...dialogProps}
           onClose={handleClose}
         />
