@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme => ({
     flexWrap: 'wrap',
   },
   flex1: {
-    maxWidth: 400,
+    maxWidth: 800,
     flex: 1,
   },
 }));

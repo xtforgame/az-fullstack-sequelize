@@ -11,6 +11,7 @@ const useStyles = makeStyles(theme => ({
 export default (props) => {
   const {
     options,
+    multiple,
     size = 'medium',
     value,
     onChange,
@@ -31,10 +32,10 @@ export default (props) => {
   const [inputValue, setInputValue] = useState('');
   return (
     <Autocomplete
-      multiple
+      multiple={multiple}
       size={size}
       options={options}
-      value={value || []}
+      value={value}
       onChange={onChange}
       inputValue={inputValue}
       onInputChange={(event, newInputValue) => {

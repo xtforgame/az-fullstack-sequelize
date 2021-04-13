@@ -14,6 +14,7 @@ import { useQuery, gql } from '@apollo/client';
 import useStateWithError from 'azrmui/hooks/useStateWithError';
 /* eslint-disable react/sort-comp */
 import axios from 'axios';
+import path from 'path';
 import Chip from '@material-ui/core/Chip';
 import { makeStyles } from '@material-ui/core/styles';
 // import { getDefaultBeforeDaysConfig, makeDaysFilter } from '~/utils/beforeDaysHelper';
@@ -25,6 +26,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import {
   FormNumberInput, FormImagesInput, FormDatePicker, FormFieldButtonSelect, FormTextField, FormSpace,
 } from 'azrmui/core/FormInputs';
+import { createHandleUploadFunction } from 'azrmui/core/FormInputs/FormImagesInput';
+import ColorInput from '~/components/ColorInput';
 import DateRangeInput from '~/components/DateRangeInput';
 import useRouterPush from '~/hooks/useRouterPush';
 import FormAutocomplete from '~/components/FormAutocomplete';
@@ -43,6 +46,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const handleUpload = createHandleUploadFunction('/api/files');
+
 function isInteger(str) {
   return !Number.isNaN(str) && !Number.isNaN(parseInt(str));
 }
@@ -52,9 +57,17 @@ function isNumber(str) {
 }
 
 
-const CAMPAIGN_LIST_QUERY = gql`
-  query CampaignList {
-    campaigns(where: {deleted_at: {_is_null: true}}, order_by: {created_at: desc}) {
+const PRODUCT_GROUP_LIST_QUERY = gql`
+query ProductGroupList {
+  productGroups(where: {deleted_at: {_is_null: true}}, order_by: {created_at: desc}) {
+    id
+    customId
+    products_aggregate(where: {deleted_at: {_is_null: true}}) {
+      aggregate{ count }
+    }
+    products(where: {deleted_at: {_is_null: true}}) { id, name }
+    category { id, name }
+    campaigns(where: {deleted_at: {_is_null: true}}) { campaign {
       id
       name
       type
@@ -66,13 +79,22 @@ const CAMPAIGN_LIST_QUERY = gql`
       created_at
       updated_at
       deleted_at
-    }
-    campaignAggregate(where: {deleted_at: {_is_null: true}}) {
-      aggregate {
-        count
-      }
+    } }
+    thumbnail
+    pictures
+    name
+    price
+    weight
+    description
+    materials
+    data
+  }
+  productGroupAggregate(where: {deleted_at: {_is_null: true}}) {
+    aggregate {
+      count
     }
   }
+}
 `;
 
 export default (props) => {
@@ -85,21 +107,25 @@ export default (props) => {
   const classes = useStyles();
   const [refreshCount, setRefreshCount] = useState(0);
 
-  const [campaigns, setCampaigns, campaignsError, setCampaignsError] = useStateWithError(isCreating ? [] : editingData.campaigns.map(c => c.campaign));
+  const [group, setGroup, groupError, setGroupError] = useStateWithError(isCreating ? null : editingData.group);
   const [name, setName, nameError, setNameError] = useStateWithError(isCreating ? '' : editingData.name);
+  const [color, setColor] = useStateWithError(isCreating ? ['黑色', { r: 0, g: 0, b: 0, a: 1 }] : (editingData.color || ['黑色', { r: 0, g: 0, b: 0, a: 1 }]));
   const [price, setPrice, priceError, setPriceError] = useStateWithError(isCreating ? 0 : editingData.price);
   const [materials, setMaterials, materialsError, setMaterialsError] = useStateWithError(isCreating ? '' : editingData.materials);
   const [description, setDescription, descriptionError, setDescriptionError] = useStateWithError(isCreating ? '' : editingData.description);
   const [weight, setWeight, weightError, setWeightError] = useStateWithError(isCreating ? '' : editingData.weight);
 
+  const [imageInfos, setImageInfos] = useState(isCreating ? [] : editingData.pictures);
+
   const push = useRouterPush();
   const submit = async () => {
     let errorOccurred = false;
     if (!name) {
-      setNameError('請輸入商品群組名稱');
+      setNameError('請輸入商品名稱');
       errorOccurred = true;
     }
 
+    console.log('imageInfos :', imageInfos);
 
     if (!price || !isInteger(price)) {
       setPriceError('錯誤的價格');
@@ -114,35 +140,40 @@ export default (props) => {
     if (errorOccurred) {
       return;
     }
+    const ii = imageInfos.map(({ imageUploadInfo, image, ...rest }) => ({ image: { ...image, imgUrl: path.join('/api/files', image.hash) }, ...rest }));
     const data = {
       name,
       price,
       materials,
       weight,
-      campaigns: campaigns.map(c => c.id),
+      group: group && group.id,
       description,
+      pictures: ii,
     };
+    if (ii[0]) {
+      [data.thumbnail] = ii;
+    }
     try {
       if (isCreating) {
         await axios({
           method: 'post',
-          url: 'api/product-groups',
+          url: 'api/products',
           data,
         });
       } else {
         await axios({
           method: 'patch',
-          url: `api/product-groups/${editingData.id}`,
+          url: `api/products/${editingData.id}`,
           data,
         });
       }
-      push('/product-group');
+      push('/product');
     } catch (error) {
       alert(`更新失敗：${error.message}`);
     }
   };
 
-  const { loading, error, data } = useQuery(CAMPAIGN_LIST_QUERY, {
+  const { loading, error, data } = useQuery(PRODUCT_GROUP_LIST_QUERY, {
     variables: {
       name: refreshCount.toString(),
     },
@@ -153,7 +184,7 @@ export default (props) => {
   if (error) {
     return (
       <pre>
-        Error in CAMPAIGN_LIST_QUERY
+        Error in PRODUCT_GROUP_LIST_QUERY
         {JSON.stringify(error, null, 2)}
       </pre>
     );
@@ -163,32 +194,31 @@ export default (props) => {
     <React.Fragment>
       <DialogTitle id="alert-dialog-title">
         {isCreating ? '新增' : '編輯'}
-        商品群組
+        商品
       </DialogTitle>
       <DialogContent>
         <div className={classes.flexContainer}>
           <div className={classes.flex1}>
-            {(!loading && data && data.campaigns) && (
+            {(!loading && data && data.productGroups) && (
               <FormAutocomplete
-                label="關聯活動"
+                label="商品群組"
                 size="small"
                 variant="outlined"
-                placeholder="新增關聯活動"
+                placeholder="新增商品群組"
                 margin="dense"
-                multiple
                 fullWidth
-                options={data.campaigns}
-                value={campaigns}
+                options={data.productGroups}
+                value={group}
                 onChange={(event, newValue) => {
-                  setCampaigns(newValue);
+                  setGroup(newValue);
                 }}
                 renderOption={option => (
                   <React.Fragment>
-                    {option.name}
+                    {(option && option.name) || ''}
                   </React.Fragment>
                 )}
-                filterOptions={(options, state) => options.filter(o => !campaigns.find(c => c.id === o.id))}
-                getOptionLabel={option => option.name}
+                filterOptions={(options, { inputValue }) => options.filter(o => o.name.indexOf(inputValue) !== -1)}
+                getOptionLabel={option => (option && option.name) || ''}
                 renderTags={(value, getTagProps) => value.map((option, index) => (
                   <Chip size="small" variant="outlined" label={option.name} {...getTagProps({ index })} />
                 ))}
@@ -196,7 +226,7 @@ export default (props) => {
             )}
             <FormSpace variant="content1" />
             <FormTextField
-              label="群組名稱"
+              label="商品名稱"
               error={!!nameError}
               helperText={nameError}
               // label={label}
@@ -218,6 +248,27 @@ export default (props) => {
               onChange={e => setPrice(e.target.value)}
               margin="dense"
               fullWidth
+            />
+            <FormSpace variant="content1" />
+            <ColorInput
+              title="選取色彩"
+              value={color}
+              onChange={setColor}
+              buttonProps={{
+                margin: 'dense',
+              }}
+            />
+            <FormSpace variant="content1" />
+            <FormImagesInput
+              label="Images"
+              value={imageInfos}
+              onChange={setImageInfos}
+              onAdd={(imageInfo, { context }) => {
+                context.uploadImage(imageInfo);
+                setImageInfos(imageInfos => imageInfos.concat([imageInfo]));
+              }}
+              fullWidth
+              handleUpload={handleUpload}
             />
             <FormSpace variant="content1" />
             <FormTextField
@@ -272,7 +323,7 @@ export default (props) => {
         </div>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => { push('/product-group'); }} color="primary">
+        <Button onClick={() => { push('/product'); }} color="primary">
           返回
         </Button>
         <Button variant="contained" onClick={submit} color="primary">

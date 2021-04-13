@@ -8,3 +8,4 @@ export * from './resourceHelpers/project';
 export * from './resourceHelpers/order';
 export * from './resourceHelpers/campaign';
 export * from './resourceHelpers/productGroup';
+export * from './resourceHelpers/product';

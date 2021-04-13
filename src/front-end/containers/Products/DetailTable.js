@@ -36,13 +36,13 @@ import EnhancedTable from '~/components/EnhancedTable';
 import useRouterQuery from '~/hooks/useRouterQuery';
 import useRouterPush from '~/hooks/useRouterPush';
 import FilterSection from './FilterSection';
-import DetailTable from './DetailTable';
+import Box from '@material-ui/core/Box';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    // maxWidth: 900,
+  box: {
   },
 }));
+
 
 const renderRowCell = (columnName, row, option) => (
   <ContentText>
@@ -60,7 +60,7 @@ const getColumnConfig = () => {
     },
     {
       id: 'name',
-      label: '商品群組名稱',
+      label: '商品名稱',
       sortable: false,
       align: 'left',
       size: 200,
@@ -124,7 +124,7 @@ const getColumnConfig = () => {
         const push = useRouterPush();
         return (
           <Tooltip title="修改">
-            <IconButton color="primary" aria-label="修改" onClick={() => push(`/product-group/edit/${row.id}`)}>
+            <IconButton color="primary" aria-label="修改" onClick={() => push(`/product/edit/${row.id}`)}>
               <EditIcon />
             </IconButton>
           </Tooltip>
@@ -145,7 +145,7 @@ const getColumnConfig = () => {
   return data;
 };
 
-const PRODUCT_GROUP_LIST_QUERY = gql`
+const PRODUCT_LIST_QUERY = gql`
   query ProductGroupList {
     productGroups(where: {deleted_at: {_is_null: true}}, order_by: {created_at: desc}) {
       id
@@ -186,7 +186,7 @@ const PRODUCT_GROUP_LIST_QUERY = gql`
 `;
 
 
-const PRODUCT_GROUP_LIST_SEARCH_QUERY = gql`
+const PRODUCT_LIST_SEARCH_QUERY = gql`
   query ProductGroupListSearch($name: String!) {
     productGroups(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}, order_by: {created_at: desc}) {
       id
@@ -233,9 +233,9 @@ export default (props) => {
   const classes = useStyles();
 
   const query = useRouterQuery();
-  console.log('query.get("text") :', query.get('text'));
+  // console.log('query.get("text") :', query.get('text'));
 
-  const { loading, error, data } = useQuery(PRODUCT_GROUP_LIST_QUERY, {
+  const { loading, error, data } = useQuery(PRODUCT_LIST_QUERY, {
     variables: {
       name: refreshCount.toString(),
     },
@@ -284,8 +284,8 @@ export default (props) => {
     </React.Fragment>
   ) : (
     <React.Fragment>
-      <Tooltip title="新增商品群組">
-        <IconButton color="primary" aria-label="新增商品群組" onClick={() => push('/product-group/edit/new')}>
+      <Tooltip title="新增商品">
+        <IconButton color="primary" aria-label="新增商品" onClick={() => push('/product/edit/new')}>
           <AddIcon />
         </IconButton>
       </Tooltip>
@@ -312,7 +312,7 @@ export default (props) => {
   if (error) {
     return (
       <pre>
-        Error in PRODUCT_GROUP_LIST_QUERY
+        Error in PRODUCT_LIST_QUERY
         {JSON.stringify(error, null, 2)}
       </pre>
     );
@@ -320,8 +320,7 @@ export default (props) => {
 
   return (
     <React.Fragment>
-      <FilterSection />
-      <BasicSection>
+      <Box className={classes.box} margin={1}>
         <EnhancedTable
           rows={rows}
           loading={loading}
@@ -329,15 +328,15 @@ export default (props) => {
           setSelected={setSelected}
           {...getColumnConfig()}
           toolbarProps={{
-            title: '商品群組管理',
+            title: '商品管理',
             renderActions,
           }}
           paginationProps={{
             rowsPerPageOptions: [10, 25, 50, 75],
           }}
-          renderRowDetail={row => (<DetailTable row={row} products={row.products} />)}
+          renderRowDetail={row => (<div />)}
         />
-      </BasicSection>
+      </Box>
     </React.Fragment>
   );
 };

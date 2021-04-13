@@ -37,6 +37,10 @@ import ProductGroups from '~/containers/ProductGroups';
 import CreateProductGroup from '~/containers/ProductGroups/Editor/Create';
 import EditProductGroup from '~/containers/ProductGroups/Editor/Edit';
 
+import Products from '~/containers/Products';
+import CreateProduct from '~/containers/Products/Editor/Create';
+import EditProduct from '~/containers/Products/Editor/Edit';
+
 
 import AdminPages from '~/containers/AdminPages';
 import OrganizationManagement from '~/containers/AdminPages/OrganizationManagement';
@@ -374,6 +378,28 @@ const globalRouteConfig = {
           path: '/product-group/edit/:id',
           component: EditProductGroup,
         },
+
+        {
+          name: 'product-list',
+          path: '/product',
+          component: Products,
+          navbar: {
+            title: '商品管理',
+          },
+          exact: true,
+        },
+        {
+          name: 'create-product',
+          path: '/product/edit/new',
+          component: CreateProduct,
+          exact: true,
+        },
+        {
+          name: 'edit-product',
+          path: '/product/edit/:id',
+          component: EditProduct,
+        },
+
         {
           name: 'order',
           path: '/order',

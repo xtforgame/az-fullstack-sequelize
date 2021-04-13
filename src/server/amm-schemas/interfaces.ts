@@ -825,7 +825,7 @@ export type ProductCreationAttributes = {
   name?: string;
   price?: number;
   weight?: number;
-  description?: any;
+  description?: string;
   data?: any;
   group_id?: string;
   group?: ProductGroupCreationAttributes;
@@ -842,7 +842,7 @@ export type ProductAttributes = {
   name?: string;
   price?: number;
   weight?: number;
-  description?: any;
+  description?: string;
   data?: any;
   group_id?: string;
   group?: ExtendedModel<ProductGroupI>;
@@ -884,8 +884,9 @@ export type ProductGroupCreationAttributes = {
   name?: string;
   price?: number;
   weight?: number;
-  description?: any;
+  description?: string;
   data?: any;
+  materials?: string;
   products?: ProductCreationAttributes[];
   category_id?: string;
   category?: ProductCategoryCreationAttributes;
@@ -900,8 +901,9 @@ export type ProductGroupAttributes = {
   name?: string;
   price?: number;
   weight?: number;
-  description?: any;
+  description?: string;
   data?: any;
+  materials?: string;
   products?: ExtendedModel<ProductI>[];
   category_id?: string;
   category?: ExtendedModel<ProductCategoryI>;

@@ -60,7 +60,7 @@ const getColumnConfig = () => {
     },
     {
       id: 'name',
-      label: '商品群組名稱',
+      label: '商品名稱',
       sortable: false,
       align: 'left',
       size: 200,
@@ -78,18 +78,6 @@ const getColumnConfig = () => {
       sortable: false,
       align: 'right',
       size: 200,
-    },
-    {
-      id: 'productCount',
-      label: '商品數量',
-      sortable: false,
-      align: 'right',
-      size: 200,
-      renderRowCell: (columnName, row, option) => (
-        <ContentText>
-          {row.products_aggregate.aggregate.count}
-        </ContentText>
-      ),
     },
     // {
     //   id: 'data',
@@ -124,7 +112,7 @@ const getColumnConfig = () => {
         const push = useRouterPush();
         return (
           <Tooltip title="修改">
-            <IconButton color="primary" aria-label="修改" onClick={() => push(`/product-group/edit/${row.id}`)}>
+            <IconButton color="primary" aria-label="修改" onClick={() => push(`/product/edit/${row.id}`)}>
               <EditIcon />
             </IconButton>
           </Tooltip>
@@ -145,39 +133,47 @@ const getColumnConfig = () => {
   return data;
 };
 
-const PRODUCT_GROUP_LIST_QUERY = gql`
-  query ProductGroupList {
-    productGroups(where: {deleted_at: {_is_null: true}}, order_by: {created_at: desc}) {
+const PRODUCT_LIST_QUERY = gql`
+  query ProductList {
+    products {
       id
       customId
-      products_aggregate(where: {deleted_at: {_is_null: true}}) {
-        aggregate{ count }
+      group {
+        products(where: {deleted_at: {_is_null: true}}) {
+          id
+          name
+        }
+        category {
+          id
+          name
+        }
+        campaigns(where: {deleted_at: {_is_null: true}}) {
+          campaign {
+            id
+            name
+            type
+            durationType
+            state
+            start
+            end
+            data
+            created_at
+            updated_at
+            deleted_at
+          }
+        }
       }
-      products(where: {deleted_at: {_is_null: true}}) { id, name }
-      category { id, name }
-      campaigns(where: {deleted_at: {_is_null: true}}) { campaign {
-        id
-        name
-        type
-        durationType
-        state
-        start
-        end
-        data
-        created_at
-        updated_at
-        deleted_at
-      } }
+      color
+      size
       thumbnail
       pictures
       name
       price
       weight
       description
-      materials
       data
     }
-    productGroupAggregate(where: {deleted_at: {_is_null: true}}) {
+    productAggregate(where: {deleted_at: {_is_null: true}}) {
       aggregate {
         count
       }
@@ -186,39 +182,47 @@ const PRODUCT_GROUP_LIST_QUERY = gql`
 `;
 
 
-const PRODUCT_GROUP_LIST_SEARCH_QUERY = gql`
+const PRODUCT_LIST_SEARCH_QUERY = gql`
   query ProductGroupListSearch($name: String!) {
-    productGroups(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}, order_by: {created_at: desc}) {
+    products(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}, order_by: {created_at: desc}) {
       id
       customId
-      products_aggregate(where: {deleted_at: {_is_null: true}}) {
-        aggregate{ count }
+      group {
+        products(where: {deleted_at: {_is_null: true}}) {
+          id
+          name
+        }
+        category {
+          id
+          name
+        }
+        campaigns(where: {deleted_at: {_is_null: true}}) {
+          campaign {
+            id
+            name
+            type
+            durationType
+            state
+            start
+            end
+            data
+            created_at
+            updated_at
+            deleted_at
+          }
+        }
       }
-      products(where: {deleted_at: {_is_null: true}}) { id, name }
-      category { id, name }
-      campaigns(where: {deleted_at: {_is_null: true}}) { campaign {
-        id
-        name
-        type
-        durationType
-        state
-        start
-        end
-        data
-        created_at
-        updated_at
-        deleted_at
-      } }
+      color
+      size
       thumbnail
       pictures
       name
       price
       weight
       description
-      materials
       data
     }
-    productGroupAggregate(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}) {
+    productAggregate(where: {deleted_at: {_is_null: true}}) {
       aggregate {
         count
       }
@@ -233,9 +237,9 @@ export default (props) => {
   const classes = useStyles();
 
   const query = useRouterQuery();
-  console.log('query.get("text") :', query.get('text'));
+  // console.log('query.get("text") :', query.get('text'));
 
-  const { loading, error, data } = useQuery(PRODUCT_GROUP_LIST_QUERY, {
+  const { loading, error, data } = useQuery(PRODUCT_LIST_QUERY, {
     variables: {
       name: refreshCount.toString(),
     },
@@ -284,8 +288,8 @@ export default (props) => {
     </React.Fragment>
   ) : (
     <React.Fragment>
-      <Tooltip title="新增商品群組">
-        <IconButton color="primary" aria-label="新增商品群組" onClick={() => push('/product-group/edit/new')}>
+      <Tooltip title="新增商品">
+        <IconButton color="primary" aria-label="新增商品" onClick={() => push('/product/edit/new')}>
           <AddIcon />
         </IconButton>
       </Tooltip>
@@ -303,8 +307,8 @@ export default (props) => {
   ));
 
   useEffect(() => {
-    if (data && data.productGroups) {
-      setRows(data.productGroups);
+    if (data && data.products) {
+      setRows(data.products);
     }
   }, [data]);
 
@@ -312,7 +316,7 @@ export default (props) => {
   if (error) {
     return (
       <pre>
-        Error in PRODUCT_GROUP_LIST_QUERY
+        Error in PRODUCT_LIST_QUERY
         {JSON.stringify(error, null, 2)}
       </pre>
     );
@@ -329,7 +333,7 @@ export default (props) => {
           setSelected={setSelected}
           {...getColumnConfig()}
           toolbarProps={{
-            title: '商品群組管理',
+            title: '商品管理',
             renderActions,
           }}
           paginationProps={{

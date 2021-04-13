@@ -87,7 +87,10 @@ const getViewPermissions : (filter : any) => Permissions = (filter : any) => {
 };
 
 const productColumns : JsonModelAttributes = {
-  thumbnail: 'string',
+  thumbnail: {
+    type: 'jsonb',
+    defaultValue: {},
+  },
   pictures: {
     type: 'jsonb',
     defaultValue: [],
@@ -95,10 +98,7 @@ const productColumns : JsonModelAttributes = {
   name: ['string', 900],
   price: ['integer'],
   weight: 'float',
-  description: {
-    type: 'jsonb',
-    defaultValue: {},
-  },
+  description: 'text',
   data: {
     type: 'jsonb',
     defaultValue: {},
