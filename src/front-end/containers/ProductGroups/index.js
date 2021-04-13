@@ -71,49 +71,36 @@ const getColumnConfig = () => {
     },
     {
       id: 'name',
-      label: '活動名稱',
+      label: '商品群組名稱',
       sortable: false,
       align: 'left',
       size: 200,
     },
     {
-      id: 'type',
-      label: '活動類型',
-      sortable: false,
-      align: 'left',
-      size: 200,
-      renderRowCell: (columnName, row) => productGroupTypeNameFunc(row[columnName]),
-    },
-    // {
-    //   id: 'durationType',
-    //   label: '活動類型',
-    //   sortable: false,
-    //   align: 'left',
-    //   size: 200,
-    // },
-    {
-      id: 'state',
-      label: '活動狀態',
-      sortable: false,
-      align: 'left',
-      size: 200,
-      renderRowCell: (columnName, row) => productGroupStateNameFunc(row[columnName]),
-    },
-    {
-      id: 'start',
-      label: '開始時間',
+      id: 'price',
+      label: '價格（新台幣）',
       sortable: false,
       align: 'right',
-      renderRowCell,
       size: 200,
     },
     {
-      id: 'end',
-      label: '結束時間',
+      id: 'weight',
+      label: '重量',
       sortable: false,
       align: 'right',
-      renderRowCell,
       size: 200,
+    },
+    {
+      id: 'productCount',
+      label: '商品數量',
+      sortable: false,
+      align: 'right',
+      size: 200,
+      renderRowCell: (columnName, row, option) => (
+        <ContentText>
+          {row.products_aggregate.aggregate.count}
+        </ContentText>
+      ),
     },
     // {
     //   id: 'data',
@@ -174,9 +161,24 @@ const PRODUCT_GROUP_LIST_QUERY = gql`
     productGroups(where: {deleted_at: {_is_null: true}}, order_by: {created_at: desc}) {
       id
       customId
-      products { id, name }
+      products_aggregate(where: {deleted_at: {_is_null: true}}) {
+        aggregate{ count }
+      }
+      products(where: {deleted_at: {_is_null: true}}) { id, name }
       category { id, name }
-      campaigns { campaign { id, name } }
+      campaigns(where: {deleted_at: {_is_null: true}}) { campaign {
+        id
+        name
+        type
+        durationType
+        state
+        start
+        end
+        data
+        created_at
+        updated_at
+        deleted_at
+      } }
       thumbnail
       pictures
       name
@@ -200,9 +202,24 @@ const PRODUCT_GROUP_LIST_SEARCH_QUERY = gql`
     productGroups(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}, order_by: {created_at: desc}) {
       id
       customId
-      products { id, name }
+      products_aggregate(where: {deleted_at: {_is_null: true}}) {
+        aggregate{ count }
+      }
+      products(where: {deleted_at: {_is_null: true}}) { id, name }
       category { id, name }
-      campaigns { campaign { id, name } }
+      campaigns(where: {deleted_at: {_is_null: true}}) { campaign {
+        id
+        name
+        type
+        durationType
+        state
+        start
+        end
+        data
+        created_at
+        updated_at
+        deleted_at
+      } }
       thumbnail
       pictures
       name
@@ -278,8 +295,8 @@ export default (props) => {
     </React.Fragment>
   ) : (
     <React.Fragment>
-      <Tooltip title="新增活動">
-        <IconButton color="primary" aria-label="新增活動" onClick={() => push('/product-group/edit/new')}>
+      <Tooltip title="新增商品群組">
+        <IconButton color="primary" aria-label="新增商品群組" onClick={() => push('/product-group/edit/new')}>
           <AddIcon />
         </IconButton>
       </Tooltip>
@@ -323,13 +340,13 @@ export default (props) => {
           setSelected={setSelected}
           {...getColumnConfig()}
           toolbarProps={{
-            title: '活動管理',
+            title: '商品群組管理',
             renderActions,
           }}
           paginationProps={{
             rowsPerPageOptions: [10, 25, 50, 75],
           }}
-          renderRowDetail={row => (<DetailTable row={row} />)}
+          renderRowDetail={row => (<DetailTable row={row} products={row.products} />)}
         />
       </BasicSection>
     </React.Fragment>

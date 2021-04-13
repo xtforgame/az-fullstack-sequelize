@@ -1,6 +1,6 @@
 {
   "greetText": "你好，{{user}}。",
-  "appTitle": "管理系統",
+  "appTitle": "Studio Doe管理系統",
   "login": "登入",
   "logout": "登出",
   "profile": "個人資料",

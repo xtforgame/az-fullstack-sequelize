@@ -25,6 +25,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import {
   FormNumberInput, FormImagesInput, FormDatePicker, FormFieldButtonSelect, FormTextField, FormSpace,
 } from 'azrmui/core/FormInputs';
+import { isNullOrUndefined } from 'util';
 import DateRangeInput from '~/components/DateRangeInput';
 import useRouterPush from '~/hooks/useRouterPush';
 import FormAutocomplete from '~/components/FormAutocomplete';
@@ -40,7 +41,6 @@ import {
   productGroupStateNameFunc,
   productGroupStates,
 } from '../constants';
-import { isNullOrUndefined } from 'util';
 
 const useStyles = makeStyles(theme => ({
   flexContainer: {
@@ -56,13 +56,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function isInteger(str) {
-  if (typeof str !== 'string') return false;
-  return !Math.isNaN(str) && !Math.isNaN(parseInt(str));
+  return !Number.isNaN(str) && !Number.isNaN(parseInt(str));
 }
 
 function isNumber(str) {
-  if (typeof str !== 'string') return false;
-  return !Math.isNaN(str) && !Math.isNaN(parseFloat(str));
+  return !Number.isNaN(str) && !Number.isNaN(parseFloat(str));
 }
 
 
@@ -99,24 +97,12 @@ export default (props) => {
   const classes = useStyles();
   const [refreshCount, setRefreshCount] = useState(0);
 
-  const [campaigns, setCampaigns, campaignsError, setCampaignsError] = useStateWithError(isCreating ? [] : editingData.campaigns);
+  const [campaigns, setCampaigns, campaignsError, setCampaignsError] = useStateWithError(isCreating ? [] : editingData.campaigns.map(c => c.campaign));
   const [name, setName, nameError, setNameError] = useStateWithError(isCreating ? '' : editingData.name);
   const [price, setPrice, priceError, setPriceError] = useStateWithError(isCreating ? 0 : editingData.price);
   const [materials, setMaterials, materialsError, setMaterialsError] = useStateWithError(isCreating ? '' : editingData.materials);
   const [description, setDescription, descriptionError, setDescriptionError] = useStateWithError(isCreating ? '' : editingData.description);
   const [weight, setWeight, weightError, setWeightError] = useStateWithError(isCreating ? '' : editingData.weight);
-
-  const [selectedType, setSelectedType, selectedTypeError, setSelectedTypeError] = useStateWithError(isCreating ? productGroupTypes[0] : { id: editingData.type, name: productGroupTypeNameFunc(editingData.type) });
-  const handleTypeMenuItemClick = (event, exEvent, i) => {
-    setSelectedType(exEvent);
-  };
-
-  const [dateRange, setDateRange] = useState(isCreating ? [null, null] : [editingData.start, editingData.end]);
-
-  const [selectedState, setSelectedState, selectedStateError, setSelectedStateError] = useStateWithError(isCreating ? productGroupStates[0] : { id: editingData.state, name: productGroupStateNameFunc(editingData.state) });
-  const handleStateMenuItemClick = (event, exEvent, i) => {
-    setSelectedState(exEvent);
-  };
 
   const push = useRouterPush();
   const submit = async () => {
@@ -126,24 +112,18 @@ export default (props) => {
       errorOccurred = true;
     }
 
+    console.log('price, weight :', price, weight);
+
     if (!price || !isInteger(price)) {
       setPriceError('錯誤的價格');
       errorOccurred = true;
     }
 
     if (!weight || !isNumber(weight)) {
-      setWeight('錯誤的重量');
+      setWeightError('錯誤的重量');
       errorOccurred = true;
     }
 
-    if (!productGroupTypeNameMap[selectedType.id]) {
-      setSelectedTypeError('請選擇商品群組類型');
-      errorOccurred = true;
-    }
-    if (!productGroupStateNameMap[selectedState.id]) {
-      setSelectedStateError('請選擇商品群組類型');
-      errorOccurred = true;
-    }
     if (errorOccurred) {
       return;
     }
@@ -151,20 +131,21 @@ export default (props) => {
       name,
       price,
       materials,
-      campaigns,
+      weight,
+      campaigns: campaigns.map(c => c.id),
       description,
     };
     try {
       if (isCreating) {
         await axios({
           method: 'post',
-          url: 'api/productGroups',
+          url: 'api/product-groups',
           data,
         });
       } else {
         await axios({
           method: 'patch',
-          url: `api/productGroups/${editingData.id}`,
+          url: `api/product-groups/${editingData.id}`,
           data,
         });
       }
@@ -218,6 +199,7 @@ export default (props) => {
                     {option.name}
                   </React.Fragment>
                 )}
+                filterOptions={(options, state) => options.filter(o => !campaigns.find(c => c.id === o.id))}
                 getOptionLabel={option => option.name}
                 renderTags={(value, getTagProps) => value.map((option, index) => (
                   <Chip size="small" variant="outlined" label={option.name} {...getTagProps({ index })} />

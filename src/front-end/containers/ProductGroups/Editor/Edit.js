@@ -9,9 +9,21 @@ const PRODUCT_GROUP_QUERY = gql`
     productGroup(id: $id){
       id
       customId
-      products { id, name }
+      products(where: {deleted_at: {_is_null: true}}) { id, name }
       category { id, name }
-      campaigns { campaign { id, name } }
+      campaigns(where: {deleted_at: {_is_null: true}}) { campaign {
+        id
+        name
+        type
+        durationType
+        state
+        start
+        end
+        data
+        created_at
+        updated_at
+        deleted_at
+      } }
       thumbnail
       pictures
       name

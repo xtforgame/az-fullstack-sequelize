@@ -7,6 +7,10 @@ import {
   findAllCampaign,
   createCampaign,
   patchCampaign,
+
+  findAllProductGroup,
+  createProductGroup,
+  patchProductGroup,
 } from '~/domain-logic';
 import RouterBase from '../core/router-base';
 
@@ -49,6 +53,34 @@ export default class ECommerceRouter extends RouterBase {
         ...rest
       } = ctx.request.body;
       return ctx.body = await patchCampaign(this.resourceManager, ctx.params.id, rest);
+    });
+
+
+    router.post('/api/product-groups', this.authKit.koaHelperEx.getIdentity, async (ctx, next) => {
+      if (!ctx.local.userSession || !ctx.local.userSession.user_id || ctx.local.userSession.privilege !== 'admin') {
+        return RestfulError.koaThrowWith(ctx, 404, 'User not found');
+      }
+      const {
+        data,
+        campaigns,
+        ...rest
+      } = ctx.request.body;
+      return ctx.body = await createProductGroup(this.resourceManager, {
+        ...rest,
+        data: {},
+        campaigns,
+      });
+    });
+
+    router.patch('/api/product-groups/:id', this.authKit.koaHelperEx.getIdentity, async (ctx, next) => {
+      if (!ctx.local.userSession || !ctx.local.userSession.user_id || ctx.local.userSession.privilege !== 'admin') {
+        return RestfulError.koaThrowWith(ctx, 404, 'User not found');
+      }
+      const {
+        data,
+        ...rest
+      } = ctx.request.body;
+      return ctx.body = await patchProductGroup(this.resourceManager, ctx.params.id, rest);
     });
   }
 }

@@ -23,6 +23,7 @@ export default (props) => {
     renderTags = (value, getTagProps) => value.map((option, index) => (
       <Chip size={size} variant="outlined" label={option} {...getTagProps({ index })} />
     )),
+    filterOptions,
     ...rest
   } = props;
   const classes = useStyles();
@@ -40,6 +41,7 @@ export default (props) => {
         setInputValue(newInputValue);
       }}
       filterSelectedOptions
+      filterOptions={filterOptions}
       getOptionLabel={getOptionLabel}
       renderOption={renderOption}
       renderTags={renderTags}

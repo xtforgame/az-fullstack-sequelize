@@ -77,7 +77,7 @@ export default function EnhancedRow({
         <TableCell align="right">{row.comment}</TableCell> */}
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={columns.length + 2}>
           {
             renderRowDetail && (
               <Collapse in={open} timeout="auto" unmountOnExit>
