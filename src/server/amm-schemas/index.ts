@@ -816,6 +816,7 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         },
         customId: 'string',
         ...productColumns,
+        materials: 'text',
         products: ['hasMany', 'product', {
           foreignKey: 'group_id',
         }],

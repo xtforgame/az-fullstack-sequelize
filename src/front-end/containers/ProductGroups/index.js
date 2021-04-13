@@ -183,6 +183,7 @@ const PRODUCT_GROUP_LIST_QUERY = gql`
       price
       weight
       description
+      materials
       data
     }
     productGroupAggregate(where: {deleted_at: {_is_null: true}}) {
@@ -195,18 +196,26 @@ const PRODUCT_GROUP_LIST_QUERY = gql`
 
 
 const PRODUCT_GROUP_LIST_SEARCH_QUERY = gql`
-  query ProductGroupListSearch($id: bigint! = 0, $name: String!) {
+  query ProductGroupListSearch($name: String!) {
     productGroups(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}, order_by: {created_at: desc}) {
       id
+      customId
+      products { id, name }
+      category { id, name }
+      campaigns { campaign { id, name } }
+      thumbnail
+      pictures
       name
+      price
+      weight
+      description
+      materials
+      data
     }
     productGroupAggregate(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}) {
       aggregate {
         count
       }
-    }
-    productGroup(id: $id){
-      id
     }
   }
 `;

@@ -17,6 +17,7 @@ const PRODUCT_GROUP_QUERY = gql`
       name
       price
       weight
+      materials
       description
       data
     }
