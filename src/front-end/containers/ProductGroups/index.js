@@ -169,7 +169,7 @@ const getColumnConfig = () => {
   return data;
 };
 
-const CAMPAIGN_LIST_QUERY = gql`
+const PRODUCT_GROUP_LIST_QUERY = gql`
   query ProductGroupList {
     productGroups(where: {deleted_at: {_is_null: true}}, order_by: {created_at: desc}) {
       id
@@ -194,7 +194,7 @@ const CAMPAIGN_LIST_QUERY = gql`
 `;
 
 
-const CAMPAIGN_LIST_SEARCH_QUERY = gql`
+const PRODUCT_GROUP_LIST_SEARCH_QUERY = gql`
   query ProductGroupListSearch($id: bigint! = 0, $name: String!) {
     productGroups(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}, order_by: {created_at: desc}) {
       id
@@ -220,7 +220,7 @@ export default (props) => {
   const query = useRouterQuery();
   console.log('query.get("text") :', query.get('text'));
 
-  const { loading, error, data } = useQuery(CAMPAIGN_LIST_QUERY, {
+  const { loading, error, data } = useQuery(PRODUCT_GROUP_LIST_QUERY, {
     variables: {
       name: refreshCount.toString(),
     },
@@ -297,7 +297,7 @@ export default (props) => {
   if (error) {
     return (
       <pre>
-        Error in CAMPAIGN_LIST_QUERY
+        Error in PRODUCT_GROUP_LIST_QUERY
         {JSON.stringify(error, null, 2)}
       </pre>
     );

@@ -4,20 +4,21 @@ import BasicSection from '~/components/Section/Basic';
 import LoadingMask from '~/components/EnhancedTable/LoadingMask';
 import ProductGroupEditor from './Editor';
 
-const CAMPAIGN_QUERY = gql`
+const PRODUCT_GROUP_QUERY = gql`
   query ProductGroup($id: bigint! = 0) {
     productGroup(id: $id){
       id
+      customId
+      products { id, name }
+      category { id, name }
+      campaigns { campaign { id, name } }
+      thumbnail
+      pictures
       name
-      type
-      durationType
-      state
-      start
-      end
+      price
+      weight
+      description
       data
-      created_at
-      updated_at
-      deleted_at
     }
   }
 `;
@@ -33,7 +34,7 @@ export default (props) => {
     id,
   } = match.params;
 
-  const { loading, error, data } = useQuery(CAMPAIGN_QUERY, {
+  const { loading, error, data } = useQuery(PRODUCT_GROUP_QUERY, {
     variables: {
       name: refreshCount.toString(),
       id,
@@ -45,7 +46,7 @@ export default (props) => {
   if (error) {
     return (
       <pre>
-        Error in CAMPAIGN_QUERY
+        Error in PRODUCT_GROUP_QUERY
         {JSON.stringify(error, null, 2)}
       </pre>
     );
