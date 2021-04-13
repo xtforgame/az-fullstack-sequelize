@@ -28,14 +28,27 @@ export default class ECommerceRouter extends RouterBase {
       if (!ctx.local.userSession || !ctx.local.userSession.user_id || ctx.local.userSession.privilege !== 'admin') {
         return RestfulError.koaThrowWith(ctx, 404, 'User not found');
       }
-      return ctx.body = await createCampaign(this.resourceManager, ctx.request.body);
+      const {
+        durationType,
+        data,
+      } = ctx.request.body;
+      return ctx.body = await createCampaign(this.resourceManager, {
+        ...ctx.request.body,
+        durationType: '',
+        data: {},
+      });
     });
 
     router.patch('/api/campaigns/:id', this.authKit.koaHelperEx.getIdentity, async (ctx, next) => {
       if (!ctx.local.userSession || !ctx.local.userSession.user_id || ctx.local.userSession.privilege !== 'admin') {
         return RestfulError.koaThrowWith(ctx, 404, 'User not found');
       }
-      return ctx.body = await patchCampaign(this.resourceManager, ctx.params.id, ctx.request.body);
+      const {
+        durationType,
+        data,
+        ...rest
+      } = ctx.request.body;
+      return ctx.body = await patchCampaign(this.resourceManager, ctx.params.id, rest);
     });
   }
 }

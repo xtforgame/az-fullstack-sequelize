@@ -36,6 +36,16 @@ import EnhancedTable from '~/components/EnhancedTable';
 import useRouterQuery from '~/hooks/useRouterQuery';
 import useRouterPush from '~/hooks/useRouterPush';
 
+import {
+  campaignTypeInfo,
+  campaignTypeNameMap,
+  campaignTypeNameFunc,
+  campaignTypes,
+  campaignStateInfo,
+  campaignStateNameMap,
+  campaignStateNameFunc,
+  campaignStates,
+} from './constants';
 import FilterSection from './FilterSection';
 import DetailTable from './DetailTable';
 
@@ -47,7 +57,7 @@ const useStyles = makeStyles(theme => ({
 
 const renderRowCell = (columnName, row, option) => (
   <ContentText>
-    {moment(row[columnName]).format('YYYY/MM/DD[\n]hh:mm:ss')}
+    {row[columnName] ? moment(row[columnName]).format('YYYY/MM/DD[\n]hh:mm:ss') : 'N/A'}
   </ContentText>
 );
 
@@ -72,6 +82,7 @@ const getColumnConfig = () => {
       sortable: false,
       align: 'left',
       size: 200,
+      renderRowCell: (columnName, row) => campaignTypeNameFunc(row[columnName]),
     },
     // {
     //   id: 'durationType',
@@ -86,6 +97,7 @@ const getColumnConfig = () => {
       sortable: false,
       align: 'left',
       size: 200,
+      renderRowCell: (columnName, row) => campaignStateNameFunc(row[columnName]),
     },
     {
       id: 'start',
@@ -235,6 +247,7 @@ export default (props) => {
     );
   };
 
+  const push = useRouterPush();
   const renderActions = numSelected => (numSelected > 0 ? (
     <React.Fragment>
       <Tooltip title="核准">
@@ -256,7 +269,7 @@ export default (props) => {
   ) : (
     <React.Fragment>
       <Tooltip title="新增活動">
-        <IconButton color="primary" aria-label="新增活動">
+        <IconButton color="primary" aria-label="新增活動" onClick={() => push('/campaign/edit/new')}>
           <AddIcon />
         </IconButton>
       </Tooltip>

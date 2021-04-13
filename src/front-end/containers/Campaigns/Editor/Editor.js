@@ -9,7 +9,7 @@ to your service.
     "react-apollo": "^2.5.5"
 */
 import React, { useEffect, useState } from 'react';
-import { useQuery, gql } from '@apollo/client';
+import moment from 'moment';
 import useStateWithError from 'azrmui/hooks/useStateWithError';
 /* eslint-disable react/sort-comp */
 import axios from 'axios';
@@ -23,37 +23,20 @@ import DialogActions from '@material-ui/core/DialogActions';
 import {
   FormDatePicker, FormFieldButtonSelect, FormTextField, FormSpace,
 } from 'azrmui/core/FormInputs';
-import MenuItem from '@material-ui/core/MenuItem';
 import DateRangeInput from '~/components/DateRangeInput';
-import BasicSection from '~/components/Section/Basic';
-import LoadingMask from '~/components/EnhancedTable/LoadingMask';
 import useRouterPush from '~/hooks/useRouterPush';
-import TagsAutocomplete from '../TagsAutocomplete';
+import TagsAutocomplete from '~/components/TagsAutocomplete';
 
-
-const campaignTypeInfo = [
-  { id: 'seasonal', name: '季節活動' },
-  { id: 'permanent-discount', name: '折扣' },
-  { id: 'discount-total-price', name: '滿額折扣' },
-  { id: 'free-shipping-total-price', name: '滿額免運' },
-  { id: 'free-shipping-total-amount', name: '滿量免運' },
-];
-const campaignTypeNameMap = campaignTypeInfo.reduce((m, v) => ({ ...m, [v.id]: v.name }), {});
-const campaignTypeNameFunc = id => campaignTypeNameMap[id] || '<不明狀態>';
-const campaignTypes = campaignTypeInfo.map(({ id, name }) => ({ id, name: name || '<不明狀態>' }));
-
-const campaignStateInfo = [
-  { id: 'na', name: '<N/A>' },
-  { id: 'actived', name: '連線' },
-  { id: 'past_actived', name: '過季連線' },
-  { id: 'in_store', name: '店內' },
-  { id: 'expired', name: '過期(上架不可選)' },
-  { id: 'hide', name: '隱藏(前端不顯示)' },
-];
-const campaignStateNameMap = campaignStateInfo.reduce((m, v) => ({ ...m, [v.id]: v.name }), {});
-const campaignStateNameFunc = id => campaignStateNameMap[id] || '<不明狀態>';
-const campaignStates = campaignStateInfo.map(({ id, name }) => ({ id, name: name || '<不明狀態>' }));
-
+import {
+  campaignTypeInfo,
+  campaignTypeNameMap,
+  campaignTypeNameFunc,
+  campaignTypes,
+  campaignStateInfo,
+  campaignStateNameMap,
+  campaignStateNameFunc,
+  campaignStates,
+} from '../constants';
 
 const useStyles = makeStyles(theme => ({
   flexContainer: {
@@ -68,7 +51,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const CampaignEditor = (props) => {
+export default (props) => {
   const {
     editingData,
   } = props;
@@ -78,44 +61,69 @@ const CampaignEditor = (props) => {
   const classes = useStyles();
 
   const [name, setName, nameError, setNameError] = useStateWithError(isCreating ? '' : editingData.name);
-  const [selectedType, setSelectedType] = useState(isCreating ? campaignTypes[0] : { id: editingData.type, name: campaignTypeNameFunc(editingData.type) });
+  const [selectedType, setSelectedType, selectedTypeError, setSelectedTypeError] = useStateWithError(isCreating ? campaignTypes[0] : { id: editingData.type, name: campaignTypeNameFunc(editingData.type) });
   const handleTypeMenuItemClick = (event, exEvent, i) => {
     setSelectedType(exEvent);
   };
 
   const [dateRange, setDateRange] = useState(isCreating ? [null, null] : [editingData.start, editingData.end]);
 
-  const [selectedState, setSelectedState] = useState(isCreating ? campaignStates[0] : { id: editingData.state, name: campaignStateNameFunc(editingData.state) });
+  const [selectedState, setSelectedState, selectedStateError, setSelectedStateError] = useStateWithError(isCreating ? campaignStates[0] : { id: editingData.state, name: campaignStateNameFunc(editingData.state) });
   const handleStateMenuItemClick = (event, exEvent, i) => {
     setSelectedState(exEvent);
   };
 
   const push = useRouterPush();
-
   const submit = async () => {
+    let errorOccurred = false;
+    if (!name) {
+      setNameError('請輸入活動名稱');
+      errorOccurred = true;
+    }
+    if (!campaignTypeNameMap[selectedType.id]) {
+      setSelectedTypeError('請選擇活動類型');
+      errorOccurred = true;
+    }
+    if (!campaignStateNameMap[selectedState.id]) {
+      setSelectedStateError('請選擇活動類型');
+      errorOccurred = true;
+    }
+    if (errorOccurred) {
+      return;
+    }
     const data = {
       name,
       type: selectedType.id,
       state: selectedState.id,
+      start: dateRange[0] && moment(dateRange[0]).valueOf(),
+      end: dateRange[1] && moment(dateRange[1]).valueOf(),
     };
-    if (isCreating) {
-      await axios({
-        method: 'post',
-        url: 'api/campaigns',
-        data,
-      });
-    } else {
-      await axios({
-        method: 'patch',
-        url: `api/campaigns/${editingData.id}`,
-        data,
-      });
+    try {
+      if (isCreating) {
+        await axios({
+          method: 'post',
+          url: 'api/campaigns',
+          data,
+        });
+      } else {
+        await axios({
+          method: 'patch',
+          url: `api/campaigns/${editingData.id}`,
+          data,
+        });
+      }
+      push('/campaign');
+    } catch (error) {
+      alert(`更新失敗：${error.message}`);
     }
   };
 
   return (
     <React.Fragment>
-      <DialogTitle id="alert-dialog-title">編輯活動</DialogTitle>
+      <DialogTitle id="alert-dialog-title">
+        {isCreating ? '新增' : '編輯'}
+        活動
+      </DialogTitle>
       <DialogContent>
         <div className={classes.flexContainer}>
           <div className={classes.flex1}>
@@ -134,6 +142,8 @@ const CampaignEditor = (props) => {
             <FormFieldButtonSelect
               id="type-selector"
               label="活動類型"
+              error={!!selectedTypeError}
+              helperText={selectedTypeError}
               value={selectedType}
               options={campaignTypes}
               onChange={handleTypeMenuItemClick}
@@ -161,6 +171,8 @@ const CampaignEditor = (props) => {
             <FormFieldButtonSelect
               id="state-selector"
               label="狀態"
+              error={!!selectedStateError}
+              helperText={selectedStateError}
               value={selectedState}
               options={campaignStates}
               onChange={handleStateMenuItemClick}
@@ -169,7 +181,7 @@ const CampaignEditor = (props) => {
               fullWidth
               margin="dense"
             />
-            <FormSpace variant="content1" />
+            {/* <FormSpace variant="content1" />
             <TagsAutocomplete
               label="搜尋包含商品"
               error={!!nameError}
@@ -192,7 +204,7 @@ const CampaignEditor = (props) => {
               // onChange={e => setName(e.target.value)}
               margin="dense"
               fullWidth
-            />
+            /> */}
           </div>
         </div>
       </DialogContent>
@@ -201,71 +213,9 @@ const CampaignEditor = (props) => {
           返回
         </Button>
         <Button variant="contained" onClick={submit} color="primary">
-          更新
+          {isCreating ? '新增' : '更新'}
         </Button>
       </DialogActions>
     </React.Fragment>
-  );
-};
-
-
-const CAMPAIGN_QUERY = gql`
-  query Campaign($id: bigint! = 0) {
-    campaign(id: $id){
-      id
-      name
-      type
-      durationType
-      state
-      start
-      end
-      data
-      created_at
-      updated_at
-      deleted_at
-    }
-  }
-`;
-
-export default (props) => {
-  const [refreshCount, setRefreshCount] = useState(0);
-
-  const {
-    match,
-  } = props;
-
-  const {
-    id,
-  } = match.params;
-
-  const classes = useStyles();
-
-  const { loading, error, data } = useQuery(CAMPAIGN_QUERY, {
-    variables: {
-      name: refreshCount.toString(),
-      id,
-    },
-    fetchPolicy: 'network-only',
-  });
-
-  // if (loading || !data) return <pre>Loading</pre>;
-  if (error) {
-    return (
-      <pre>
-        Error in CAMPAIGN_QUERY
-        {JSON.stringify(error, null, 2)}
-      </pre>
-    );
-  }
-
-  return (
-    <BasicSection withMaxWith>
-      {(!loading && !error && data && data.campaign) && (
-        <CampaignEditor
-          editingData={data.campaign}
-        />
-      )}
-      <LoadingMask loading={loading || !data} />
-    </BasicSection>
   );
 };

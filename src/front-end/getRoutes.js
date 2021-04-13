@@ -30,7 +30,8 @@ import SubContent09 from '~/containers/Home/SubContent09';
 
 import OrderPages from '~/containers/OrderPages';
 import Campaigns from '~/containers/Campaigns';
-import CampaignsEditor from '~/containers/Campaigns/Editor';
+import CreateCampaigns from '~/containers/Campaigns/Editor/Create';
+import EditCampaigns from '~/containers/Campaigns/Editor/Edit';
 
 import AdminPages from '~/containers/AdminPages';
 import OrganizationManagement from '~/containers/AdminPages/OrganizationManagement';
@@ -337,9 +338,15 @@ const globalRouteConfig = {
           exact: true,
         },
         {
-          name: 'editor',
+          name: 'create-campaign',
+          path: '/campaign/edit/new',
+          component: CreateCampaigns,
+          exact: true,
+        },
+        {
+          name: 'edit-campaign',
           path: '/campaign/edit/:id',
-          component: CampaignsEditor,
+          component: EditCampaigns,
         },
         {
           name: 'order',

@@ -9,7 +9,7 @@ import { FormDatePicker, FormFieldButtonSelect, FormTextField, FormSpace } from 
 import MenuItem from '@material-ui/core/MenuItem';
 
 import DateRangeInput from '~/components/DateRangeInput';
-import TagsAutocomplete from './TagsAutocomplete';
+import TagsAutocomplete from '~/components/TagsAutocomplete';
 
 import BasicSection from '~/components/Section/Basic';
 
