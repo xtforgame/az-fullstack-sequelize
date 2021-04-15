@@ -35,7 +35,25 @@ export default (props) => {
   } = props;
 
   const classes = useStyles();
-  const [imageInfos, setImageInfos] = useState([]);
+  const [imageInfos, setImageInfos] = useState([{
+    id: 'd980f6ea-c597-45ad-846a-7c4451dba796',
+    image: {
+      hash: '4d26c5f329024c93d8a289cf38a169edf61a5e75b9e3caec95f5542c51e4779f',
+      id: 'd980f6ea-c597-45ad-846a-7c4451dba796',
+      imgUrl: 'https://picsum.photos/200/300',
+      metadata: {},
+      name: '隨機圖片.png',
+    },
+  }, {
+    id: 'd980f6ea-c597-45ad-846a-7c4451dba7962',
+    image: {
+      hash: '4d26c5f329024c93d8a289cf38a169edf61a5e75b9e3caec95f5542c51e4779f2',
+      id: 'd980f6ea-c597-45ad-846a-7c4451dba7962',
+      imgUrl: 'https://picsum.photos/200/300',
+      metadata: {},
+      name: '隨機圖片.png',
+    },
+  }]);
   const [list, setList] = useState([
     { id: 1, text: 'Xxxx1' },
     { id: 2, text: 'Xxxx2' },

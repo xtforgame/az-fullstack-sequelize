@@ -44,7 +44,7 @@ export default function EnhancedRow({
             checked={isItemSelected}
             inputProps={{ 'aria-labelledby': labelId }}
             onClick={event => event.stopPropagation()}
-            onChange={event => handleClick(event, row.name)}
+            onChange={event => handleClick(event, row.id)}
           />
         </TableCell>
         {/* <TableCell component="th" id={labelId} scope="row" padding="none">
@@ -53,12 +53,16 @@ export default function EnhancedRow({
         {
           columns.map((column, i) => {
             const style = (columnSizes && columnSizes[i] != null) ? { width: columnSizes[i] } : {};
+            if (column.size != null) {
+              style.width = column.size;
+            }
             const renderFunction = row.renderCell
               || column.renderRowCell
               || ((columnId, row) => row[columnId]);
             return (
               <TableCell
                 key={column.id}
+                padding={column.padding || 'default'}
                 align={column.align ? column.align : 'left'}
                 style={style}
               >
@@ -73,7 +77,7 @@ export default function EnhancedRow({
         <TableCell align="right">{row.comment}</TableCell> */}
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={columns.length + 2}>
           {
             renderRowDetail && (
               <Collapse in={open} timeout="auto" unmountOnExit>

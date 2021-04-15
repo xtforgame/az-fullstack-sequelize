@@ -49,6 +49,9 @@ type Query {
   library(branch: String!): Library
   libraries: [Library]
 }
+type Mutation{
+  refresh(force: String!): Int
+}
 `;
 
 const printDeepSelections = (selections, prefix = '') => {
@@ -98,6 +101,13 @@ const resolvers = {
   // Because Book.author returns an object with a "name" field,
   // Apollo Server's default resolver for Author.name will work.
   // We don't need to define one.
+
+  Mutation: {
+    refresh: async (_, { force }, ctx, info) => {
+      if (1 === 2) { return {}; }
+      return 1;
+    },
+  },
 };
 
 

@@ -22,7 +22,7 @@ describe('Server Test Cases', () => {
   });
 
   describe('Sync', function () {
-    this.timeout(30000);
+    this.timeout(3000000);
     let server = null;
     const stubs = [];
     beforeEach(() => {

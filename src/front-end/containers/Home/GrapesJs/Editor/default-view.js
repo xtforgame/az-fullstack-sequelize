@@ -9,7 +9,6 @@ export const defaultCss = `
   padding-top:35px;
   padding-bottom:100px;
   color:#ffffff;
-  font-family:Helvetica, serif;
   font-weight:100;
   background-image:url("https://grapesjs.com/img/bg-gr-v.png"), url("https://grapesjs.com/img/work-desk.jpg");
   background-attachment:scroll, scroll;
@@ -87,7 +86,6 @@ export const defaultCss = `
 .flex-sect{
   background-color:#fafafa;
   padding:100px 0;
-  font-family:Helvetica, serif;
 }
 .flex-title{
   margin-bottom:15px;
@@ -166,7 +164,6 @@ export const defaultCss = `
 .am-sect{
   padding-top:100px;
   padding-bottom:100px;
-  font-family:Helvetica, serif;
 }
 .img-phone{
   float:left;
@@ -209,7 +206,6 @@ export const defaultCss = `
   padding-top:100px;
   padding-bottom:100px;
   background-color:#222222;
-  font-family:Helvetica, serif;
 }
 .blk-title{
   color:#fff;
@@ -382,7 +378,6 @@ export const defaultCss = `
 .bdg-sect{
   padding-top:100px;
   padding-bottom:100px;
-  font-family:Helvetica, serif;
   background-color:#fafafa;
 }
 .bdg-title{
@@ -400,7 +395,6 @@ export const defaultCss = `
 }
 .badge{
   width:290px;
-  font-family:Helvetica, serif;
   background-color:white;
   margin-bottom:30px;
   box-shadow:0 2px 2px 0 rgba(0, 0, 0, 0.2);

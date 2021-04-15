@@ -4,6 +4,7 @@ import {
 } from 'az-restful-helpers';
 import { isValidEmail } from 'common/utils/validators';
 import fs from 'fs';
+import sass from 'sass';
 import {
   toCamel,
   toUnderscore,
@@ -37,18 +38,31 @@ export default class LiquidRouter extends RouterBase {
     if (ctx.path.startsWith('/azadmin')) {
       return next();
     }
+    const guestData = await this.authKit.koaHelperEx.guestManager.getGuestData(ctx);
     const callback = options.callback || (async () => null);
     const getScopeData = options.getScopeData || (async () => ({}));
     const getFilename = options.getFilename || (({ url }) => `pages${url}`);
     let str;
     const url = normalizeUrl(ctx.path);
+    const basenameArray = url.substr(0, url.length - '.liquid'.length).split('/');
+    const basename = basenameArray[basenameArray.length - 1];
     // console.log('url :', url);
     const cbData = { ctx, url };
+    const filename = getFilename(cbData);
     try {
-      str = fs.readFileSync(getFilename(cbData), 'utf8');
+      str = fs.readFileSync(filename, 'utf8');
     } catch (error) {
-      return next();
-      // fs.writeFileSync('pages' + url, str, { encoding: 'utf8' });
+      if (basename.split('.')[1] === 'css') {
+        try {
+          str = fs.readFileSync(filename.replace('css.liquid', 'scss.liquid'), 'utf8');
+        } catch (error2) {
+          return next();
+          // fs.writeFileSync('pages' + url, str, { encoding: 'utf8' });
+        }
+      } else {
+        return next();
+        // fs.writeFileSync('pages' + url, str, { encoding: 'utf8' });
+      }
     }
 
     const engine = new Liquid({
@@ -62,34 +76,102 @@ export default class LiquidRouter extends RouterBase {
         console.log('value :', value);
         return value;
       });
-
       this.registerFilter('toUnderscoredWcName', str => toUnderscore(str.split('_')[0]));
       this.registerFilter('toWcName', str => str.split('_')[0]);
+
+      this.registerFilter('toCss', (scss) => {
+        const result = sass.renderSync({
+          data: scss,
+        });
+        return (result && result.css && result.css.toString('utf8')) || '';
+      });
+
+      this.registerFilter('azIf', (condition, y, n) => (condition ? y : n));
     });
 
     const componentMap = {};
-    const results2 = engine.parse(str);
-    results2.forEach((t) => {
+    const results = engine.parse(str);
+    results.forEach((t) => {
       // console.log('t.token :', t);
     });
     const scope = await getScopeData(cbData);
-    const renderTask = engine.render(results2, scope);
+    const buildinScope = {
+      newUser: !guestData.data.read,
+      cart: guestData.cart,
+    };
+    guestData.data.read = true;
+    guestData.update();
+    const renderTask = engine.render(results, {
+      ...buildinScope,
+      ...scope,
+    });
     // console.log('x :', x.then(console.log));
     const rendered = await renderTask;
     // res.status(404);
-    const basename = url.substr(0, url.length - '.liquid'.length).split('/');
-    ctx.set('Content-Type', mime.contentType(basename[basename.length - 1]));
+    ctx.set('Content-Type', mime.contentType(basename));
     await callback({ ...cbData, rendered });
     return ctx.body = rendered;
   }
 
   setupRoutes({ router }) {
-    router.get('/products/:prodId', this.liquidFor({
-      getFilename: ({ ctx }) => `pages/products${ctx.param.prodId}`,
-      getScopeData: async ({ ctx }) => {
-        console.log('ctx :', ctx);
-      },
-    }));
+    const productListMiddlewares = [async (ctx, next) => {
+      ctx.local = ctx.local || {};
+      const products = await this.routerApi.getProducts();
+      ctx.local.products = products;
+      return next();
+    }, this.liquidFor({
+      getFilename: ({ ctx }) => 'pages/index.html.liquid',
+      getScopeData: async ({ ctx }) => ctx.local.products,
+    })];
+
+    router.get('/', ...productListMiddlewares);
+
+    router.get('/products/newin', ...productListMiddlewares);
+
+    const fF = this.liquidFor({
+      getFilename: ({ ctx }) => 'pages/products/index.html.liquid',
+      getScopeData: async ({ ctx }) => ctx.local.product,
+    });
+    router.post('/carts/add_product', async (ctx, next) => {
+      const guestData = await this.authKit.koaHelperEx.guestManager.getGuestData(ctx);
+      console.log('guestData :', guestData);
+      guestData.cart.items.push(ctx.request.query.product_id);
+      ctx.set('content-type', 'text/javascript; charset=utf-8');
+      return ctx.body = `
+        Turbolinks.clearCache()
+        Turbolinks.visit("/products/${ctx.request.query.product_id}", {"action":"replace"})
+      `;
+    });
+    router.get('/products/:prodId', async (ctx, next) => {
+      if (!parseInt(ctx.params.prodId)) {
+        return next();
+      }
+      ctx.local = ctx.local || {};
+      const product = await this.routerApi.getProduct(ctx.params.prodId);
+      if (!product) {
+        ctx.set('Turbolinks-Location', '/');
+        return ctx.redirect('/');
+        // ctx.set('content-type', 'text/javascript; charset=utf-8');
+        // return ctx.body = `
+        //   Turbolinks.clearCache()
+        //   Turbolinks.visit("/", {"action":"replace"})
+        // `;
+        // return ctx.body = `
+        // <script>
+        //   Turbolinks.clearCache()
+        //   Turbolinks.visit("/", {"action":"replace"})
+        // </script>
+        // `;
+        // // ctx.set('content-type', 'text/javascript; charset=utf-8');
+        // // return ctx.body = `
+        // //   Turbolinks.clearCache()
+        // //   Turbolinks.visit("/", {"action":"replace"})
+        // // `;
+        // return ctx.redirect('/');
+      }
+      ctx.local.product = product;
+      return fF(ctx, next);
+    });
     router.get('*', this.liquidFor({}));
   }
 }

@@ -20,6 +20,18 @@ export function getTheme(theme) {
   let { paletteType } = theme;
   let primary = blue;
   let secondary = pink;
+  primary = {
+    light: '#b4afab',
+    main: '#a29b96',
+    dark: '#716c69',
+    contrastText: common.white,
+  };
+  secondary = {
+    light: '#c7b3a3',
+    main: '#baa18d',
+    dark: '#827062',
+    contrastText: common.white,
+  };
   let background = {
     paper: common.white,
     default: grey[50],

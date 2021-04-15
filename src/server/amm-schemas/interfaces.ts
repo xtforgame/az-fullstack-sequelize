@@ -98,9 +98,12 @@ export type UserCreationAttributes = {
   assignedMessage?: ContactUsMessageCreationAttributes[];
   userSettings?: UserSettingCreationAttributes[];
   memos?: MemoCreationAttributes[];
-  ordererInfo?: OrdererDataCreationAttributes[];
-  recipientInfo?: RecipientDataCreationAttributes[];
+  defaultOrdererInfo?: OrdererInfoCreationAttributes;
+  defaultRecipientInfo?: RecipientInfoCreationAttributes;
+  ordererInfos?: OrdererInfoCreationAttributes[];
+  recipientInfos?: RecipientInfoCreationAttributes[];
   orders?: OrderCreationAttributes[];
+  subscriptionOrders?: SubscriptionOrderCreationAttributes[];
 };
 
 export type UserAttributes = {
@@ -127,9 +130,12 @@ export type UserAttributes = {
   assignedMessage?: ExtendedModel<ContactUsMessageI>[];
   userSettings?: ExtendedModel<UserSettingI>[];
   memos?: ExtendedModel<MemoI>[];
-  ordererInfo?: ExtendedModel<OrdererDataI>[];
-  recipientInfo?: ExtendedModel<RecipientDataI>[];
+  defaultOrdererInfo?: ExtendedModel<OrdererInfoI>;
+  defaultRecipientInfo?: ExtendedModel<RecipientInfoI>;
+  ordererInfos?: ExtendedModel<OrdererInfoI>[];
+  recipientInfos?: ExtendedModel<RecipientInfoI>[];
   orders?: ExtendedModel<OrderI>[];
+  subscriptionOrders?: ExtendedModel<SubscriptionOrderI>[];
 };
 
 export type UserI = UserAttributes & {
@@ -322,29 +328,39 @@ export type UserI = UserAttributes & {
   createMemo: BelongsToManyCreateAssociationMixin<MemoI>;
 
 
-  // association: ordererInfo
-  countOrdererData: HasManyCountAssociationsMixin;
-  hasOrdererDatum: HasManyHasAssociationMixin<OrdererDataI, string>;
-  hasOrdererData: HasManyHasAssociationsMixin<OrdererDataI, string>;
-  getOrdererData: HasManyGetAssociationsMixin<OrdererDataI>;
-  setOrdererData: HasManySetAssociationsMixin<OrdererDataI, string>;
-  addOrdererDatum: HasManyAddAssociationMixin<OrdererDataI, string>;
-  addOrdererData: HasManyAddAssociationsMixin<OrdererDataI, string>;
-  removeOrdererDatum: HasManyRemoveAssociationMixin<OrdererDataI, string>;
-  removeOrdererData: HasManyRemoveAssociationsMixin<OrdererDataI, string>;
-  createOrdererDatum: HasManyCreateAssociationMixin<OrdererDataI>;
+  // association: defaultOrdererInfo
+  getDefaultOrdererInfo: HasOneGetAssociationMixin<OrdererInfoI>;
+  setDefaultOrdererInfo: HasOneSetAssociationMixin<OrdererInfoI, string>;
+  createDefaultOrdererInfo: HasOneCreateAssociationMixin<OrdererInfoI>;
 
-  // association: recipientInfo
-  countRecipientData: HasManyCountAssociationsMixin;
-  hasRecipientDatum: HasManyHasAssociationMixin<RecipientDataI, string>;
-  hasRecipientData: HasManyHasAssociationsMixin<RecipientDataI, string>;
-  getRecipientData: HasManyGetAssociationsMixin<RecipientDataI>;
-  setRecipientData: HasManySetAssociationsMixin<RecipientDataI, string>;
-  addRecipientDatum: HasManyAddAssociationMixin<RecipientDataI, string>;
-  addRecipientData: HasManyAddAssociationsMixin<RecipientDataI, string>;
-  removeRecipientDatum: HasManyRemoveAssociationMixin<RecipientDataI, string>;
-  removeRecipientData: HasManyRemoveAssociationsMixin<RecipientDataI, string>;
-  createRecipientDatum: HasManyCreateAssociationMixin<RecipientDataI>;
+  // association: defaultRecipientInfo
+  getDefaultRecipientInfo: HasOneGetAssociationMixin<RecipientInfoI>;
+  setDefaultRecipientInfo: HasOneSetAssociationMixin<RecipientInfoI, string>;
+  createDefaultRecipientInfo: HasOneCreateAssociationMixin<RecipientInfoI>;
+
+  // association: ordererInfos
+  countOrdererInfos: HasManyCountAssociationsMixin;
+  hasOrdererInfo: HasManyHasAssociationMixin<OrdererInfoI, string>;
+  hasOrdererInfos: HasManyHasAssociationsMixin<OrdererInfoI, string>;
+  getOrdererInfos: HasManyGetAssociationsMixin<OrdererInfoI>;
+  setOrdererInfos: HasManySetAssociationsMixin<OrdererInfoI, string>;
+  addOrdererInfo: HasManyAddAssociationMixin<OrdererInfoI, string>;
+  addOrdererInfos: HasManyAddAssociationsMixin<OrdererInfoI, string>;
+  removeOrdererInfo: HasManyRemoveAssociationMixin<OrdererInfoI, string>;
+  removeOrdererInfos: HasManyRemoveAssociationsMixin<OrdererInfoI, string>;
+  createOrdererInfo: HasManyCreateAssociationMixin<OrdererInfoI>;
+
+  // association: recipientInfos
+  countRecipientInfos: HasManyCountAssociationsMixin;
+  hasRecipientInfo: HasManyHasAssociationMixin<RecipientInfoI, string>;
+  hasRecipientInfos: HasManyHasAssociationsMixin<RecipientInfoI, string>;
+  getRecipientInfos: HasManyGetAssociationsMixin<RecipientInfoI>;
+  setRecipientInfos: HasManySetAssociationsMixin<RecipientInfoI, string>;
+  addRecipientInfo: HasManyAddAssociationMixin<RecipientInfoI, string>;
+  addRecipientInfos: HasManyAddAssociationsMixin<RecipientInfoI, string>;
+  removeRecipientInfo: HasManyRemoveAssociationMixin<RecipientInfoI, string>;
+  removeRecipientInfos: HasManyRemoveAssociationsMixin<RecipientInfoI, string>;
+  createRecipientInfo: HasManyCreateAssociationMixin<RecipientInfoI>;
 
   // association: orders
   countOrders: HasManyCountAssociationsMixin;
@@ -357,6 +373,18 @@ export type UserI = UserAttributes & {
   removeOrder: HasManyRemoveAssociationMixin<OrderI, string>;
   removeOrders: HasManyRemoveAssociationsMixin<OrderI, string>;
   createOrder: HasManyCreateAssociationMixin<OrderI>;
+
+  // association: subscriptionOrders
+  countSubscriptionOrders: HasManyCountAssociationsMixin;
+  hasSubscriptionOrder: HasManyHasAssociationMixin<SubscriptionOrderI, string>;
+  hasSubscriptionOrders: HasManyHasAssociationsMixin<SubscriptionOrderI, string>;
+  getSubscriptionOrders: HasManyGetAssociationsMixin<SubscriptionOrderI>;
+  setSubscriptionOrders: HasManySetAssociationsMixin<SubscriptionOrderI, string>;
+  addSubscriptionOrder: HasManyAddAssociationMixin<SubscriptionOrderI, string>;
+  addSubscriptionOrders: HasManyAddAssociationsMixin<SubscriptionOrderI, string>;
+  removeSubscriptionOrder: HasManyRemoveAssociationMixin<SubscriptionOrderI, string>;
+  removeSubscriptionOrders: HasManyRemoveAssociationsMixin<SubscriptionOrderI, string>;
+  createSubscriptionOrder: HasManyCreateAssociationMixin<SubscriptionOrderI>;
 };
 // ============== end model: User ==============
 
@@ -509,6 +537,7 @@ export type UserGroupI = UserGroupAttributes & {
 // ============== start model: Organization ==============
 export type OrganizationCreationAttributes = {
   name?: string;
+  data?: any;
   users?: UserCreationAttributes[];
   ownedUser?: UserCreationAttributes[];
   projects?: ProjectCreationAttributes[];
@@ -519,6 +548,7 @@ export type OrganizationCreationAttributes = {
 export type OrganizationAttributes = {
   id: string;
   name?: string;
+  data?: any;
   users?: ExtendedModel<UserI>[];
   ownedUser?: ExtendedModel<UserI>[];
   projects?: ExtendedModel<ProjectI>[];
@@ -750,26 +780,73 @@ export type ContactUsMessageI = ContactUsMessageAttributes & {
 };
 // ============== end model: ContactUsMessage ==============
 
+// ============== start model: ProductCategory ==============
+export type ProductCategoryCreationAttributes = {
+  name?: string;
+  data?: any;
+  groups?: ProductGroupCreationAttributes[];
+};
+
+export type ProductCategoryAttributes = {
+  id: string;
+  name?: string;
+  data?: any;
+  groups?: ExtendedModel<ProductGroupI>[];
+};
+
+export type ProductCategoryI = ProductCategoryAttributes & {
+
+  // timestamps
+  readonly created_at: Date;
+  readonly updated_at: Date;
+  readonly deleted_at: Date;
+
+  // association: groups
+  countGroups: HasManyCountAssociationsMixin;
+  hasGroup: HasManyHasAssociationMixin<ProductGroupI, string>;
+  hasGroups: HasManyHasAssociationsMixin<ProductGroupI, string>;
+  getGroups: HasManyGetAssociationsMixin<ProductGroupI>;
+  setGroups: HasManySetAssociationsMixin<ProductGroupI, string>;
+  addGroup: HasManyAddAssociationMixin<ProductGroupI, string>;
+  addGroups: HasManyAddAssociationsMixin<ProductGroupI, string>;
+  removeGroup: HasManyRemoveAssociationMixin<ProductGroupI, string>;
+  removeGroups: HasManyRemoveAssociationsMixin<ProductGroupI, string>;
+  createGroup: HasManyCreateAssociationMixin<ProductGroupI>;
+};
+// ============== end model: ProductCategory ==============
+
 // ============== start model: Product ==============
 export type ProductCreationAttributes = {
+  customId?: string;
+  color?: string;
+  size?: string;
   thumbnail?: string;
   pictures?: any;
   name?: string;
   price?: number;
   weight?: number;
-  description?: any;
+  description?: string;
   data?: any;
+  group_id?: string;
+  group?: ProductGroupCreationAttributes;
+  orders?: OrderCreationAttributes[];
 };
 
 export type ProductAttributes = {
   id: string;
+  customId?: string;
+  color?: string;
+  size?: string;
   thumbnail?: string;
   pictures?: any;
   name?: string;
   price?: number;
   weight?: number;
-  description?: any;
+  description?: string;
   data?: any;
+  group_id?: string;
+  group?: ExtendedModel<ProductGroupI>;
+  orders?: ExtendedModel<OrderI>[];
 };
 
 export type ProductI = ProductAttributes & {
@@ -778,24 +855,164 @@ export type ProductI = ProductAttributes & {
   readonly created_at: Date;
   readonly updated_at: Date;
   readonly deleted_at: Date;
+
+  // association: group
+  getGroup: BelongsToGetAssociationMixin<ProductGroupI>;
+  setGroup: BelongsToSetAssociationMixin<ProductGroupI, string>;
+  createGroup: BelongsToCreateAssociationMixin<ProductGroupI>;
+
+  // association: orders
+  countOrders: BelongsToManyCountAssociationsMixin;
+  hasOrder: BelongsToManyHasAssociationMixin<OrderI, string>;
+  hasOrders: BelongsToManyHasAssociationsMixin<OrderI, string>;
+  getOrders: BelongsToManyGetAssociationsMixin<OrderI>;
+  setOrders: BelongsToManySetAssociationsMixin<OrderI, string>;
+  addOrder: BelongsToManyAddAssociationMixin<OrderI, string>;
+  addOrders: BelongsToManyAddAssociationsMixin<OrderI, string>;
+  removeOrder: BelongsToManyRemoveAssociationMixin<OrderI, string>;
+  removeOrders: BelongsToManyRemoveAssociationsMixin<OrderI, string>;
+  createOrder: BelongsToManyCreateAssociationMixin<OrderI>;
+
 };
 // ============== end model: Product ==============
 
-// ============== start model: OrdererData ==============
-export type OrdererDataCreationAttributes = {
+// ============== start model: ProductGroup ==============
+export type ProductGroupCreationAttributes = {
+  customId?: string;
+  thumbnail?: string;
+  pictures?: any;
+  name?: string;
+  price?: number;
+  weight?: number;
+  description?: string;
+  data?: any;
+  materials?: string;
+  products?: ProductCreationAttributes[];
+  category_id?: string;
+  category?: ProductCategoryCreationAttributes;
+  campaigns?: CampaignCreationAttributes[];
+};
+
+export type ProductGroupAttributes = {
+  id: string;
+  customId?: string;
+  thumbnail?: string;
+  pictures?: any;
+  name?: string;
+  price?: number;
+  weight?: number;
+  description?: string;
+  data?: any;
+  materials?: string;
+  products?: ExtendedModel<ProductI>[];
+  category_id?: string;
+  category?: ExtendedModel<ProductCategoryI>;
+  campaigns?: ExtendedModel<CampaignI>[];
+};
+
+export type ProductGroupI = ProductGroupAttributes & {
+
+  // timestamps
+  readonly created_at: Date;
+  readonly updated_at: Date;
+  readonly deleted_at: Date;
+
+  // association: products
+  countProducts: HasManyCountAssociationsMixin;
+  hasProduct: HasManyHasAssociationMixin<ProductI, string>;
+  hasProducts: HasManyHasAssociationsMixin<ProductI, string>;
+  getProducts: HasManyGetAssociationsMixin<ProductI>;
+  setProducts: HasManySetAssociationsMixin<ProductI, string>;
+  addProduct: HasManyAddAssociationMixin<ProductI, string>;
+  addProducts: HasManyAddAssociationsMixin<ProductI, string>;
+  removeProduct: HasManyRemoveAssociationMixin<ProductI, string>;
+  removeProducts: HasManyRemoveAssociationsMixin<ProductI, string>;
+  createProduct: HasManyCreateAssociationMixin<ProductI>;
+
+  // association: category
+  getCategory: BelongsToGetAssociationMixin<ProductCategoryI>;
+  setCategory: BelongsToSetAssociationMixin<ProductCategoryI, string>;
+  createCategory: BelongsToCreateAssociationMixin<ProductCategoryI>;
+
+  // association: campaigns
+  countCampaigns: BelongsToManyCountAssociationsMixin;
+  hasCampaign: BelongsToManyHasAssociationMixin<CampaignI, string>;
+  hasCampaigns: BelongsToManyHasAssociationsMixin<CampaignI, string>;
+  getCampaigns: BelongsToManyGetAssociationsMixin<CampaignI>;
+  setCampaigns: BelongsToManySetAssociationsMixin<CampaignI, string>;
+  addCampaign: BelongsToManyAddAssociationMixin<CampaignI, string>;
+  addCampaigns: BelongsToManyAddAssociationsMixin<CampaignI, string>;
+  removeCampaign: BelongsToManyRemoveAssociationMixin<CampaignI, string>;
+  removeCampaigns: BelongsToManyRemoveAssociationsMixin<CampaignI, string>;
+  createCampaign: BelongsToManyCreateAssociationMixin<CampaignI>;
+
+};
+// ============== end model: ProductGroup ==============
+
+// ============== start model: Campaign ==============
+export type CampaignCreationAttributes = {
+  name?: string;
+  type?: string;
+  durationType?: string;
+  start?: Date;
+  end?: Date;
+  state?: string;
+  data?: any;
+  productGroups?: ProductGroupCreationAttributes[];
+};
+
+export type CampaignAttributes = {
+  id: string;
+  name?: string;
+  type?: string;
+  durationType?: string;
+  start?: Date;
+  end?: Date;
+  state?: string;
+  data?: any;
+  productGroups?: ExtendedModel<ProductGroupI>[];
+};
+
+export type CampaignI = CampaignAttributes & {
+
+  // timestamps
+  readonly created_at: Date;
+  readonly updated_at: Date;
+  readonly deleted_at: Date;
+
+  // association: productGroups
+  countProductGroups: BelongsToManyCountAssociationsMixin;
+  hasProductGroup: BelongsToManyHasAssociationMixin<ProductGroupI, string>;
+  hasProductGroups: BelongsToManyHasAssociationsMixin<ProductGroupI, string>;
+  getProductGroups: BelongsToManyGetAssociationsMixin<ProductGroupI>;
+  setProductGroups: BelongsToManySetAssociationsMixin<ProductGroupI, string>;
+  addProductGroup: BelongsToManyAddAssociationMixin<ProductGroupI, string>;
+  addProductGroups: BelongsToManyAddAssociationsMixin<ProductGroupI, string>;
+  removeProductGroup: BelongsToManyRemoveAssociationMixin<ProductGroupI, string>;
+  removeProductGroups: BelongsToManyRemoveAssociationsMixin<ProductGroupI, string>;
+  createProductGroup: BelongsToManyCreateAssociationMixin<ProductGroupI>;
+
+};
+// ============== end model: Campaign ==============
+
+// ============== start model: OrdererInfo ==============
+export type OrdererInfoCreationAttributes = {
   name?: string;
   mobile?: string;
   phone1?: string;
   phone2?: string;
   zipcode?: string;
   address?: string;
-  memo?: string;
   area?: string;
+  email1?: string;
+  email2?: string;
   user_id?: string;
   user?: UserCreationAttributes;
+  as_default_to?: string;
+  asDefaultTo?: UserCreationAttributes;
 };
 
-export type OrdererDataAttributes = {
+export type OrdererInfoAttributes = {
   id: string;
   name?: string;
   mobile?: string;
@@ -803,13 +1020,16 @@ export type OrdererDataAttributes = {
   phone2?: string;
   zipcode?: string;
   address?: string;
-  memo?: string;
   area?: string;
+  email1?: string;
+  email2?: string;
   user_id?: string;
   user?: ExtendedModel<UserI>;
+  as_default_to?: string;
+  asDefaultTo?: ExtendedModel<UserI>;
 };
 
-export type OrdererDataI = OrdererDataAttributes & {
+export type OrdererInfoI = OrdererInfoAttributes & {
 
   // timestamps
   readonly created_at: Date;
@@ -820,24 +1040,32 @@ export type OrdererDataI = OrdererDataAttributes & {
   getUser: BelongsToGetAssociationMixin<UserI>;
   setUser: BelongsToSetAssociationMixin<UserI, string>;
   createUser: BelongsToCreateAssociationMixin<UserI>;
-};
-// ============== end model: OrdererData ==============
 
-// ============== start model: RecipientData ==============
-export type RecipientDataCreationAttributes = {
+  // association: asDefaultTo
+  getAsDefaultTo: BelongsToGetAssociationMixin<UserI>;
+  setAsDefaultTo: BelongsToSetAssociationMixin<UserI, string>;
+  createAsDefaultTo: BelongsToCreateAssociationMixin<UserI>;
+};
+// ============== end model: OrdererInfo ==============
+
+// ============== start model: RecipientInfo ==============
+export type RecipientInfoCreationAttributes = {
   name?: string;
   mobile?: string;
   phone1?: string;
   phone2?: string;
   zipcode?: string;
   address?: string;
-  memo?: string;
   area?: string;
+  email1?: string;
+  email2?: string;
   user_id?: string;
   user?: UserCreationAttributes;
+  as_default_to?: string;
+  asDefaultTo?: UserCreationAttributes;
 };
 
-export type RecipientDataAttributes = {
+export type RecipientInfoAttributes = {
   id: string;
   name?: string;
   mobile?: string;
@@ -845,13 +1073,16 @@ export type RecipientDataAttributes = {
   phone2?: string;
   zipcode?: string;
   address?: string;
-  memo?: string;
   area?: string;
+  email1?: string;
+  email2?: string;
   user_id?: string;
   user?: ExtendedModel<UserI>;
+  as_default_to?: string;
+  asDefaultTo?: ExtendedModel<UserI>;
 };
 
-export type RecipientDataI = RecipientDataAttributes & {
+export type RecipientInfoI = RecipientInfoAttributes & {
 
   // timestamps
   readonly created_at: Date;
@@ -862,27 +1093,36 @@ export type RecipientDataI = RecipientDataAttributes & {
   getUser: BelongsToGetAssociationMixin<UserI>;
   setUser: BelongsToSetAssociationMixin<UserI, string>;
   createUser: BelongsToCreateAssociationMixin<UserI>;
+
+  // association: asDefaultTo
+  getAsDefaultTo: BelongsToGetAssociationMixin<UserI>;
+  setAsDefaultTo: BelongsToSetAssociationMixin<UserI, string>;
+  createAsDefaultTo: BelongsToCreateAssociationMixin<UserI>;
 };
-// ============== end model: RecipientData ==============
+// ============== end model: RecipientInfo ==============
 
 // ============== start model: Order ==============
 export type OrderCreationAttributes = {
   memo?: string;
+  shipmentId?: string;
   orderer?: any;
   recipient?: any;
   data?: any;
   user_id?: string;
   user?: UserCreationAttributes;
+  products?: ProductCreationAttributes[];
 };
 
 export type OrderAttributes = {
   id: string;
   memo?: string;
+  shipmentId?: string;
   orderer?: any;
   recipient?: any;
   data?: any;
   user_id?: string;
   user?: ExtendedModel<UserI>;
+  products?: ExtendedModel<ProductI>[];
 };
 
 export type OrderI = OrderAttributes & {
@@ -896,8 +1136,57 @@ export type OrderI = OrderAttributes & {
   getUser: BelongsToGetAssociationMixin<UserI>;
   setUser: BelongsToSetAssociationMixin<UserI, string>;
   createUser: BelongsToCreateAssociationMixin<UserI>;
+
+  // association: products
+  countProducts: BelongsToManyCountAssociationsMixin;
+  hasProduct: BelongsToManyHasAssociationMixin<ProductI, string>;
+  hasProducts: BelongsToManyHasAssociationsMixin<ProductI, string>;
+  getProducts: BelongsToManyGetAssociationsMixin<ProductI>;
+  setProducts: BelongsToManySetAssociationsMixin<ProductI, string>;
+  addProduct: BelongsToManyAddAssociationMixin<ProductI, string>;
+  addProducts: BelongsToManyAddAssociationsMixin<ProductI, string>;
+  removeProduct: BelongsToManyRemoveAssociationMixin<ProductI, string>;
+  removeProducts: BelongsToManyRemoveAssociationsMixin<ProductI, string>;
+  createProduct: BelongsToManyCreateAssociationMixin<ProductI>;
+
 };
 // ============== end model: Order ==============
+
+// ============== start model: SubscriptionOrder ==============
+export type SubscriptionOrderCreationAttributes = {
+  memo?: string;
+  shipmentId?: string;
+  orderer?: any;
+  recipient?: any;
+  data?: any;
+  user_id?: string;
+  user?: UserCreationAttributes;
+};
+
+export type SubscriptionOrderAttributes = {
+  id: string;
+  memo?: string;
+  shipmentId?: string;
+  orderer?: any;
+  recipient?: any;
+  data?: any;
+  user_id?: string;
+  user?: ExtendedModel<UserI>;
+};
+
+export type SubscriptionOrderI = SubscriptionOrderAttributes & {
+
+  // timestamps
+  readonly created_at: Date;
+  readonly updated_at: Date;
+  readonly deleted_at: Date;
+
+  // association: user
+  getUser: BelongsToGetAssociationMixin<UserI>;
+  setUser: BelongsToSetAssociationMixin<UserI, string>;
+  createUser: BelongsToCreateAssociationMixin<UserI>;
+};
+// ============== end model: SubscriptionOrder ==============
 
 // ============== start model: UserUserGroup ==============
 export type UserUserGroupCreationAttributes = {
@@ -1192,4 +1481,84 @@ export type UserMemoI = UserMemoAttributes & {
   createMemo: BelongsToCreateAssociationMixin<MemoI>;
 };
 // ============== end model: UserMemo ==============
+
+// ============== start model: OrderProduct ==============
+export type OrderProductCreationAttributes = {
+  quantity?: number;
+  price?: number;
+  totalPrice?: number;
+  data?: any;
+  product_id?: string;
+  product?: ProductCreationAttributes;
+  order_id?: string;
+  order?: OrderCreationAttributes;
+};
+
+export type OrderProductAttributes = {
+  id: string;
+  quantity?: number;
+  price?: number;
+  totalPrice?: number;
+  data?: any;
+  product_id?: string;
+  product?: ExtendedModel<ProductI>;
+  order_id?: string;
+  order?: ExtendedModel<OrderI>;
+};
+
+export type OrderProductI = OrderProductAttributes & {
+
+  // timestamps
+  readonly created_at: Date;
+  readonly updated_at: Date;
+  readonly deleted_at: Date;
+
+  // association: product
+  getProduct: BelongsToGetAssociationMixin<ProductI>;
+  setProduct: BelongsToSetAssociationMixin<ProductI, string>;
+  createProduct: BelongsToCreateAssociationMixin<ProductI>;
+
+  // association: order
+  getOrder: BelongsToGetAssociationMixin<OrderI>;
+  setOrder: BelongsToSetAssociationMixin<OrderI, string>;
+  createOrder: BelongsToCreateAssociationMixin<OrderI>;
+};
+// ============== end model: OrderProduct ==============
+
+// ============== start model: ProductGroupCampaign ==============
+export type ProductGroupCampaignCreationAttributes = {
+  data?: any;
+  product_group_id?: string;
+  productGroup?: ProductGroupCreationAttributes;
+  campaign_id?: string;
+  campaign?: CampaignCreationAttributes;
+};
+
+export type ProductGroupCampaignAttributes = {
+  id: string;
+  data?: any;
+  product_group_id?: string;
+  productGroup?: ExtendedModel<ProductGroupI>;
+  campaign_id?: string;
+  campaign?: ExtendedModel<CampaignI>;
+};
+
+export type ProductGroupCampaignI = ProductGroupCampaignAttributes & {
+
+  // timestamps
+  readonly created_at: Date;
+  readonly updated_at: Date;
+  readonly deleted_at: Date;
+
+  // association: productGroup
+  getProductGroup: BelongsToGetAssociationMixin<ProductGroupI>;
+  setProductGroup: BelongsToSetAssociationMixin<ProductGroupI, string>;
+  createProductGroup: BelongsToCreateAssociationMixin<ProductGroupI>;
+
+  // association: campaign
+  getCampaign: BelongsToGetAssociationMixin<CampaignI>;
+  setCampaign: BelongsToSetAssociationMixin<CampaignI, string>;
+  createCampaign: BelongsToCreateAssociationMixin<CampaignI>;
+};
+// ============== end model: ProductGroupCampaign ==============
 
