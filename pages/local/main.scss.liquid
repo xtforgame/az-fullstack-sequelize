@@ -9,6 +9,13 @@
 
 // 按鈕高 30
 
+
+@font-face {
+  font-family: OratorStd;
+  src: url("/font/OratorStd.otf") format("opentype");
+}
+
+
 @mixin transform($property) {
   -webkit-transform: $property;
   -ms-transform: $property;
@@ -73,11 +80,11 @@
 }
 
 div, span:not(.material-icons), p, h1, h2, h3, h4, h5, h6 {
-  font-family: 'Roboto', 'Noto Sans TC', sans-serif !important;
+  font-family: 'OratorStd', orator-std, 'Roboto', 'Noto Sans TC', sans-serif !important;
 }
 .section {
-  width: 90%;
-  max-width: 1200px;
+  width: 100%;
+  max-width: 100%;
   margin-top: 80px;
   margin-right: auto;
   margin-bottom: 120px;
@@ -100,10 +107,47 @@ div, span:not(.material-icons), p, h1, h2, h3, h4, h5, h6 {
 }
 
 .image-container {
+  position: relative;
   background-position-x: center;
   background-position-y: center;
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+.text-mask {
+  position: absolute;
+  bottom: 0;
+  color: white;
+  width: 100%;
+  height: 300px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 100%);
+}
+
+.float-text1 {
+  letter-spacing: 5px;
+  position: absolute;
+  bottom: 80px;
+  color: white;
+  width: 100%;
+  text-align: center;
+  font-weight: 300;
+  font-size: 46px;
+}
+
+.float-text2 {
+  position: absolute;
+  bottom: 40px;
+  color: white;
+  width: 100%;
+  text-align: center;
+  font-weight: 300;
+  font-size: 40px;
+}
+
+.section-content {
+  margin-top: 40px;
+  color: #666666;
+  line-height: 30px;
 }
 
 .flex-container-v-center {
@@ -126,7 +170,7 @@ body {
 .main-logo {
   min-width: 200px;
   max-width: 200px;
-  border: solid 1px black;
+  // border: solid 1px black;
 }
 
 .main-header {
@@ -186,8 +230,8 @@ body {
 }
 
 .top-swiper-container {
-  max-width: 1200px;
-  height: 600px;
+  max-width: 100%;
+  height: 50vw;
   position: relative;
 }
 
@@ -209,7 +253,7 @@ body {
 }
 
 .x-section {
-  max-width: 1200px;
+  max-width: 100%;
   margin-top: 80px;
   margin-right: auto;
   margin-bottom: 120px;
@@ -218,6 +262,103 @@ body {
 
 .x-b {
   word-break: break-all;
+}
+
+.my-slider__slide {
+  height: 50vw;
+  background-position-x: center;
+  background-position-y: center;
+  background-repeat: no-repeat;
+  color: white;
+  background: #aaa;
+  // background-image: url('https://picsum.photos/1200/600?');
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.home-slide001 {
+  background-image: url('/images/home-images/DSC06194.jpg');
+}
+
+.home-slide002 {
+  background-image: url('/images/home-images/IMG_0158.jpg');
+}
+
+.home-slide003 {
+  background-image: url('/images/home-images/IMG_1797.jpg');
+}
+
+.home-slide004 {
+  background-image: url('/images/home-images/IMG_8853.jpg');
+}
+
+.home-slide005 {
+  background-image: url('/images/home-images/LGP07168.jpg');
+}
+
+.home-slide006 {
+  background-image: url('/images/home-images/LGP07258.jpg');
+}
+
+.home-slide007 {
+  background-image: url('/images/home-images/LGP07270.jpg');
+}
+
+.home-slide008 {
+  background-image: url('/images/home-images/LGP07275.jpg');
+}
+
+.overlay {
+  // position: absolute;
+  // top: 0;
+  // bottom: 0;
+  // left: 0;
+  // right: 0;
+  // height: 100%;
+  // width: 100%;
+  opacity: 0;
+  transition: .5s ease;
+  background-color: #008CBA;
+}
+
+.overlay:hover {
+  opacity: 1;
+}
+
+.home-block-01-01 {
+  background-image: url('/images/home-blocks/01/01.jpg');
+}
+
+.home-block-01-02 {
+  background-image: url('/images/home-blocks/01/02.jpg');
+}
+
+.home-block-02-01 {
+  background-image: url('/images/home-blocks/02/01.jpg');
+}
+
+.home-block-02-02 {
+  background-image: url('/images/home-blocks/02/02.jpg');
+}
+
+.home-block-03-01 {
+  background-image: url('/images/home-blocks/03/01.jpg');
+}
+
+.home-block-03-02 {
+  background-image: url('/images/home-blocks/03/02.jpg');
+}
+
+.home-block-04-01 {
+  background-image: url('/images/home-blocks/04/01.jpg');
+}
+
+.home-block-04-02 {
+  background-image: url('/images/home-blocks/04/02.jpg');
 }
 
 {% endcapture %}
