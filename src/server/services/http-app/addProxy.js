@@ -3,6 +3,8 @@ import proxy from 'koa-better-http-proxy';
 import fs from 'fs';
 import pretty from 'pretty';
 import { Liquid } from 'liquidjs';
+import sass from 'sass';
+import mime from 'mime-types';
 
 export default (app) => {
   const toCamel = str => str.replace(/_([a-z])/g, g => g[1].toUpperCase());
@@ -24,16 +26,29 @@ export default (app) => {
     userResDecorator(proxyRes, proxyResData, ctx) {
       // console.log('proxyResData :', proxyResData.toString('utf8'));
 
+      const getFilename = (({ url }) => `pages${url}`);
       let str = proxyResData.toString('utf8');
-      str = str.replace(/https:\/\/studiodoe.com/g, 'http://localhost:3000');
+      str = str.replace(/https:\/\/studiodoe.com/g, 'http://localhost:8080');
       const url = normalizeUrl(ctx.url);
+      const basenameArray = url.substr(0, url.length - '.liquid'.length).split('/');
+      const basename = basenameArray[basenameArray.length - 1];
       if (ctx.url.split('.').length === 1) {
         str = pretty(str);
       }
+      const cbData = { ctx, url };
+      const filename = getFilename(cbData);
       try {
-        str = fs.readFileSync(`pages${url}`, 'utf8');
+        str = fs.readFileSync(filename, 'utf8');
       } catch (error) {
-        fs.writeFileSync(`pages${url}`, str, { encoding: 'utf8' });
+        if (basename.split('.')[1] === 'css') {
+          try {
+            str = fs.readFileSync(filename.replace('css.liquid', 'scss.liquid'), 'utf8');
+          } catch (error2) {
+            fs.writeFileSync(`pages${url}`, str, { encoding: 'utf8' });
+          }
+        } else {
+          fs.writeFileSync(`pages${url}`, str, { encoding: 'utf8' });
+        }
       }
 
       const engine = new Liquid({
@@ -50,6 +65,13 @@ export default (app) => {
 
         this.registerFilter('toUnderscoredWcName', str => toUnderscore(str.split('_')[0]));
         this.registerFilter('toWcName', str => str.split('_')[0]);
+
+        this.registerFilter('toCss', (scss) => {
+          const result = sass.renderSync({
+            data: scss,
+          });
+          return (result && result.css && result.css.toString('utf8')) || '';
+        });
       });
 
       const componentMap = {};
@@ -71,10 +93,30 @@ export default (app) => {
     if (!ctx.url.startsWith('/local/')) {
       return next();
     }
-    const url = normalizeUrl(ctx.url);
-    console.log('url :', url);
+    const getScopeData = (async () => ({}));
+    const getFilename = (({ url }) => `pages${url}`);
     let str;
-    str = fs.readFileSync(`pages${url}`, 'utf8');
+    const url = normalizeUrl(ctx.path);
+    const basenameArray = url.substr(0, url.length - '.liquid'.length).split('/');
+    const basename = basenameArray[basenameArray.length - 1];
+    // console.log('url :', url);
+    const cbData = { ctx, url };
+    const filename = getFilename(cbData);
+    try {
+      str = fs.readFileSync(filename, 'utf8');
+    } catch (error) {
+      if (basename.split('.')[1] === 'css') {
+        try {
+          str = fs.readFileSync(filename.replace('css.liquid', 'scss.liquid'), 'utf8');
+        } catch (error2) {
+          return next();
+          // fs.writeFileSync('pages' + url, str, { encoding: 'utf8' });
+        }
+      } else {
+        return next();
+        // fs.writeFileSync('pages' + url, str, { encoding: 'utf8' });
+      }
+    }
     const engine = new Liquid({
       root: 'pages',
     });
@@ -89,6 +131,12 @@ export default (app) => {
 
       this.registerFilter('toUnderscoredWcName', str => toUnderscore(str.split('_')[0]));
       this.registerFilter('toWcName', str => str.split('_')[0]);
+      this.registerFilter('toCss', (scss) => {
+        const result = sass.renderSync({
+          data: scss,
+        });
+        return (result && result.css && result.css.toString('utf8')) || '';
+      });
     });
 
     const indexJsFileName = '';
@@ -101,6 +149,7 @@ export default (app) => {
     const x = engine.render(results2, {
       jsName: { index: indexJsFileName }, componentMap, schemasMetadata: {}, schemas: {},
     });
+    ctx.set('Content-Type', mime.contentType(basename));
     // console.log('x :', x.then(console.log));
     return x.then((data) => {
       // res.status(404);

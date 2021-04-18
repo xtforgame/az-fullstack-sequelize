@@ -1,14 +1,13 @@
 import React from 'react';
 
-import { ApolloClient, InMemoryCache, HttpLink } from 'apollo-boost';
-import { ApolloProvider } from 'react-apollo';
+import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client/react';
 
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { ConnectedRouter } from 'connected-react-router';
 import useStylesByNs from 'azrmui/styles/useStylesByNs';
-import { hasuraEndpoint } from 'common/config';
 import ThemeContainer from '~/containers/core/ThemeContainer';
 import {
   makeUiThemeSelector,
@@ -19,7 +18,7 @@ import {
 const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
   link: new HttpLink({
-    uri: hasuraEndpoint,
+    uri: 'v1/graphql',
     headers: {
       'x-hasura-admin-secret': 'xxxxhsr',
     },

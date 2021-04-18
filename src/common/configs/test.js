@@ -13,10 +13,13 @@ please DO NOT put any sensitive information here.
 export { jwtIssuer } from './codegen/test';
 
 const runningMode = 'Test';
-const hasuraEndpoint = 'http://localhost:8081/v1/graphql';
+const hasuraOrigin = 'http://localhost:8081';
+// const hasuraOrigin = 'http://rick.cloud:22004';
+const hasuraEndpoint = `${hasuraOrigin}/v1/graphql`;
 
 export {
   runningMode,
   hasuraEndpoint,
+  hasuraOrigin,
 };
 

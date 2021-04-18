@@ -1,8 +1,111 @@
+/* eslint-disable no-shadow */
+
 // model for az RDBMS ORM
 import sequelize from 'sequelize';
-import { AmmOrm, AmmSchemas, IJsonSchemas, JsonSchemasX } from 'az-model-manager';
+import {
+  AmmOrm, AmmSchemas, IJsonSchemas, JsonSchemasX,
+  JsonModelAttributes,
+} from 'az-model-manager';
 
-export const getJsonSchema : () => IJsonSchemas = () => ({
+
+export enum EnumSupportedHasuraRoles {
+   user= 'user',
+   manager= 'manager',
+}
+
+export const supportedHasuraRoles = [
+  EnumSupportedHasuraRoles.user,
+  EnumSupportedHasuraRoles.manager,
+];
+
+type SupportedHasuraRoleNames = keyof typeof EnumSupportedHasuraRoles;
+
+export type PermissionOptions = {
+  role: SupportedHasuraRoleNames;
+  filter: any;
+  limit?: number | null;
+  allow_aggregations?: boolean;
+}
+
+export type Permissions = {
+  [name in SupportedHasuraRoleNames]?: PermissionOptions;
+}
+
+export type ModelExtraOptions = {
+  hasura: {
+    views?: {
+      [viewLevelName: string]: {
+        columns?: string[] | 'all',
+        permissions: Permissions,
+      },
+    },
+    publicColumns?: string[] | 'all',
+    restrictedColumns?: string[],
+  },
+}
+
+const userIdF : (userIdColumnName : string) => any = (userIdColumnName : string) => {
+  if (!userIdColumnName) {
+    return null;
+  }
+  return {
+    [userIdColumnName]: {
+      _eq: 'X-Hasura-User-Id',
+    },
+  };
+};
+
+const belongsToManyUser : (asName : string, userIdName : string) => any = (asName : string, userIdName : string) => {
+  if (!asName || !userIdName) {
+    return null;
+  }
+  return {
+    [asName]: {
+      [userIdName]: { _eq: 'X-Hasura-User-Id' },
+    },
+  };
+};
+
+const getViewPermissions : (filter : any) => Permissions = (filter : any) => {
+  if (!filter) {
+    return {};
+  }
+  return {
+    user: {
+      role: EnumSupportedHasuraRoles.user,
+      filter,
+      limit: 25,
+      allow_aggregations: true,
+    },
+    manager: {
+      role: EnumSupportedHasuraRoles.manager,
+      filter,
+      limit: 25,
+      allow_aggregations: true,
+    },
+  };
+};
+
+const productColumns : JsonModelAttributes = {
+  thumbnail: {
+    type: 'jsonb',
+    defaultValue: {},
+  },
+  pictures: {
+    type: 'jsonb',
+    defaultValue: [],
+  },
+  name: ['string', 900],
+  price: ['integer'],
+  weight: 'float',
+  description: 'text',
+  data: {
+    type: 'jsonb',
+    defaultValue: {},
+  },
+};
+
+export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
   models: {
     accountLink: {
       columns: {
@@ -46,6 +149,26 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
             },
           },
         ],
+      },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(userIdF('user_id')),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
+          },
+          // publicColumns: [
+          //   'id', 'provider_id',
+          // ],
+          restrictedColumns: [
+            'provider_user_access_info',
+          ],
+        },
       },
     },
     user: {
@@ -238,6 +361,23 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           },
         },
       },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(userIdF('id')),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('id')),
+            // },
+          },
+          publicColumns: [
+            'id', 'name', 'type', 'privilege', 'picture',
+          ],
+        },
+      },
     },
     userSetting: {
       columns: {
@@ -266,6 +406,21 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
             fields: ['user_id', 'type'],
           },
         ],
+      },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(userIdF('user_id')),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
+          },
+          restrictedColumns: [],
+        },
       },
     },
     log: {
@@ -352,6 +507,21 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           otherKey: 'invitee_id',
         }],
       },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(belongsToManyUser('users', 'user_id')),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(null),
+            // },
+          },
+          restrictedColumns: [],
+        },
+      },
     },
     organization: {
       columns: {
@@ -361,6 +531,10 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           autoIncrement: true,
         },
         name: ['string', 900],
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
         users: ['belongsToMany', 'user', {
           through: {
             unique: false,
@@ -397,6 +571,23 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           foreignKey: 'organization_id',
           otherKey: 'invitee_id',
         }],
+      },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: ['data', 'ownedUser', 'users', 'projects'],
+              permissions: getViewPermissions(belongsToManyUser('users', 'user_id')),
+            },
+            // orgSharedVd: {
+            //   columns: ['data', 'ownedUser', 'users', 'projects'],
+            //   permissions: getViewPermissions(null),
+            // },
+          },
+          // publicColumns: [
+          //   'id', 'name',
+          // ],
+        },
       },
     },
     project: {
@@ -446,6 +637,23 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           otherKey: 'invitee_id',
         }],
       },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: ['type', 'data', 'users', 'organization'],
+              permissions: getViewPermissions(belongsToManyUser('users', 'user_id')),
+            },
+            // orgSharedVd: {
+            //   columns: ['type', 'data', 'users', 'organization'],
+            //   permissions: getViewPermissions(null),
+            // },
+          },
+          // publicColumns: [
+          //   'id', 'name',
+          // ],
+        },
+      },
     },
     memo: {
       columns: {
@@ -468,6 +676,20 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           foreignKey: 'memo_id',
           otherKey: 'user_id',
         }],
+      },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: ['data'],
+              permissions: getViewPermissions(null),
+            },
+            // orgSharedVd: {
+            //   columns: ['data', 'users'],
+            //   permissions: getViewPermissions(null),
+            // },
+          },
+        },
       },
     },
     contactUsMessage: {
@@ -494,6 +716,43 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
         },
       },
     },
+    productCategory: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        name: 'string',
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+        groups: ['hasMany', 'productGroup', {
+          foreignKey: 'category_id',
+        }],
+      },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(null),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(null),
+            // },
+          },
+          publicColumns: [
+            'id',
+            'name',
+            'data',
+            'groups',
+          ],
+        },
+      },
+    },
     product: {
       columns: {
         id: {
@@ -501,22 +760,14 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           primaryKey: true,
           autoIncrement: true,
         },
-        thumbnail: 'string',
-        pictures: {
-          type: 'jsonb',
-          defaultValue: [],
-        },
-        name: ['string', 900],
-        price: ['integer'],
-        weight: 'float',
-        description: {
-          type: 'jsonb',
-          defaultValue: {},
-        },
-        data: {
-          type: 'jsonb',
-          defaultValue: {},
-        },
+        customId: 'string',
+        color: 'string',
+        colorName: 'string',
+        size: 'string',
+        ...productColumns,
+        group: ['belongsTo', 'productGroup', {
+          foreignKey: 'group_id',
+        }],
         orders: ['belongsToMany', 'order', {
           through: {
             unique: false,
@@ -527,6 +778,127 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           foreignKey: 'product_id',
           otherKey: 'order_id',
         }],
+      },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(null),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(null),
+            // },
+          },
+          publicColumns: [
+            'id',
+            'customId',
+            'color',
+            'size',
+            'thumbnail',
+            'pictures',
+            'name',
+            'price',
+            'weight',
+            'description',
+            'data',
+            'group',
+          ],
+        },
+      },
+    },
+    productGroup: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        customId: 'string',
+        ...productColumns,
+        materials: 'text',
+        products: ['hasMany', 'product', {
+          foreignKey: 'group_id',
+        }],
+        category: ['belongsTo', 'productCategory', {
+          foreignKey: 'category_id',
+        }],
+        campaigns: ['belongsToMany', 'campaign', {
+          through: {
+            unique: false,
+            ammModelName: 'productGroupCampaign',
+            ammThroughTableColumnAs: 'productGroup',
+            ammThroughAs: 'relation',
+          },
+          foreignKey: 'product_group_id',
+          otherKey: 'campaign_id',
+        }],
+      },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(null),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(null),
+            // },
+          },
+          publicColumns: 'all',
+        },
+      },
+    },
+    campaign: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        name: ['string', 900],
+        type: ['string', 191],
+        durationType: ['string', 900], // 'time-range', 'permanent'
+        start: 'date',
+        end: 'date',
+        state: 'string',
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+        productGroups: ['belongsToMany', 'productGroup', {
+          through: {
+            unique: false,
+            ammModelName: 'productGroupCampaign',
+            ammThroughTableColumnAs: 'campaign',
+            ammThroughAs: 'relation',
+          },
+          foreignKey: 'campaign_id',
+          otherKey: 'product_group_id',
+        }],
+      },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(null),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(null),
+            // },
+          },
+          publicColumns: 'all',
+          // publicColumns: [
+          //   'id',
+          //   'name',
+          //   'data',
+          //   'productGroups',
+          // ],
+        },
       },
     },
     ordererInfo: {
@@ -552,6 +924,21 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           foreignKey: 'as_default_to',
         }],
       },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(userIdF('user_id')),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
+          },
+          restrictedColumns: [],
+        },
+      },
     },
     recipientInfo: {
       columns: {
@@ -575,6 +962,21 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
         asDefaultTo: ['belongsTo', 'user', {
           foreignKey: 'as_default_to',
         }],
+      },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(userIdF('user_id')),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
+          },
+          restrictedColumns: [],
+        },
       },
     },
     order: {
@@ -612,6 +1014,21 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           otherKey: 'product_id',
         }],
       },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(userIdF('user_id')),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
+          },
+          restrictedColumns: [],
+        },
+      },
     },
     subscriptionOrder: {
       columns: {
@@ -638,6 +1055,21 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           foreignKey: 'user_id',
         }],
       },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(userIdF('user_id')),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
+          },
+          restrictedColumns: [],
+        },
+      },
     },
   },
   associationModels: {
@@ -662,6 +1094,22 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           },
         ],
       },
+      extraOptions: {
+        hasura: {
+          publicColumns: ['id'],
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(userIdF('user_id')),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
+          },
+          restrictedColumns: [],
+        },
+      },
     },
     groupInvitation: {
       columns: {
@@ -683,6 +1131,22 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
             },
           },
         ],
+      },
+      extraOptions: {
+        hasura: {
+          publicColumns: ['id'],
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
+            // },
+          },
+          restrictedColumns: [],
+        },
       },
     },
     userOrganization: {
@@ -714,6 +1178,22 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           },
         ],
       },
+      extraOptions: {
+        hasura: {
+          publicColumns: ['id'],
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(userIdF('user_id')),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
+          },
+          restrictedColumns: [],
+        },
+      },
     },
     organizationInvitation: {
       columns: {
@@ -735,6 +1215,22 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
             },
           },
         ],
+      },
+      extraOptions: {
+        hasura: {
+          publicColumns: ['id'],
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
+            // },
+          },
+          restrictedColumns: [],
+        },
       },
     },
     userProject: {
@@ -766,6 +1262,22 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           },
         ],
       },
+      extraOptions: {
+        hasura: {
+          publicColumns: ['id'],
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(userIdF('user_id')),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
+          },
+          restrictedColumns: [],
+        },
+      },
     },
     projectInvitation: {
       columns: {
@@ -788,6 +1300,22 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           },
         ],
       },
+      extraOptions: {
+        hasura: {
+          publicColumns: ['id'],
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions({ _or: [userIdF('inviter_id'), userIdF('invitee_id')] }),
+            // },
+          },
+          restrictedColumns: [],
+        },
+      },
     },
     userMemo: {
       columns: {
@@ -809,6 +1337,22 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
             },
           },
         ],
+      },
+      extraOptions: {
+        hasura: {
+          publicColumns: ['id'],
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(userIdF('user_id')),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
+          },
+          restrictedColumns: [],
+        },
       },
     },
     orderProduct: {
@@ -838,12 +1382,69 @@ export const getJsonSchema : () => IJsonSchemas = () => ({
           },
         ],
       },
+      extraOptions: {
+        hasura: {
+          publicColumns: ['id'],
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(null),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(null),
+            // },
+          },
+          restrictedColumns: [],
+        },
+      },
+    },
+    productGroupCampaign: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+      },
+      options: {
+        indexes: [
+          {
+            name: 'product_group_campaign_uniqueness',
+            unique: true,
+            fields: ['product_group_id', 'campaign_id'],
+            where: {
+              deleted_at: null,
+            },
+          },
+        ],
+      },
+      extraOptions: {
+        hasura: {
+          publicColumns: ['id'],
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(null),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(null),
+            // },
+          },
+          restrictedColumns: [],
+        },
+      },
     },
   },
 });
 
 export const getJsonSchemasX : () => JsonSchemasX = () => {
-  const result = new JsonSchemasX('public', <any>getJsonSchema())
+  const result = new JsonSchemasX('public', <any>getJsonSchema());
   result.toCoreSchemas();
   return result;
 };

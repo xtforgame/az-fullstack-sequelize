@@ -48,11 +48,14 @@ export default function EnhancedTableHead(props) {
         </TableCell>
         {columns.map((column, i) => {
           const style = (columnSizes && columnSizes[i] != null) ? { width: columnSizes[i] } : {};
+          if (column.size != null) {
+            style.width = column.size;
+          }
           return (
             <TableCell
               key={column.id}
               align={column.align ? column.align : 'left'}
-              padding={column.disablePadding ? 'none' : 'default'}
+              padding={column.padding || 'default'}
               sortDirection={orderBy === column.id ? order : false}
               style={style}
             >

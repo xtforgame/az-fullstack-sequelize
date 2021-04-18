@@ -2,6 +2,7 @@ import { promiseReduce } from 'common/utils';
 import ServiceBase from '../ServiceBase';
 // ========================================
 import Routers from '~/routers';
+import RouterApi from './api';
 
 
 export default class RouterManager extends ServiceBase {
@@ -21,6 +22,7 @@ export default class RouterManager extends ServiceBase {
     this.resourceManager = resourceManager.resourceManager;
     this.mailer = mailer;
     this.minioApi = minioApi;
+    this.routerApi = new RouterApi();
 
     this.routers = Routers
     .map(Router => new Router({
@@ -29,6 +31,7 @@ export default class RouterManager extends ServiceBase {
       minioApi: this.minioApi,
       authKit: this.authKit,
       resourceManager: this.resourceManager,
+      routerApi: this.routerApi,
     }));
     this.routers.map(router => router.setupRoutes(httpApp.appConfig));
   }

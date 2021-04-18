@@ -104,7 +104,6 @@ export default [
       <style>.agc1-sect{
         padding-top: var(--agc1-section-padding-top, var(--azg-section-padding-top, 100px));
         padding-bottom: var(--agc1-section-padding-bottom, var(--azg-section-padding-bottom, 100px));
-        font-family:Helvetica, serif;
       }
       .agc1-sect-container{
         width:90%;
@@ -126,7 +125,6 @@ export default [
       css: `.agc1-sect{
         padding-top: var(--agc1-section-padding-top, var(--azg-section-padding-top, 100px));
         padding-bottom: var(--agc1-section-padding-bottom, var(--azg-section-padding-bottom, 100px));
-        font-family:Helvetica, serif;
       }
       .agc1-sect-container{
         width:90%;

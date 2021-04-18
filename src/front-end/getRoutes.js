@@ -28,6 +28,20 @@ import SubContent07 from '~/containers/Home/SubContent07';
 import SubContent08 from '~/containers/Home/SubContent08';
 import SubContent09 from '~/containers/Home/SubContent09';
 
+import OrderPages from '~/containers/OrderPages';
+import Campaigns from '~/containers/Campaigns';
+import CreateCampaign from '~/containers/Campaigns/Editor/Create';
+import EditCampaign from '~/containers/Campaigns/Editor/Edit';
+
+import ProductGroups from '~/containers/ProductGroups';
+import CreateProductGroup from '~/containers/ProductGroups/Editor/Create';
+import EditProductGroup from '~/containers/ProductGroups/Editor/Edit';
+
+import Products from '~/containers/Products';
+import CreateProduct from '~/containers/Products/Editor/Create';
+import EditProduct from '~/containers/Products/Editor/Edit';
+
+
 import AdminPages from '~/containers/AdminPages';
 import OrganizationManagement from '~/containers/AdminPages/OrganizationManagement';
 import ProjectManagement from '~/containers/AdminPages/ProjectManagement';
@@ -78,7 +92,7 @@ const globalRouteConfig = {
     routes: [{
       name: 'redirect',
       path: '/',
-      component: () => <Redirect to={{ pathname: '/home' }} />,
+      component: () => <Redirect to={{ pathname: '/home/grapesjs' }} />,
       exact: true,
     },
     {
@@ -297,6 +311,297 @@ const globalRouteConfig = {
             }],
           }],
         },
+        // {
+        //   name: 'campaign',
+        //   path: '/campaign',
+        //   component: ({ routeView }) => routeView,
+        //   navbar: {
+        //     title: '活動管理',
+        //   },
+        //   routeViews: [{
+        //     routes: [
+        //       {
+        //         name: 'list',
+        //         path: '/campaign',
+        //         component: Campaigns,
+        //         navbar: {
+        //           title: '活動管理',
+        //         },
+        //         exact: true,
+        //       },
+        //       {
+        //         name: 'editor',
+        //         path: '/campaign/:pType/:pId/*',
+        //         component: CampaignsEditor,
+        //       },
+        //     ],
+        //   }],
+        // },
+        {
+          name: 'campaign-list',
+          path: '/campaign',
+          component: Campaigns,
+          navbar: {
+            title: '活動管理',
+          },
+          exact: true,
+        },
+        {
+          name: 'create-campaign',
+          path: '/campaign/edit/new',
+          component: CreateCampaign,
+          exact: true,
+        },
+        {
+          name: 'edit-campaign',
+          path: '/campaign/edit/:id',
+          component: EditCampaign,
+        },
+
+        {
+          name: 'product-group-list',
+          path: '/product-group',
+          component: ProductGroups,
+          navbar: {
+            title: '商品群組管理',
+          },
+          exact: true,
+        },
+        {
+          name: 'create-product-group',
+          path: '/product-group/edit/new',
+          component: CreateProductGroup,
+          exact: true,
+        },
+        {
+          name: 'edit-product-group',
+          path: '/product-group/edit/:id',
+          component: EditProductGroup,
+        },
+
+        {
+          name: 'product-list',
+          path: '/product',
+          component: Products,
+          navbar: {
+            title: '商品管理',
+          },
+          exact: true,
+        },
+        {
+          name: 'create-product',
+          path: '/product/edit/new',
+          component: CreateProduct,
+          exact: true,
+        },
+        {
+          name: 'edit-product',
+          path: '/product/edit/:id',
+          component: EditProduct,
+        },
+
+        {
+          name: 'order',
+          path: '/order',
+          component: OrderPages,
+          navbar: {
+            title: '訂單管理',
+          },
+        },
+        {
+          name: 'goods',
+          path: '/goods',
+          component: Home,
+          // navbar: {
+          //   title: 'Home',
+          //   level: 0,
+          //   // level: currentLevel => (currentLevel ? (currentLevel - 1) : 0),
+          // },
+          // navbar: true,
+          navbar: {
+            title: '商品/活動管理',
+          },
+          routeViews: [{
+            routes: [{
+              name: 'goods-index',
+              path: '/goods',
+              component: () => <Redirect to={{ pathname: '/goods/sub01' }} />,
+              exact: true,
+            },
+            {
+              name: 'sub01',
+              path: '/goods/sub01',
+              component: SubContent01,
+              navbar: {
+                title: '商品管理',
+              },
+            },
+            {
+              name: 'sub02',
+              path: '/goods/sub02',
+              component: SubContent02,
+              navbar: {
+                title: '活動管理',
+              },
+            }],
+          }],
+        },
+        {
+          name: 'orders',
+          path: '/orders',
+          component: Home,
+          // navbar: {
+          //   title: 'Home',
+          //   level: 0,
+          //   // level: currentLevel => (currentLevel ? (currentLevel - 1) : 0),
+          // },
+          // navbar: true,
+          navbar: {
+            title: '訂單',
+          },
+          routeViews: [{
+            routes: [{
+              name: 'orders-index',
+              path: '/orders',
+              component: () => <Redirect to={{ pathname: '/orders/sub01' }} />,
+              exact: true,
+            },
+            {
+              name: 'sub01',
+              path: '/orders/sub01',
+              component: SubContent01,
+              navbar: {
+                title: '所有訂單',
+              },
+            },
+            {
+              name: 'sub02',
+              path: '/orders/sub02',
+              component: SubContent02,
+              navbar: {
+                title: '未付款訂單',
+              },
+            },
+            {
+              name: 'sub03',
+              path: '/orders/sub03',
+              component: SubContent03,
+              navbar: {
+                title: '已付款訂單',
+              },
+            },
+            {
+              name: 'sub04',
+              path: '/orders/sub04',
+              component: SubContent04,
+              navbar: {
+                title: '待出貨訂單',
+              },
+            },
+            {
+              name: 'sub05',
+              path: '/orders/sub05',
+              component: SubContent05,
+              navbar: {
+                title: '已出貨訂單',
+              },
+            },
+            {
+              name: 'sub06',
+              path: '/orders/sub06',
+              component: SubContent06,
+              navbar: {
+                title: '已過期訂單',
+              },
+            },
+            {
+              name: 'sub07',
+              path: '/orders/sub07',
+              component: SubContent07,
+              navbar: {
+                title: '已退貨訂單',
+              },
+            }],
+          }],
+        },
+        {
+          name: 'shipment',
+          path: '/shipment',
+          component: Home,
+          // navbar: {
+          //   title: 'Home',
+          //   level: 0,
+          //   // level: currentLevel => (currentLevel ? (currentLevel - 1) : 0),
+          // },
+          // navbar: true,
+          navbar: {
+            title: '運費管理',
+          },
+          routeViews: [{
+            routes: [{
+              name: 'shipment-index',
+              path: '/shipment',
+              component: () => <Redirect to={{ pathname: '/shipment/sub01' }} />,
+              exact: true,
+            },
+            {
+              name: 'sub01',
+              path: '/shipment/sub01',
+              component: SubContent01,
+              navbar: {
+                title: '國際運費管理',
+              },
+            },
+            {
+              name: 'sub02',
+              path: '/shipment/sub02',
+              component: SubContent01,
+              navbar: {
+                title: '免運管理',
+              },
+            }],
+          }],
+        },
+        // {
+        //   name: 'campaign',
+        //   path: '/campaign',
+        //   component: ({ routeView }) => routeView,
+        //   navbar: {
+        //     title: '活動管理',
+        //   },
+        //   routeViews: [{
+        //     routes: [
+        //       {
+        //         name: 'list',
+        //         path: '/campaign',
+        //         component: Campaigns,
+        //         navbar: {
+        //           title: '活動管理',
+        //         },
+        //         exact: true,
+        //       },
+        //       {
+        //         name: 'editor',
+        //         path: '/campaign/:pType/:pId/*',
+        //         component: CampaignsEditor,
+        //       },
+        //     ],
+        //   }],
+        // },
+        {
+          name: 'coupon',
+          path: '/coupon',
+          // navbar: {
+          //   title: 'Home',
+          //   level: 0,
+          //   // level: currentLevel => (currentLevel ? (currentLevel - 1) : 0),
+          // },
+          // navbar: true,
+          navbar: {
+            title: '購物金管理',
+          },
+          component: SubContent01,
+        },
         {
           name: 'management',
           path: '/management',
@@ -308,7 +613,7 @@ const globalRouteConfig = {
           // },
           // navbar: true,
           navbar: {
-            title: '管理頁面',
+            title: '會員/帳號管理',
           },
           routeViews: [{
             routes: [{
@@ -338,79 +643,95 @@ const globalRouteConfig = {
               path: '/management/user',
               component: UserManagementDemo,
               navbar: {
-                title: '使用者管理(範例)',
+                title: '使用者管理',
+              },
+            },
+            {
+              name: 'sub01',
+              path: '/management/sub01',
+              component: SubContent01,
+              navbar: {
+                title: '黑名單管理',
+              },
+            },
+            {
+              name: 'sub02',
+              path: '/management/sub02',
+              component: SubContent02,
+              navbar: {
+                title: '顧客標籤管理',
               },
             }],
           }],
         },
-        {
-          name: 'idle',
-          path: '/idle',
-          component: Idle,
-          navbar: true,
-          routeViews: [{
-            routes: [{
-              name: 'idle-index',
-              path: '/idle',
-              component: () => <Redirect to={{ pathname: '/idle/stats' }} />,
-              exact: true,
-            },
-            {
-              name: 'stats',
-              path: '/idle/stats',
-              component: Stats,
-              navbar: {
-                title: 'Stats',
-              },
-            },
-            {
-              name: 'bots',
-              path: '/idle/bots',
-              component: Bots,
-              navbar: {
-                title: 'Bots',
-              },
-            },
-            {
-              name: 'schedules',
-              path: '/idle/schedules',
-              component: Schedules,
-              navbar: {
-                title: 'Schedules',
-              },
-            }],
-          }],
-        },
-        {
-          name: 'memo',
-          path: '/memo',
-          component: Memo,
-          navbar: true,
-          routeViews: [{
-            routes: [{
-              name: 'memo-index',
-              path: '/memo',
-              component: () => <Redirect to={{ pathname: '/memo/memos' }} />,
-              exact: true,
-            },
-            {
-              name: 'memos',
-              path: '/memo/memos',
-              component: Memos,
-              navbar: {
-                title: 'Stats',
-              },
-            },
-            {
-              name: 'schedules',
-              path: '/memo/schedules',
-              component: MemoSchedules,
-              navbar: {
-                title: 'Schedules',
-              },
-            }],
-          }],
-        },
+        // {
+        //   name: 'idle',
+        //   path: '/idle',
+        //   component: Idle,
+        //   navbar: true,
+        //   routeViews: [{
+        //     routes: [{
+        //       name: 'idle-index',
+        //       path: '/idle',
+        //       component: () => <Redirect to={{ pathname: '/idle/stats' }} />,
+        //       exact: true,
+        //     },
+        //     {
+        //       name: 'stats',
+        //       path: '/idle/stats',
+        //       component: Stats,
+        //       navbar: {
+        //         title: 'Stats',
+        //       },
+        //     },
+        //     {
+        //       name: 'bots',
+        //       path: '/idle/bots',
+        //       component: Bots,
+        //       navbar: {
+        //         title: 'Bots',
+        //       },
+        //     },
+        //     {
+        //       name: 'schedules',
+        //       path: '/idle/schedules',
+        //       component: Schedules,
+        //       navbar: {
+        //         title: 'Schedules',
+        //       },
+        //     }],
+        //   }],
+        // },
+        // {
+        //   name: 'memo',
+        //   path: '/memo',
+        //   component: Memo,
+        //   navbar: true,
+        //   routeViews: [{
+        //     routes: [{
+        //       name: 'memo-index',
+        //       path: '/memo',
+        //       component: () => <Redirect to={{ pathname: '/memo/memos' }} />,
+        //       exact: true,
+        //     },
+        //     {
+        //       name: 'memos',
+        //       path: '/memo/memos',
+        //       component: Memos,
+        //       navbar: {
+        //         title: 'Stats',
+        //       },
+        //     },
+        //     {
+        //       name: 'schedules',
+        //       path: '/memo/schedules',
+        //       component: MemoSchedules,
+        //       navbar: {
+        //         title: 'Schedules',
+        //       },
+        //     }],
+        //   }],
+        // },
         // {
         //   name: 'test',
         //   path: '/test',

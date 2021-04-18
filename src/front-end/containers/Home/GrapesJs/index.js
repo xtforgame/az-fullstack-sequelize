@@ -8,14 +8,6 @@ import MinioFolderApiEx from './ui/MinioFolderApiEx';
 import FilePicker from './ui/FilePicker';
 import FileSaver from './ui/FileSaver';
 
-import './grapesjs/plugins/styleManagerPlugin';
-import './grapesjs/plugins/assetManagerPlugin';
-import './grapesjs/plugins/simpleStoragePlugin';
-import './grapesjs/plugins/createCustomBlockPlugin';
-import './grapesjs/plugins/editCodePlugin';
-import './grapesjs/plugins/azCommonPlugin';
-import './grapesjs/plugins/azComponentsPlugin';
-
 const minioFolderApi = new MinioFolderApiEx();
 
 const useStyles = makeStyles(theme => ({

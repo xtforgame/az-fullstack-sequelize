@@ -3,11 +3,12 @@ import gtb from './grapesjs-html-block';
 import addTraits from './addTraits';
 
 export const azCommonPlugin = (editor, options) => {
-  console.log('options :', options);
+  // console.log('options :', options);
   // azCommonPluginComponents(config, editor);
 
   gtb(editor, options);
 
+  // console.log('editor.globalScriptManager :', editor.globalScriptManager);
 
   editor.on('component:mount', (component) => {
     const domElement = component.getEl();
