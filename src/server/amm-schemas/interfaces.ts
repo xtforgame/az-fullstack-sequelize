@@ -819,8 +819,9 @@ export type ProductCategoryI = ProductCategoryAttributes & {
 export type ProductCreationAttributes = {
   customId?: string;
   color?: string;
+  colorName?: string;
   size?: string;
-  thumbnail?: string;
+  thumbnail?: any;
   pictures?: any;
   name?: string;
   price?: number;
@@ -836,8 +837,9 @@ export type ProductAttributes = {
   id: string;
   customId?: string;
   color?: string;
+  colorName?: string;
   size?: string;
-  thumbnail?: string;
+  thumbnail?: any;
   pictures?: any;
   name?: string;
   price?: number;
@@ -879,7 +881,7 @@ export type ProductI = ProductAttributes & {
 // ============== start model: ProductGroup ==============
 export type ProductGroupCreationAttributes = {
   customId?: string;
-  thumbnail?: string;
+  thumbnail?: any;
   pictures?: any;
   name?: string;
   price?: number;
@@ -896,7 +898,7 @@ export type ProductGroupCreationAttributes = {
 export type ProductGroupAttributes = {
   id: string;
   customId?: string;
-  thumbnail?: string;
+  thumbnail?: any;
   pictures?: any;
   name?: string;
   price?: number;

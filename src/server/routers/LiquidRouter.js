@@ -10,6 +10,7 @@ import {
   toUnderscore,
   capitalizeFirstLetter,
 } from 'common/utils';
+import { externalUrl } from 'config';
 import mime from 'mime-types';
 import { Liquid } from 'liquidjs';
 import {
@@ -66,7 +67,7 @@ export default class LiquidRouter extends RouterBase {
     }
 
     const engine = new Liquid({
-      root: 'pages',
+      root: ['pages'],
     });
     engine.plugin(function (Liquid) {
       this.registerFilter('toCamel', toCamel);
@@ -98,6 +99,7 @@ export default class LiquidRouter extends RouterBase {
     const buildinScope = {
       newUser: !guestData.data.read,
       cart: guestData.cart,
+      externalUrl,
     };
     guestData.data.read = true;
     guestData.update();

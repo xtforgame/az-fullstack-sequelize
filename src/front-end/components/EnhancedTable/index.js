@@ -72,27 +72,39 @@ export default function EnhancedTable({
   setSelected,
   loading,
 
+  toolbarProps,
+  paginationProps,
+
   defaultSorting = {
     order: 'desc',
     orderBy: '',
   },
 
-  toolbarProps,
-  paginationProps,
+  order: orderProp,
+  onOrderChange,
+
+  orderBy: orderByProp,
+  onOrderByChange,
 
   page: pageProp,
+  onPageChange,
+
   dense: denseProp,
+  onDenseChange,
+
   rowsPerPage: rowsPerPageProp,
+  onRowsPerPageChange,
+
   columns: columnsProp,
   columnSizes: columnSizesProp,
   renderRowDetail,
 }) {
   const classes = useStyles();
-  const [order, setOrder] = useHalfControllable(defaultSorting.order);
-  const [orderBy, setOrderBy] = useHalfControllable(defaultSorting.orderBy);
-  const [page, setPage] = useHalfControllable(pageProp || 0);
-  const [dense, setDense] = useHalfControllable(denseProp != null ? denseProp : true);
-  const [rowsPerPage, setRowsPerPage] = useHalfControllable(rowsPerPageProp || 10);
+  const [order, setOrder] = useHalfControllable(orderProp || defaultSorting.order, onOrderChange, defaultSorting.order || 'id');
+  const [orderBy, setOrderBy] = useHalfControllable(orderByProp || defaultSorting.orderBy, onOrderByChange, defaultSorting.orderBy || 'desc');
+  const [page, setPage] = useHalfControllable(pageProp || 0, onPageChange, 0);
+  const [dense, setDense] = useHalfControllable(denseProp != null ? denseProp : true, onDenseChange, true);
+  const [rowsPerPage, setRowsPerPage] = useHalfControllable(rowsPerPageProp || 10, onRowsPerPageChange, 10);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -134,7 +146,7 @@ export default function EnhancedTable({
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    setRowsPerPage(parseInt(event.target.value));
     setPage(0);
   };
 

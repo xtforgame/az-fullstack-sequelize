@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html class="no-js" lang="zh-TW" ng-app="recipes_index" xmlns="https://www.w3.org/1999/xhtml" xmlns:fb="https://www.facebook.com/2008/fbml" xmlns:og="https://ogp.me/ns#">
-  <head>
+<html>
+  {% capture head_main %}
     <title>Az</title>
     <meta name="description" content="azazazaz">
     <link rel="canonical" href="http://localhost:3000/">
@@ -10,7 +10,13 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="http://localhost:3000/">
     <meta property="og:image" content="xxxx.jpg">
-  </head>
-  <body>
-  </body>
+  {% endcapture %}
+  {% render "parts/head-layout.liquid", content: head_main %}
+  {% capture body_main %}
+  <main class="main" role="main">
+  </main>
+  {% endcapture %}
+  {% capture body_extra %}
+  {% endcapture %}
+  {% render "parts/body-layout.liquid", content: body_main, extra: body_extra, cart: cart %}
 </html>

@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 import React, { useState } from 'react';
-import moment from 'moment';
 import { makeStyles } from '@material-ui/core/styles';
 import FormDialogInput from 'azrmui/core/FormInputs/FormDialogInput';
 import {
@@ -31,11 +30,7 @@ export default (props) => {
     value = [null, null],
     onChange,
     buttonProps,
-    rangeInpuProps = {
-      PickerProps: { ampm: false },
-      Picker1Props: { initialFocusedDate: moment().startOf('day') },
-      Picker2Props: { initialFocusedDate: moment().startOf('day').add(18, 'hours') },
-    },
+    rangeInpuProps,
   } = props;
   return (
     <FormDialogInput

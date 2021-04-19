@@ -10,8 +10,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 import DateRangeInput from '~/components/DateRangeInput';
 import TagsAutocomplete from '~/components/TagsAutocomplete';
-
 import BasicSection from '~/components/Section/Basic';
+
+import useTextField from '~/components/hooks/inputs/useTextField';
+import useFormSelect from '~/components/hooks/inputs/useFormSelect';
+import useDateRange from '~/components/hooks/inputs/useDateRange';
 
 const useStyles = makeStyles(theme => ({
   flexContainer: {
@@ -29,35 +32,31 @@ const useStyles = makeStyles(theme => ({
 
 export default () => {
   const classes = useStyles();
-  const [searchText, setSearchText, searchTextError, setSearchTextError] = useStateWithError('');
-  const [dateRange, setDateRange] = useState([null, null]);
+  const [
+    [searchText, setSearchText, searchTextError, setSearchTextError], searchInput,
+  ] = useTextField('', '', {
+    label: '搜尋文字',
+  });
 
-  const [selectedState, setSelectedState] = useState({ id: 0, name: '<全部>' });
-  const [stateArray, setStateArray] = useState([
-    { id: 0, name: '<全部>' },
-    { id: 1, name: '已付款' },
-    { id: 2, name: '已取消' },
-    { id: 3, name: '已退款' },
-    { id: 4, name: '已出貨' },
-    { id: 5, name: '已完成' },
-  ]);
-  const getStateMenuItem = ({
-    option,
-    // selectedOption,
-    // isSelected,
-    handleOptionClick,
-  }) => (
-    <MenuItem
-      key={option.id}
-      selected={option.id === (selectedState && selectedState.id)}
-      onClick={handleOptionClick}
-    >
-      {`${option.name}`}
-    </MenuItem>
-  );
-  const handleStateMenuItemClick = (event, exEvent, i) => {
-    setSelectedState(exEvent);
-  };
+  const [
+    [dateRange, setDateRange], selectDateRange,
+  ] = useDateRange([null, null], '', {
+    title: '選取時間範圍',
+  });
+
+  const [
+    [selectedState, setSelectedState], selectInput,
+  ] = useFormSelect('', '', {
+    label: '訂單狀態',
+    items: [
+      { value: 0, label: '<全部>' },
+      { value: 1, label: '已付款' },
+      { value: 2, label: '已取消' },
+      { value: 3, label: '已退款' },
+      { value: 4, label: '已出貨' },
+      { value: 5, label: '已完成' },
+    ],
+  });
 
   return (
     <BasicSection withMaxWith>
@@ -65,51 +64,15 @@ export default () => {
       <DialogContent>
         <div className={classes.flexContainer}>
           <div className={classes.flex1}>
-            <FormTextField
-              label="搜尋文字"
-              error={!!searchTextError}
-              helperText={searchTextError}
-              // label={label}
-              // onKeyPress={handleEnterForTextField}
-              value={searchText}
-              onChange={e => setSearchText(e.target.value)}
-              margin="dense"
-              fullWidth
-            />
+            {searchInput.render()}
             <FormSpace variant="content1" />
-            {/* <FormDatePicker
-              label="搜尋文字"
-              margin="dense"
-              fullWidth
-            />
-            <FormSpace variant="content1" /> */}
-            <DateRangeInput
-              title="選取時間範圍"
-              value={dateRange}
-              onChange={setDateRange}
-              buttonProps={{
-                margin: 'dense',
-              }}
-            />
+            {selectDateRange.render()}
             <FormSpace variant="content1" />
-            <FormFieldButtonSelect
-              id="state-selector"
-              label="訂單狀態"
-              value={selectedState}
-              options={stateArray}
-              getMenuItem={getStateMenuItem}
-              onChange={handleStateMenuItemClick}
-              toInputValue={state => (state && `${state.name}`) || '<未選取>'}
-              toButtonValue={state => `${(state && state.name) || '<未選取>'}`}
-              fullWidth
-              margin="dense"
-            />
+            {selectInput.render()}
           </div>
           <div className={classes.flex1}>
             <TagsAutocomplete
               label="搜尋包含商品"
-              error={!!searchTextError}
-              helperText={searchTextError}
               // label={label}
               // onKeyPress={handleEnterForTextField}
               // value={searchText}
@@ -120,8 +83,6 @@ export default () => {
             <FormSpace variant="content1" />
             <TagsAutocomplete
               label="搜尋活動"
-              error={!!searchTextError}
-              helperText={searchTextError}
               // label={label}
               // onKeyPress={handleEnterForTextField}
               // value={searchText}

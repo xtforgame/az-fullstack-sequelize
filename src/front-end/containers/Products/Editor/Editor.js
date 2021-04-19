@@ -213,12 +213,14 @@ export default (props) => {
           <div className={classes.flex1}>
             {(!loading && data && data.productGroups) && (
               <FormAutocomplete
-                label="商品群組"
+                inputProps={{
+                  label: '商品群組',
+                  variant: 'outlined',
+                  placeholder: '新增商品群組',
+                  margin: 'dense',
+                  fullWidth: true,
+                }}
                 size="small"
-                variant="outlined"
-                placeholder="新增商品群組"
-                margin="dense"
-                fullWidth
                 options={data.productGroups}
                 value={group}
                 onChange={(event, newValue) => {

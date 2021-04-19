@@ -72,7 +72,7 @@ export default function EnhancedTableHead(props) {
                 ) : null}
               </TableSortLabel>
             </TableCell>
-          )
+          );
         })}
       </TableRow>
     </TableHead>

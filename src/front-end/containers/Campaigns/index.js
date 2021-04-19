@@ -35,6 +35,7 @@ import BasicSection from '~/components/Section/Basic';
 import EnhancedTable from '~/components/EnhancedTable';
 import useRouterQuery from '~/hooks/useRouterQuery';
 import useRouterPush from '~/hooks/useRouterPush';
+import useGqlQuery from '~/hooks/useGqlQuery';
 
 import {
   campaignTypeInfo,
@@ -162,7 +163,7 @@ const getColumnConfig = () => {
     columns,
     defaultSorting: {
       order: 'desc',
-      orderBy: 'date',
+      orderBy: 'id',
     },
     // columnSizes: [120, 120, 180, 150, null],
   };
@@ -170,8 +171,13 @@ const getColumnConfig = () => {
 };
 
 const CAMPAIGN_LIST_QUERY = gql`
-  query CampaignList {
-    campaigns(where: {deleted_at: {_is_null: true}}, order_by: {created_at: desc}) {
+  query Query {
+    campaigns(
+      where: {
+        deleted_at: {_is_null: true}
+      },
+      order_by: {created_at: desc}
+    ) {
       id
       name
       type
@@ -217,11 +223,22 @@ export default (props) => {
   const classes = useStyles();
 
   const query = useRouterQuery();
-  console.log('query.get("text") :', query.get('text'));
+  // console.log('query.get("text") :', query.get('text'));
+  const gqlQuery = useGqlQuery(
+    'campaigns',
+    'campaignAggregate',
+    'id name type durationType state start end data created_at updated_at deleted_at',
+    {
+      // args: ['$name: String!'],
+      // where: ['{name: {_ilike: $name}}'],
+      orderBy: '{created_at: desc}',
+    },
+  );
 
-  const { loading, error, data } = useQuery(CAMPAIGN_LIST_QUERY, {
+  const { loading, error, data } = useQuery(gqlQuery, {
     variables: {
-      name: refreshCount.toString(),
+      name: '%w%',
+      refreshCount: refreshCount.toString(),
     },
     fetchPolicy: 'network-only',
   });
@@ -304,7 +321,7 @@ export default (props) => {
 
   return (
     <React.Fragment>
-      {/* <FilterSection /> */}
+      <FilterSection />
       <BasicSection>
         <EnhancedTable
           rows={rows}

@@ -233,7 +233,7 @@ export default (props) => {
   const classes = useStyles();
 
   const query = useRouterQuery();
-  console.log('query.get("text") :', query.get('text'));
+  // console.log('query.get("text") :', query.get('text'));
 
   const { loading, error, data } = useQuery(PRODUCT_GROUP_LIST_QUERY, {
     variables: {

@@ -171,13 +171,15 @@ export default (props) => {
           <div className={classes.flex1}>
             {(!loading && data && data.campaigns) && (
               <FormAutocomplete
-                label="關聯活動"
+                inputProps={{
+                  label: '關聯活動',
+                  variant: 'outlined',
+                  placeholder: '新增關聯活動',
+                  margin: 'dense',
+                  fullWidth: true,
+                }}
                 size="small"
-                variant="outlined"
-                placeholder="新增關聯活動"
-                margin="dense"
                 multiple
-                fullWidth
                 options={data.campaigns}
                 value={campaigns}
                 onChange={(event, newValue) => {

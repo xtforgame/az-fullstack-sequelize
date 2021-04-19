@@ -1163,7 +1163,6 @@ class HasuraMgr extends HasuraMgrBase {
     // await this.getTables();
     // await this.getMetadata();
 
-
     // const tables = await this.getTables();
     // tables.forEach(console.log);
   }

@@ -34,7 +34,8 @@
     "gmail-auth-dev": "cross-env NODE_ENV=development node dist/server/scripts/gmailAuth.js",
     "start-db": "docker-compose -f dev.yml up -d",
     "stop-db": "docker-compose -f dev.yml down",
-    "config": "cross-env HYGEN_OVERWRITE=1 hygen deploy config"
+    "config": "cross-env HYGEN_OVERWRITE=1 hygen deploy config",
+    "amm-sync": "cross-env NODE_ENV=development node dist/server/scripts/ammSync/index.js"
   },
   "license": "MIT",
   "engines": {
@@ -72,7 +73,7 @@
     "az-model-manager": "git+https://github.com/xtforgame/az-model-manager.git#v0.2.5",
     "az-restful-helpers": "git+https://github.com/xtforgame/az-restful-helpers.git#v0.1.0",
     "azldi": "git+https://github.com/xtforgame/azldi.git#v0.1.0",
-    "azrmui": "git+https://github.com/xtforgame/azrmui.git#v0.1.16",
+    "azrmui": "git+https://github.com/xtforgame/azrmui.git#v0.1.17",
     "classnames": "^2.2.5",
     "clsx": "^1.1.1",
     "connected-react-router": "^6.5.2",
