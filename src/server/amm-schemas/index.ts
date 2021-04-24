@@ -9,8 +9,8 @@ import {
 
 
 export enum EnumSupportedHasuraRoles {
-   user= 'user',
-   manager= 'manager',
+  user = 'user',
+  manager = 'manager',
 }
 
 export const supportedHasuraRoles = [

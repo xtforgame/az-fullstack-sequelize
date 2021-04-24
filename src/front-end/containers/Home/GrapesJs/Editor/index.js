@@ -169,6 +169,7 @@ const GrapesJsEditor = (props) => {
           // { type: 'module', 'data-stencil': '', 'data-resources-url': '/build/', 'data-stencil-namespace': 'xbase' },
           { type: 'module', src: 'https://rick.cloud/chatbotmate/assets/xbase/xbase.esm.js' },
           // { nomodule: '', src: 'https://rick.cloud/chatbotmate/assets/xbase/xbase.js', 'data-stencil': '' },
+          'https://rick.cloud/chatbotmate/assets/xbase/xbase.init.js',
         ],
         styles: [
           'css/grapesjs-canvas.css',
@@ -228,7 +229,7 @@ const GrapesJsEditor = (props) => {
       ],
       pluginsOpts: {
         'az-global-script': {
-          runOnceScript: `window.customRunOnceFuncs.push(() => { console.log('custom runOnceScript'); });`,
+          runOnceScript: `window.azgjsRunOnce('azgjs-test', () => { console.log('custom runOnceScript'); });`,
           updateScript,
           openEventsBinder: eventsBinderHandleOpen,
         },

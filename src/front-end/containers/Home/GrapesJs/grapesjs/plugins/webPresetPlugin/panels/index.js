@@ -80,11 +80,11 @@ export default (editor, config) => {
       active: true,
       className: 'fa fa-paint-brush',
     },
-    // {
-    //   id: otm,
-    //   command: otm,
-    //   className: 'fa fa-cog',
-    // },
+    {
+      id: otm,
+      command: otm,
+      className: 'fa fa-cog',
+    },
     // {
     //   id: ola,
     //   command: ola,
