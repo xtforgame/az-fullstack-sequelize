@@ -124,3 +124,9 @@ span.gjs-layer-name {
     margin: 0;
     padding: 5px 15px;
 }
+
+#gjs-sm-float,
+.gjs-pn-views .fa-cog {
+  display: none;
+}
+

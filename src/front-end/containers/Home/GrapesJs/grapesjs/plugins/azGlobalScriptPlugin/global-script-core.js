@@ -146,6 +146,7 @@ export default (editor, options) => {
         }),
         toHTML(opt = {}) {
           // console.log('toHTML');
+          return '';
           return `<script data-global-script>${getScripts()}</script>`;
           return defaultType.model.prototype.toHTML
           .call(this, opt)

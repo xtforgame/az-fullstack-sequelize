@@ -158,7 +158,7 @@ const GrapesJsEditor = (props) => {
         stepsBeforeSave: 1,
       },
       // https://github.com/artf/grapesjs/blob/master/src/editor/config/config.js
-      styleManager: {},
+      styleManager: { clearProperties: 1 },
       container: `#${id}`,
       fromElement: true,
 
@@ -229,7 +229,7 @@ const GrapesJsEditor = (props) => {
       ],
       pluginsOpts: {
         'az-global-script': {
-          runOnceScript: `window.azgjsRunOnce('azgjs-test', () => { console.log('custom runOnceScript'); });`,
+          runOnceScript: 'window.azgjsRunOnce(\'azgjs-test\', () => { console.log(\'custom runOnceScript\'); });',
           updateScript,
           openEventsBinder: eventsBinderHandleOpen,
         },
@@ -321,6 +321,36 @@ const GrapesJsEditor = (props) => {
     editor.on('load', () => {
       editorLoadedRef.current = true;
       azFinalizePlugin(editor, {});
+
+      const { $ } = grapesjs;
+
+      const pn = editor.Panels;
+      // Load and show settings and style manager
+      const openTmBtn = pn.getButton('views', 'open-tm');
+      openTmBtn && openTmBtn.set('active', 1);
+      const openSm = pn.getButton('views', 'open-sm');
+      openSm && openSm.set('active', 1);
+
+      // Add Settings Sector
+      const traitsSector = $('<div class="gjs-sm-sector no-select">'
+        + '<div class="gjs-sm-title"><span class="icon-settings fa fa-cog"></span> Settings</div>'
+        + '<div class="gjs-sm-properties" style="display: none;"></div></div>');
+      const traitsProps = traitsSector.find('.gjs-sm-properties');
+      traitsProps.append($('.gjs-trt-traits'));
+      $('.gjs-sm-sectors').before(traitsSector);
+      traitsSector.find('.gjs-sm-title').on('click', () => {
+        const traitStyle = traitsProps.get(0).style;
+        const hidden = traitStyle.display == 'none';
+        if (hidden) {
+          traitStyle.display = 'block';
+        } else {
+          traitStyle.display = 'none';
+        }
+      });
+
+      // Open block manager
+      const openBlocksBtn = pn.getButton('views', 'open-blocks');
+      openBlocksBtn && openBlocksBtn.set('active', 1);
     });
 
     // handleOpen(1);

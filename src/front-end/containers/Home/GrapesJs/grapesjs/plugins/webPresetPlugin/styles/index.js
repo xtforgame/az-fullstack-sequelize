@@ -34,7 +34,7 @@ export default (editor, config) => {
   // }]);
   sm.getSectors().reset([
     {
-      name: 'General',
+      name: '位置', // 'General',
       open: false,
       buildProps: ['float', 'display', 'position', 'top', 'right', 'left', 'bottom'],
     },
@@ -54,19 +54,19 @@ export default (editor, config) => {
         'align-self',
       ],
     }, {
-      name: 'Dimension',
+      name: '尺寸', // 'Dimension',
       open: false,
       buildProps: ['width', 'height', 'min-width', 'max-width', 'min-height', 'max-height', 'margin', 'padding'],
     }, {
-      name: 'Typography',
+      name: '字型', // 'Typography',
       open: false,
       buildProps: ['font-family', 'font-size', 'font-weight', 'letter-spacing', 'color', 'line-height', 'text-align', 'text-shadow'],
     }, {
-      name: 'Decorations',
+      name: '背景/框線/陰影', // 'Decorations',
       open: false,
       buildProps: ['border-radius-c', 'background-color', 'border-radius', 'border', 'box-shadow', 'background'],
     }, {
-      name: 'Extra',
+      name: '其他', // 'Extra',
       open: false,
       buildProps: ['opacity', 'transition', 'perspective', 'transform'],
       properties: [

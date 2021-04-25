@@ -82,11 +82,11 @@ export default (editor, options) => {
   defaultType.model.prototype.initialize = function () {
     _initialize.apply(this, arguments);
 
-    this.get('traits').add({
-      type: 'href-next',
-      name: 'href',
-      label: 'New href',
-    });
+    // this.get('traits').add({
+    //   type: 'href-next',
+    //   name: 'href',
+    //   label: 'New href',
+    // });
   };
 
   // const domComponents = editor.DomComponents;
