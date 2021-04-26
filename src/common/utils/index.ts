@@ -44,7 +44,7 @@ export function promiseReduce<T>(
   toPrmiseFunc : ToPromiseFunction<T> = defaultToPromiseFunc,
   startValue: any,
 ) {
-  return inArray.reduce((prev, curr, index, array) => prev.then(() => toPrmiseFunc(prev, curr, index, array)), Promise.resolve(startValue));
+  return inArray.reduce((prev, curr, index, array) => prev.then(v => toPrmiseFunc(v, curr, index, array)), Promise.resolve(startValue));
 }
 
 export function promiseWait(waitMillisec) {
