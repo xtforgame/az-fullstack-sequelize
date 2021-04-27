@@ -57,6 +57,11 @@ services:
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
       ## uncomment next line to set an admin secret
       HASURA_GRAPHQL_ADMIN_SECRET: xxxxhsr
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "10m"
 
   webserver:
     image: ${AZ_IMAGE_NS:-azinternal}/${AZ_IMAGE_PROJ:-default}/afswebserver
