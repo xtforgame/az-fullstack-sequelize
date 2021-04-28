@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import BasicSection from '~/components/Section/Basic';
 import LoadingMask from '~/components/EnhancedTable/LoadingMask';
-import ProductEditor from './Editor';
+import Editor from './Editor';
 
 const PRODUCT_QUERY = gql`
   query Product($id: bigint! = 0) {
     product(id: $id){
       id
+      uid
       customId
       group {
         id
@@ -38,14 +39,20 @@ const PRODUCT_QUERY = gql`
       }
       color
       colorName
+      colorCode
       size
       thumbnail
       pictures
       name
       price
       weight
+      ordering
+      instock
       description
       data
+      disabled
+      isLimit
+      soldout
     }
   }
 `;
@@ -82,7 +89,7 @@ export default (props) => {
   return (
     <BasicSection withMaxWith>
       {(!loading && !error && data && data.product) && (
-        <ProductEditor
+        <Editor
           editingData={data.product}
         />
       )}

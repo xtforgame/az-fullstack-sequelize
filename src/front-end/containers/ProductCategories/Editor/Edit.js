@@ -4,20 +4,10 @@ import BasicSection from '~/components/Section/Basic';
 import LoadingMask from '~/components/EnhancedTable/LoadingMask';
 import Editor from './Editor';
 
-const CAMPAIGN_QUERY = gql`
-  query Campaign($id: bigint! = 0) {
-    campaign(id: $id){
-      id
-      name
-      type
-      durationType
-      state
-      start
-      end
-      data
-      created_at
-      updated_at
-      deleted_at
+const PRODUCT_CATEGORY_QUERY = gql`
+  query ProductCategory($id: bigint! = 0) {
+    productCategory(id: $id){
+      id name priority active data
     }
   }
 `;
@@ -33,7 +23,7 @@ export default (props) => {
     id,
   } = match.params;
 
-  const { loading, error, data } = useQuery(CAMPAIGN_QUERY, {
+  const { loading, error, data } = useQuery(PRODUCT_CATEGORY_QUERY, {
     variables: {
       name: refreshCount.toString(),
       id,
@@ -45,7 +35,7 @@ export default (props) => {
   if (error) {
     return (
       <pre>
-        Error in CAMPAIGN_QUERY
+        Error in PRODUCT_CATEGORY_QUERY
         {JSON.stringify(error, null, 2)}
       </pre>
     );
@@ -53,9 +43,9 @@ export default (props) => {
 
   return (
     <BasicSection withMaxWith>
-      {(!loading && !error && data && data.campaign) && (
+      {(!loading && !error && data && data.productCategory) && (
         <Editor
-          editingData={data.campaign}
+          editingData={data.productCategory}
         />
       )}
       <LoadingMask loading={loading || !data} />

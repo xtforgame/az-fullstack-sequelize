@@ -68,7 +68,7 @@ export default () => {
             <FormSpace variant="content1" />
             {selectDateRange.render()}
             <FormSpace variant="content1" />
-            {selectInput.render()}
+            {/* selectInput.render() */}
           </div>
           <div className={classes.flex1}>
             <TagsAutocomplete

@@ -52,6 +52,7 @@ const useStyles = makeStyles(theme => ({
   },
   table: {
     minWidth: 750,
+    tableLayout: 'fixed',
   },
   visuallyHidden: {
     border: 0,

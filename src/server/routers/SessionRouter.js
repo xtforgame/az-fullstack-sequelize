@@ -12,30 +12,8 @@ export default class SessionRouter extends RouterBase {
       if (!ctx.local.userSession || !ctx.local.userSession.user_id) {
         return RestfulError.koaThrowWith(ctx, 403, 'Forbidden');
       }
-      ctx.cookies.set(
-        'login-session',
-        '',
-        {
-          // domain: 'localhost',
-          // path: '/index',
-          // maxAge: 1000000 * 60 * 1000,
-          expires: new Date(0),
-          httpOnly: true,
-          overwrite: true,
-        },
-      );
-      ctx.cookies.set(
-        'login-session-exists',
-        '',
-        {
-          // domain: 'localhost',
-          // path: '/index',
-          // maxAge: 1000000 * 60 * 1000,
-          expires: new Date(0),
-          httpOnly: false,
-          overwrite: true,
-        },
-      );
+      this.authKit.koaHelperEx.loginSessionCookie.remove(ctx);
+      this.authKit.koaHelperEx.loginSessionExistCookie.remove(ctx);
       return true;
     });
 

@@ -46,6 +46,7 @@ export default class HttpApp extends ServiceBase {
       throw err;
     }));
     this.app.use(bodyParser({
+      enableTypes:['json', 'form', 'text'],
       formLimit: '10mb',
       jsonLimit: '10mb',
       textLimit: '10mb',

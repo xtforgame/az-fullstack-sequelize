@@ -3,6 +3,7 @@ import {
   KoaHelper,
 } from 'az-authn-kit-v2';
 import { v4 } from 'uuid';
+import { isFunctionV2 } from 'common/utils';
 // ========================================
 
 export class CookieManager {
@@ -25,7 +26,7 @@ export class CookieManager {
   }
 
   set(ctx, createData) {
-    const data = createData()
+    const data = isFunctionV2(createData) ? createData() : createData;
     ctx.cookies.set(
       this.cookieName,
       data,
@@ -105,6 +106,7 @@ export default class GuestManager {
     if (!guestData) {
       guestData = new GuestData(id);
       this.guestMap[id] = guestData;
+      guestData.cart.id = id;
     }
     ctx.local = ctx.local || {};
     ctx.local.guestData = guestData;

@@ -8,8 +8,9 @@ to your service.
     "graphql-tag": "^2.10.0",
     "react-apollo": "^2.5.5"
 */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery, gql } from '@apollo/client';
+import moment from 'moment';
 /* eslint-disable react/sort-comp */
 import axios from 'axios';
 import { compose } from 'recompose';
@@ -23,48 +24,20 @@ import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import DoneIcon from '@material-ui/icons/Done';
 import ClearIcon from '@material-ui/icons/Clear';
 import IconButton from '@material-ui/core/IconButton';
-
 import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
+import EditIcon from '@material-ui/icons/Edit';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import FilterListIcon from '@material-ui/icons/FilterList';
-
+import ContentText from 'azrmui/core/Text/ContentText';
+import BasicSection from '~/components/Section/Basic';
+import EnhancedTable from '~/components/EnhancedTable';
+import useRouterQuery from '~/hooks/useRouterQuery';
+import useRouterPush from '~/hooks/useRouterPush';
+import useGqlQuery from '~/hooks/useGqlQuery';
 import FilterSection from './FilterSection';
-import EnhancedTable from '../../components/EnhancedTable';
 import DetailTable from './DetailTable';
-
-
-function createData(id, name, account, shipmentId, date, serialNumbers = []) {
-  return {
-    id,
-    name,
-    account,
-    shipmentId,
-    date,
-    comment: serialNumbers && serialNumbers.length ? `商品：${serialNumbers.join(',')}` : '',
-    expanded: false,
-    history: [
-      { date: '2020-01-05', customerId: '11091700', amount: 3 },
-      { date: '2020-01-02', customerId: 'Anonymous', amount: 1 },
-    ],
-    serialNumbers,
-  };
-}
-
-const createList = () => [
-  createData(1, 'CEBRDBDRB293847801', 'Rick Chen', 'KMXX7801', '2021/01/21', ['XHXS23445643', 'XHXS23445644', 'XHXS23445645']),
-  createData(2, 'CEBRDBDRB293847802', 'TestUser', 'KMXX7802', '2020/11/30', ['XHXS23445643', 'XHXS23445644', 'XHXS23445645']),
-  createData(3, 'CEBRDBDRB293847803', 'TestUser', 'KMXX7803', '2021/01/21', ['XHXS23445643', 'XHXS23445644', 'XHXS23445645']),
-  createData(4, 'CEBRDBDRB293847804', 'TestUser', 'KMXX7804', '2020/11/30', ['XHXS23445643', 'XHXS23445644', 'XHXS23445645']),
-  createData(5, 'CEBRDBDRB293847805', 'TestUser', 'KMXX7805', '2021/01/21', ['XHXS23445643', 'XHXS23445644', 'XHXS23445645']),
-  createData(6, 'CEBRDBDRB293847806', 'TestUser', 'KMXX7806', '2020/11/30', ['XHXS23445643', 'XHXS23445644', 'XHXS23445645']),
-  createData(7, 'CEBRDBDRB293847807', 'TestUser', 'KMXX7807', '2021/01/21', ['XHXS23445643', 'XHXS23445644', 'XHXS23445645']),
-  createData(8, 'CEBRDBDRB293847808', 'TestUser', 'KMXX7808', '2020/11/30', ['XHXS23445643', 'XHXS23445644', 'XHXS23445645']),
-  createData(9, 'CEBRDBDRB293847809', 'TestUser', 'KMXX7809', '2021/01/21', ['XHXS23445643', 'XHXS23445644', 'XHXS23445645']),
-  createData(10, 'CEBRDBDRB293847810', 'TestUser', 'KMXX7810', '2020/11/30', ['XHXS23445643', 'XHXS23445644', 'XHXS23445645']),
-  createData(11, 'CEBRDBDRB293847811', 'TestUser', 'KMXX7811', '2021/01/21', ['XHXS23445643', 'XHXS23445644', 'XHXS23445645']),
-];
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -72,32 +45,100 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const renderRowCell = (columnName, row, option) => (
+  <ContentText>
+    {row[columnName] ? moment(row[columnName]).format('YYYY/MM/DD[\n]hh:mm:ss') : 'N/A'}
+  </ContentText>
+);
+
 const getColumnConfig = () => {
-  const columns = [{
-    id: 'name',
-    label: '訂單ID',
-    align: 'left',
-  }, {
-    id: 'account',
-    label: '客戶名稱',
-    sortable: false,
-    align: 'left',
-  }, {
-    id: 'shipmentId',
-    label: '貨運追蹤碼',
-    sortable: false,
-    align: 'left',
-  }, {
-    id: 'date',
-    label: '時間',
-    sortable: false,
-    align: 'right',
-  }, {
-    id: 'comment',
-    label: '備註',
-    sortable: false,
-    align: 'left',
-  }];
+  const columns = [
+    {
+      id: 'id',
+      label: '訂單ID',
+      align: 'left',
+      size: 120,
+    },
+    {
+      id: 'user',
+      label: '客戶名稱',
+      sortable: false,
+      align: 'left',
+      size: 200,
+      renderRowCell: (columnName, row, option) => (
+        <ContentText>
+          {row.user.name}
+        </ContentText>
+      ),
+    },
+    // {
+    //   id: 'price',
+    //   label: '價格（新台幣）',
+    //   sortable: false,
+    //   align: 'right',
+    //   size: 200,
+    // },
+    // {
+    //   id: 'weight',
+    //   label: '重量',
+    //   sortable: false,
+    //   align: 'right',
+    //   size: 200,
+    // },
+    // {
+    //   id: 'productCount',
+    //   label: '商品數量',
+    //   sortable: false,
+    //   align: 'right',
+    //   size: 200,
+    //   renderRowCell: (columnName, row, option) => (
+    //     <ContentText>
+    //       {row.products_aggregate.aggregate.count}
+    //     </ContentText>
+    //   ),
+    // },
+    // {
+    //   id: 'data',
+    //   label: '客戶名稱',
+    //   sortable: false,
+    //   align: 'left',
+    //   size: 60,
+    // },
+    {
+      id: 'created_at',
+      label: '建立時間',
+      sortable: false,
+      align: 'right',
+      renderRowCell,
+      size: 200,
+    },
+    // {
+    //   id: 'updated_at',
+    //   label: '最後更新時間',
+    //   sortable: false,
+    //   align: 'right',
+    //   renderRowCell,
+    //   size: 200,
+    // },
+    {
+      id: '__action__',
+      label: '',
+      sortable: false,
+      align: 'right',
+      padding: 'checkbox',
+      renderRowCell: (columnName, row, option) => {
+        const push = useRouterPush();
+        return (
+          <Tooltip title="修改">
+            <IconButton color="primary" aria-label="修改" onClick={() => push(`/product-group/edit/${row.id}`)}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+        );
+      },
+      size: 64,
+    },
+  ];
 
   const data = {
     columns,
@@ -105,35 +146,48 @@ const getColumnConfig = () => {
       order: 'desc',
       orderBy: 'date',
     },
-    columnSizes: [120, 120, 180, 150, null],
+    // columnSizes: [120, 120, 180, 150, null],
   };
   return data;
 };
 
-const ORDER_LIST_QUERY = gql`
-  query OrderList {
-    orders(order_by: {created_at: desc}) {
-      id
-      memo
-    }
-  }
-`;
-
 export default (props) => {
+  const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState([]);
   const [refreshCount, setRefreshCount] = useState(0);
   const classes = useStyles();
 
-  const { loading, error, data } = useQuery(ORDER_LIST_QUERY, { variables: { name: refreshCount.toString() }, fetchPolicy: 'network-only' });
+  const query = useRouterQuery();
+  // console.log('query.get("text") :', query.get('text'));
+  const gqlQuery = useGqlQuery(
+    'orders',
+    'orderAggregate',
+    `
+      id
+      user { id, name }
+      memo
+      orderer
+      recipient
+      data
+    `,
+    {
+      // args: ['$name: String!'],
+      // where: ['{name: {_ilike: $name}}'],
+      orderBy: '{created_at: desc}',
+    },
+  );
+  const { loading, error, data } = useQuery(gqlQuery, {
+    variables: {
+      name: refreshCount.toString(),
+    },
+    fetchPolicy: 'network-only',
+  });
 
   const refresh = async () => {
-    setSelected([]);
     setRefreshCount(refreshCount + 1);
   };
 
   const handleAccept = async () => {
-    const rows = createList();
-    console.log('rows, selected :', rows, selected);
     await refresh();
   };
 
@@ -142,7 +196,6 @@ export default (props) => {
   };
 
   const handleDownload = async () => {
-    const rows = createList();
     await Promise.all(
       selected.map(i => rows[i - 1])
       .map(async (row) => {
@@ -151,6 +204,7 @@ export default (props) => {
     );
   };
 
+  const push = useRouterPush();
   const renderActions = numSelected => (numSelected > 0 ? (
     <React.Fragment>
       <Tooltip title="核准">
@@ -171,8 +225,8 @@ export default (props) => {
     </React.Fragment>
   ) : (
     <React.Fragment>
-      <Tooltip title="新增活動">
-        <IconButton color="primary" aria-label="新增活動">
+      {/* <Tooltip title="新增商品群組">
+        <IconButton color="primary" aria-label="新增商品群組" onClick={() => push('/product-group/edit/new')}>
           <AddIcon />
         </IconButton>
       </Tooltip>
@@ -180,7 +234,7 @@ export default (props) => {
         <IconButton aria-label="重新整理" onClick={refresh}>
           <RefreshIcon />
         </IconButton>
-      </Tooltip>
+      </Tooltip> */}
       {/* <Tooltip title="Filter list">
           <IconButton aria-label="filter list">
             <FilterListIcon />
@@ -189,7 +243,11 @@ export default (props) => {
     </React.Fragment>
   ));
 
-  const rows = createList();
+  useEffect(() => {
+    if (data && data.orders) {
+      setRows(data.orders);
+    }
+  }, [data]);
 
   // if (loading || !data) return <pre>Loading</pre>;
   if (error) {
@@ -200,28 +258,27 @@ export default (props) => {
       </pre>
     );
   }
-  if (data && data.orders) {
-    console.log('data.orders :', data.orders);
-  }
 
   return (
     <React.Fragment>
       <FilterSection />
-      <EnhancedTable
-        rows={rows}
-        loading={loading}
-        selected={selected}
-        setSelected={setSelected}
-        {...getColumnConfig()}
-        toolbarProps={{
-          title: '訂單管理',
-          renderActions,
-        }}
-        paginationProps={{
-          rowsPerPageOptions: [10, 25, 50, 75],
-        }}
-        renderRowDetail={row => (<DetailTable row={row} />)}
-      />
+      <BasicSection>
+        <EnhancedTable
+          rows={rows}
+          loading={loading}
+          selected={selected}
+          setSelected={setSelected}
+          {...getColumnConfig()}
+          toolbarProps={{
+            title: '訂單管理',
+            renderActions,
+          }}
+          paginationProps={{
+            rowsPerPageOptions: [10, 25, 50, 75],
+          }}
+          renderRowDetail={row => (<DetailTable row={row} products={row.products} />)}
+        />
+      </BasicSection>
     </React.Fragment>
   );
 };

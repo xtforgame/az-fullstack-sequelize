@@ -149,6 +149,7 @@ const PRODUCT_LIST_QUERY = gql`
   query ProductGroupList {
     productGroups(where: {deleted_at: {_is_null: true}}, order_by: {created_at: desc}) {
       id
+      uid
       customId
       products_aggregate(where: {deleted_at: {_is_null: true}}) {
         aggregate{ count }
@@ -190,6 +191,7 @@ const PRODUCT_LIST_SEARCH_QUERY = gql`
   query ProductGroupListSearch($name: String!) {
     productGroups(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}, order_by: {created_at: desc}) {
       id
+      uid
       customId
       products_aggregate(where: {deleted_at: {_is_null: true}}) {
         aggregate{ count }
@@ -320,7 +322,7 @@ export default (props) => {
 
   return (
     <React.Fragment>
-      <Box className={classes.box} margin={1}>
+      {/* <Box className={classes.box} margin={1}>
         <EnhancedTable
           rows={rows}
           loading={loading}
@@ -336,7 +338,7 @@ export default (props) => {
           }}
           renderRowDetail={row => (<div />)}
         />
-      </Box>
+      </Box> */}
     </React.Fragment>
   );
 };

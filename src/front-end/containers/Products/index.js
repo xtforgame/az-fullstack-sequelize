@@ -31,10 +31,12 @@ import EditIcon from '@material-ui/icons/Edit';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import ContentText from 'azrmui/core/Text/ContentText';
+import { toCurrency } from 'common/utils';
 import BasicSection from '~/components/Section/Basic';
 import EnhancedTable from '~/components/EnhancedTable';
 import useRouterQuery from '~/hooks/useRouterQuery';
 import useRouterPush from '~/hooks/useRouterPush';
+import useGqlQuery from '~/hooks/useGqlQuery';
 import FilterSection from './FilterSection';
 import DetailTable from './DetailTable';
 
@@ -52,10 +54,24 @@ const renderRowCell = (columnName, row, option) => (
 
 const getColumnConfig = () => {
   const columns = [
+    // {
+    //   id: 'id',
+    //   label: 'ID',
+    //   align: 'left',
+    //   size: 120,
+    // },
     {
-      id: 'id',
-      label: 'ID',
+      id: 'uid',
+      label: '編號',
       align: 'left',
+      padding: 'checkbox',
+      size: 120,
+    },
+    {
+      id: 'customId',
+      label: '貨號',
+      align: 'left',
+      padding: 'checkbox',
       size: 120,
     },
     {
@@ -63,28 +79,127 @@ const getColumnConfig = () => {
       label: '商品名稱',
       sortable: false,
       align: 'left',
+      padding: 'checkbox',
       size: 200,
     },
     {
-      id: 'price',
-      label: '價格（新台幣）',
+      id: 'color',
+      label: '顏色',
+      sortable: false,
+      align: 'left',
+      renderRowCell: (columnName, row, option) => {
+        const color = JSON.parse(row[columnName]);
+        console.log('color :', color);
+        return (
+          <div style={{ display: 'flex', }}>
+            <div style={{ marginRight: 12, width: 24, height: 24, backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})` }}>
+            </div>
+            {row.colorName}
+          </div>
+        );
+      },
+      padding: 'checkbox',
+      size: 100,
+    },
+    {
+      id: 'size',
+      label: '尺寸',
       sortable: false,
       align: 'right',
-      size: 200,
+      padding: 'checkbox',
+      size: 100,
     },
     {
       id: 'weight',
       label: '重量',
       sortable: false,
       align: 'right',
-      size: 200,
+      padding: 'checkbox',
+      size: 120,
+    },
+    {
+      id: 'price',
+      label: '價格',
+      sortable: false,
+      align: 'right',
+      padding: 'checkbox',
+      size: 120,
+      renderRowCell: (columnName, row, option) => {
+        return toCurrency(row[columnName]);
+      },
+    },
+    {
+      id: 'disabled',
+      label: '狀態',
+      sortable: false,
+      align: 'right',
+      padding: 'checkbox',
+      size: 100,
+      renderRowCell: (columnName, row, option) => {
+        return row[columnName] ? '下架' : '';
+      },
+    },
+    {
+      id: 'isLimit',
+      label: '限量',
+      sortable: false,
+      align: 'right',
+      padding: 'checkbox',
+      size: 100,
+      renderRowCell: (columnName, row, option) => {
+        return row[columnName] ? '是' : '';
+      },
+    },
+    {
+      id: 'soldout',
+      label: '斷貨',
+      sortable: false,
+      align: 'right',
+      padding: 'checkbox',
+      size: 100,
+      renderRowCell: (columnName, row, option) => {
+        return row[columnName] ? '是' : '';
+      },
+    },
+    {
+      id: 'instock',
+      label: '庫存',
+      sortable: false,
+      align: 'right',
+      padding: 'checkbox',
+      size: 100,
+      renderRowCell: (columnName, row, option) => {
+        return row[columnName];
+      },
+    },
+    {
+      id: 'x',
+      label: '已備貨',
+      sortable: false,
+      align: 'right',
+      padding: 'checkbox',
+      size: 100,
+      renderRowCell: (columnName, row, option) => {
+        return 0;
+      },
+    },
+    {
+      id: 'x2',
+      label: '追加',
+      sortable: false,
+      align: 'right',
+      padding: 'checkbox',
+      size: 100,
+      renderRowCell: (columnName, row, option) => {
+        return 0;
+      },
     },
     // {
     //   id: 'data',
     //   label: '客戶名稱',
     //   sortable: false,
     //   align: 'left',
-    //   size: 60,
+    //   size: 100,
     // },
     // {
     //   id: 'created_at',
@@ -94,14 +209,12 @@ const getColumnConfig = () => {
     //   renderRowCell,
     //   size: 200,
     // },
-    // {
-    //   id: 'updated_at',
-    //   label: '最後更新時間',
-    //   sortable: false,
-    //   align: 'right',
-    //   renderRowCell,
-    //   size: 200,
-    // },
+    {
+      id: 'updated_at',
+      // label: '最後更新時間',
+      sortable: false,
+      align: 'left',
+    },
     {
       id: '__action__',
       label: '',
@@ -137,6 +250,7 @@ const PRODUCT_LIST_QUERY = gql`
   query ProductList {
     products {
       id
+      uid
       customId
       group {
         products(where: {deleted_at: {_is_null: true}}) {
@@ -165,6 +279,7 @@ const PRODUCT_LIST_QUERY = gql`
       }
       color
       colorName
+      colorCode
       size
       thumbnail
       pictures
@@ -187,6 +302,7 @@ const PRODUCT_LIST_SEARCH_QUERY = gql`
   query ProductGroupListSearch($name: String!) {
     products(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}, order_by: {created_at: desc}) {
       id
+      uid
       customId
       group {
         products(where: {deleted_at: {_is_null: true}}) {
@@ -239,8 +355,61 @@ export default (props) => {
 
   const query = useRouterQuery();
   // console.log('query.get("text") :', query.get('text'));
+  const gqlQuery = useGqlQuery(
+    'products',
+    'productAggregate',
+    `
+      id
+      uid
+      customId
+      group {
+        products(where: {deleted_at: {_is_null: true}}) {
+          id
+          name
+        }
+        category {
+          id
+          name
+        }
+        campaigns(where: {deleted_at: {_is_null: true}}) {
+          campaign {
+            id
+            name
+            type
+            durationType
+            state
+            start
+            end
+            data
+            created_at
+            updated_at
+            deleted_at
+          }
+        }
+      }
+      color
+      colorName
+      size
+      thumbnail
+      pictures
+      name
+      instock
+      price
+      weight
+      description
+      data
+      disabled
+      isLimit
+      soldout
+    `,
+    {
+      // args: ['$name: String!'],
+      // where: ['{name: {_ilike: $name}}'],
+      orderBy: '{created_at: desc}',
+    },
+  );
 
-  const { loading, error, data } = useQuery(PRODUCT_LIST_QUERY, {
+  const { loading, error, data } = useQuery(gqlQuery, {
     variables: {
       name: refreshCount.toString(),
     },

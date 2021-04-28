@@ -22,20 +22,17 @@ import DialogContent from '@material-ui/core/DialogContent';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import {
-  FormNumberInput, FormDatePicker, FormFieldButtonSelect, FormTextField, FormSpace,
+  FormNumberInput, FormOutlinedSelect, FormFieldButtonSelect, FormTextField, FormSpace,
 } from 'azrmui/core/FormInputs';
 import DateRangeInput from '~/components/DateRangeInput';
 import useRouterPush from '~/hooks/useRouterPush';
 import TagsAutocomplete from '~/components/TagsAutocomplete';
-
+import useTextField from '~/components/hooks/inputs/useTextField';
+import useFormSelect from '~/components/hooks/inputs/useFormSelect';
+import useDateRange from '~/components/hooks/inputs/useDateRange';
+import DiscountInput from './DiscountInput';
 import {
-  campaignTypeInfo,
-  campaignTypeNameMap,
-  campaignTypeNameFunc,
   campaignTypes,
-  campaignStateInfo,
-  campaignStateNameMap,
-  campaignStateNameFunc,
   campaignStates,
 } from '../constants';
 
@@ -62,24 +59,41 @@ export default (props) => {
 
   const classes = useStyles();
 
-  const [name, setName, nameError, setNameError] = useStateWithError(isCreating ? '' : editingData.name);
-  const [selectedType, setSelectedType, selectedTypeError, setSelectedTypeError] = useStateWithError(isCreating ? campaignTypes[0] : { id: editingData.type, name: campaignTypeNameFunc(editingData.type) });
-  const handleTypeMenuItemClick = (event, exEvent, i) => {
-    setSelectedType(exEvent);
-  };
+  const [
+    [name, setName, nameError, setNameError],
+    nameInput,
+  ] = useTextField(isCreating ? '' : editingData.name, '', {
+    label: '活動名稱',
+    required: true,
+  });
+  const [
+    [selectedType, setSelectedType, selectedTypeError, setSelectedTypeError],
+    selectedTypeInput,
+  ] = useFormSelect(isCreating ? campaignTypes[0].id : editingData.type, '', {
+    label: '活動類型',
+    valueKey: 'id',
+    labelKey: 'name',
+    items: campaignTypes,
+  });
 
-  const [dateRange, setDateRange] = useState(isCreating ? [null, null] : [editingData.start, editingData.end]);
+  const [
+    [dateRange, setDateRange],
+    selectDateRange,
+  ] = useDateRange(isCreating ? [null, null] : [editingData.start, editingData.end], '', {
+    title: '選取時間範圍',
+  });
 
-  const [selectedState, setSelectedState, selectedStateError, setSelectedStateError] = useStateWithError(isCreating ? campaignStates[0] : { id: editingData.state, name: campaignStateNameFunc(editingData.state) });
-  const handleStateMenuItemClick = (event, exEvent, i) => {
-    setSelectedState(exEvent);
-  };
+  const [
+    [selectedState, setSelectedState, selectedStateError, setSelectedStateError],
+    selectedStateInput,
+  ] = useFormSelect(isCreating ? campaignStates[0].id : editingData.state, '', {
+    label: '狀態',
+    valueKey: 'id',
+    labelKey: 'name',
+    items: campaignStates,
+  });
 
-  // { id: 'seasonal', name: '季節活動' },
-  // { id: 'permanent-discount', name: '折扣' },
-  // { id: 'discount-total-price', name: '滿額折扣' },
-  // { id: 'free-shipping-total-price', name: '滿額免運' },
-  // { id: 'free-shipping-total-amount', name: '滿量免運' },
+  const [discount, setDiscount] = useState(editingData && editingData.data && editingData.data.discount);
 
   const push = useRouterPush();
   const submit = async () => {
@@ -88,12 +102,12 @@ export default (props) => {
       setNameError('請輸入活動名稱');
       errorOccurred = true;
     }
-    if (!campaignTypeNameMap[selectedType.id]) {
+    if (!selectedType) {
       setSelectedTypeError('請選擇活動類型');
       errorOccurred = true;
     }
-    if (!campaignStateNameMap[selectedState.id]) {
-      setSelectedStateError('請選擇活動類型');
+    if (!selectedState) {
+      setSelectedStateError('請選擇活動狀態');
       errorOccurred = true;
     }
     if (errorOccurred) {
@@ -101,10 +115,14 @@ export default (props) => {
     }
     const data = {
       name,
-      type: selectedType.id,
-      state: selectedState.id,
+      type: selectedType,
+      state: selectedState,
       start: dateRange[0] && moment(dateRange[0]).valueOf(),
       end: dateRange[1] && moment(dateRange[1]).valueOf(),
+      data: {
+        ...(editingData && editingData.data),
+        discount,
+      },
     };
     try {
       if (isCreating) {
@@ -135,133 +153,21 @@ export default (props) => {
       <DialogContent>
         <div className={classes.flexContainer}>
           <div className={classes.flex1}>
-            <FormTextField
-              label="活動名稱"
-              error={!!nameError}
-              helperText={nameError}
-              // label={label}
-              // onKeyPress={handleEnterForTextField}
-              value={name}
-              onChange={e => setName(e.target.value)}
-              margin="dense"
-              fullWidth
-            />
+            {nameInput.render()}
             <FormSpace variant="content1" />
-            <FormFieldButtonSelect
-              id="type-selector"
-              label="活動類型"
-              error={!!selectedTypeError}
-              helperText={selectedTypeError}
-              value={selectedType}
-              options={campaignTypes}
-              onChange={handleTypeMenuItemClick}
-              toInputValue={v => (v && `${v.name}`) || '<未選取>'}
-              toButtonValue={v => `${(v && v.name) || '<未選取>'}`}
-              fullWidth
-              margin="dense"
-            />
+            {selectedTypeInput.render()}
             <FormSpace variant="content1" />
-            {/* <FormDatePicker
-              label="搜尋文字"
-              margin="dense"
-              fullWidth
-            />
-            <FormSpace variant="content1" /> */}
-            <DateRangeInput
-              title="選取時間範圍"
-              value={dateRange}
-              onChange={setDateRange}
-              buttonProps={{
-                margin: 'dense',
-              }}
-            />
+            {selectDateRange.render()}
             <FormSpace variant="content1" />
-            <FormFieldButtonSelect
-              id="state-selector"
-              label="狀態"
-              error={!!selectedStateError}
-              helperText={selectedStateError}
-              value={selectedState}
-              options={campaignStates}
-              onChange={handleStateMenuItemClick}
-              toInputValue={v => (v && `${v.name}`) || '<未選取>'}
-              toButtonValue={v => `${(v && v.name) || '<未選取>'}`}
-              fullWidth
-              margin="dense"
-            />
+            {selectedStateInput.render()}
             <FormSpace variant="content1" />
             <Divider />
             <FormSpace variant="content1" />
-            {(
-              (selectedType && selectedType.id === 'permanent-discount')
-              || (selectedType && selectedType.id === 'discount-total-price')
-            )
-              && (
-                <React.Fragment>
-                  {(selectedType.id === 'discount-total-price')
-                    && (
-                      <FormNumberInput
-                        label="滿額價格(新台幣)"
-                        currency
-                        // label={label}
-                        // onKeyPress={handleEnterForTextField}
-                        margin="dense"
-                        fullWidth
-                      />
-                    )
-                  }
-                  <FormSpace variant="content1" />
-                  <FormNumberInput
-                    label="折扣價格(新台幣)"
-                    currency
-                    // label={label}
-                    // onKeyPress={handleEnterForTextField}
-                    margin="dense"
-                    fullWidth
-                  />
-                  <FormSpace variant="content1" />
-                  <FormNumberInput
-                    label="折扣比例"
-                    // label={label}
-                    // onKeyPress={handleEnterForTextField}
-                    margin="dense"
-                    fullWidth
-                    InputProps={{
-                      inputProps: {
-                        decimalScale: 3,
-                        thousandSeparator: true,
-                        suffix: '%',
-                      },
-                    }}
-                  />
-                  <FormSpace variant="content1" />
-                </React.Fragment>
-              )
-            }
-            {/* <FormSpace variant="content1" />
-            <TagsAutocomplete
-              label="搜尋包含商品"
-              error={!!nameError}
-              helperText={nameError}
-              // label={label}
-              // onKeyPress={handleEnterForTextField}
-              // value={name}
-              // onChange={e => setName(e.target.value)}
-              margin="dense"
-              fullWidth
+            <DiscountInput
+              value={discount}
+              onChange={setDiscount}
+              selectedType={selectedType}
             />
-            <FormSpace variant="content1" />
-            <TagsAutocomplete
-              label="搜尋活動"
-              error={!!nameError}
-              helperText={nameError}
-              // label={label}
-              // onKeyPress={handleEnterForTextField}
-              // value={name}
-              // onChange={e => setName(e.target.value)}
-              margin="dense"
-              fullWidth
-            /> */}
           </div>
         </div>
       </DialogContent>

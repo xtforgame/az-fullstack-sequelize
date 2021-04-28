@@ -32,6 +32,11 @@ import DateRangeInput from '~/components/DateRangeInput';
 import useRouterPush from '~/hooks/useRouterPush';
 import FormAutocomplete from '~/components/FormAutocomplete';
 import LoadingMask from '~/components/EnhancedTable/LoadingMask';
+import useTextField from '~/components/hooks/inputs/useTextField';
+import useFormSelect from '~/components/hooks/inputs/useFormSelect';
+import useDateRange from '~/components/hooks/inputs/useDateRange';
+import useSwitch from '~/components/hooks/inputs/useSwitch';
+import useCheckbox from '~/components/hooks/inputs/useCheckbox';
 
 const useStyles = makeStyles(theme => ({
   flexContainer: {
@@ -62,6 +67,7 @@ const PRODUCT_GROUP_LIST_QUERY = gql`
 query ProductGroupList {
   productGroups(where: {deleted_at: {_is_null: true}}, order_by: {created_at: desc}) {
     id
+    uid
     customId
     products_aggregate(where: {deleted_at: {_is_null: true}}) {
       aggregate{ count }
@@ -116,12 +122,69 @@ export default (props) => {
   const [refreshCount, setRefreshCount] = useState(0);
 
   const [group, setGroup, groupError, setGroupError] = useStateWithError(isCreating ? null : editingData.group);
-  const [name, setName, nameError, setNameError] = useStateWithError(isCreating ? '' : editingData.name);
+  const [
+    [name, setName, nameError, setNameError],
+    nameInput,
+  ] = useTextField(isCreating ? '' : editingData.name, '', {
+    label: '商品名稱',
+    required: true,
+  });
+  const [
+    [customId, setCustomId, customIdError, setCustomIdError],
+    customIdInput,
+  ] = useTextField(isCreating ? '' : editingData.customId, '', {
+    label: '商品貨號',
+    // required: true,
+  });
+  const [
+    [size, setSize, sizeError, setSizeError],
+    sizeInput,
+  ] = useTextField(isCreating ? '' : editingData.size, '', {
+    label: '尺寸',
+    required: true,
+  });
+  const [
+    [colorCode, setColorCode, colorCodeError, setColorCodeError],
+    colorCodeInput,
+  ] = useTextField(isCreating ? '' : editingData.colorCode, '', {
+    label: '顏色代號',
+    required: true,
+  });
   const [colorInfo, setColorInfo] = useStateWithError(getDefaultColor(editingData));
   const [price, setPrice, priceError, setPriceError] = useStateWithError(isCreating ? 0 : editingData.price);
   const [materials, setMaterials, materialsError, setMaterialsError] = useStateWithError(isCreating ? '' : editingData.materials);
   const [description, setDescription, descriptionError, setDescriptionError] = useStateWithError(isCreating ? '' : editingData.description);
   const [weight, setWeight, weightError, setWeightError] = useStateWithError(isCreating ? '' : editingData.weight);
+  const [ordering, setOrdering, orderingError, setOrderingError] = useStateWithError(isCreating ? 0 : editingData.ordering);
+  const [instock, setInstock, instockError, setInstockError] = useStateWithError(isCreating ? 0 : editingData.instock);
+  const [
+    [disabled, setDisabled, disabledError, setDisabledError],
+    disabledInput,
+  ] = useSwitch(isCreating ? false : editingData.disabled, '', {
+    labelProps: {
+      labelPlacement: 'end',
+    },
+  });
+  
+  const [
+    [isLimit, setIsLimit, isLimitError, setIsLimitError],
+    isLimitInput,
+  ] = useCheckbox(isCreating ? false : editingData.isLimit, '', {
+    label: '限量商品',
+    labelProps: {
+      labelPlacement: 'end',
+    },
+  });
+
+  const [
+    [soldout, setSoldout, soldoutError, setSoldoutError],
+    soldoutInput,
+  ] = useCheckbox(isCreating ? false : editingData.soldout, '', {
+    label: '斷貨',
+    labelProps: {
+      labelPlacement: 'end',
+    },
+  });
 
   console.log('group :', group);
   const [imageInfos, setImageInfos] = useState(isCreating ? [] : editingData.pictures);
@@ -136,13 +199,29 @@ export default (props) => {
 
     console.log('imageInfos :', imageInfos);
 
-    if (!price || !isInteger(price)) {
-      setPriceError('錯誤的價格');
+    
+    if (!group) {
+      setGroupError('請選擇群組');
       errorOccurred = true;
     }
 
-    if (!weight || !isNumber(weight)) {
-      setWeightError('錯誤的重量');
+    // if (!price || !isInteger(price)) {
+    //   setPriceError('錯誤的價格');
+    //   errorOccurred = true;
+    // }
+
+    if (!size) {
+      setSizeError('錯誤的尺寸');
+      errorOccurred = true;
+    }
+
+    // if (!weight || !isNumber(weight)) {
+    //   setWeightError('錯誤的重量');
+    //   errorOccurred = true;
+    // }
+
+    if (instock == null || !isInteger(instock)) {
+      setInstockError('錯誤的庫存數');
       errorOccurred = true;
     }
 
@@ -152,21 +231,29 @@ export default (props) => {
     const ii = imageInfos.map(({ imageUploadInfo, image, ...rest }) => ({ image: { ...image, imgUrl: path.join('/api/files', image.hash) }, ...rest }));
     const data = {
       name,
+      customId,
       price,
       materials,
       weight,
-      group: group && group.id,
       colorName: colorInfo[0],
       color: JSON.stringify(colorInfo[1]),
-      size: 'F',
       description,
       pictures: ii,
+      instock,
+      disabled,
+      isLimit,
+      soldout,
     };
     if (ii[0]) {
       [data.thumbnail] = ii;
     }
     try {
       if (isCreating) {
+        data.group = group && group.id,
+        data.size = size;
+        data.colorCode = colorCode;
+        data.uid = `${group.uid}${colorCode}-${size}`;
+        console.log('data.uid :', data.uid);
         await axios({
           method: 'post',
           url: 'api/products',
@@ -211,19 +298,31 @@ export default (props) => {
       <DialogContent>
         <div className={classes.flexContainer}>
           <div className={classes.flex1}>
+            <FormSpace variant="content1" />
             {(!loading && data && data.productGroups) && (
               <FormAutocomplete
                 inputProps={{
-                  label: '商品群組',
                   variant: 'outlined',
-                  placeholder: '新增商品群組',
+                  placeholder: '選擇商品群組',
                   margin: 'dense',
-                  fullWidth: true,
                 }}
+                disabled={!isCreating}
+                required
+                error={!!groupError}
+                helperText={groupError}
+                label="商品群組"
+                fullWidth
                 size="small"
                 options={data.productGroups}
                 value={group}
                 onChange={(event, newValue) => {
+                  if (newValue) {
+                    setName(newValue.name);
+                    setPrice(newValue.price);
+                    setWeight(newValue.weight);
+                    setDescription(newValue.description);
+                    setMaterials(newValue.materials);
+                  }
                   setGroup(newValue);
                 }}
                 renderOption={option => (
@@ -239,17 +338,13 @@ export default (props) => {
               />
             )}
             <FormSpace variant="content1" />
-            <FormTextField
-              label="商品名稱"
-              error={!!nameError}
-              helperText={nameError}
-              // label={label}
-              // onKeyPress={handleEnterForTextField}
-              value={name}
-              onChange={e => setName(e.target.value)}
-              margin="dense"
-              fullWidth
-            />
+            {customIdInput.render()}
+            <FormSpace variant="content1" />
+            {sizeInput.render({ disabled: !isCreating })}
+            <FormSpace variant="content1" />
+            {colorCodeInput.render({ disabled: !isCreating })}
+            <FormSpace variant="content1" />
+            {nameInput.render()}
             <FormSpace variant="content1" />
             <FormNumberInput
               label="價格(新台幣)"
@@ -333,6 +428,25 @@ export default (props) => {
                 },
               }}
             />
+            <FormSpace variant="content1" />
+            <FormNumberInput
+              label="庫存"
+              error={!!instockError}
+              helperText={instockError}
+              // label={label}
+              // onKeyPress={handleEnterForTextField}
+              value={instock}
+              onChange={e => setInstock(e.target.value)}
+              margin="dense"
+              fullWidth
+            />
+            {disabledInput.render({
+              label: disabled ? '下架' : '上架',
+            })}
+            <FormSpace variant="content1" />
+            {isLimitInput.render()}
+            <FormSpace variant="content1" />
+            {soldoutInput.render()}
           </div>
         </div>
       </DialogContent>

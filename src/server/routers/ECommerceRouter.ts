@@ -3,12 +3,17 @@ import {
   // RestfulResponse,
   RestfulError,
 } from 'az-restful-helpers';
+import MersenneTwister from 'mersenne-twister';
 import {
   findAllOrder,
 
   findAllCampaign,
   createCampaign,
   patchCampaign,
+
+  findAllProductCategory,
+  createProductCategory,
+  patchProductCategory,
 
   findAllProductGroup,
   createProductGroup,
@@ -20,6 +25,17 @@ import {
   patchProduct,
 } from '~/domain-logic';
 import RouterBase from '../core/router-base';
+
+const generateId = (seed: number, length: number = 6) => {
+  const generator = new MersenneTwister(seed);
+  const result : string[] = [];
+  const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result.push(characters.charAt(Math.floor(generator.random() * charactersLength)));
+  }
+  return result.join('');
+};
 
 export default class ECommerceRouter extends RouterBase {
   setupRoutes({ router }) {
@@ -72,11 +88,15 @@ export default class ECommerceRouter extends RouterBase {
         campaigns,
         ...rest
       } = ctx.request.body;
-      return ctx.body = await createProductGroup(this.resourceManager, {
+
+      const productGroup = await createProductGroup(this.resourceManager, {
         ...rest,
         data: {},
         campaigns,
       });
+      productGroup.uid = generateId(parseInt(productGroup.id));
+      await productGroup.save();
+      return ctx.body = productGroup;
     });
 
     router.patch('/api/product-groups/:id', this.authKit.koaHelperEx.getIdentity, async (ctx, next) => {
@@ -90,6 +110,30 @@ export default class ECommerceRouter extends RouterBase {
       return ctx.body = await patchProductGroup(this.resourceManager, ctx.params.id, rest);
     });
 
+    router.post('/api/product-categories', this.authKit.koaHelperEx.getIdentity, async (ctx, next) => {
+      if (!ctx.local.userSession || !ctx.local.userSession.user_id || ctx.local.userSession.privilege !== 'admin') {
+        return RestfulError.koaThrowWith(ctx, 404, 'User not found');
+      }
+      const {
+        data,
+        ...rest
+      } = ctx.request.body;
+      return ctx.body = await createProductCategory(this.resourceManager, {
+        ...rest,
+        data: {},
+      });
+    });
+
+    router.patch('/api/product-categories/:id', this.authKit.koaHelperEx.getIdentity, async (ctx, next) => {
+      if (!ctx.local.userSession || !ctx.local.userSession.user_id || ctx.local.userSession.privilege !== 'admin') {
+        return RestfulError.koaThrowWith(ctx, 404, 'User not found');
+      }
+      const {
+        data,
+        ...rest
+      } = ctx.request.body;
+      return ctx.body = await patchProductCategory(this.resourceManager, ctx.params.id, rest);
+    });
 
     router.post('/api/products', this.authKit.koaHelperEx.getIdentity, async (ctx, next) => {
       if (!ctx.local.userSession || !ctx.local.userSession.user_id || ctx.local.userSession.privilege !== 'admin') {
@@ -100,11 +144,15 @@ export default class ECommerceRouter extends RouterBase {
         group,
         ...rest
       } = ctx.request.body;
-      return ctx.body = await createProduct(this.resourceManager, {
+
+      const product = await createProduct(this.resourceManager, {
         ...rest,
         data: {},
         group,
       });
+      // product.uid = generateId(parseInt(group));
+      // await product.save();
+      return ctx.body = product;
     });
 
     router.patch('/api/products/:id', this.authKit.koaHelperEx.getIdentity, async (ctx, next) => {

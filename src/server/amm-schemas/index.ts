@@ -103,6 +103,10 @@ const productColumns : JsonModelAttributes = {
     type: 'jsonb',
     defaultValue: {},
   },
+  disabled: {
+    type: 'boolean',
+    defaultValue: false,
+  },
 };
 
 export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
@@ -724,6 +728,8 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           autoIncrement: true,
         },
         name: 'string',
+        priority: 'integer',
+        active: 'boolean',
         data: {
           type: 'jsonb',
           defaultValue: {},
@@ -747,6 +753,8 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           publicColumns: [
             'id',
             'name',
+            'priority',
+            'active',
             'data',
             'groups',
           ],
@@ -760,11 +768,23 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           primaryKey: true,
           autoIncrement: true,
         },
+        uid: 'string',
         customId: 'string',
         color: 'string',
         colorName: 'string',
+        colorCode: 'string',
         size: 'string',
         ...productColumns,
+        ordering: 'integer',
+        instock: 'integer',
+        isLimit: {
+          type: 'boolean',
+          defaultValue: false,
+        },
+        soldout: {
+          type: 'boolean',
+          defaultValue: false,
+        },
         group: ['belongsTo', 'productGroup', {
           foreignKey: 'group_id',
         }],
@@ -815,6 +835,7 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           primaryKey: true,
           autoIncrement: true,
         },
+        uid: 'string',
         customId: 'string',
         ...productColumns,
         materials: 'text',

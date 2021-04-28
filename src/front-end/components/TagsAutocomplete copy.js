@@ -131,7 +131,7 @@ export default (props) => {
       id="tags-filled"
       size="small"
       options={top100Films}
-      defaultValue={[top100Films[13]]}
+      defaultValue={[/*top100Films[13]*/]}
       filterSelectedOptions
       getOptionLabel={option => option.title}
       renderOption={option => (

@@ -18,6 +18,9 @@ import {
   findAllUser,
   patchUser,
   createUser,
+
+  findOrderById,
+  createOrder,
 } from '~/domain-logic';
 import RouterBase from '../core/router-base';
 
@@ -39,6 +42,11 @@ export default class LiquidRouter extends RouterBase {
     if (ctx.path.startsWith('/azadmin')) {
       return next();
     }
+    await this.authKit.koaHelperEx.getIdentity(ctx, () => Promise.resolve());
+    const userSession = ctx.local.userSession || null;
+    // if (ctx.local.userSession && ctx.local.userSession.user_id) {
+    //   console.log('ctx.local.userSession.user_id :', ctx.local.userSession.user_id);
+    // }
     const guestData = await this.authKit.koaHelperEx.guestManager.getGuestData(ctx);
     const callback = options.callback || (async () => null);
     const getScopeData = options.getScopeData || (async () => ({}));
@@ -97,6 +105,7 @@ export default class LiquidRouter extends RouterBase {
     });
     const scope = await getScopeData(cbData);
     const buildinScope = {
+      userSession,
       newUser: !guestData.data.read,
       cart: guestData.cart,
       externalUrl,
@@ -138,6 +147,9 @@ export default class LiquidRouter extends RouterBase {
       }
       ctx.local = ctx.local || {};
       const product = await this.routerApi.getProduct(ctx.params.prodId);
+      if (!product) {
+        return ctx.redirect('/');
+      }
       ctx.local.product = product;
       return fF(ctx, next);
     });

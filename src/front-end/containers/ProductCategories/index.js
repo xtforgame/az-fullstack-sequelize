@@ -35,6 +35,7 @@ import BasicSection from '~/components/Section/Basic';
 import EnhancedTable from '~/components/EnhancedTable';
 import useRouterQuery from '~/hooks/useRouterQuery';
 import useRouterPush from '~/hooks/useRouterPush';
+import useGqlQuery from '~/hooks/useGqlQuery';
 import FilterSection from './FilterSection';
 import DetailTable from './DetailTable';
 
@@ -59,43 +60,30 @@ const getColumnConfig = () => {
       size: 120,
     },
     {
-      id: 'uid',
-      label: '群組編號',
-      align: 'left',
-      size: 120,
-    },
-    {
       id: 'name',
-      label: '商品群組名稱',
+      label: '商品分類名稱',
       sortable: false,
       align: 'left',
       size: 200,
     },
     {
-      id: 'price',
-      label: '價格（新台幣）',
+      id: 'active',
+      label: '是否顯示',
       sortable: false,
-      align: 'right',
-      size: 200,
-    },
-    {
-      id: 'weight',
-      label: '重量',
-      sortable: false,
-      align: 'right',
-      size: 200,
-    },
-    {
-      id: 'productCount',
-      label: '商品數量',
-      sortable: false,
-      align: 'right',
+      align: 'left',
       size: 200,
       renderRowCell: (columnName, row, option) => (
         <ContentText>
-          {row.products_aggregate.aggregate.count}
+          {row[columnName] ? '顯示中' : '不顯示'}
         </ContentText>
       ),
+    },
+    {
+      id: 'priority',
+      label: '排序(數字大的在上)',
+      sortable: false,
+      align: 'left',
+      size: 200,
     },
     // {
     //   id: 'data',
@@ -130,7 +118,7 @@ const getColumnConfig = () => {
         const push = useRouterPush();
         return (
           <Tooltip title="修改">
-            <IconButton color="primary" aria-label="修改" onClick={() => push(`/product-group/edit/${row.id}`)}>
+            <IconButton color="primary" aria-label="修改" onClick={() => push(`/product-category/edit/${row.id}`)}>
               <EditIcon />
             </IconButton>
           </Tooltip>
@@ -151,88 +139,6 @@ const getColumnConfig = () => {
   return data;
 };
 
-const PRODUCT_GROUP_LIST_QUERY = gql`
-  query ProductGroupList {
-    productGroups(where: {deleted_at: {_is_null: true}}, order_by: {created_at: desc}) {
-      id
-      uid
-      customId
-      products_aggregate(where: {deleted_at: {_is_null: true}}) {
-        aggregate{ count }
-      }
-      products(where: {deleted_at: {_is_null: true}}) { id, name }
-      category { id, name }
-      campaigns(where: {deleted_at: {_is_null: true}}) { campaign {
-        id
-        name
-        type
-        durationType
-        state
-        start
-        end
-        data
-        created_at
-        updated_at
-        deleted_at
-      } }
-      thumbnail
-      pictures
-      name
-      price
-      weight
-      description
-      materials
-      data
-    }
-    productGroupAggregate(where: {deleted_at: {_is_null: true}}) {
-      aggregate {
-        count
-      }
-    }
-  }
-`;
-
-
-const PRODUCT_GROUP_LIST_SEARCH_QUERY = gql`
-  query ProductGroupListSearch($name: String!) {
-    productGroups(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}, order_by: {created_at: desc}) {
-      id
-      uid
-      customId
-      products_aggregate(where: {deleted_at: {_is_null: true}}) {
-        aggregate{ count }
-      }
-      products(where: {deleted_at: {_is_null: true}}) { id, name }
-      category { id, name }
-      campaigns(where: {deleted_at: {_is_null: true}}) { campaign {
-        id
-        name
-        type
-        durationType
-        state
-        start
-        end
-        data
-        created_at
-        updated_at
-        deleted_at
-      } }
-      thumbnail
-      pictures
-      name
-      price
-      weight
-      description
-      materials
-      data
-    }
-    productGroupAggregate(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}) {
-      aggregate {
-        count
-      }
-    }
-  }
-`;
 
 export default (props) => {
   const [rows, setRows] = useState([]);
@@ -243,7 +149,17 @@ export default (props) => {
   const query = useRouterQuery();
   // console.log('query.get("text") :', query.get('text'));
 
-  const { loading, error, data } = useQuery(PRODUCT_GROUP_LIST_QUERY, {
+  const gqlQuery = useGqlQuery(
+    'productCategories',
+    'productCategoryAggregate',
+    'id name priority active data',
+    {
+      // args: ['$name: String!'],
+      // where: ['{name: {_ilike: $name}}'],
+      orderBy: '{priority: desc}',
+    },
+  );
+  const { loading, error, data } = useQuery(gqlQuery, {
     variables: {
       name: refreshCount.toString(),
     },
@@ -292,8 +208,8 @@ export default (props) => {
     </React.Fragment>
   ) : (
     <React.Fragment>
-      <Tooltip title="新增商品群組">
-        <IconButton color="primary" aria-label="新增商品群組" onClick={() => push('/product-group/edit/new')}>
+      <Tooltip title="新增商品分類">
+        <IconButton color="primary" aria-label="新增商品分類" onClick={() => push('/product-category/edit/new')}>
           <AddIcon />
         </IconButton>
       </Tooltip>
@@ -311,8 +227,8 @@ export default (props) => {
   ));
 
   useEffect(() => {
-    if (data && data.productGroups) {
-      setRows(data.productGroups);
+    if (data && data.productCategories) {
+      setRows(data.productCategories);
     }
   }, [data]);
 
@@ -320,7 +236,7 @@ export default (props) => {
   if (error) {
     return (
       <pre>
-        Error in PRODUCT_GROUP_LIST_QUERY
+        Error in PRODUCT_CATEGORY_LIST_QUERY
         {JSON.stringify(error, null, 2)}
       </pre>
     );
@@ -337,7 +253,7 @@ export default (props) => {
           setSelected={setSelected}
           {...getColumnConfig()}
           toolbarProps={{
-            title: '商品群組管理',
+            title: '商品分類管理',
             renderActions,
           }}
           paginationProps={{

@@ -783,6 +783,8 @@ export type ContactUsMessageI = ContactUsMessageAttributes & {
 // ============== start model: ProductCategory ==============
 export type ProductCategoryCreationAttributes = {
   name?: string;
+  priority?: number;
+  active?: boolean;
   data?: any;
   groups?: ProductGroupCreationAttributes[];
 };
@@ -790,6 +792,8 @@ export type ProductCategoryCreationAttributes = {
 export type ProductCategoryAttributes = {
   id: string;
   name?: string;
+  priority?: number;
+  active?: boolean;
   data?: any;
   groups?: ExtendedModel<ProductGroupI>[];
 };
@@ -817,9 +821,11 @@ export type ProductCategoryI = ProductCategoryAttributes & {
 
 // ============== start model: Product ==============
 export type ProductCreationAttributes = {
+  uid?: string;
   customId?: string;
   color?: string;
   colorName?: string;
+  colorCode?: string;
   size?: string;
   thumbnail?: any;
   pictures?: any;
@@ -828,6 +834,11 @@ export type ProductCreationAttributes = {
   weight?: number;
   description?: string;
   data?: any;
+  disabled?: boolean;
+  ordering?: number;
+  instock?: number;
+  isLimit?: boolean;
+  soldout?: boolean;
   group_id?: string;
   group?: ProductGroupCreationAttributes;
   orders?: OrderCreationAttributes[];
@@ -835,9 +846,11 @@ export type ProductCreationAttributes = {
 
 export type ProductAttributes = {
   id: string;
+  uid?: string;
   customId?: string;
   color?: string;
   colorName?: string;
+  colorCode?: string;
   size?: string;
   thumbnail?: any;
   pictures?: any;
@@ -846,6 +859,11 @@ export type ProductAttributes = {
   weight?: number;
   description?: string;
   data?: any;
+  disabled?: boolean;
+  ordering?: number;
+  instock?: number;
+  isLimit?: boolean;
+  soldout?: boolean;
   group_id?: string;
   group?: ExtendedModel<ProductGroupI>;
   orders?: ExtendedModel<OrderI>[];
@@ -880,6 +898,7 @@ export type ProductI = ProductAttributes & {
 
 // ============== start model: ProductGroup ==============
 export type ProductGroupCreationAttributes = {
+  uid?: string;
   customId?: string;
   thumbnail?: any;
   pictures?: any;
@@ -888,6 +907,7 @@ export type ProductGroupCreationAttributes = {
   weight?: number;
   description?: string;
   data?: any;
+  disabled?: boolean;
   materials?: string;
   products?: ProductCreationAttributes[];
   category_id?: string;
@@ -897,6 +917,7 @@ export type ProductGroupCreationAttributes = {
 
 export type ProductGroupAttributes = {
   id: string;
+  uid?: string;
   customId?: string;
   thumbnail?: any;
   pictures?: any;
@@ -905,6 +926,7 @@ export type ProductGroupAttributes = {
   weight?: number;
   description?: string;
   data?: any;
+  disabled?: boolean;
   materials?: string;
   products?: ExtendedModel<ProductI>[];
   category_id?: string;

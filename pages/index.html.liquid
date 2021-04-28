@@ -18,5 +18,5 @@
   {% endcapture %}
   {% capture body_extra %}
   {% endcapture %}
-  {% render "parts/body-layout.liquid", content: body_main, extra: body_extra, cart: cart %}
+  {% render "parts/body-layout.liquid", content: body_main, extra: body_extra, cart: cart, userSession: userSession %}
 </html>
