@@ -130,3 +130,41 @@ span.gjs-layer-name {
   display: none;
 }
 
+
+/* ====== grapedrop ====== */
+
+.gjs-block:hover .gjs-block-custom__edit {
+  opacity: 1;
+}
+
+.gjs-block-custom__edit {
+  font-size: 12px!important;
+  opacity: 0;
+}
+.is-abs--b-l, .is-abs--b-r {
+  position: absolute;
+  bottom: 0;
+}
+.is-abs--b-r {
+  right: 0;
+}
+.is-click, .is-clickable {
+  cursor: pointer;
+}
+.is-anim {
+  transition: opacity .25s,transform .25s;
+}
+.u-p--xs {
+  padding: 5px!important;
+}
+.is-abs--b-l, .is-abs--b-r {
+  position: absolute;
+  bottom: 0;
+}
+.is-abs--b-r {
+  right: 0;
+}
+
+.gjs-block {
+  position: relative;
+}

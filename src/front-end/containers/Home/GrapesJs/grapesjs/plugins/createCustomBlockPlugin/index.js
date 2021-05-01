@@ -134,10 +134,11 @@ export const azCreateCustomBlockPlugin = (editor, options = {}) => {
       // const Css = editor.getCss({ avoidProtected: true });
 
       if (previewEditor) {
-        previewEditor.DomComponents.clear(); // Clear components
-        previewEditor.CssComposer.clear(); // Clear styles
-        previewEditor.UndoManager.clear(); // Clear undo history
-        previewEditor.destroy();
+        // previewEditor.DomComponents.clear(); // Clear components
+        // previewEditor.CssComposer.clear(); // Clear styles
+        // previewEditor.UndoManager.clear(); // Clear undo history
+        // previewEditor.destroy();
+        // console.log('previewEditor :', previewEditor);
         bottomContainer.innerHTML = '';
         previewEditor = null;
       }

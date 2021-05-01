@@ -2,6 +2,12 @@ import React, {
   useState, useLayoutEffect, useEffect, useRef,
 } from 'react';
 import grapesjs from 'grapesjs';
+import Drawer from '@material-ui/core/Drawer';
+import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import AppBar from '@material-ui/core/AppBar';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import axios from 'axios';
@@ -24,17 +30,85 @@ import '../grapesjs/plugins/assetManagerPlugin';
 import { ProviderBase } from '../grapesjs/plugins/simpleStoragePlugin';
 import '../grapesjs/plugins/editCodePlugin';
 import '../grapesjs/plugins/azComponentsPlugin';
+import '../grapesjs/plugins/customCodePlugin';
+import '../grapesjs/plugins/imgConatinerPlugin';
 import azFinalizePlugin from '../grapesjs/plugins/azFinalizePlugin';
 import EventsBinder from './EventsBinder';
 
+const drawerWidth = 250;
 const useStyles = makeStyles(theme => ({
-  root: {
-    width: '100%',
-    maxWidth: 360,
-    backgroundColor: theme.palette.background.paper,
+  drawerPaper: {
+    position: 'relative',
+    zIndex: 1199,
+    height: '100%',
+    width: drawerWidth,
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    backgroundColor: '#2c303b',
   },
-  inline: {
-    display: 'inline',
+  drawerPaperClose: {
+    position: 'relative',
+    width: 48,
+    overflowX: 'hidden',
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    backgroundColor: '#2c303b',
+  },
+  drawerInner: {
+    // Make the items inside not wrap when transitioning:
+    width: drawerWidth,
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    overflowY: 'scroll',
+  },
+  drawerInnerMain: {
+    // Make the items inside not wrap when transitioning:
+    flex: 1,
+    width: drawerWidth,
+  },
+  drawerHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    // justifyContent: 'flex-end',
+    // padding: '0 8px',
+    // ...theme.mixins.toolbar,
+  },
+  drawerHeaderClose: {
+    display: 'flex',
+    alignItems: 'center',
+    // justifyContent: 'flex-start',
+    // padding: '0 8px',
+    // ...theme.mixins.toolbar,
+  },
+  drawerSwitch: {
+    position: 'absolute',
+    left: drawerWidth - 48,
+    color: 'white',
+    transition: theme.transitions.create('all', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  },
+  drawerSwitchClose: {
+    position: 'absolute',
+    left: 0,
+    color: 'white',
+    transition: theme.transitions.create('all', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  },
+  appBarPlaceHolder: {
+    minHeight: 48,
+    backgroundColor: '#2c303b',
+  },
+  displayNone: {
+    display: 'none',
   },
 }));
 
@@ -79,6 +153,8 @@ const GrapesJsEditor = (props) => {
     pId,
   } = match.params;
   const fPath = match.params[0];
+
+  const [open, setOpen] = useState(true);
 
   const fragmentMinioApiRef = useRef(new MinioFolderApiEx(pType, pId, 'np-fragments'));
   const fragmentMinioApi = fragmentMinioApiRef.current;
@@ -225,6 +301,8 @@ const GrapesJsEditor = (props) => {
         'az-edit-code',
         'az-simple-storage',
         'az-components',
+        'custom-code-p',
+        'img-container',
         // 'az-finalize',
       ],
       pluginsOpts: {
@@ -351,6 +429,16 @@ const GrapesJsEditor = (props) => {
       // Open block manager
       const openBlocksBtn = pn.getButton('views', 'open-blocks');
       openBlocksBtn && openBlocksBtn.set('active', 1);
+      // setTimeout(() => {
+      //   // Render new set of blocks
+      //   const blockManager = editor.BlockManager;
+      //   const blocks = blockManager.getAll();
+      //   const filtered = blocks.filter(block => block.get('category').id === 'Basic');
+
+      //   blockManager.render(filtered);
+      // }, 3000);
+      const x = $('.gjs-blocks-cs')[0];
+      x.parentNode.insertBefore($('<div>Xxxxxxxx</div>')[0], x);
     });
 
     // handleOpen(1);
@@ -378,14 +466,32 @@ const GrapesJsEditor = (props) => {
       run();
     }
   }, [customCompnents]);
-
   return (
     <React.Fragment>
       <div style={{ height: '100%', overflowY: 'hidden' }}>
         <div className="editor-row" style={{ height: '100%', overflowY: 'scroll' }}>
-          <div className="panel-left">
-            <div className="layers-container" />
-          </div>
+          <Drawer
+            variant="permanent"
+            classes={{
+              paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+            }}
+            open={open}
+          >
+            <div className={classes.drawerInner}>
+              <AppBar position="relative" color="default">
+                <IconButton className={open ? classes.drawerSwitch : classes.drawerSwitchClose} onClick={() => setOpen(!open)}>
+                  {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                </IconButton>
+              </AppBar>
+              <div className={classes.appBarPlaceHolder} />
+              <div className={classes.drawerInnerMain}>
+                <Divider />
+                <div className={clsx('panel-left', { [classes.displayNone]: !open })}>
+                  <div className="layers-container" />
+                </div>
+              </div>
+            </div>
+          </Drawer>
           <div className="editor-canvas">
             <div id={id} style={{ height: '0px', overflow: 'hidden' }} />
           </div>

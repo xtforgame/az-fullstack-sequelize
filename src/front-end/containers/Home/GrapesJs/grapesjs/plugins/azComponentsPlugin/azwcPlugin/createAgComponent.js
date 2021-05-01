@@ -20,6 +20,15 @@ export default (componentName, Component, componentConfig = {}) => {
       attributes: { class: 'fa fa-link' },
       label: agName,
       content: `<${Component.is}></${Component.is}>`,
+      render({ el, model, className, prefix: ppfx }) {
+        const label = model.get('label');
+        const media = model.get('media');
+        return `
+          ${media ? `<div class="${className}__media">${media}</div>` : ''}
+          <div class="${className}-label">${label}</div>
+          <i class="${className}-custom__edit is-abs--b-r u-p--xs fa fa-pencil is-clickable is-anim"></i>
+        `;
+      },
       // content: `<${Component.is}>
       //   <agjc-slot class="az-slot-bg1" slot="top">
       //   </agjc-slot>
