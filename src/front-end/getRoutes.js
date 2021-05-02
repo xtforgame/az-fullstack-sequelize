@@ -33,6 +33,10 @@ import Campaigns from '~/containers/Campaigns';
 import CreateCampaign from '~/containers/Campaigns/Editor/Create';
 import EditCampaign from '~/containers/Campaigns/Editor/Edit';
 
+import ProductCategories from '~/containers/ProductCategories';
+import CreateProductCategory from '~/containers/ProductCategories/Editor/Create';
+import EditProductCategory from '~/containers/ProductCategories/Editor/Edit';
+
 import ProductGroups from '~/containers/ProductGroups';
 import CreateProductGroup from '~/containers/ProductGroups/Editor/Create';
 import EditProductGroup from '~/containers/ProductGroups/Editor/Edit';
@@ -377,6 +381,27 @@ const globalRouteConfig = {
           name: 'edit-product-group',
           path: '/product-group/edit/:id',
           component: EditProductGroup,
+        },
+
+        {
+          name: 'product-category-list',
+          path: '/product-category',
+          component: ProductCategories,
+          navbar: {
+            title: '商品分類管理',
+          },
+          exact: true,
+        },
+        {
+          name: 'create-product-category',
+          path: '/product-category/edit/new',
+          component: CreateProductCategory,
+          exact: true,
+        },
+        {
+          name: 'edit-product-category',
+          path: '/product-category/edit/:id',
+          component: EditProductCategory,
         },
 
         {
