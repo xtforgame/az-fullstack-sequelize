@@ -1,4 +1,4 @@
-const jwtIssuer = 'afs';
+const jwtIssuer = 'dialogue';
 
 export {
   jwtIssuer,
