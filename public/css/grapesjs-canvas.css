@@ -24,3 +24,24 @@ agjc-slot {
   overflow: auto;
   overflow-x: scroll !important; /* hidden; */
 }
+
+/* https://grapedrop.com */
+[data-azbox]:empty:before {
+  background-color: #ddd;
+  color: #000;
+  font-size: 16px;
+  font-weight: bold;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  padding: 0 10px;
+  opacity: 0.3;
+  border-radius: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  content: "Box";
+  height: auto;
+}
