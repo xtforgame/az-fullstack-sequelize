@@ -1,10 +1,7 @@
-import {
-  RestfulResponse,
-  RestfulError,
-} from 'az-restful-helpers';
-import { isValidEmail } from 'common/utils/validators';
 import fs from 'fs';
 import sass from 'sass';
+import axios from 'axios';
+import { hasuraEndpoint } from 'common/config';
 import {
   toCamel,
   toUnderscore,
@@ -13,15 +10,8 @@ import {
 import { externalUrl } from 'config';
 import mime from 'mime-types';
 import { Liquid } from 'liquidjs';
-import {
-  findUser,
-  findAllUser,
-  patchUser,
-  createUser,
-
-  findOrderById,
-  createOrder,
-} from '~/domain-logic';
+import { buildQueryT1, Options } from 'common/graphQL';
+import moment from 'moment';
 import RouterBase from '../core/router-base';
 
 const normalizeUrl = (u) => {
@@ -37,11 +27,28 @@ const normalizeUrl = (u) => {
   return url;
 };
 
-export default class LiquidRouter extends RouterBase {
-  liquidFor = (options = {}) => async (ctx, next) => {
+export default class LiquidRouterBase extends RouterBase {
+  liquidFor = (options : any = {}) => async (ctx, next) => {
     if (ctx.path.startsWith('/azadmin')) {
       return next();
     }
+
+    const {
+      buildQueryString,
+    } = buildQueryT1(
+      'productCategories',
+      null,
+      `
+        id
+        name
+      `,
+      {
+        where: ['{active: {_eq: true}}'],
+        orderBy: '{priority: desc}',
+      }
+    );
+    const { data } = await this.sendGraphQLRequest(buildQueryString());
+
     await this.authKit.koaHelperEx.getIdentity(ctx, () => Promise.resolve());
     const userSession = ctx.local.userSession || null;
     // if (ctx.local.userSession && ctx.local.userSession.user_id) {
@@ -83,10 +90,10 @@ export default class LiquidRouter extends RouterBase {
       this.registerFilter('capitalizeFirstLetter', capitalizeFirstLetter);
       this.registerFilter('debugPrint', (value) => {
         console.log('value :', value);
-        return value;
+        return '';
       });
-      this.registerFilter('toUnderscoredWcName', str => toUnderscore(str.split('_')[0]));
-      this.registerFilter('toWcName', str => str.split('_')[0]);
+      this.registerFilter('toUnderscoredWcName', s => toUnderscore(s.split('_')[0]));
+      this.registerFilter('toWcName', s => s.split('_')[0]);
 
       this.registerFilter('toCss', (scss) => {
         const result = sass.renderSync({
@@ -96,16 +103,29 @@ export default class LiquidRouter extends RouterBase {
       });
 
       this.registerFilter('azIf', (condition, y, n) => (condition ? y : n));
+      this.registerFilter('dateFormat', (date, format = 'YYYY/MM/DD HH:mm:ss') => moment(date).format(format));
+
+      this.registerFilter('orderStateName', (orderState) => {
+        const orderStateNames = {
+          unpaid: '未付款',
+          paid: '已付款',
+          selected: '待出貨',
+          shipped: '已出貨',
+          returned: '已退貨',
+          expired: '已過期',
+        };
+        return orderStateNames[orderState] || '<未確認>';
+      });
     });
 
-    const componentMap = {};
     const results = engine.parse(str);
     results.forEach((t) => {
       // console.log('t.token :', t);
     });
-    const scope = await getScopeData(cbData);
+    const scope : any = await getScopeData(cbData);
     const buildinScope = {
       userSession,
+      productCategories: data.productCategories,
       newUser: !guestData.data.read,
       cart: guestData.cart,
       externalUrl,
@@ -124,35 +144,19 @@ export default class LiquidRouter extends RouterBase {
     return ctx.body = rendered;
   }
 
-  setupRoutes({ router }) {
-    const productListMiddlewares = [async (ctx, next) => {
-      ctx.local = ctx.local || {};
-      const products = await this.routerApi.getProducts();
-      ctx.local.products = products;
-      return next();
-    }, this.liquidFor({
-      getFilename: ({ ctx }) => 'pages/index.html.liquid',
-      getScopeData: async ({ ctx }) => ctx.local.products,
-    })];
-
-    router.get('/', ...productListMiddlewares);
-
-    const fF = this.liquidFor({
-      getFilename: ({ ctx }) => 'pages/products/index.html.liquid',
-      getScopeData: async ({ ctx }) => ctx.local.product,
+  async sendGraphQLRequest(query: string) {
+    const { data } = await axios({
+      url: hasuraEndpoint,
+      method: 'post',
+      headers: {
+        'X-Hasura-Role': 'admin',
+        'X-Hasura-Admin-Secret': 'xxxxhsr',
+        'Content-Type': 'application/json',
+      },
+      data: {
+        query,
+      },
     });
-    router.get('/products/:prodId', async (ctx, next) => {
-      if (!parseInt(ctx.params.prodId)) {
-        return next();
-      }
-      ctx.local = ctx.local || {};
-      const product = await this.routerApi.getProduct(ctx.params.prodId);
-      if (!product) {
-        return ctx.redirect('/');
-      }
-      ctx.local.product = product;
-      return fF(ctx, next);
-    });
-    router.get('*', this.liquidFor({}));
+    return data;
   }
 }

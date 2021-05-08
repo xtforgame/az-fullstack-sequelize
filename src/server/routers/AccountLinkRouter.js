@@ -10,7 +10,7 @@ import RouterBase from '../core/router-base';
 export default class AccountLinkRouter extends RouterBase {
   setupRoutes({ router }) {
     router.patch('/api/users/:userId/accountLinks/basic', async (ctx, next) => {
-      await this.authKit.koaHelperEx.authenticate(ctx, next);
+      await this.authKit.koaHelperEx.ｘ(ctx, next);
       if (ctx.body.error) {
         return RestfulError.koaThrowWith(ctx, 400, 'Wrong Password');
       }

@@ -33,6 +33,7 @@ import useRouterPush from '~/hooks/useRouterPush';
 import FormAutocomplete from '~/components/FormAutocomplete';
 import LoadingMask from '~/components/EnhancedTable/LoadingMask';
 import useTextField from '~/components/hooks/inputs/useTextField';
+import useNumberInput from '~/components/hooks/inputs/useNumberInput';
 import useFormSelect from '~/components/hooks/inputs/useFormSelect';
 import useDateRange from '~/components/hooks/inputs/useDateRange';
 import useSwitch from '~/components/hooks/inputs/useSwitch';
@@ -147,11 +148,31 @@ export default (props) => {
     [colorCode, setColorCode, colorCodeError, setColorCodeError],
     colorCodeInput,
   ] = useTextField(isCreating ? '' : editingData.colorCode, '', {
-    label: '顏色代號',
+    label: '顏色代號(產生商品編號用)',
     required: true,
   });
   const [colorInfo, setColorInfo] = useStateWithError(getDefaultColor(editingData));
   const [price, setPrice, priceError, setPriceError] = useStateWithError(isCreating ? 0 : editingData.price);
+  const [
+    [priority, setPriority, priorityError, setPriorityError],
+    priorityInput,
+  ] = useNumberInput(isCreating ? 0 : (editingData.priority || 0), '', {
+    label: '順序(數字大的在上)',
+    required: true,
+  });
+  const [
+    [sizeChart, setSizeChart, sizeChartError, setSizeChartError],
+    sizeChartInput,
+  ] = useTextField(isCreating ? '' : editingData.sizeChart, '', {
+    label: '尺寸表',
+    placeholder: `格式:\n尺寸名1:數值1\n尺寸名2:數值2`,
+    required: true,
+    margin: 'dense',
+    fullWidth: true,
+    multiline: true,
+    rows: 5,
+    rowsMax: 20,
+  });
   const [materials, setMaterials, materialsError, setMaterialsError] = useStateWithError(isCreating ? '' : editingData.materials);
   const [description, setDescription, descriptionError, setDescriptionError] = useStateWithError(isCreating ? '' : editingData.description);
   const [weight, setWeight, weightError, setWeightError] = useStateWithError(isCreating ? '' : editingData.weight);
@@ -199,7 +220,11 @@ export default (props) => {
 
     console.log('imageInfos :', imageInfos);
 
-    
+    if (!priority || !isInteger(priority)) {
+      setPriorityError('錯誤的順序');
+      errorOccurred = true;
+    }
+
     if (!group) {
       setGroupError('請選擇群組');
       errorOccurred = true;
@@ -243,6 +268,8 @@ export default (props) => {
       disabled,
       isLimit,
       soldout,
+      priority,
+      sizeChart: sizeChart || '',
     };
     if (ii[0]) {
       [data.thumbnail] = ii;
@@ -305,9 +332,12 @@ export default (props) => {
                   variant: 'outlined',
                   placeholder: '選擇商品群組',
                   margin: 'dense',
+                  fullWidth: true,
+                  required: true,
+                  label: '商品群組',
                 }}
+                noOptionsText="查無資料"
                 disabled={!isCreating}
-                required
                 error={!!groupError}
                 helperText={groupError}
                 label="商品群組"
@@ -346,6 +376,8 @@ export default (props) => {
             <FormSpace variant="content1" />
             {nameInput.render()}
             <FormSpace variant="content1" />
+            {priorityInput.render()}
+            <FormSpace variant="content1" />
             <FormNumberInput
               label="價格(新台幣)"
               currency
@@ -369,7 +401,7 @@ export default (props) => {
             />
             <FormSpace variant="content1" />
             <FormImagesInput
-              label="Images"
+              label="商品照片"
               value={imageInfos}
               onChange={setImageInfos}
               onAdd={(imageInfo, { context }) => {
@@ -394,6 +426,8 @@ export default (props) => {
               rows={5}
               rowsMax={20}
             />
+            <FormSpace variant="content1" />
+            {sizeChartInput.render()}
             <FormSpace variant="content1" />
             <FormTextField
               label="商品描述"

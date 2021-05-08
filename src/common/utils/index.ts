@@ -53,6 +53,16 @@ export function promiseWait(waitMillisec) {
   });
 }
 
+export function toMap<T>(
+  inArray : T[],
+  getId : (t: T) => any,
+) {
+  return inArray.reduce((prev, curr, index, array) => {
+    prev[getId(curr)] = curr;
+    return prev;
+  }, {});
+}
+
 const defaultCallbackPromise = ({ result, error }) => {
   if (error) {
     return Promise.reject(error);
@@ -77,6 +87,24 @@ const capitalizeFirstLetter = str => (str.charAt(0).toUpperCase() + str.slice(1)
 const toCurrency = number => number.toFixed().replace(/\d(?=(\d{3})+$)/g, '$&,');
 const toFloatCurrency = (v, d = 2) => parseFloat(v).toFixed(d).replace(/\d(?=(\d{3})+\.)/g, '$&,');
 
+
+
+const leftJustify = function(s, length, char) {
+  let fill : any[] = [];
+  while ( fill.length + s.length < length ) {
+    fill[fill.length] = char;
+  }
+  return fill.join('') + s;
+}
+
+const rightJustify = function(s, length, char ) {
+  let fill : any[] = [];
+  while ( fill.length + s.length < length ) {
+    fill[fill.length] = char;
+  }
+  return s + fill.join('');
+} 
+
 export {
   toCamel,
   toUnderscore,
@@ -86,6 +114,9 @@ export {
   defaultCallbackPromise,
   isFunction,
   isFunctionV2,
+
+  leftJustify,
+  rightJustify,
 };
 
 /*

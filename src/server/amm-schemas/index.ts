@@ -99,6 +99,7 @@ const productColumns : JsonModelAttributes = {
   price: ['integer'],
   weight: 'float',
   description: 'text',
+  materials: 'text',
   data: {
     type: 'jsonb',
     defaultValue: {},
@@ -208,6 +209,12 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         },
         managedBy: ['belongsTo', 'organization', {
           foreignKey: 'org_mgr_id',
+        }],
+        browserSessions: ['hasMany', 'browserSession', {
+          foreignKey: 'user_id',
+        }],
+        notifications: ['hasMany', 'notification', {
+          foreignKey: 'user_id',
         }],
         userGroups: ['belongsToMany', 'userGroup', {
           through: {
@@ -425,6 +432,40 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           },
           restrictedColumns: [],
         },
+      },
+    },
+    browserSession: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        sessionId: 'string',
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+        user: ['belongsTo', 'user', {
+          foreignKey: 'user_id',
+        }],
+      },
+    },
+    notification: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        sessionId: 'string',
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+        user: ['belongsTo', 'user', {
+          foreignKey: 'user_id',
+        }],
       },
     },
     log: {
@@ -775,6 +816,8 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         colorCode: 'string',
         size: 'string',
         ...productColumns,
+        sizeChart: 'string',
+        priority: 'integer',
         ordering: 'integer',
         instock: 'integer',
         isLimit: {
@@ -838,7 +881,6 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         uid: 'string',
         customId: 'string',
         ...productColumns,
-        materials: 'text',
         products: ['hasMany', 'product', {
           foreignKey: 'group_id',
         }],
@@ -929,6 +971,7 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           primaryKey: true,
           autoIncrement: true,
         },
+        configName: 'string',
         name: 'string',
         mobile: 'string',
         phone1: 'string',
@@ -938,6 +981,10 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         area: 'string',
         email1: 'string',
         email2: 'string',
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
         user: ['belongsTo', 'user', {
           foreignKey: 'user_id',
         }],
@@ -968,6 +1015,7 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           primaryKey: true,
           autoIncrement: true,
         },
+        configName: 'string',
         name: 'string',
         mobile: 'string',
         phone1: 'string',
@@ -977,6 +1025,10 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         area: 'string',
         email1: 'string',
         email2: 'string',
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
         user: ['belongsTo', 'user', {
           foreignKey: 'user_id',
         }],
@@ -1007,6 +1059,18 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           primaryKey: true,
           autoIncrement: true,
         },
+        state: {
+          type: 'string',
+          defaultValue: 'unpaid',
+          /*
+            unpaid: '未付款',
+            paid: '已付款',
+            selected: '待出貨',
+            shipped: '已出貨',
+            returned: '已退貨',
+            expired: '已過期'
+          */
+        },
         memo: 'text',
         shipmentId: 'text',
         orderer: {
@@ -1021,6 +1085,22 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           type: 'jsonb',
           defaultValue: {},
         },
+
+        payWay: 'string',
+
+        payTime: 'date',
+
+        selectedAt: 'date',
+        expiredAt: 'date',
+        paidAt: 'date',
+        shippedAt: 'date',
+
+        atmAccount: 'string',
+        esunData: 'text',
+        esunOrderId: 'string',
+        esunTradeInfo: 'text',
+        esunTradeState: 'string',
+
         user: ['belongsTo', 'user', {
           foreignKey: 'user_id',
         }],
@@ -1385,7 +1465,8 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         },
         quantity: 'integer',
         price: 'integer',
-        totalPrice: 'integer',
+        subtotal: 'integer',
+        assignedQuantity: 'integer',
         data: {
           type: 'jsonb',
           defaultValue: {},

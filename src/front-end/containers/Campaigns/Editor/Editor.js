@@ -8,7 +8,7 @@ to your service.
     "graphql-tag": "^2.10.0",
     "react-apollo": "^2.5.5"
 */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import moment from 'moment';
 import useStateWithError from 'azrmui/hooks/useStateWithError';
 /* eslint-disable react/sort-comp */
@@ -31,6 +31,7 @@ import useTextField from '~/components/hooks/inputs/useTextField';
 import useFormSelect from '~/components/hooks/inputs/useFormSelect';
 import useDateRange from '~/components/hooks/inputs/useDateRange';
 import DiscountInput from './DiscountInput';
+import FreebieInput from './FreebieInput';
 import {
   campaignTypes,
   campaignStates,
@@ -94,6 +95,10 @@ export default (props) => {
   });
 
   const [discount, setDiscount] = useState(editingData && editingData.data && editingData.data.discount);
+  const discountFormApiRef = useRef();
+
+  const [freebie, setFreebie] = useState(editingData && editingData.data && editingData.data.freebie);
+  const freebieFormApiRef = useRef();
 
   const push = useRouterPush();
   const submit = async () => {
@@ -110,6 +115,25 @@ export default (props) => {
       setSelectedStateError('請選擇活動狀態');
       errorOccurred = true;
     }
+
+    const { getDataToSubmit: getDiscount } = discountFormApiRef.current;
+    if (!getDiscount) {
+      return;
+    }
+    const discount = getDiscount();
+    if (!discount) {
+      errorOccurred = true;
+    }
+
+    const { getDataToSubmit: getFreebie } = freebieFormApiRef.current;
+    if (!getFreebie) {
+      return;
+    }
+    const freebie = getFreebie();
+    if (!freebie) {
+      errorOccurred = true;
+    }
+
     if (errorOccurred) {
       return;
     }
@@ -122,6 +146,7 @@ export default (props) => {
       data: {
         ...(editingData && editingData.data),
         discount,
+        freebie,
       },
     };
     try {
@@ -167,6 +192,13 @@ export default (props) => {
               value={discount}
               onChange={setDiscount}
               selectedType={selectedType}
+              formApiRef={discountFormApiRef}
+            />
+            <FreebieInput
+              value={freebie}
+              onChange={setFreebie}
+              selectedType={selectedType}
+              formApiRef={freebieFormApiRef}
             />
           </div>
         </div>

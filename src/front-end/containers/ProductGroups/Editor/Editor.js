@@ -10,6 +10,7 @@ to your service.
 */
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
+import path from 'path';
 import { useQuery, gql } from '@apollo/client';
 import useStateWithError from 'azrmui/hooks/useStateWithError';
 /* eslint-disable react/sort-comp */
@@ -22,13 +23,16 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
+import { createHandleUploadFunction } from 'azrmui/core/FormInputs/FormImagesInput';
 import {
-  FormNumberInput, FormOutlinedSelect, FormTextField, FormSpace,
+  FormNumberInput, FormImagesInput, FormOutlinedSelect, FormTextField, FormSpace,
 } from 'azrmui/core/FormInputs';
 import DateRangeInput from '~/components/DateRangeInput';
 import useRouterPush from '~/hooks/useRouterPush';
 import FormAutocomplete from '~/components/FormAutocomplete';
 import LoadingMask from '~/components/EnhancedTable/LoadingMask';
+
+const handleUpload = createHandleUploadFunction('/api/files');
 
 const useStyles = makeStyles(theme => ({
   flexContainer: {
@@ -101,6 +105,7 @@ export default (props) => {
   const [materials, setMaterials, materialsError, setMaterialsError] = useStateWithError(isCreating ? '' : editingData.materials);
   const [description, setDescription, descriptionError, setDescriptionError] = useStateWithError(isCreating ? '' : editingData.description);
   const [weight, setWeight, weightError, setWeightError] = useStateWithError(isCreating ? '' : editingData.weight);
+  const [imageInfos, setImageInfos] = useState(isCreating ? [] : editingData.pictures);
 
   const push = useRouterPush();
   const submit = async () => {
@@ -129,6 +134,7 @@ export default (props) => {
     if (errorOccurred) {
       return;
     }
+    const ii = imageInfos.map(({ imageUploadInfo, image, ...rest }) => ({ image: { ...image, imgUrl: path.join('/api/files', image.hash) }, ...rest }));
     const data = {
       name,
       price,
@@ -137,7 +143,11 @@ export default (props) => {
       category_id: category,
       campaigns: campaigns.map(c => c.id),
       description,
+      pictures: ii,
     };
+    if (ii[0]) {
+      [data.thumbnail] = ii;
+    }
     try {
       if (isCreating) {
         await axios({
@@ -190,7 +200,10 @@ export default (props) => {
                   variant: 'outlined',
                   placeholder: '新增關聯活動',
                   margin: 'dense',
+                  fullWidth: true,
+                  label: '關聯活動',
                 }}
+                noOptionsText="查無資料"
                 label="關聯活動"
                 fullWidth
                 size="small"
@@ -251,6 +264,18 @@ export default (props) => {
               onChange={e => setPrice(e.target.value)}
               margin="dense"
               fullWidth
+            />
+            <FormSpace variant="content1" />
+            <FormImagesInput
+              label="商品首圖"
+              value={imageInfos}
+              onChange={setImageInfos}
+              onAdd={(imageInfo, { context }) => {
+                context.uploadImage(imageInfo);
+                setImageInfos(imageInfos => imageInfos.concat([imageInfo]));
+              }}
+              fullWidth
+              handleUpload={handleUpload}
             />
             <FormSpace variant="content1" />
             <FormTextField

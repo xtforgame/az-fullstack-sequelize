@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize';
 import AmmOrm, { AssociationModelNameAsToInclude } from 'az-model-manager/core';
-import { ProductI } from '../../amm-schemas/interfaces';
+import { ProductI, OrderProductI } from '../../amm-schemas/interfaces';
 
 export const findProductById = async (resourceManager : AmmOrm, id : string, includes : AssociationModelNameAsToInclude[] = []) => {
   const Product = resourceManager.getSqlzModel<ProductI>('product')!;
@@ -71,4 +71,46 @@ export const patchProduct = async (resourceManager : AmmOrm, productId, data : a
     await product.setGroup(group);
   }
   return product;
+};
+
+
+export const assignProduct = async (resourceManager : AmmOrm, productId, orderId) => {
+  const Product = resourceManager.getSqlzModel<ProductI>('product')!;
+  const OrderProduct = resourceManager.getSqlzAssociationModel<OrderProductI>('orderProduct')!;
+  const transaction = await resourceManager.db.transaction();
+  try {
+    const product = await Product.findOne({
+      where: {
+        id: productId,
+      },
+      transaction,
+    })!;
+    if(!product) {
+      throw Error('');
+    }
+    const orderProduct = await OrderProduct.findOne({
+      where: {
+        product_id: productId,
+        order_id: orderId,
+      },
+      transaction,
+    })!;
+    if(!orderProduct) {
+      throw Error('');
+    }
+    if (product.instock! > orderProduct.quantity! - orderProduct.assignedQuantity!) {
+      product.instock! -= orderProduct.quantity! - orderProduct.assignedQuantity!;
+      orderProduct.assignedQuantity! = orderProduct.quantity!;
+    } else if (product.instock! !== 0) {
+      product.instock! = 0;
+      orderProduct.assignedQuantity! += product.instock!;
+    }
+    await product.save();
+    await orderProduct.save();
+    await transaction.commit();
+    return product;
+  } catch (error) {
+    await transaction.rollback();
+    return Promise.reject(error);
+  }
 };

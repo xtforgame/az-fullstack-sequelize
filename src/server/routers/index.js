@@ -15,7 +15,8 @@ import MemoRouter from '~/routers/MemoRouter';
 import ModuleComplierRouter from '~/routers/ModuleComplierRouter';
 import ContactUsMessageRouter from '~/routers/ContactUsMessageRouter';
 import NopgRouter from '~/routers/NopgRouter';
-import LiquidRouter from '~/routers/LiquidRouter';
+import LiquidRouter01 from '~/routers/LiquidRouter01';
+import LiquidRouterLast from '~/routers/LiquidRouterLast';
 
 export default [
   SystemInfoRouter,
@@ -35,5 +36,6 @@ export default [
   ModuleComplierRouter,
   ContactUsMessageRouter,
   NopgRouter,
-  LiquidRouter,
+  LiquidRouter01,
+  LiquidRouterLast,
 ];

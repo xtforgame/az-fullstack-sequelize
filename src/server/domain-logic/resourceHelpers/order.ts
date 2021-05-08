@@ -1,6 +1,7 @@
 import Sequelize from 'sequelize';
 import AmmOrm, { AssociationModelNameAsToInclude } from 'az-model-manager/core';
-import { OrderI } from '../../amm-schemas/interfaces';
+import { OrderI, OrderProductI, OrderCreationAttributes } from '../../amm-schemas/interfaces';
+import { promiseReduce } from 'common/utils';
 
 export const findOrderById = async (resourceManager : AmmOrm, id : string, includes : AssociationModelNameAsToInclude[] = []) => {
   const Order = resourceManager.getSqlzModel<OrderI>('order')!;
@@ -23,16 +24,37 @@ export const findAllOrder = async (resourceManager : AmmOrm, where, includes : A
   });
 };
 
-export const createOrder = async (resourceManager : AmmOrm, userId : string, data = {}) => {
+export type ProductQuantity = {
+  id: number;
+  quantity: number;
+  price: number;
+  subtotal: number;
+  assignedQuantity: number;
+}
+
+export const createOrder = async (resourceManager : AmmOrm, userId : string, data: OrderCreationAttributes = {}, productQuantity: ProductQuantity[] = []) => {
   const transaction = await resourceManager.db.transaction();
   try {
     const Order = resourceManager.getSqlzModel<OrderI>('order')!;
+    const OrderProduct = resourceManager.getSqlzAssociationModel<OrderProductI>('orderProduct')!;
     const order = await Order.create({
       user_id: userId,
       ...data,
     }, {
       transaction,
     });
+
+    await OrderProduct.bulkCreate(productQuantity.map((pq) => ({
+      order_id: order.id,
+      product_id: pq.id,
+      quantity: pq.quantity,
+      price: pq.price,
+      subtotal: pq.subtotal,
+      assignedQuantity: pq.assignedQuantity,
+    })), {
+      transaction,
+    });
+    
     await transaction.commit();
     return order;
   } catch (error) {

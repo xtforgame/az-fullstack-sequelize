@@ -25,10 +25,25 @@ function descendingComparator(a, b, orderBy) {
   return 0;
 }
 
-function getComparator(order, orderBy) {
+function ascend(a, b, orderBy) {
+  if (b[orderBy] > a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] < a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
+function getComparator(columns, order, orderBy) {
+  const column = columns.find(c => c.id === orderBy)
+  let compareFunc = ascend; // descendingComparator;
+  if (column && column.compareFunc) {
+    ({ compareFunc } = column);
+  }
   return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
+    ? (a, b) => -compareFunc(a, b, orderBy)
+    : (a, b) => compareFunc(a, b, orderBy);
 }
 
 function stableSort(array, comparator) {
@@ -184,7 +199,7 @@ export default function EnhancedTable({
               columnSizes={columnSizesProp}
             />
             <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
+              {stableSort(rows, getComparator(columnsProp, order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.id);

@@ -92,7 +92,7 @@ const getColumnConfig = () => {
         console.log('color :', color);
         return (
           <div style={{ display: 'flex', }}>
-            <div style={{ marginRight: 12, width: 24, height: 24, backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})` }}>
+            <div style={{ marginRight: 12, width: 24, height: 24, border: '1px solid black', backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})` }}>
             </div>
             {row.colorName}
           </div>
@@ -288,6 +288,7 @@ const PRODUCT_LIST_QUERY = gql`
       weight
       description
       data
+      sizeChart
     }
     productAggregate(where: {deleted_at: {_is_null: true}}) {
       aggregate {

@@ -4,57 +4,35 @@ import BasicSection from '~/components/Section/Basic';
 import LoadingMask from '~/components/EnhancedTable/LoadingMask';
 import Editor from './Editor';
 
-const PRODUCT_QUERY = gql`
-  query Product($id: bigint! = 0) {
-    product(id: $id){
+const PRODUCT_GROUP_QUERY = gql`
+  query ProductGroup($id: bigint! = 0) {
+    productGroup(id: $id){
       id
       uid
       customId
-      group {
+      products(where: {deleted_at: {_is_null: true}}) { id, name }
+      category { id, name }
+      campaigns(where: {deleted_at: {_is_null: true}}) { campaign {
         id
         name
-        products(where: {deleted_at: {_is_null: true}}) {
-          id
-          name
-        }
-        category {
-          id
-          name
-        }
-        campaigns(where: {deleted_at: {_is_null: true}}) {
-          campaign {
-            id
-            name
-            type
-            durationType
-            state
-            start
-            end
-            data
-            created_at
-            updated_at
-            deleted_at
-          }
-        }
-      }
-      color
-      colorName
-      colorCode
-      size
+        type
+        durationType
+        state
+        start
+        end
+        data
+        created_at
+        updated_at
+        deleted_at
+      } }
       thumbnail
       pictures
       name
       price
       weight
-      ordering
-      instock
+      materials
       description
       data
-      disabled
-      isLimit
-      soldout
-      priority
-      sizeChart
     }
   }
 `;
@@ -70,7 +48,7 @@ export default (props) => {
     id,
   } = match.params;
 
-  const { loading, error, data } = useQuery(PRODUCT_QUERY, {
+  const { loading, error, data } = useQuery(PRODUCT_GROUP_QUERY, {
     variables: {
       name: refreshCount.toString(),
       id,
@@ -82,7 +60,7 @@ export default (props) => {
   if (error) {
     return (
       <pre>
-        Error in PRODUCT_QUERY
+        Error in PRODUCT_GROUP_QUERY
         {JSON.stringify(error, null, 2)}
       </pre>
     );
@@ -90,9 +68,9 @@ export default (props) => {
 
   return (
     <BasicSection withMaxWith>
-      {(!loading && !error && data && data.product) && (
+      {(!loading && !error && data && data.productGroup) && (
         <Editor
-          editingData={data.product}
+          editingData={data.productGroup}
         />
       )}
       <LoadingMask loading={loading || !data} />

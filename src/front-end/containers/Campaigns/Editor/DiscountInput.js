@@ -32,7 +32,7 @@ import useTextField from '~/components/hooks/inputs/useTextField';
 import useFormSelect from '~/components/hooks/inputs/useFormSelect';
 import useNumberInput from '~/components/hooks/inputs/useNumberInput';
 import useSwitch from '~/components/hooks/inputs/useSwitch';
-
+import { isFunctionV2 } from 'common/utils';
 
 export const dicountMethods = [
   { id: 'fixed-number', name: '固定折扣' },
@@ -55,6 +55,7 @@ export default (props) => {
     value: v,
     onChange = () => {},
     selectedType,
+    formApiRef,
   } = props;
 
   const classes = useStyles();
@@ -144,6 +145,37 @@ export default (props) => {
     disconutPercentage,
     canCombine,
   ]);
+
+  const getDataToSubmit = () => {
+    console.log('selectedType :', selectedType);
+    if (
+      (selectedType === 'discount-basic')
+      || (selectedType === 'discount-total-price')
+      || (selectedType === 'discount-total-amount')
+    ) {
+      let errorOccurred = false;
+      if (errorOccurred) {
+        return;
+      }
+      return {
+        totalPrice: parseInt(totalPrice),
+        totalAmount: parseInt(totalAmount),
+        dicountMethod: dicountMethod,
+        disconutPrice: parseInt(disconutPrice),
+        disconutPercentage: parseFloat(disconutPercentage),
+        canCombine,
+      };
+    }
+    return {};
+  };
+
+  if (formApiRef) {
+    if (isFunctionV2(formApiRef)) {
+      formApiRef({ getDataToSubmit });
+    } else {
+      formApiRef.current = { getDataToSubmit };
+    }
+  }
 
   return (
     <React.Fragment>

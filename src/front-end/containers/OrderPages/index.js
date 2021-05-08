@@ -71,6 +71,28 @@ const getColumnConfig = () => {
         </ContentText>
       ),
     },
+    {
+      id: 'buyer_email',
+      label: 'Email',
+      sortable: false,
+      align: 'left',
+      size: 200,
+      compareFunc: (a, b, orderBy) => {
+        if (b.data.orderData.order.buyer.email > a.data.orderData.order.buyer.email) {
+          return -1;
+        }
+        if (b.data.orderData.order.buyer.email < a.data.orderData.order.buyer.email) {
+          return 1;
+        }
+        return 0;
+      },
+      renderRowCell: (columnName, row, option) => (
+        <ContentText>
+          {row.data.orderData.order.buyer.email}
+        </ContentText>
+      ),
+    },
+
     // {
     //   id: 'price',
     //   label: '價格（新台幣）',
@@ -169,6 +191,25 @@ export default (props) => {
       orderer
       recipient
       data
+      created_at
+      products {
+        price
+        quantity
+        subtotal
+        assignedQuantity
+        order_id
+        id
+        data
+        product_id
+        product {
+          name
+          customId
+          id
+          size
+          instock
+          soldout
+        }
+      }
     `,
     {
       // args: ['$name: String!'],
@@ -276,7 +317,17 @@ export default (props) => {
           paginationProps={{
             rowsPerPageOptions: [10, 25, 50, 75],
           }}
-          renderRowDetail={row => (<DetailTable row={row} products={row.products} />)}
+          renderRowDetail={row => (<DetailTable assign={async (orderId, productId) => {
+            await axios({
+              method: 'post',
+              url: 'api/assign-order-product',
+              data: {
+                orderId,
+                productId,
+              },
+            });
+            refresh();
+          }} row={row} products={row.products} />)}
         />
       </BasicSection>
     </React.Fragment>

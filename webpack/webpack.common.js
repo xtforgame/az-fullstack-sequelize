@@ -21,6 +21,10 @@ module.exports = function({ mode }) {
     mode,
     devtool: 'inline-source-map',
     entry: {
+      webapp: [
+        '@babel/polyfill',
+        path.resolve(projRoot, 'src/front-end/web/app.js'),
+      ],
       app: [
         '@babel/polyfill',
         path.resolve(projRoot, frontEndJsEntryFilename),

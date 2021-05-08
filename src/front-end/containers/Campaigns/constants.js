@@ -4,6 +4,7 @@ export const campaignTypeInfo = [
   { id: 'discount-basic', name: '一般折扣/免運' },
   { id: 'discount-total-price', name: '滿額折扣/免運' },
   { id: 'discount-total-amount', name: '滿量折扣/免運' },
+  { id: 'freebie-total-price', name: '滿額贈品' },
 ];
 export const campaignTypeNameMap = campaignTypeInfo.reduce((m, v) => ({ ...m, [v.id]: v.name }), {});
 export const campaignTypeNameFunc = id => campaignTypeNameMap[id] || '<不明狀態>';

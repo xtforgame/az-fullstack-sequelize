@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import moment from 'moment';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -13,6 +14,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import { deepOrange, green, yellow, red, grey } from '@material-ui/core/colors';
 import FlightLandIcon from '@material-ui/icons/FlightLand';
+import CalendarInput from '~/components/CalendarInput';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -39,6 +41,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+
 export default function DetailTable(props) {
   const {
     row,
@@ -47,7 +50,27 @@ export default function DetailTable(props) {
   } = props;
 
   const classes = useStyles();
-  console.log('row :', row.products);
+  const [leaves, setLeaves] = useState(() => {
+    const startDate = moment().startOf('month');
+    const endDateMs = moment(startDate).add(1, 'month').valueOf();
+
+    const result = [];
+    let date = startDate;
+    while (date.valueOf() < endDateMs) {
+      const baseName = date.format('YYYYMMDD');
+      result.push({
+        id: `${baseName}早班`,
+        title: '可選',
+        hideTime: true,
+        start: moment(date).add(9, 'hours').toDate(),
+        end: moment(date).add(22, 'hours').toDate(),
+        desc: '營業時間',
+        // selected: true,
+      });
+      date = moment(date).add(1, 'day');
+    }
+    return result;
+  });
 
   return (
     <React.Fragment>
@@ -56,7 +79,7 @@ export default function DetailTable(props) {
           <div>
             <Paper className={classes.paper} elevation={0}>
               <Typography variant="h6" gutterBottom component="div">
-                購買人資訊
+                員工資訊
               </Typography>
               <Table size="small" aria-label="purchases">
                 <TableHead>
@@ -70,7 +93,7 @@ export default function DetailTable(props) {
                 <TableBody>
                   <TableRow>
                     <TableCell component="th" scope="row">
-                      {row.account}
+                      {12}
                     </TableCell>
                     <TableCell align="right"> </TableCell>
                     <TableCell align="right">
@@ -81,109 +104,74 @@ export default function DetailTable(props) {
                 </TableBody>
               </Table>
             </Paper>
-            {/* <Divider /> */}
             <Paper className={classes.paper} elevation={0}>
               <Typography variant="h6" gutterBottom component="div">
-                收件人資訊
+                期望休假時間
               </Typography>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>姓名</TableCell>
-                    <TableCell align="right">地址</TableCell>
-                    <TableCell align="right">電話</TableCell>
-                    <TableCell>取貨方式</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <TableCell component="th" scope="row">
-                      {row.account}
-                    </TableCell>
-                    <TableCell align="right"> </TableCell>
-                    <TableCell align="right">
-                      {Math.round(15 * 12 * 100 * 5) / 100}
-                    </TableCell>
-                    <TableCell>台灣本島</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
+              <CalendarInput value={leaves} onChange={setLeaves} />
             </Paper>
-            {/* <Divider /> */}
           </div>
           <div>
             <Paper className={classes.paper} elevation={0}>
               <Typography variant="h6" gutterBottom component="div">
-                商品清單
+                本月成本
               </Typography>
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
-                    <TableCell>商品</TableCell>
-                    <TableCell>名稱</TableCell>
-                    <TableCell align="right">數量</TableCell>
-                    <TableCell align="right">總價 ($)</TableCell>
+                    <TableCell>項目</TableCell>
+                    <TableCell align="right">薪水 ($)</TableCell>
+                    <TableCell align="right">公司負擔 ($)</TableCell>
                     <TableCell>備註</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row.products.map(opMn => console.log('opMn :', opMn) || (
-                    <TableRow key={opMn.id}>
-                      <TableCell>
-                        <Avatar variant="square" className={classes.square}>
-                          {opMn.product.size}
-                        </Avatar>
-                      </TableCell>
-                      <TableCell component="th" scope="row">
-                        {opMn.product.name}
-                      </TableCell>
-                      <TableCell align="right">{opMn.quantity}</TableCell>
-                      <TableCell align="right">
-                        {opMn.subtotal}
-                      </TableCell>
-                      <TableCell>
-                        {opMn.product.soldout ? '[斷貨] ' : ''}備貨數量：{opMn.assignedQuantity}
-                        <Button variant="contained" onClick={() => assign(opMn.order_id, opMn.product_id)}>
-                          備貨
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  <TableRow style={{ backgroundColor: grey[300] }}>
-                    <TableCell> </TableCell>
+                  <TableRow>
                     <TableCell component="th" scope="row">
-                      總價
+                      本薪
                     </TableCell>
-                    <TableCell align="right"> </TableCell>
-                    <TableCell align="right">
-                      {row.data.orderData.order.subtotal}
-                    </TableCell>
-                    <TableCell> </TableCell>
+                    <TableCell align="right">40,000</TableCell>
+                    <TableCell align="right" />
+                    <TableCell />
                   </TableRow>
                   <TableRow>
-                    <TableCell>
-                      <Avatar variant="rounded" className={classes.rounded}>
-                        <FlightLandIcon />
-                      </Avatar>
-                    </TableCell>
                     <TableCell component="th" scope="row">
-                      運費
+                      加班/少班
                     </TableCell>
-                    <TableCell align="right"> </TableCell>
-                    <TableCell align="right">
-                      {row.data.orderData.order.shippingFee}
+                    <TableCell align="right">3,000</TableCell>
+                    <TableCell align="right" />
+                    <TableCell>8hr</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      勞保
                     </TableCell>
-                    <TableCell> </TableCell>
+                    <TableCell align="right">-3,000</TableCell>
+                    <TableCell align="right">-1,000</TableCell>
+                    <TableCell>級距：38,200</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      勞退
+                    </TableCell>
+                    <TableCell align="right" />
+                    <TableCell align="right">-1,000</TableCell>
+                    <TableCell />
+                  </TableRow>
+                  <TableRow>
+                    <TableCell component="th" scope="row">
+                      健保
+                    </TableCell>
+                    <TableCell align="right">-3,000</TableCell>
+                    <TableCell align="right">-1,000</TableCell>
+                    <TableCell>級距：38,200</TableCell>
                   </TableRow>
                   <TableRow style={{ backgroundColor: yellow[300] }}>
-                    <TableCell> </TableCell>
                     <TableCell component="th" scope="row">
                       總金額
                     </TableCell>
-                    <TableCell align="right"> </TableCell>
-                    <TableCell align="right">
-                      {row.data.orderData.order.subtotal + row.data.orderData.order.shippingFee}
-                    </TableCell>
+                    <TableCell align="right">37,000</TableCell>
+                    <TableCell align="right">-3,000</TableCell>
                     <TableCell> </TableCell>
                   </TableRow>
                 </TableBody>

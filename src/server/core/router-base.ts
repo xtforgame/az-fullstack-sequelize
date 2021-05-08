@@ -1,5 +1,8 @@
 import AmmOrm from 'az-model-manager/core';
 import { AuthKit } from '../services/resource-manager/insterfaces';
+import RouterApi from '../services/router-manager/api';
+
+
 
 export default class RouterBase {
   httpApp!: any;
@@ -7,6 +10,7 @@ export default class RouterBase {
   minioApi!: any;
   authKit!: AuthKit;
   resourceManager!: AmmOrm;
+  routerApi!: RouterApi;
 
   constructor(_props) {
     const props = _props || {};
