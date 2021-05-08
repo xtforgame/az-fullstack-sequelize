@@ -37,7 +37,7 @@ services:
 <% } -%>
 <% if(docker.dockerPostgresType === 'mine'){ -%>
   pg-master:
-    image: postgres:9.6
+    image: postgres:12
 
     container_name: ${<%= prefixUpper %>_CONTAINER_NS:-<%= prefixLower %>internal}-${<%= prefixUpper %>_CONTAINER_PROJ:-default}-afs-pg-master
     environment:

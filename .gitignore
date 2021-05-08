@@ -7,4 +7,5 @@
 /env-vars.sh
 /schemas.json
 /models.ts
+/compare.json
 .DS_Store
