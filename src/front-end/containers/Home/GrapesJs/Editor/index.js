@@ -466,16 +466,25 @@ const GrapesJsEditor = (props) => {
       run();
     }
   }, [customCompnents]);
+
+  const drawerRef = useRef();
   return (
     <React.Fragment>
       <div style={{ height: '100%', overflowY: 'hidden' }}>
         <div className="editor-row" style={{ height: '100%', overflowY: 'scroll' }}>
           <Drawer
+            ref={drawerRef}
             variant="permanent"
             classes={{
               paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
             }}
             open={open}
+            onTransitionEnd={(e) => {
+              if (e.target.parentElement === drawerRef.current) {
+                console.log('onTransitionEnd');
+                editorRef.current.refresh();
+              }
+            }}
           >
             <div className={classes.drawerInner}>
               <AppBar position="relative" color="default">
