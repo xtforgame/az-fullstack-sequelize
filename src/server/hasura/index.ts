@@ -529,12 +529,14 @@ class HasuraMgr extends HasuraMgrBase {
             // if (table.object_relationships.find(r => r.using.foreign_key_constraint_on === a.using.foreign_key_constraint_on)) {
             //   return table;
             // }
+            table.object_relationships = table.object_relationships.filter(r => r.name !== a.name);
             table.object_relationships.push({
               name: a.name,
               using: a.using,
             });
           } else if (type === 'pg_create_array_relationship') {
             table.array_relationships = table.array_relationships || [];
+            table.array_relationships = table.array_relationships.filter(r => r.name !== a.name);
             table.array_relationships.push({
               name: a.name,
               using: a.using,
@@ -590,7 +592,7 @@ class HasuraMgr extends HasuraMgrBase {
             args: {
               source: 'db_rick_data',
               sql: dropScript,
-              cascade: false,
+              cascade: true,
             },
           },
           {
