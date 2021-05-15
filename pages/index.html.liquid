@@ -11,12 +11,12 @@
     <meta property="og:url" content="http://localhost:3000/">
     <meta property="og:image" content="xxxx.jpg">
   {% endcapture %}
-  {% render "parts/head-layout.liquid", content: head_main %}
+  {% renderEx "parts/head-layout.liquid", content: head_main %}
   {% capture body_main %}
   <main class="main" role="main">
   </main>
   {% endcapture %}
   {% capture body_extra %}
   {% endcapture %}
-  {% render "parts/body-layout.liquid", content: body_main, extra: body_extra, cart: cart, userSession: userSession %}
+  {% renderEx "parts/body-layout.liquid", content: body_main, extra: body_extra %}
 </html>

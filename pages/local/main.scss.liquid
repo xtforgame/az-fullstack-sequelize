@@ -1,8 +1,6 @@
 {% capture scss %}
-{% render "local/global.scss.liquid", content: "xxx" %}
+{% renderEx "local/global.scss.liquid" %}
 
-
-{% render "local/products.scss.liquid", content: "xxx" %}
 {% endcapture %}
 {{ scss | toCss }}
 

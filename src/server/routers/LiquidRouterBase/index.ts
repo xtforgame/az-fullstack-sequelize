@@ -12,7 +12,8 @@ import mime from 'mime-types';
 import { Liquid } from 'liquidjs';
 import { buildQueryT1, Options } from 'common/graphQL';
 import moment from 'moment';
-import RouterBase from '../core/router-base';
+import RouterBase from '../../core/router-base';
+import renderEx from './LiquidRenderEx';
 
 const normalizeUrl = (u) => {
   let url = u.split('?')[0];
@@ -85,6 +86,7 @@ export default class LiquidRouterBase extends RouterBase {
       root: ['pages'],
     });
     engine.plugin(function (Liquid) {
+      this.registerTag('renderEx', renderEx);
       this.registerFilter('toCamel', toCamel);
       this.registerFilter('toUnderscore', toUnderscore);
       this.registerFilter('capitalizeFirstLetter', capitalizeFirstLetter);

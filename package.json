@@ -161,6 +161,7 @@
     "sanitize-html": "^2.3.3",
     "sass": "^1.32.8",
     "sequelize": "^6.3.5",
+    "underscore": "^1.13.1",
     "uuid": "^3.3.2",
     "validator": "^10.2.0",
     "xbase": "git+https://github.com/xtforgame/xbase.git#master",
