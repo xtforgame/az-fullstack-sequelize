@@ -35,7 +35,7 @@ import FreebieInput from './FreebieInput';
 import {
   campaignTypes,
   campaignStates,
-} from '../constants';
+} from 'common/domain-logic/constants/campaign';
 
 const useStyles = makeStyles(theme => ({
   flexContainer: {

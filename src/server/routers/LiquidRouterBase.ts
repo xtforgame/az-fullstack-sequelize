@@ -17,7 +17,7 @@ import RouterBase from '../core/router-base';
 const normalizeUrl = (u) => {
   let url = u.split('?')[0];
   if (url.split('.').length === 1) {
-    fs.mkdirSync(`pages${url}`, { recursive: true });
+    // fs.mkdirSync(`pages${url}`, { recursive: true });
     url += '/index.html';
   }
   url += '.liquid';

@@ -251,6 +251,7 @@ export default (props) => {
           id
           size
           instock
+          orderQuota
           soldout
         }
       }

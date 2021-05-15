@@ -1,16 +1,8 @@
-.az-mobile-only {
-}
+{% capture scss %}
+{% render "local/global.scss.liquid", content: "xxx" %}
 
-.az-desktop-only {
-  display: none !important;
-}
 
-@media (min-width:768px) {
-  .az-mobile-only {
-    display: none !important;
-  }
+{% render "local/products.scss.liquid", content: "xxx" %}
+{% endcapture %}
+{{ scss | toCss }}
 
-  .az-desktop-only {
-    display: block !important;
-  }
-}

@@ -7,7 +7,7 @@ import Editor from './Editor';
 const PRODUCT_CATEGORY_QUERY = gql`
   query ProductCategory($id: bigint! = 0) {
     productCategory(id: $id){
-      id name priority active data
+      id name nameEn priority active data
     }
   }
 `;

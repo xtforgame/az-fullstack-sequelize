@@ -46,7 +46,7 @@ import {
   campaignStateNameMap,
   campaignStateNameFunc,
   campaignStates,
-} from './constants';
+} from 'common/domain-logic/constants/campaign';
 import FilterSection from './FilterSection';
 import DetailTable from './DetailTable';
 

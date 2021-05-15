@@ -48,6 +48,7 @@ const PRODUCT_QUERY = gql`
       weight
       ordering
       instock
+      orderQuota
       description
       data
       disabled

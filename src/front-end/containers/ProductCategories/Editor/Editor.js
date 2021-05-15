@@ -29,6 +29,7 @@ import DateRangeInput from '~/components/DateRangeInput';
 import useRouterPush from '~/hooks/useRouterPush';
 import FormAutocomplete from '~/components/FormAutocomplete';
 import LoadingMask from '~/components/EnhancedTable/LoadingMask';
+import useTextField from '~/components/hooks/inputs/useTextField';
 
 const useStyles = makeStyles(theme => ({
   flexContainer: {
@@ -63,6 +64,13 @@ export default (props) => {
   const [refreshCount, setRefreshCount] = useState(0);
 
   const [name, setName, nameError, setNameError] = useStateWithError(isCreating ? '' : editingData.name);
+  const [
+    [nameEn, setNameEn, nameEnError, setNameEnError],
+    nameEnInput,
+  ] = useTextField(isCreating ? '' : editingData.nameEn, '', {
+    label: '英文名稱',
+    required: true,
+  });
   const [priority, setPriority, priorityError, setPriorityError] = useStateWithError(isCreating ? 0 : editingData.priority);
   const [active, setActive, activeError, setActiveError] = useStateWithError(isCreating ? false : editingData.active);
 
@@ -84,6 +92,7 @@ export default (props) => {
     }
     const data = {
       name,
+      nameEn,
       priority,
       active,
     };
@@ -141,6 +150,8 @@ export default (props) => {
               margin="dense"
               fullWidth
             />
+            <FormSpace variant="content1" />
+            {nameEnInput.render()}
             <FormSpace variant="content1" />
             <FormNumberInput
               label="順序"

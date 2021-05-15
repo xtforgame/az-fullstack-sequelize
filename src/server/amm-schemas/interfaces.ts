@@ -106,6 +106,9 @@ export type UserCreationAttributes = {
   recipientInfos?: RecipientInfoCreationAttributes[];
   orders?: OrderCreationAttributes[];
   subscriptionOrders?: SubscriptionOrderCreationAttributes[];
+  coupons?: CouponCreationAttributes[];
+  provideCoupons?: CouponCreationAttributes[];
+  couponRecords?: CouponRecordCreationAttributes[];
 };
 
 export type UserAttributes = {
@@ -140,6 +143,9 @@ export type UserAttributes = {
   recipientInfos?: ExtendedModel<RecipientInfoI>[];
   orders?: ExtendedModel<OrderI>[];
   subscriptionOrders?: ExtendedModel<SubscriptionOrderI>[];
+  coupons?: ExtendedModel<CouponI>[];
+  provideCoupons?: ExtendedModel<CouponI>[];
+  couponRecords?: ExtendedModel<CouponRecordI>[];
 };
 
 export type UserI = UserAttributes & {
@@ -413,6 +419,42 @@ export type UserI = UserAttributes & {
   removeSubscriptionOrder: HasManyRemoveAssociationMixin<SubscriptionOrderI, string>;
   removeSubscriptionOrders: HasManyRemoveAssociationsMixin<SubscriptionOrderI, string>;
   createSubscriptionOrder: HasManyCreateAssociationMixin<SubscriptionOrderI>;
+
+  // association: coupons
+  countCoupons: HasManyCountAssociationsMixin;
+  hasCoupon: HasManyHasAssociationMixin<CouponI, string>;
+  hasCoupons: HasManyHasAssociationsMixin<CouponI, string>;
+  getCoupons: HasManyGetAssociationsMixin<CouponI>;
+  setCoupons: HasManySetAssociationsMixin<CouponI, string>;
+  addCoupon: HasManyAddAssociationMixin<CouponI, string>;
+  addCoupons: HasManyAddAssociationsMixin<CouponI, string>;
+  removeCoupon: HasManyRemoveAssociationMixin<CouponI, string>;
+  removeCoupons: HasManyRemoveAssociationsMixin<CouponI, string>;
+  createCoupon: HasManyCreateAssociationMixin<CouponI>;
+
+  // association: provideCoupons
+  countProvideCoupons: HasManyCountAssociationsMixin;
+  hasProvideCoupon: HasManyHasAssociationMixin<CouponI, string>;
+  hasProvideCoupons: HasManyHasAssociationsMixin<CouponI, string>;
+  getProvideCoupons: HasManyGetAssociationsMixin<CouponI>;
+  setProvideCoupons: HasManySetAssociationsMixin<CouponI, string>;
+  addProvideCoupon: HasManyAddAssociationMixin<CouponI, string>;
+  addProvideCoupons: HasManyAddAssociationsMixin<CouponI, string>;
+  removeProvideCoupon: HasManyRemoveAssociationMixin<CouponI, string>;
+  removeProvideCoupons: HasManyRemoveAssociationsMixin<CouponI, string>;
+  createProvideCoupon: HasManyCreateAssociationMixin<CouponI>;
+
+  // association: couponRecords
+  countCouponRecords: HasManyCountAssociationsMixin;
+  hasCouponRecord: HasManyHasAssociationMixin<CouponRecordI, string>;
+  hasCouponRecords: HasManyHasAssociationsMixin<CouponRecordI, string>;
+  getCouponRecords: HasManyGetAssociationsMixin<CouponRecordI>;
+  setCouponRecords: HasManySetAssociationsMixin<CouponRecordI, string>;
+  addCouponRecord: HasManyAddAssociationMixin<CouponRecordI, string>;
+  addCouponRecords: HasManyAddAssociationsMixin<CouponRecordI, string>;
+  removeCouponRecord: HasManyRemoveAssociationMixin<CouponRecordI, string>;
+  removeCouponRecords: HasManyRemoveAssociationsMixin<CouponRecordI, string>;
+  createCouponRecord: HasManyCreateAssociationMixin<CouponRecordI>;
 };
 // ============== end model: User ==============
 
@@ -452,6 +494,7 @@ export type BrowserSessionCreationAttributes = {
   data?: any;
   user_id?: string;
   user?: UserCreationAttributes;
+  products?: ProductCreationAttributes[];
 };
 
 export type BrowserSessionAttributes = {
@@ -460,6 +503,7 @@ export type BrowserSessionAttributes = {
   data?: any;
   user_id?: string;
   user?: ExtendedModel<UserI>;
+  products?: ExtendedModel<ProductI>[];
 };
 
 export type BrowserSessionI = BrowserSessionAttributes & {
@@ -473,6 +517,19 @@ export type BrowserSessionI = BrowserSessionAttributes & {
   getUser: BelongsToGetAssociationMixin<UserI>;
   setUser: BelongsToSetAssociationMixin<UserI, string>;
   createUser: BelongsToCreateAssociationMixin<UserI>;
+
+  // association: products
+  countProducts: BelongsToManyCountAssociationsMixin;
+  hasProduct: BelongsToManyHasAssociationMixin<ProductI, string>;
+  hasProducts: BelongsToManyHasAssociationsMixin<ProductI, string>;
+  getProducts: BelongsToManyGetAssociationsMixin<ProductI>;
+  setProducts: BelongsToManySetAssociationsMixin<ProductI, string>;
+  addProduct: BelongsToManyAddAssociationMixin<ProductI, string>;
+  addProducts: BelongsToManyAddAssociationsMixin<ProductI, string>;
+  removeProduct: BelongsToManyRemoveAssociationMixin<ProductI, string>;
+  removeProducts: BelongsToManyRemoveAssociationsMixin<ProductI, string>;
+  createProduct: BelongsToManyCreateAssociationMixin<ProductI>;
+
 };
 // ============== end model: BrowserSession ==============
 
@@ -513,6 +570,7 @@ export type LogCreationAttributes = {
 };
 
 export type LogAttributes = {
+  id: string;
   type?: string;
   data?: any;
 };
@@ -871,6 +929,7 @@ export type ContactUsMessageI = ContactUsMessageAttributes & {
 // ============== start model: ProductCategory ==============
 export type ProductCategoryCreationAttributes = {
   name?: string;
+  nameEn?: string;
   priority?: number;
   active?: boolean;
   data?: any;
@@ -880,6 +939,7 @@ export type ProductCategoryCreationAttributes = {
 export type ProductCategoryAttributes = {
   id: string;
   name?: string;
+  nameEn?: string;
   priority?: number;
   active?: boolean;
   data?: any;
@@ -917,21 +977,26 @@ export type ProductCreationAttributes = {
   size?: string;
   thumbnail?: any;
   pictures?: any;
+  type?: string;
   name?: string;
+  nameEn?: string;
   price?: number;
   weight?: number;
   description?: string;
   materials?: string;
   data?: any;
   disabled?: boolean;
+  variantData?: any;
   sizeChart?: string;
   priority?: number;
   ordering?: number;
   instock?: number;
+  orderQuota?: number;
   isLimit?: boolean;
   soldout?: boolean;
   group_id?: string;
   group?: ProductGroupCreationAttributes;
+  carts?: BrowserSessionCreationAttributes[];
   orders?: OrderCreationAttributes[];
 };
 
@@ -945,21 +1010,26 @@ export type ProductAttributes = {
   size?: string;
   thumbnail?: any;
   pictures?: any;
+  type?: string;
   name?: string;
+  nameEn?: string;
   price?: number;
   weight?: number;
   description?: string;
   materials?: string;
   data?: any;
   disabled?: boolean;
+  variantData?: any;
   sizeChart?: string;
   priority?: number;
   ordering?: number;
   instock?: number;
+  orderQuota?: number;
   isLimit?: boolean;
   soldout?: boolean;
   group_id?: string;
   group?: ExtendedModel<ProductGroupI>;
+  carts?: ExtendedModel<BrowserSessionI>[];
   orders?: ExtendedModel<OrderI>[];
 };
 
@@ -974,6 +1044,19 @@ export type ProductI = ProductAttributes & {
   getGroup: BelongsToGetAssociationMixin<ProductGroupI>;
   setGroup: BelongsToSetAssociationMixin<ProductGroupI, string>;
   createGroup: BelongsToCreateAssociationMixin<ProductGroupI>;
+
+  // association: carts
+  countCarts: BelongsToManyCountAssociationsMixin;
+  hasCart: BelongsToManyHasAssociationMixin<BrowserSessionI, string>;
+  hasCarts: BelongsToManyHasAssociationsMixin<BrowserSessionI, string>;
+  getCarts: BelongsToManyGetAssociationsMixin<BrowserSessionI>;
+  setCarts: BelongsToManySetAssociationsMixin<BrowserSessionI, string>;
+  addCart: BelongsToManyAddAssociationMixin<BrowserSessionI, string>;
+  addCarts: BelongsToManyAddAssociationsMixin<BrowserSessionI, string>;
+  removeCart: BelongsToManyRemoveAssociationMixin<BrowserSessionI, string>;
+  removeCarts: BelongsToManyRemoveAssociationsMixin<BrowserSessionI, string>;
+  createCart: BelongsToManyCreateAssociationMixin<BrowserSessionI>;
+
 
   // association: orders
   countOrders: BelongsToManyCountAssociationsMixin;
@@ -996,7 +1079,9 @@ export type ProductGroupCreationAttributes = {
   customId?: string;
   thumbnail?: any;
   pictures?: any;
+  type?: string;
   name?: string;
+  nameEn?: string;
   price?: number;
   weight?: number;
   description?: string;
@@ -1015,7 +1100,9 @@ export type ProductGroupAttributes = {
   customId?: string;
   thumbnail?: any;
   pictures?: any;
+  type?: string;
   name?: string;
+  nameEn?: string;
   price?: number;
   weight?: number;
   description?: string;
@@ -1246,9 +1333,14 @@ export type OrderCreationAttributes = {
   esunOrderId?: string;
   esunTradeInfo?: string;
   esunTradeState?: string;
+  cvsName?: string;
+  smseData?: string;
+  smsePayno?: string;
+  smseSmilepayno?: string;
   user_id?: string;
   user?: UserCreationAttributes;
   products?: ProductCreationAttributes[];
+  couponRecord?: CouponRecordCreationAttributes;
 };
 
 export type OrderAttributes = {
@@ -1270,9 +1362,14 @@ export type OrderAttributes = {
   esunOrderId?: string;
   esunTradeInfo?: string;
   esunTradeState?: string;
+  cvsName?: string;
+  smseData?: string;
+  smsePayno?: string;
+  smseSmilepayno?: string;
   user_id?: string;
   user?: ExtendedModel<UserI>;
   products?: ExtendedModel<ProductI>[];
+  couponRecord?: ExtendedModel<CouponRecordI>;
 };
 
 export type OrderI = OrderAttributes & {
@@ -1299,6 +1396,11 @@ export type OrderI = OrderAttributes & {
   removeProducts: BelongsToManyRemoveAssociationsMixin<ProductI, string>;
   createProduct: BelongsToManyCreateAssociationMixin<ProductI>;
 
+
+  // association: couponRecord
+  getCouponRecord: HasOneGetAssociationMixin<CouponRecordI>;
+  setCouponRecord: HasOneSetAssociationMixin<CouponRecordI, string>;
+  createCouponRecord: HasOneCreateAssociationMixin<CouponRecordI>;
 };
 // ============== end model: Order ==============
 
@@ -1337,6 +1439,104 @@ export type SubscriptionOrderI = SubscriptionOrderAttributes & {
   createUser: BelongsToCreateAssociationMixin<UserI>;
 };
 // ============== end model: SubscriptionOrder ==============
+
+// ============== start model: Coupon ==============
+export type CouponCreationAttributes = {
+  price?: number;
+  isDeduct?: boolean;
+  memo?: string;
+  data?: any;
+  admin_user_id?: string;
+  adminUser?: UserCreationAttributes;
+  user_id?: string;
+  user?: UserCreationAttributes;
+  couponRecord?: CouponRecordCreationAttributes;
+};
+
+export type CouponAttributes = {
+  id: string;
+  price?: number;
+  isDeduct?: boolean;
+  memo?: string;
+  data?: any;
+  admin_user_id?: string;
+  adminUser?: ExtendedModel<UserI>;
+  user_id?: string;
+  user?: ExtendedModel<UserI>;
+  couponRecord?: ExtendedModel<CouponRecordI>;
+};
+
+export type CouponI = CouponAttributes & {
+
+  // timestamps
+  readonly created_at: Date;
+  readonly updated_at: Date;
+  readonly deleted_at: Date;
+
+  // association: adminUser
+  getAdminUser: BelongsToGetAssociationMixin<UserI>;
+  setAdminUser: BelongsToSetAssociationMixin<UserI, string>;
+  createAdminUser: BelongsToCreateAssociationMixin<UserI>;
+
+  // association: user
+  getUser: BelongsToGetAssociationMixin<UserI>;
+  setUser: BelongsToSetAssociationMixin<UserI, string>;
+  createUser: BelongsToCreateAssociationMixin<UserI>;
+
+  // association: couponRecord
+  getCouponRecord: HasOneGetAssociationMixin<CouponRecordI>;
+  setCouponRecord: HasOneSetAssociationMixin<CouponRecordI, string>;
+  createCouponRecord: HasOneCreateAssociationMixin<CouponRecordI>;
+};
+// ============== end model: Coupon ==============
+
+// ============== start model: CouponRecord ==============
+export type CouponRecordCreationAttributes = {
+  action?: string;
+  price?: number;
+  user_id?: string;
+  user?: UserCreationAttributes;
+  coupon_id?: string;
+  byCoupon?: CouponCreationAttributes;
+  order_id?: string;
+  byOrder?: OrderCreationAttributes;
+};
+
+export type CouponRecordAttributes = {
+  id: string;
+  action?: string;
+  price?: number;
+  user_id?: string;
+  user?: ExtendedModel<UserI>;
+  coupon_id?: string;
+  byCoupon?: ExtendedModel<CouponI>;
+  order_id?: string;
+  byOrder?: ExtendedModel<OrderI>;
+};
+
+export type CouponRecordI = CouponRecordAttributes & {
+
+  // timestamps
+  readonly created_at: Date;
+  readonly updated_at: Date;
+  readonly deleted_at: Date;
+
+  // association: user
+  getUser: BelongsToGetAssociationMixin<UserI>;
+  setUser: BelongsToSetAssociationMixin<UserI, string>;
+  createUser: BelongsToCreateAssociationMixin<UserI>;
+
+  // association: byCoupon
+  getByCoupon: BelongsToGetAssociationMixin<CouponI>;
+  setByCoupon: BelongsToSetAssociationMixin<CouponI, string>;
+  createByCoupon: BelongsToCreateAssociationMixin<CouponI>;
+
+  // association: byOrder
+  getByOrder: BelongsToGetAssociationMixin<OrderI>;
+  setByOrder: BelongsToSetAssociationMixin<OrderI, string>;
+  createByOrder: BelongsToCreateAssociationMixin<OrderI>;
+};
+// ============== end model: CouponRecord ==============
 
 // ============== start model: UserUserGroup ==============
 export type UserUserGroupCreationAttributes = {
@@ -1631,6 +1831,51 @@ export type UserMemoI = UserMemoAttributes & {
   createMemo: BelongsToCreateAssociationMixin<MemoI>;
 };
 // ============== end model: UserMemo ==============
+
+// ============== start model: CartProduct ==============
+export type CartProductCreationAttributes = {
+  quantity?: number;
+  price?: number;
+  subtotal?: number;
+  assignedQuantity?: number;
+  data?: any;
+  cart_id?: string;
+  cart?: BrowserSessionCreationAttributes;
+  product_id?: string;
+  product?: ProductCreationAttributes;
+};
+
+export type CartProductAttributes = {
+  id: string;
+  quantity?: number;
+  price?: number;
+  subtotal?: number;
+  assignedQuantity?: number;
+  data?: any;
+  cart_id?: string;
+  cart?: ExtendedModel<BrowserSessionI>;
+  product_id?: string;
+  product?: ExtendedModel<ProductI>;
+};
+
+export type CartProductI = CartProductAttributes & {
+
+  // timestamps
+  readonly created_at: Date;
+  readonly updated_at: Date;
+  readonly deleted_at: Date;
+
+  // association: cart
+  getCart: BelongsToGetAssociationMixin<BrowserSessionI>;
+  setCart: BelongsToSetAssociationMixin<BrowserSessionI, string>;
+  createCart: BelongsToCreateAssociationMixin<BrowserSessionI>;
+
+  // association: product
+  getProduct: BelongsToGetAssociationMixin<ProductI>;
+  setProduct: BelongsToSetAssociationMixin<ProductI, string>;
+  createProduct: BelongsToCreateAssociationMixin<ProductI>;
+};
+// ============== end model: CartProduct ==============
 
 // ============== start model: OrderProduct ==============
 export type OrderProductCreationAttributes = {

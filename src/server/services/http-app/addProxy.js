@@ -22,13 +22,13 @@ export default (app) => {
   };
 
 
-  const p = proxy('https://studiodoe.com', {
+  const p = proxy('https://rick.cloud', {
     userResDecorator(proxyRes, proxyResData, ctx) {
       // console.log('proxyResData :', proxyResData.toString('utf8'));
 
       const getFilename = (({ url }) => `pages${url}`);
       let str = proxyResData.toString('utf8');
-      str = str.replace(/https:\/\/studiodoe.com/g, 'http://localhost:8080');
+      str = str.replace(/https:\/\/rick.cloud/g, 'http://localhost:8080');
       const url = normalizeUrl(ctx.url);
       const basenameArray = url.substr(0, url.length - '.liquid'.length).split('/');
       const basename = basenameArray[basenameArray.length - 1];

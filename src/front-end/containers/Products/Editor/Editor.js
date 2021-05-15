@@ -178,6 +178,7 @@ export default (props) => {
   const [weight, setWeight, weightError, setWeightError] = useStateWithError(isCreating ? '' : editingData.weight);
   const [ordering, setOrdering, orderingError, setOrderingError] = useStateWithError(isCreating ? 0 : editingData.ordering);
   const [instock, setInstock, instockError, setInstockError] = useStateWithError(isCreating ? 0 : editingData.instock);
+  const [orderQuota, setOrderQuota, orderQuotaError, setOrderQuotaError] = useStateWithError(isCreating ? 0 : editingData.orderQuota);
   const [
     [disabled, setDisabled, disabledError, setDisabledError],
     disabledInput,
@@ -265,6 +266,7 @@ export default (props) => {
       description,
       pictures: ii,
       instock,
+      orderQuota: orderQuota || 0,
       disabled,
       isLimit,
       soldout,
@@ -471,6 +473,18 @@ export default (props) => {
               // onKeyPress={handleEnterForTextField}
               value={instock}
               onChange={e => setInstock(e.target.value)}
+              margin="dense"
+              fullWidth
+            />
+            <FormSpace variant="content1" />
+            <FormNumberInput
+              label="尚餘預購數量"
+              error={!!orderQuotaError}
+              helperText={orderQuotaError}
+              // label={label}
+              // onKeyPress={handleEnterForTextField}
+              value={orderQuota}
+              onChange={e => setOrderQuota(e.target.value)}
               margin="dense"
               fullWidth
             />

@@ -95,7 +95,9 @@ const productColumns : JsonModelAttributes = {
     type: 'jsonb',
     defaultValue: [],
   },
+  type: ['string', 900],
   name: ['string', 900],
+  nameEn: ['string', 900],
   price: ['integer'],
   weight: 'float',
   description: 'text',
@@ -343,6 +345,15 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         subscriptionOrders: ['hasMany', 'subscriptionOrder', {
           foreignKey: 'user_id',
         }],
+        coupons: ['hasMany', 'coupon', {
+          foreignKey: 'user_id',
+        }],
+        provideCoupons: ['hasMany', 'coupon', {
+          foreignKey: 'admin_user_id',
+        }],
+        couponRecords: ['hasMany', 'couponRecord', {
+          foreignKey: 'user_id',
+        }],
       },
       options: {
         name: {
@@ -449,6 +460,16 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         user: ['belongsTo', 'user', {
           foreignKey: 'user_id',
         }],
+        products: ['belongsToMany', 'product', {
+          through: {
+            unique: false,
+            ammModelName: 'cartProduct',
+            ammThroughTableColumnAs: 'cart',
+            ammThroughAs: 'relation',
+          },
+          foreignKey: 'cart_id',
+          otherKey: 'product_id',
+        }],
       },
     },
     notification: {
@@ -470,6 +491,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
     },
     log: {
       columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
         type: ['string', 900],
         data: {
           type: 'jsonb',
@@ -769,6 +795,7 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           autoIncrement: true,
         },
         name: 'string',
+        nameEn: 'string',
         priority: 'integer',
         active: 'boolean',
         data: {
@@ -816,10 +843,15 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         colorCode: 'string',
         size: 'string',
         ...productColumns,
+        variantData: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
         sizeChart: 'string',
         priority: 'integer',
         ordering: 'integer',
         instock: 'integer',
+        orderQuota: 'integer',
         isLimit: {
           type: 'boolean',
           defaultValue: false,
@@ -830,6 +862,16 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         },
         group: ['belongsTo', 'productGroup', {
           foreignKey: 'group_id',
+        }],
+        carts: ['belongsToMany', 'browserSession', {
+          through: {
+            unique: false,
+            ammModelName: 'cartProduct',
+            ammThroughTableColumnAs: 'product',
+            ammThroughAs: 'relation',
+          },
+          foreignKey: 'product_id',
+          otherKey: 'cart_id',
         }],
         orders: ['belongsToMany', 'order', {
           through: {
@@ -1101,6 +1143,11 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         esunTradeInfo: 'text',
         esunTradeState: 'string',
 
+        cvsName: 'string',
+        smseData: 'text',
+        smsePayno: 'string',
+        smseSmilepayno: 'string',
+
         user: ['belongsTo', 'user', {
           foreignKey: 'user_id',
         }],
@@ -1113,6 +1160,9 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           },
           foreignKey: 'order_id',
           otherKey: 'product_id',
+        }],
+        couponRecord: ['hasOne', 'couponRecord', {
+          foreignKey: 'order_id',
         }],
       },
       extraOptions: {
@@ -1162,6 +1212,90 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
             privateVd: {
               columns: 'all',
               permissions: getViewPermissions(userIdF('user_id')),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
+          },
+          restrictedColumns: [],
+        },
+      },
+    },
+    coupon: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        price: {
+          type: 'integer',
+          defaultValue: 0,
+        },
+        isDeduct: {
+          type: 'boolean',
+          defaultValue: false,
+        },
+        memo: 'text',
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+        adminUser: ['belongsTo', 'user', {
+          foreignKey: 'admin_user_id',
+        }],
+        user: ['belongsTo', 'user', {
+          foreignKey: 'user_id',
+        }],
+        couponRecord: ['hasOne', 'couponRecord', {
+          foreignKey: 'coupon_id',
+        }],
+      },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(null),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
+          },
+          restrictedColumns: [],
+        },
+      },
+    },
+    couponRecord: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        action: 'string',
+        price: {
+          type: 'integer',
+          defaultValue: 0,
+        },
+        user: ['belongsTo', 'user', {
+          foreignKey: 'user_id',
+        }],
+        byCoupon: ['belongsTo', 'coupon', {
+          foreignKey: 'coupon_id',
+        }],
+        byOrder: ['belongsTo', 'order', {
+          foreignKey: 'order_id',
+        }],
+      },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(null),
             },
             // orgSharedVd: {
             //   columns: 'all',
@@ -1450,6 +1584,51 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
             // orgSharedVd: {
             //   columns: 'all',
             //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
+          },
+          restrictedColumns: [],
+        },
+      },
+    },
+    cartProduct: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        quantity: 'integer',
+        price: 'integer',
+        subtotal: 'integer',
+        assignedQuantity: 'integer',
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+      },
+      options: {
+        indexes: [
+          {
+            name: 'cart_product_uniqueness',
+            unique: true,
+            fields: ['cart_id', 'product_id'],
+            where: {
+              deleted_at: null,
+            },
+          },
+        ],
+      },
+      extraOptions: {
+        hasura: {
+          publicColumns: ['id'],
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(null),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(null),
             // },
           },
           restrictedColumns: [],

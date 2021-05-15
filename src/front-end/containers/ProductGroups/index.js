@@ -35,6 +35,7 @@ import BasicSection from '~/components/Section/Basic';
 import EnhancedTable from '~/components/EnhancedTable';
 import useRouterQuery from '~/hooks/useRouterQuery';
 import useRouterPush from '~/hooks/useRouterPush';
+import useGqlQuery from '~/hooks/useGqlQuery';
 import FilterSection from './FilterSection';
 import DetailTable from './DetailTable';
 
@@ -151,89 +152,6 @@ const getColumnConfig = () => {
   return data;
 };
 
-const PRODUCT_GROUP_LIST_QUERY = gql`
-  query ProductGroupList {
-    productGroups(where: {deleted_at: {_is_null: true}}, order_by: {created_at: desc}) {
-      id
-      uid
-      customId
-      products_aggregate(where: {deleted_at: {_is_null: true}}) {
-        aggregate{ count }
-      }
-      products(where: {deleted_at: {_is_null: true}}) { id, name }
-      category { id, name }
-      campaigns(where: {deleted_at: {_is_null: true}}) { campaign {
-        id
-        name
-        type
-        durationType
-        state
-        start
-        end
-        data
-        created_at
-        updated_at
-        deleted_at
-      } }
-      thumbnail
-      pictures
-      name
-      price
-      weight
-      description
-      materials
-      data
-    }
-    productGroupAggregate(where: {deleted_at: {_is_null: true}}) {
-      aggregate {
-        count
-      }
-    }
-  }
-`;
-
-
-const PRODUCT_GROUP_LIST_SEARCH_QUERY = gql`
-  query ProductGroupListSearch($name: String!) {
-    productGroups(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}, order_by: {created_at: desc}) {
-      id
-      uid
-      customId
-      products_aggregate(where: {deleted_at: {_is_null: true}}) {
-        aggregate{ count }
-      }
-      products(where: {deleted_at: {_is_null: true}}) { id, name }
-      category { id, name }
-      campaigns(where: {deleted_at: {_is_null: true}}) { campaign {
-        id
-        name
-        type
-        durationType
-        state
-        start
-        end
-        data
-        created_at
-        updated_at
-        deleted_at
-      } }
-      thumbnail
-      pictures
-      name
-      price
-      weight
-      description
-      materials
-      data
-    }
-    productGroupAggregate(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}) {
-      aggregate {
-        count
-      }
-    }
-  }
-`;
-
 export default (props) => {
   const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState([]);
@@ -242,8 +160,48 @@ export default (props) => {
 
   const query = useRouterQuery();
   // console.log('query.get("text") :', query.get('text'));
+  const gqlQuery = useGqlQuery(
+    'productGroups',
+    'productGroupAggregate',
+    `
+      id
+      uid
+      customId
+      products_aggregate(where: {deleted_at: {_is_null: true}}) {
+        aggregate{ count }
+      }
+      products(where: {deleted_at: {_is_null: true}}) { id, name }
+      category { id, name }
+      campaigns(where: {deleted_at: {_is_null: true}}) { campaign {
+        id
+        name
+        type
+        durationType
+        state
+        start
+        end
+        data
+        created_at
+        updated_at
+        deleted_at
+      } }
+      thumbnail
+      pictures
+      name
+      price
+      weight
+      description
+      materials
+      data
+    `,
+    {
+      // args: ['$name: String!'],
+      // where: ['{name: {_ilike: $name}}'],
+      orderBy: '{created_at: desc}',
+    },
+  );
 
-  const { loading, error, data } = useQuery(PRODUCT_GROUP_LIST_QUERY, {
+  const { loading, error, data } = useQuery(gqlQuery, {
     variables: {
       name: refreshCount.toString(),
     },

@@ -114,6 +114,8 @@ export default function EnhancedTable({
   columns: columnsProp,
   columnSizes: columnSizesProp,
   renderRowDetail,
+
+  hidePagination,
 }) {
   const classes = useStyles();
   const [order, setOrder] = useHalfControllable(orderProp || defaultSorting.order, onOrderChange, defaultSorting.order || 'id');
@@ -197,6 +199,7 @@ export default function EnhancedTable({
               rowCount={rows.length}
               columns={columnsProp}
               columnSizes={columnSizesProp}
+              renderRowDetail={renderRowDetail}
             />
             <TableBody>
               {stableSort(rows, getComparator(columnsProp, order, orderBy))
@@ -226,15 +229,19 @@ export default function EnhancedTable({
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          {...paginationProps}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
+        {
+          !hidePagination && (
+            <TablePagination
+              {...paginationProps}
+              component="div"
+              count={rows.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onChangePage={handleChangePage}
+              onChangeRowsPerPage={handleChangeRowsPerPage}
+            />
+          )
+        }
         <LoadingMask loading={loading} />
       </Paper>
       {/* <FormControlLabel

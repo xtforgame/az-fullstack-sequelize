@@ -1,0 +1,74 @@
+version: '3'
+services:
+  minio1:
+    image: minio/minio:RELEASE.2019-04-09T01-22-30Z
+
+    container_name: minio1
+
+    volumes:
+      - ./minio_data:/data
+
+    ports:
+      - "9001:9000"
+
+    environment:
+      MINIO_ACCESS_KEY: minioxxxak
+      MINIO_SECRET_KEY: minioxxxsk
+
+    command: server /data
+
+  pg-master:
+    image: postgres:12
+
+    container_name: postgresql-master
+    environment:
+      POSTGRES_PASSWORD: xxxx1234
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+
+  graphql-engine:
+    image: hasura/graphql-engine:v2.0.0-alpha.3
+    ports:
+    - "8081:8080"
+    depends_on:
+    - "pg-master"
+    restart: always
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:xxxx1234@pg-master:5432/postgres
+      ## HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:xxxx1234@pg-master:5432/db_studiodoe
+      ## enable the console served by server
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
+      ## enable debugging mode. It is recommended to disable this in production
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      ## uncomment next line to set an admin secret
+      HASURA_GRAPHQL_ADMIN_SECRET: xxxxhsr
+
+  pg-src:
+    image: postgres:12
+
+    container_name: postgresql-src
+    environment:
+      POSTGRES_PASSWORD: xxxx1234
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5433:5432"
+
+  graphql-engine-src:
+    image: hasura/graphql-engine:v2.0.0-alpha.3
+    ports:
+    - "8082:8080"
+    depends_on:
+    - "pg-src"
+    restart: always
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:xxxx1234@pg-src:5432/postgres
+      ## HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:xxxx1234@pg-master:5432/db_studiodoe
+      ## enable the console served by server
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
+      ## enable debugging mode. It is recommended to disable this in production
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      ## uncomment next line to set an admin secret
+      HASURA_GRAPHQL_ADMIN_SECRET: xxxxhsr

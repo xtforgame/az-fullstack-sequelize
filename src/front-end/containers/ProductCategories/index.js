@@ -152,7 +152,7 @@ export default (props) => {
   const gqlQuery = useGqlQuery(
     'productCategories',
     'productCategoryAggregate',
-    'id name priority active data',
+    'id name nameEn priority active data',
     {
       // args: ['$name: String!'],
       // where: ['{name: {_ilike: $name}}'],

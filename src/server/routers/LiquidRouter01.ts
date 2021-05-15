@@ -120,12 +120,12 @@ export default class LiquidRouter01 extends LiquidRouterBase {
       return data && data.productGroups && data.productGroups.filter(g => g.products.length > 0 && g.products[0].isLimit);
     }));
 
-    const typsLf = this.liquidFor({
-      getFilename: ({ ctx }) => 'pages/typs/index.html.liquid',
+    const categoriesLf = this.liquidFor({
+      getFilename: ({ ctx }) => 'pages/categories/index.html.liquid',
       getScopeData: async ({ ctx }) => ctx.local.products,
     });
-    router.get('/typs/:typsId', async (ctx, next) => {
-      if (!parseInt(ctx.params.typsId)) {
+    router.get('/categories/:categoryId', async (ctx, next) => {
+      if (!parseInt(ctx.params.categoryId)) {
         return next();
       }
       const {
@@ -149,7 +149,7 @@ export default class LiquidRouter01 extends LiquidRouterBase {
           }
         `,
         {
-          where: [`{category_id: {_eq: "${ctx.params.typsId}"}}`]
+          where: [`{category_id: {_eq: "${ctx.params.categoryId}"}}`]
         },
       );
       const { data } = await this.sendGraphQLRequest(buildQueryString());
@@ -157,7 +157,7 @@ export default class LiquidRouter01 extends LiquidRouterBase {
       if (data && data.productGroups) {
         ctx.local.products = productGroupsToListLiquidScope(data.productGroups);
       }
-      return typsLf(ctx, next);
+      return categoriesLf(ctx, next);
     });
   }
 }

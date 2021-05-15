@@ -27,24 +27,28 @@ export default class HttpApp extends ServiceBase {
   static $funcDeps = {
     start: ['routerManager', 'mailer'],
   };
-
+  
   constructor(envCfg) {
     super();
     this.app = new Koa();
     this.app.proxy = !!process.env.KOA_PROXY_ENABLED;
     // prevent any error to be sent to user
-    this.app.use((ctx, next) => next().catch((err) => {
-      if (err instanceof RestfulError) {
-        return err.koaThrow(ctx);
-      }
-      // console.log('err.restfulError :', err.restfulError);
-      if (!err.status) {
-        console.error(err);
-        console.error(err.stack);
-        ctx.throw(500);
-      }
-      throw err;
-    }));
+    this.app.use((ctx, next) => {
+      ctx.local = ctx.local || {};
+      ctx.local.azIp = ctx.request.headers['x-forwarded-for'] || ctx.ip;
+      return next().catch((err) => {
+        if (err instanceof RestfulError) {
+          return err.koaThrow(ctx);
+        }
+        // console.log('err.restfulError :', err.restfulError);
+        if (!err.status) {
+          console.error(err);
+          console.error(err.stack);
+          ctx.throw(500);
+        }
+        throw err;
+      });
+    });
     this.app.use(bodyParser({
       enableTypes:['json', 'form', 'text'],
       formLimit: '10mb',

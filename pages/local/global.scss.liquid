@@ -1,0 +1,63 @@
+.az-mobile-only {
+}
+
+.az-desktop-only {
+  display: none !important;
+}
+
+@media (min-width:768px) {
+  .az-mobile-only {
+    display: none !important;
+  }
+
+  .az-desktop-only {
+    display: block !important;
+  }
+}
+
+:root{
+  --azg-theme-primary: #faefe3; /* rgb(250, 239, 227); */
+  --azg-theme-on-primary: #936f4a; /* rgb(143, 113, 80); */
+  --azg-theme-on-primary-header: #3c260f; /* rgb(143, 113, 80); */
+  --azg-theme-surface: #fceee0; /* rgb(250, 239, 227); */
+  --azg-theme-background: #fef8f3; /* rgb(252, 248, 244); */
+  --azg-section-padding-top: 50px;
+  --azg-section-padding-bottom: 50px;
+
+  --agc1-theme-primary: black;
+  --agc1-theme-on-primary: #e8e8e8;
+}
+:root{
+  --azwc-nav-button-line-width: 1.5rem;
+  --azwc-nav-button-line-border-radius: calc(var(--azwc-nav-button-line-width) / 16);
+  --azwc-nav-button-border-radius: 50%;
+  --azwc-nav-button-duration: 0.5s;
+  --azwc-nav-button-toggled-size: 1;
+  --azwc-nav-button-toggled-btn-bg: #274380;
+  --azwc-nav-button-toggled-content-bg: #FFF;
+  --azwc-nav-button-size: calc(var(--azwc-nav-button-line-width) * 1.8);
+  --azwc-nav-button-line-height: calc(var(--azwc-nav-button-line-width) / 8);
+  --azwc-nav-button-padding-left: calc((var(--azwc-nav-button-size) - var(--azwc-nav-button-line-width)) / 2);
+  --azwc-nav-button-padding-top: calc((var(--azwc-nav-button-size) - var(--azwc-nav-button-line-height)) / 2);
+}
+:root{
+  --azwc-nav-menu-z-index-1: 999;
+  --azwc-nav-menu-z-index-2: 1000;
+  --azwc-nav-menu-item-min-width: 12em;
+  --azwc-nav-menu-root-item-padding: 2px 20px;
+  --azwc-nav-menu-item-padding: 8px 10px;
+  --azwc-nav-menu-box-shadow: none;
+  --azwc-nav-menu-root-item-active-bg-color: rgba(147,111,74, 0.9);
+  --azwc-nav-menu-root-item-color: inherit;
+  --azwc-nav-menu-root-item-hover-color: inherit;
+  --azwc-nav-menu-item-color: inherit;
+  --azwc-nav-menu-item-hover-color: inherit;
+  --azwc-nav-menu-lv2-item-bg-color: rgba(147,111,74, 0.1);
+  --azwc-nav-menu-lv3-item-bg-color: rgba(147,111,74, 0.2);
+  --azwc-nav-menu-lv4-item-bg-color: rgba(147,111,74, 0.3);
+  // --azwc-nav-menu-lv4-item-hover-bg-color:rgba(147,111,74, 0.5);
+
+
+  --swiper-navigation-color: #FFF;
+  --swiper-theme-color: #FFF;
+}

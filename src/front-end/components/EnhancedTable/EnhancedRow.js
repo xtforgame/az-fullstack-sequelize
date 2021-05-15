@@ -34,11 +34,15 @@ export default function EnhancedRow({
         key={row.id}
         selected={isItemSelected}
       >
-        <TableCell>
-          <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
+        {
+          renderRowDetail && (
+            <TableCell>
+              <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
+                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+              </IconButton>
+            </TableCell>
+          )
+        }
         <TableCell padding="checkbox">
           <Checkbox
             checked={isItemSelected}

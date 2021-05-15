@@ -26,6 +26,7 @@ export default function EnhancedTableHead(props) {
     onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort,
     columns,
     columnSizes,
+    renderRowDetail,
   } = props;
   const classes = useStyles();
   const createSortHandler = property => (event) => {
@@ -35,9 +36,13 @@ export default function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <div />
-        </TableCell>
+        {
+          renderRowDetail && (
+            <TableCell padding="checkbox">
+              <div />
+            </TableCell>
+          )
+        }
         <TableCell padding="checkbox">
           <Checkbox
             indeterminate={numSelected > 0 && numSelected < rowCount}

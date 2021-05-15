@@ -14,7 +14,7 @@ export { jwtIssuer } from './codegen/test';
 
 const runningMode = 'Test';
 const hasuraOrigin = 'http://localhost:8081';
-// const hasuraOrigin = 'http://rick.cloud:22004';
+// const hasuraOrigin = 'http://rick.cloud/hasura';
 const hasuraEndpoint = `${hasuraOrigin}/v1/graphql`;
 
 export {

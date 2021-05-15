@@ -69,7 +69,7 @@ export const productToDetailLiquidScope = (product) => {
   }).replace(/<br \/>/g, '\n');
   const seoTitle = `${product.name} (${product.colorName}) (${product.size})`;
   const thumbnailImage = (product.thumbnail && product.thumbnail.image && product.thumbnail.image.imgUrl) || '';
-  
+
   const sizeMap = {};
   const colorMap = {};
 
@@ -111,8 +111,7 @@ export const productToDetailLiquidScope = (product) => {
   const sizes = Object.values(sizeMap)
     .sort((a : any, b : any) => a.forOrder.priority - b.forOrder.priority)
     .map((p: any) => sizeToView(p.current) || sizeToView(p.forOrder, true));
-  
-    
+
 
   const colorToView = (p, hasProduct = false) => p && ({
     title: p.colorName,
@@ -175,10 +174,9 @@ export const getProduct = async (id) => {
 };
 
 
-export const productGroupsToListLiquidScope = (productGroups) => {
-  return {
-    productGroups,
-    sections: productGroups.filter(p => p.products.length !== 0).map(p => `
+export const productGroupsToListLiquidScope = productGroups => ({
+  productGroups: productGroups.filter(p => p.products.length !== 0),
+  sections: productGroups.filter(p => p.products.length !== 0).map(p => `
     <section class="item"><a class="item-link" href="/products/${p.products[0].id}">
       <div class="item-inner lazy" data-src="${(p.thumbnail && p.thumbnail.image && p.thumbnail.image.imgUrl) || ''}"></div>
       <div class="item-title">
@@ -187,8 +185,7 @@ export const productGroupsToListLiquidScope = (productGroups) => {
       </div>
     </a></section>
   `),
-  };
-};
+});
 
 export const getProducts = async () => {
   const {
