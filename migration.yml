@@ -55,6 +55,9 @@ services:
     ports:
       - "5433:5432"
 
+    volumes:
+      - ../pgdata:/var/lib/postgresql/data/pgdata
+
   graphql-engine-src:
     image: hasura/graphql-engine:v2.0.0-alpha.3
     ports:

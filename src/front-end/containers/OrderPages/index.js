@@ -152,7 +152,7 @@ const getColumnConfig = () => {
         const push = useRouterPush();
         return (
           <Tooltip title="修改">
-            <IconButton color="primary" aria-label="修改" onClick={() => push(`/product-group/edit/${row.id}`)}>
+            <IconButton color="primary" aria-label="修改" onClick={() => push(`/order/edit/${row.id}`)}>
               <EditIcon />
             </IconButton>
           </Tooltip>
@@ -186,6 +186,8 @@ export default (props) => {
     'orderAggregate',
     `
       id
+      state
+      payWay
       user { id, name }
       memo
       orderer

@@ -58,13 +58,13 @@ export default class ECommerceRouter extends RouterBase {
         return RestfulError.koaThrowWith(ctx, 404, 'User not found');
       }
       const {
-        durationType,
-        data,
+        // durationType,
+        // data,
       } = ctx.request.body;
       return ctx.body = await createCampaign(this.resourceManager, {
         ...ctx.request.body,
-        durationType: '',
-        data: {},
+        // durationType: '',
+        // data: {},
       });
     });
 
@@ -73,8 +73,8 @@ export default class ECommerceRouter extends RouterBase {
         return RestfulError.koaThrowWith(ctx, 404, 'User not found');
       }
       const {
-        durationType,
-        data,
+        // durationType,
+        // data,
         ...rest
       } = ctx.request.body;
       return ctx.body = await patchCampaign(this.resourceManager, ctx.params.id, rest);

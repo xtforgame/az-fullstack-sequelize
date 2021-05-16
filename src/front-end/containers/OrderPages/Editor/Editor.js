@@ -14,6 +14,10 @@ import { useQuery, gql } from '@apollo/client';
 import useStateWithError from 'azrmui/hooks/useStateWithError';
 /* eslint-disable react/sort-comp */
 import axios from 'axios';
+import path from 'path';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 import Chip from '@material-ui/core/Chip';
 import { makeStyles } from '@material-ui/core/styles';
 // import { getDefaultBeforeDaysConfig, makeDaysFilter } from '~/utils/beforeDaysHelper';
@@ -23,12 +27,27 @@ import DialogContent from '@material-ui/core/DialogContent';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import {
-  FormNumberInput, FormOutlinedSelect, FormTextField, FormSpace,
+  FormNumberInput, FormImagesInput, FormDatePicker, FormFieldButtonSelect, FormTextField, FormSpace,
 } from 'azrmui/core/FormInputs';
+import { createHandleUploadFunction } from 'azrmui/core/FormInputs/FormImagesInput';
+import ColorInput from '~/components/ColorInput';
 import DateRangeInput from '~/components/DateRangeInput';
 import useRouterPush from '~/hooks/useRouterPush';
 import FormAutocomplete from '~/components/FormAutocomplete';
 import LoadingMask from '~/components/EnhancedTable/LoadingMask';
+import useTextField from '~/components/hooks/inputs/useTextField';
+import useNumberInput from '~/components/hooks/inputs/useNumberInput';
+import useFormSelect from '~/components/hooks/inputs/useFormSelect';
+import useDateRange from '~/components/hooks/inputs/useDateRange';
+import useSwitch from '~/components/hooks/inputs/useSwitch';
+import useCheckbox from '~/components/hooks/inputs/useCheckbox';
+import {
+  orderStates,
+  orderStateNameFunc,
+  orderPayWayNameFunc,
+} from 'common/domain-logic/constants/order';
+import ProductDetail from '../DetailTable/ProductDetail';
+import ActionsPaper from './ActionsPaper';
 
 const useStyles = makeStyles(theme => ({
   flexContainer: {
@@ -42,7 +61,18 @@ const useStyles = makeStyles(theme => ({
     padding: 24,
     flex: 1,
   },
+  container: {
+    top: 0,
+    position: 'relative',
+  },
+  actionsPaperContainer: {
+    top: 120,
+    right: 40,
+    position: 'fixed',
+  }
 }));
+
+const handleUpload = createHandleUploadFunction('/api/files');
 
 function isInteger(str) {
   return !Number.isNaN(str) && !Number.isNaN(parseInt(str));
@@ -53,9 +83,18 @@ function isNumber(str) {
 }
 
 
-const CAMPAIGN_LIST_QUERY = gql`
-  query CampaignList {
-    campaigns(where: {deleted_at: {_is_null: true}}, order_by: {created_at: desc}) {
+const PRODUCT_GROUP_LIST_QUERY = gql`
+query ProductGroupList {
+  productGroups(where: {deleted_at: {_is_null: true}}, order_by: {created_at: desc}) {
+    id
+    uid
+    customId
+    products_aggregate(where: {deleted_at: {_is_null: true}}) {
+      aggregate{ count }
+    }
+    products(where: {deleted_at: {_is_null: true}}) { id, name }
+    category { id, name }
+    campaigns(where: {deleted_at: {_is_null: true}}) { campaign {
       id
       name
       type
@@ -67,22 +106,30 @@ const CAMPAIGN_LIST_QUERY = gql`
       created_at
       updated_at
       deleted_at
-    }
-    campaignAggregate(where: {deleted_at: {_is_null: true}}) {
-      aggregate {
-        count
-      }
-    }
-    productCategories(where: {deleted_at: {_is_null: true}}, order_by: {created_at: desc}) {
-      id name priority active data
-    }
-    productCategoryAggregate(where: {deleted_at: {_is_null: true}}) {
-      aggregate {
-        count
-      }
+    } }
+    thumbnail
+    pictures
+    name
+    price
+    weight
+    description
+    materials
+    data
+  }
+  productGroupAggregate(where: {deleted_at: {_is_null: true}}) {
+    aggregate {
+      count
     }
   }
+}
 `;
+
+const getDefaultColor = (editingData) => {
+  if (editingData && editingData.colorName && editingData.color) {
+    return [editingData.colorName, JSON.parse(editingData.color)];
+  }
+  return ['黑色', { r: 0, g: 0, b: 0, a: 1 }];
+};
 
 export default (props) => {
   const {
@@ -94,71 +141,47 @@ export default (props) => {
   const classes = useStyles();
   const [refreshCount, setRefreshCount] = useState(0);
 
-  const [campaigns, setCampaigns, campaignsError, setCampaignsError] = useStateWithError(isCreating ? [] : editingData.campaigns.map(c => c.campaign));
-  const [category, setCategory, categoryError, setCategoryError] = useStateWithError(isCreating ? 0 : editingData.category.id);
-  const [name, setName, nameError, setNameError] = useStateWithError(isCreating ? '' : editingData.name);
-  const [price, setPrice, priceError, setPriceError] = useStateWithError(isCreating ? 0 : editingData.price);
-  const [materials, setMaterials, materialsError, setMaterialsError] = useStateWithError(isCreating ? '' : editingData.materials);
-  const [description, setDescription, descriptionError, setDescriptionError] = useStateWithError(isCreating ? '' : editingData.description);
-  const [weight, setWeight, weightError, setWeightError] = useStateWithError(isCreating ? '' : editingData.weight);
+  const [group, setGroup, groupError, setGroupError] = useStateWithError(isCreating ? null : editingData.group);
+  const [
+    [name, setName, nameError, setNameError],
+    nameInput,
+  ] = useTextField(isCreating ? '' : editingData.name, '', {
+    label: '商品名稱',
+    required: true,
+  });
+  const [
+    [selectedState, setSelectedState, selectedStateError, setSelectedStateError],
+    selectedStateInput,
+  ] = useFormSelect(isCreating ? orderStates[0].id : editingData.state, '', {
+    label: '訂單狀態',
+    valueKey: 'id',
+    labelKey: 'name',
+    items: orderStates,
+  });
 
   const push = useRouterPush();
   const submit = async () => {
-    let errorOccurred = false;
-    if (!name) {
-      setNameError('請輸入商品群組名稱');
-      errorOccurred = true;
-    }
-
-    console.log('category :', category);
-    if (!category) {
-      setCategoryError('請選擇商品分類');
-      errorOccurred = true;
-    }
-
-    if (!price || !isInteger(price)) {
-      setPriceError('錯誤的價格');
-      errorOccurred = true;
-    }
-
-    if (!weight || !isNumber(weight)) {
-      setWeightError('錯誤的重量');
-      errorOccurred = true;
-    }
+    let errorOccurred = false; d
 
     if (errorOccurred) {
       return;
     }
     const data = {
-      name,
-      price,
-      materials,
-      weight,
-      category_id: category,
-      campaigns: campaigns.map(c => c.id),
-      description,
+      state: selectedStateInput,
     };
     try {
-      if (isCreating) {
-        await axios({
-          method: 'post',
-          url: 'api/product-groups',
-          data,
-        });
-      } else {
-        await axios({
-          method: 'patch',
-          url: `api/product-groups/${editingData.id}`,
-          data,
-        });
-      }
-      push('/product-group');
+      // await axios({
+      //   method: 'patch',
+      //   url: `api/products/${editingData.id}`,
+      //   data,
+      // });
+      push('/order');
     } catch (error) {
       alert(`更新失敗：${error.message}`);
     }
   };
 
-  const { loading, error, data } = useQuery(CAMPAIGN_LIST_QUERY, {
+  const { loading, error, data } = useQuery(PRODUCT_GROUP_LIST_QUERY, {
     variables: {
       name: refreshCount.toString(),
     },
@@ -169,153 +192,66 @@ export default (props) => {
   if (error) {
     return (
       <pre>
-        Error in CAMPAIGN_LIST_QUERY
+        Error in PRODUCT_GROUP_LIST_QUERY
         {JSON.stringify(error, null, 2)}
       </pre>
     );
   }
-
+  console.log('editingData :', editingData);
   return (
     <React.Fragment>
-      <DialogTitle id="alert-dialog-title">
-        {isCreating ? '新增' : '編輯'}
-        商品群組
-      </DialogTitle>
-      <DialogContent>
-        <div className={classes.flexContainer}>
-          <div className={classes.flex1}>
-            {(!loading && data && data.campaigns) && (
-              <FormAutocomplete
-                inputProps={{
-                  variant: 'outlined',
-                  placeholder: '新增關聯活動',
-                  margin: 'dense',
-                  fullWidth: true,
-                  label: '關聯活動',
-                }}
-                noOptionsText="查無資料"
-                label="關聯活動"
-                fullWidth
-                size="small"
-                multiple
-                options={data.campaigns}
-                value={campaigns}
-                onChange={(event, newValue) => {
-                  setCampaigns(newValue);
-                }}
-                renderOption={option => (
-                  <React.Fragment>
-                    {option.name}
-                  </React.Fragment>
-                )}
-                filterOptions={(options, state) => options.filter(o => !campaigns.find(c => c.id === o.id))}
-                getOptionLabel={option => option.name}
-                renderTags={(value, getTagProps) => value.map((option, index) => (
-                  <Chip size="small" variant="outlined" label={option.name} {...getTagProps({ index })} />
-                ))}
-              />
-            )}
-            <FormSpace variant="content1" />
-            {(!loading && data && data.productCategories) && (
-              <FormOutlinedSelect
-                label="商品分類"
-                error={!!categoryError}
-                helperText={categoryError}
-                value={category}
-                onChange={(e, v) => {
-                  setCategory(e.target.value);
-                }}
-                margin="dense"
-                fullWidth
-                items={data.productCategories.map(({ id, name}) => ({ value: id, label: name }))}
-              />
-            )}
-            <FormSpace variant="content1" />
-            <FormTextField
-              label="群組名稱"
-              error={!!nameError}
-              helperText={nameError}
-              // label={label}
-              // onKeyPress={handleEnterForTextField}
-              value={name}
-              onChange={e => setName(e.target.value)}
-              margin="dense"
-              fullWidth
-            />
-            <FormSpace variant="content1" />
-            <FormNumberInput
-              label="價格(新台幣)"
-              currency
-              error={!!priceError}
-              helperText={priceError}
-              // label={label}
-              // onKeyPress={handleEnterForTextField}
-              value={price}
-              onChange={e => setPrice(e.target.value)}
-              margin="dense"
-              fullWidth
-            />
-            <FormSpace variant="content1" />
-            <FormTextField
-              label="商品材質"
-              error={!!materialsError}
-              helperText={materialsError}
-              // label={label}
-              // onKeyPress={handleEnterForTextField}
-              value={materials}
-              onChange={e => setMaterials(e.target.value)}
-              margin="dense"
-              fullWidth
-              multiline
-              rows={5}
-              rowsMax={20}
-            />
-            <FormSpace variant="content1" />
-            <FormTextField
-              label="商品描述"
-              error={!!descriptionError}
-              helperText={descriptionError}
-              // label={label}
-              // onKeyPress={handleEnterForTextField}
-              value={description}
-              onChange={e => setDescription(e.target.value)}
-              margin="dense"
-              fullWidth
-              multiline
-              rows={5}
-              rowsMax={20}
-            />
-            <FormSpace variant="content1" />
-            <FormNumberInput
-              label="商品重量(公克)"
-              error={!!weightError}
-              helperText={weightError}
-              // label={label}
-              // onKeyPress={handleEnterForTextField}
-              value={weight}
-              onChange={e => setWeight(e.target.value)}
-              margin="dense"
-              fullWidth
-              InputProps={{
-                inputProps: {
-                  decimalScale: 3,
-                  thousandSeparator: true,
-                  suffix: ' (g)',
-                },
-              }}
-            />
+      <div className={classes.container}>
+        <DialogTitle id="alert-dialog-title">
+          編輯訂單
+        </DialogTitle>
+        <DialogContent>
+          <div className={classes.flexContainer}>
+            <div className={classes.flex1}>
+              <ListItem>
+                <ListItemText
+                  primary="訂單編號"
+                  secondary={editingData?.id}
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemText
+                  primary="購買人"
+                  secondary={editingData?.data?.orderData?.order?.buyer?.email}
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemText
+                  primary="付款方式"
+                  secondary={orderPayWayNameFunc(editingData?.payWay)}
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemText
+                  primary="訂單狀態"
+                  secondary={orderStateNameFunc(editingData?.state)}
+                />
+              </ListItem>
+              {/* <FormSpace variant="content1" />
+              {selectedStateInput.render()} */}
+              <FormSpace variant="content1" />
+              <ProductDetail row={editingData} assign={() => {}} />
+              <FormSpace variant="content1" />
+            </div>
           </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => { push('/order'); }} color="primary">
+            返回
+          </Button>
+          <Button variant="contained" onClick={submit} color="primary">
+            更新
+          </Button>
+        </DialogActions>
+        <div className={classes.actionsPaperContainer}>
+          <ActionsPaper row={editingData} assign={() => {}} />
         </div>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => { push('/product-group'); }} color="primary">
-          返回
-        </Button>
-        <Button variant="contained" onClick={submit} color="primary">
-          {isCreating ? '新增' : '更新'}
-        </Button>
-      </DialogActions>
-      <LoadingMask loading={loading} />
+        <LoadingMask loading={loading} />
+      </div>
     </React.Fragment>
   );
 };

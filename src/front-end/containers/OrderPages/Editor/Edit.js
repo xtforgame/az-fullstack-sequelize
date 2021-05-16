@@ -5,34 +5,36 @@ import LoadingMask from '~/components/EnhancedTable/LoadingMask';
 import Editor from './Editor';
 
 const PRODUCT_GROUP_QUERY = gql`
-  query ProductGroup($id: bigint! = 0) {
-    productGroup(id: $id){
+  query Order($id: bigint! = 0) {
+    order(id: $id){
       id
-      uid
-      customId
-      products(where: {deleted_at: {_is_null: true}}) { id, name }
-      category { id, name }
-      campaigns(where: {deleted_at: {_is_null: true}}) { campaign {
-        id
-        name
-        type
-        durationType
-        state
-        start
-        end
-        data
-        created_at
-        updated_at
-        deleted_at
-      } }
-      thumbnail
-      pictures
-      name
-      price
-      weight
-      materials
-      description
+      state
+      payWay
+      user { id, name }
+      memo
+      orderer
+      recipient
       data
+      created_at
+      products {
+        price
+        quantity
+        subtotal
+        assignedQuantity
+        order_id
+        id
+        data
+        product_id
+        product {
+          name
+          customId
+          id
+          size
+          instock
+          orderQuota
+          soldout
+        }
+      }
     }
   }
 `;
@@ -68,9 +70,9 @@ export default (props) => {
 
   return (
     <BasicSection withMaxWith>
-      {(!loading && !error && data && data.productGroup) && (
+      {(!loading && !error && data && data.order) && (
         <Editor
-          editingData={data.productGroup}
+          editingData={data.order}
         />
       )}
       <LoadingMask loading={loading || !data} />

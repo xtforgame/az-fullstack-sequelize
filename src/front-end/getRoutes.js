@@ -29,6 +29,10 @@ import SubContent08 from '~/containers/Home/SubContent08';
 import SubContent09 from '~/containers/Home/SubContent09';
 
 import OrderPages from '~/containers/OrderPages';
+import CreateOrder from '~/containers/OrderPages/Editor/Create';
+import EditOrder from '~/containers/OrderPages/Editor/Edit';
+
+
 import Campaigns from '~/containers/Campaigns';
 import CreateCampaign from '~/containers/Campaigns/Editor/Create';
 import EditCampaign from '~/containers/Campaigns/Editor/Edit';
@@ -388,6 +392,18 @@ const otherEcRoutes = [
     navbar: {
       title: '訂單管理',
     },
+    exact: true,
+  },
+  {
+    name: 'create-order',
+    path: '/order/edit/new',
+    component: CreateOrder,
+    exact: true,
+  },
+  {
+    name: 'edit-order',
+    path: '/order/edit/:id',
+    component: EditOrder,
   },
   {
     name: 'goods',
