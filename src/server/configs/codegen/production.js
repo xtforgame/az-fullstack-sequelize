@@ -1,6 +1,6 @@
-const externalUrl = 'https://rick.cloud';
-const minioBucketName = 'az-rmd-minio';
-const postgresDbName = 'db_rick_data';
+const externalUrl = 'https://localhost:8443';
+const minioBucketName = 'afs';
+const postgresDbName = 'db_afs';
 
 export {
   externalUrl,

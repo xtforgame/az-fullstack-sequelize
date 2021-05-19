@@ -9,7 +9,7 @@ Run `npm install`
 
 yarn stop-db&&yarn start-db&&yarn start
 
-yarn stop-db&&yarn start-db&&yarn test:hasura&&yarn amm-sync
+yarn stop-db&&yarn start-db&&yarn test:hasura&&yarn build-server-dev&&yarn amm-sync
 
 postgres://postgres:xxxx1234@pg-master:5432/db_rick_data
 

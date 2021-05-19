@@ -2,8 +2,8 @@
 to: src/server/configs/codegen/test.js
 ---
 const externalUrl = 'https://localhost:8443';
-const minioBucketName = '<%= server.minioBucketName %>';
-const postgresDbName = '<%= server.postgresDbName %>';
+const minioBucketName = 'az-rmd-minio';
+const postgresDbName = 'db_rick_data';
 
 export {
   externalUrl,

@@ -22,6 +22,7 @@
     "lint-all-fix": "eslint --fix --ext .js ./src ./test ./internals&& tslint --fix -c ./tslint.json './src/**/*.ts'",
     "build": "cross-env NODE_ENV=production gulp server:build && cross-env NODE_ENV=production gulp server:build:extras && cross-env NODE_ENV=production webpack --config ./webpack/webpack.prod.js",
     "build-server": "cross-env NODE_ENV=production gulp server:build && cross-env NODE_ENV=production gulp server:build:extras",
+    "build-server-dev": "cross-env NODE_ENV=development gulp server:build && cross-env NODE_ENV=development gulp server:build:extras",
     "start": "cross-env NODE_ENV=development gulp server:watch:dev",
     "debug": "cross-env NODE_ENV=development gulp server:watch:dev --inspect",
     "test:server": "eslint --ext .js ./test/server && cross-env NODE_ENV=test mocha --require ./test/babel-register.js './test/server/**/*.spec.js'",
@@ -40,6 +41,7 @@
     "amm-sync": "cross-env NODE_ENV=development node dist/server/scripts/ammSync/index.js",
     "start-mig": "docker-compose -f migration.yml up -d",
     "stop-mig": "docker-compose -f migration.yml down",
+    "init:hasura": "yarn stop-db&&yarn start-db&&yarn test:hasura&&yarn build-server-dev&&yarn amm-sync",
     "test:migration": "cross-env NODE_ENV=test mocha --require ./test/babel-register.js './test/migration/**/*.spec.ts'"
   },
   "license": "MIT",

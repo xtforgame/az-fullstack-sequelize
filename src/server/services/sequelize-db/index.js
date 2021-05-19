@@ -57,6 +57,9 @@ export default class SequelizeDb extends ServiceBase {
     .catch((error) => {
       this.retryCounter++;
       console.log('==== Retry connecting:', this.retryCounter);
+      if (this.retryCounter === 5) {
+        console.log('error :', error);
+      }
       if (error.errInfo && error.errInfo.client) {
         error.errInfo.client.end();
       }

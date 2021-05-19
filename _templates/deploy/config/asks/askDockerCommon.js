@@ -29,7 +29,7 @@ module.exports = async ({ prompter, args }, { localConfig, step }) => {
     choices.push({
       name: 'networkName',
       message: 'Network Name',
-      initial: args.networkName,
+      initial: args.networkName || 'mainginx_net',
       editable: true,
       validate(value, state) {
         // console.log('state :', state);
@@ -39,7 +39,7 @@ module.exports = async ({ prompter, args }, { localConfig, step }) => {
         }
         let letters = /^[A-Za-z]{1}[A-Za-z_0-9]*$/;
         if (!value.match(letters)) {
-          this.error = 'Invalid email address';
+          this.error = 'Invalid Network Name';
           return false;
         }
         this.error = void 0;

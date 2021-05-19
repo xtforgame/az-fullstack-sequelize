@@ -8,16 +8,13 @@
 
 version: '3'
 services:
-  minio1:
+  minio1-afs:
     image: minio/minio:RELEASE.2019-04-09T01-22-30Z
 
-    container_name: ${AZ_CONTAINER_NS:-azinternal}-${AZ_CONTAINER_PROJ:-default}-afs-minio1
+    container_name: ${AZ_CONTAINER_NS:-azinternal}-${AZ_CONTAINER_PROJ:-default}-minio1
 
     volumes:
       - ../minio_data:/data
-
-    ports:
-      - "${AZ_MINIO_PORT:-9000}:9000"
 
     environment:
       MINIO_ACCESS_KEY: minioxxxak
@@ -25,31 +22,25 @@ services:
 
     command: server /data
 
-  pg-master:
+  pg-master-afs:
     image: postgres:12
 
-    container_name: ${AZ_CONTAINER_NS:-azinternal}-${AZ_CONTAINER_PROJ:-default}-afs-pg-master
+    container_name: ${AZ_CONTAINER_NS:-azinternal}-${AZ_CONTAINER_PROJ:-default}-pg-master-afs
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: xxxx1234
       PGDATA: /var/lib/postgresql/data/pgdata
 
-    ports:
-      - "${AZ_PG_PORT:-5432}:5432"
-
     volumes:
       - "../pgdata:/var/lib/postgresql/data/pgdata"
 
-  graphql-engine:
+  graphql-engine-afs:
     image: hasura/graphql-engine:v2.0.0-alpha.3
-    # ports:
-    # - "24004:8080"
-    depends_on:
-    - "pg-master"
+    container_name: ${AZ_CONTAINER_NS:-azinternal}-${AZ_CONTAINER_PROJ:-default}-hasura-afs
     # restart: always
     environment:
-      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:xxxx1234@pg-master:5432/postgres
-      ## HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:xxxx1234@pg-master:5432/db_rick_data
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:xxxx1234@postgres:5432/postgres
+      ## HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:xxxx1234@postgres:5432/db_rick_data
       ## enable the console served by server
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
       ## enable debugging mode. It is recommended to disable this in production
@@ -63,20 +54,26 @@ services:
         max-file: "5"
         max-size: "10m"
 
+    links:
+      - "pg-master-afs:postgres"
+
+    depends_on:
+      - "pg-master-afs"
+
   webserver:
-    image: ${AZ_IMAGE_NS:-azinternal}/${AZ_IMAGE_PROJ:-default}/afswebserver
+    image: ${AZ_IMAGE_NS:-azinternal}/${AZ_IMAGE_PROJ:-default}/webserver-afs
     build:
       context: .
 
-    container_name: ${AZ_CONTAINER_NS:-azinternal}-${AZ_CONTAINER_PROJ:-default}-afs-webserver
+    container_name: ${AZ_CONTAINER_NS:-azinternal}-${AZ_CONTAINER_PROJ:-default}-webserver-afs
 
     links:
-      - "minio1:minio1"
-      - "pg-master:postgres"
+      - "minio1-afs:minio1"
+      - "pg-master-afs:postgres"
 
     depends_on:
-      - "minio1"
-      - "pg-master"
+      - "minio1-afs"
+      - "pg-master-afs"
 
     environment:
       AFS_SECRETS_FOLDER: "/usr/volumes/share/secrets"
@@ -90,3 +87,8 @@ services:
     # ports:
     #   - "443:443"
     #   - "80:80"
+
+networks:
+  default:
+    external:
+      name: mainginx_net

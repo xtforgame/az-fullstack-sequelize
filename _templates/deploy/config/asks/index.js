@@ -4,6 +4,7 @@ const askServerConfig = require('./askServerConfig');
 const askDockerCommon = require('./askDockerCommon');
 const askDockerMinio = require('./askDockerMinio');
 const askDockerPostgres = require('./askDockerPostgres');
+const askDockerHasura = require('./askDockerHasura');
 
 module.exports = [
   askProjectConfig,
@@ -12,4 +13,5 @@ module.exports = [
   askDockerCommon,
   askDockerMinio,
   askDockerPostgres,
+  askDockerHasura,
 ];

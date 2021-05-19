@@ -1,8 +1,9 @@
 const { promiseReduce } = require('./utils');
 
-module.exports = async ({ prompter, args }, { localConfig, step }) => {
+module.exports = async ({ prompter, args }, { localConfig, config, step }) => {
   const choices = []
   const server = localConfig.server || {};
+  const project = config.project || {};
   if (!server.externalUrl) {
     choices.push({
       name: 'externalUrl',
@@ -29,7 +30,7 @@ module.exports = async ({ prompter, args }, { localConfig, step }) => {
     choices.push({
       name: 'minioBucketName',
       message: 'Minio Bucket Name',
-      initial: args.minioBucketName || 'az-rmd-minio',
+      initial: args.minioBucketName || project.dashedName,
       editable: true,
       validate(value, state) {
         // console.log('state :', state);
@@ -51,7 +52,7 @@ module.exports = async ({ prompter, args }, { localConfig, step }) => {
     choices.push({
       name: 'postgresDbName',
       message: 'postgres Db Name',
-      initial: args.postgresDbName || 'db_rick_data',
+      initial: args.postgresDbName || `db_${project.underscoredName}`,
       editable: true,
       validate(value, state) {
         // console.log('state :', state);

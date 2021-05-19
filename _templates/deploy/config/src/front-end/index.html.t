@@ -9,7 +9,7 @@ to: src/front-end/index.html
     <!-- Make the page mobile compatible -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="mobile-web-app-capable" content="yes">
-    <title><%= h.capitalize(project.name) %></title>
+    <title><%= h.capitalize(project.displayName) %></title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
     <!-- grapesjs -->
