@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme => ({
 
 const renderRowCell = (columnName, row, option) => (
   <ContentText>
-    {row[columnName] ? moment(row[columnName]).format('YYYY/MM/DD[\n]hh:mm:ss') : 'N/A'}
+    {row[columnName] ? moment(row[columnName]).format('YYYY/MM/DD[\n]HH:mm:ss') : 'N/A'}
   </ContentText>
 );
 
@@ -87,7 +87,6 @@ const getColumnConfig = () => {
       align: 'left',
       renderRowCell: (columnName, row, option) => {
         const color = JSON.parse(row[columnName]);
-        console.log('color :', color);
         return (
           <div style={{ display: 'flex', }}>
             <div style={{ marginRight: 12, width: 24, height: 24, border: '1px solid black', backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})` }}>

@@ -88,7 +88,7 @@ export default function DetailTable(props) {
             </TableCell>
             <TableCell align="right"> </TableCell>
             <TableCell align="right">
-              {row.data.orderData.order.subtotal}
+              {row.metadata.total}
             </TableCell>
             <TableCell> </TableCell>
           </TableRow>
@@ -103,7 +103,7 @@ export default function DetailTable(props) {
             </TableCell>
             <TableCell align="right"> </TableCell>
             <TableCell align="right">
-              {row.data.orderData.order.shippingFee}
+              {(row.metadata.shippingFee || 0)}
             </TableCell>
             <TableCell> </TableCell>
           </TableRow>
@@ -114,7 +114,7 @@ export default function DetailTable(props) {
             </TableCell>
             <TableCell align="right"> </TableCell>
             <TableCell align="right">
-              {row.data.orderData.order.subtotal + row.data.orderData.order.shippingFee}
+              {row.metadata.total + (row.metadata.shippingFee || 0)}
             </TableCell>
             <TableCell> </TableCell>
           </TableRow>

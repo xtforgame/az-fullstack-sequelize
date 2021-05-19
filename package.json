@@ -40,7 +40,7 @@
     "amm-sync": "cross-env NODE_ENV=development node dist/server/scripts/ammSync/index.js",
     "start-mig": "docker-compose -f migration.yml up -d",
     "stop-mig": "docker-compose -f migration.yml down",
-    "test:migration": "eslint --ext .js ./test/migration && cross-env NODE_ENV=test mocha --require ./test/babel-register.js './test/migration/**/*.spec.js'"
+    "test:migration": "cross-env NODE_ENV=test mocha --require ./test/babel-register.js './test/migration/**/*.spec.ts'"
   },
   "license": "MIT",
   "engines": {
@@ -72,10 +72,11 @@
     "@stfy/react-editor.js": "^1.0.3",
     "apollo-server-koa": "^2.18.2",
     "app-root-path": "^1.0.0",
+    "aws-sdk": "^2.906.0",
     "axios": "^0.19.0",
     "az-authn-kit-v2": "git+https://github.com/xtforgame/az-authn-kit-v2.git#v0.1.2",
     "az-mail-kit": "git+https://github.com/xtforgame/az-mail-kit.git#v0.1.0",
-    "az-model-manager": "git+https://github.com/xtforgame/az-model-manager.git#v0.2.8",
+    "az-model-manager": "git+https://github.com/xtforgame/az-model-manager.git#v0.2.9",
     "az-restful-helpers": "git+https://github.com/xtforgame/az-restful-helpers.git#v0.1.0",
     "az-sequelize-utils": "git+https://github.com/xtforgame/az-sequelize-utils.git#v0.1.0",
     "azldi": "git+https://github.com/xtforgame/azldi.git#v0.1.0",

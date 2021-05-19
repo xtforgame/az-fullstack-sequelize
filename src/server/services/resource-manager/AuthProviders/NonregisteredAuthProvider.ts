@@ -11,8 +11,6 @@ import {
   ProviderUserId,
   AccountLink,
   AuthProvider,
-  sha512gen_salt,
-  crypt,
 } from 'az-authn-kit-v2';
 import { addInitDataToAccountLink } from '~/domain-logic';
 

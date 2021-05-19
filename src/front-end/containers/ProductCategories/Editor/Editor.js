@@ -9,7 +9,7 @@ to your service.
     "react-apollo": "^2.5.5"
 */
 import React, { useEffect, useState } from 'react';
-import moment from 'moment';
+import path from 'path';
 import { useQuery, gql } from '@apollo/client';
 import useStateWithError from 'azrmui/hooks/useStateWithError';
 /* eslint-disable react/sort-comp */
@@ -22,14 +22,17 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
+import { createHandleUploadFunction } from 'azrmui/core/FormInputs/FormImagesInput';
 import {
-  FormNumberInput, FormSwitch, FormTextField, FormSpace,
+  FormNumberInput, FormImagesInput, FormSwitch, FormTextField, FormSpace,
 } from 'azrmui/core/FormInputs';
 import DateRangeInput from '~/components/DateRangeInput';
 import useRouterPush from '~/hooks/useRouterPush';
 import FormAutocomplete from '~/components/FormAutocomplete';
 import LoadingMask from '~/components/EnhancedTable/LoadingMask';
 import useTextField from '~/components/hooks/inputs/useTextField';
+
+const handleUpload = createHandleUploadFunction('/api/files');
 
 const useStyles = makeStyles(theme => ({
   flexContainer: {
@@ -67,12 +70,58 @@ export default (props) => {
   const [
     [nameEn, setNameEn, nameEnError, setNameEnError],
     nameEnInput,
-  ] = useTextField(isCreating ? '' : editingData.nameEn, '', {
+  ] = useTextField(isCreating ? '' : (editingData.nameEn || ''), '', {
     label: '英文名稱',
     required: true,
   });
   const [priority, setPriority, priorityError, setPriorityError] = useStateWithError(isCreating ? 0 : editingData.priority);
   const [active, setActive, activeError, setActiveError] = useStateWithError(isCreating ? false : editingData.active);
+  const [imageInfos, setImageInfos, imageInfosError, setImageInfosError] = useStateWithError(isCreating ? [] : (editingData.specPic ? [editingData.specPic] : []));
+
+  const [
+    [specsDesc, setSpecsDesc, specsDescError, setSpecsDescError],
+    specsDescInput,
+  ] = useTextField(isCreating ? '' : editingData.specsDesc, '', {
+    label: '尺寸表',
+    placeholder: `格式:\n尺寸名1:數值1\n尺寸名2:數值2`,
+    required: true,
+    margin: 'dense',
+    fullWidth: true,
+    multiline: true,
+    rows: 5,
+    rowsMax: 20,
+  });
+
+  const [
+    [modelsReference1, setModelsReference1, modelsReference1Error, setModelsReference1Error],
+    modelsReference1Input,
+  ] = useTextField(isCreating ? '' : editingData.modelsReference1, '', {
+    label: '小編試穿',
+    placeholder: `格式:\n尺寸名1:數值1\n尺寸名2:數值2`,
+    required: true,
+    margin: 'dense',
+    fullWidth: true,
+    multiline: true,
+    rows: 5,
+    rowsMax: 20,
+  });
+
+  const [
+    [modelsReference2, setModelsReference2, modelsReference2Error, setModelsReference2Error],
+    modelsReference2Input,
+  ] = useTextField(isCreating ? '' : editingData.modelsReference2, '', {
+    label: 'model試穿',
+    placeholder: `格式:\n尺寸名1:數值1\n尺寸名2:數值2`,
+    required: true,
+    margin: 'dense',
+    fullWidth: true,
+    multiline: true,
+    rows: 5,
+    rowsMax: 20,
+  });
+
+  // console.log('imageInfos :', imageInfos);
+  // code
 
   const push = useRouterPush();
   const submit = async () => {
@@ -87,14 +136,25 @@ export default (props) => {
       errorOccurred = true;
     }
 
+    const ii = imageInfos.map(({ imageUploadInfo, image, ...rest }) => ({ image: { ...image, imgUrl: path.join('/api/files', image.hash) }, ...rest }));
+    if (!ii[0]) {
+      setImageInfosError('請上傳尺寸示意圖');
+      errorOccurred = true;
+    }
+
     if (errorOccurred) {
       return;
     }
+
     const data = {
       name,
       nameEn,
       priority,
       active,
+      specPic: ii[0],
+      specsDesc,
+      modelsReference1,
+      modelsReference2,
     };
     try {
       if (isCreating) {
@@ -164,6 +224,26 @@ export default (props) => {
               margin="dense"
               fullWidth
             />
+            <FormSpace variant="content1" />
+            <FormImagesInput
+              label="尺寸示意圖"
+              value={imageInfos}
+              error={!!imageInfosError}
+              helperText={imageInfosError}
+              onChange={setImageInfos}
+              onAdd={(imageInfo, { context }) => {
+                context.uploadImage(imageInfo);
+                setImageInfos(imageInfos => imageInfos.concat([imageInfo]));
+              }}
+              fullWidth
+              handleUpload={handleUpload}
+            />
+            <FormSpace variant="content1" />
+            {specsDescInput.render()}
+            <FormSpace variant="content1" />
+            {modelsReference1Input.render()}
+            <FormSpace variant="content1" />
+            {modelsReference2Input.render()}
           </div>
         </div>
       </DialogContent>

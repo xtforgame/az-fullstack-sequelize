@@ -28,7 +28,7 @@ export default class OrderRouter extends RouterBase {
         return RestfulError.koaThrowWith(ctx, 404, 'User not found');
       }
       return ctx.body = await createOrder(this.resourceManager, ctx.local.userSession.user_id, {
-        orderer: {
+        buyer: {
           name: 'string',
           mobile: 'string',
           phone1: 'string',

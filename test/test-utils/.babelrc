@@ -18,12 +18,12 @@
         ["module-resolver", {
           "extensions": [".js", ".ts"],
           "alias": {
-            "~": "./src/test-utils",
+            "~": "./test/test-utils",
             "common": "./src/common",
             "server": "./src/server",
             "common/config": "./src/common/configs/development",
             "server/config": "./src/server/configs/development",
-            "test-data": "./src/test-data"
+            "test-data": "./test/test-data"
           }
         }]
       ]
@@ -33,12 +33,12 @@
         ["module-resolver", {
           "extensions": [".js", ".ts"],
           "alias": {
-            "~": "./src/test-utils",
+            "~": "./test/test-utils",
             "common": "./src/common",
             "server": "./src/server",
             "common/config": "./src/common/configs/development",
             "server/config": "./src/server/configs/development",
-            "test-data": "./src/test-data"
+            "test-data": "./test/test-data"
           }
         }]
       ]
@@ -48,12 +48,12 @@
         ["module-resolver", {
           "extensions": [".js", ".ts"],
           "alias": {
-            "~": "./src/test-utils",
+            "~": "./test/test-utils",
             "common": "./src/common",
             "server": "./src/server",
             "common/config": "./src/common/configs/development",
             "server/config": "./src/server/configs/development",
-            "test-data": "./src/test-data"
+            "test-data": "./test/test-data"
           }
         }]
       ]

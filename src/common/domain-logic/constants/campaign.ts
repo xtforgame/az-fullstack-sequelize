@@ -19,6 +19,7 @@ export const campaignTypes = campaignTypeInfo.map(({ id, name }) => ({ id, name:
 
 export const campaignStateInfo : EnumInfo[] = [
   { id: 'actived', name: '開啟' },
+  { id: 'hide', name: '隱藏' },
   { id: 'deactivated', name: '關閉' },
 ];
 export const campaignStateNameMap = toMap<EnumInfo, string>(campaignStateInfo, v => v.id, v => v.name);

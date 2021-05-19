@@ -5,6 +5,7 @@ import Mailer from '~/services/mailer';
 import MinioApi from '~/services/minio';
 import SequelizeDb from '~/services/sequelize-db';
 import ResourceManager from '~/services/resource-manager';
+import AwsSdk from '~/services/aws-sdk';
 
 export default [
   EnvCfg,
@@ -14,4 +15,5 @@ export default [
   MinioApi,
   SequelizeDb,
   ResourceManager,
+  AwsSdk,
 ];

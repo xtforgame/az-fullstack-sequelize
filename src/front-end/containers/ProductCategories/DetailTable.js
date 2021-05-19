@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme => ({
 
 const renderRowCell = (columnName, row, option) => (
   <ContentText>
-    {row[columnName] ? moment(row[columnName]).format('YYYY/MM/DD[\n]hh:mm:ss') : 'N/A'}
+    {row[columnName] ? moment(row[columnName]).format('YYYY/MM/DD[\n]HH:mm:ss') : 'N/A'}
   </ContentText>
 );
 

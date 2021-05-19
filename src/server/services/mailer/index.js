@@ -23,10 +23,11 @@ export default class Mailer extends ServiceBase {
 
   static $type = 'service';
 
-  static $inject = [];
+  static $inject = ['awsSdk'];
 
-  constructor() {
+  constructor(awsSdk) {
     super();
+    this.awsMgr = awsSdk.awsMgr;
     this.azMailer = new AzMailer(`${appRoot}/ejs-mjml`);
     this.gmailSender = new GmailSender({
       credentialsFile,
@@ -110,7 +111,39 @@ export default class Mailer extends ServiceBase {
     return this.gmailSender.sendMail(mailOptions);
   }
 
+  _sendAwsSes(target, resetLink, resetCode) {
+    let targets = target;
+    if (!Array.isArray(target)) {
+      targets = [target];
+    }
+
+    const result = this.renderMail('reset-password', {
+      serviceName,
+      resetPasswordUrl: resetLink,
+      resetPasswordCode: resetCode,
+      domainName,
+      supportEmail,
+    });
+
+    if (result.error) {
+      return Promise.reject(result.error);
+    }
+
+    // setup email data with unicode symbols
+    const mailOptions = {
+      from: senderName, // sender address
+      to: targets, // list of receivers
+      subject: 'Reset your password', // Subject line
+      text: `Reset link: ${resetLink}`, // plain text body
+      // HTML body
+      html: result.mailHtml, // fs.readFileSync(path.join(__dirname, 'assets/template.html'), 'utf8'),
+    };
+
+    return this.awsMgr.sendMail(mailOptions);
+  }
+
   sendResetPasswordMail(target, resetLink, resetCode) {
+    return this._sendAwsSes(target, resetLink, resetCode);
     if (mailerConfig.type === 'ethereal') {
       return this._sendEtherealMail(target, resetLink, resetCode);
     } else if (mailerConfig.type === 'gmail') {

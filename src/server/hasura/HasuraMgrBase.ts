@@ -273,11 +273,17 @@ class HasuraMgrBase {
 
     if (result.publicColumns.length) {
       result.publicColumnNames = result.publicColumns.map(k => ({ k, c: model.columns[k] })).map(({ k, c }) => this.getForeignKey(k, <any>c)).filter(c => c)
+      .filter(function(item, pos, array) {
+        return array.indexOf(item) == pos;
+      })
       .concat(['created_at', 'updated_at', 'deleted_at']);
     }
 
     Object.keys(views).forEach((viewLevelName) => {
       const columnNames : string[] = result.views[viewLevelName].columns.map(k => ({ k, c: model.columns[k] })).map(({ k, c }) => this.getForeignKey(k, <any>c)).filter(c => c)
+      .filter(function(item, pos, array) {
+        return array.indexOf(item) == pos;
+      })
       .concat(['created_at', 'updated_at', 'deleted_at']);
       const viewTableName = toUnderscore(`${modelInfo.tableName.replace(tablePrefix, 'view_')}_${viewLevelName}`);
       // CREATE VIEW view_user_private AS SELECT "id" as "id" FROM tbl_user;

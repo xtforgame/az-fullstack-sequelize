@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
 
 const renderRowCell = (columnName, row, option) => (
   <ContentText>
-    {row[columnName] ? moment(row[columnName]).format('YYYY/MM/DD[\n]hh:mm:ss') : 'N/A'}
+    {row[columnName] ? moment(row[columnName]).format('YYYY/MM/DD[\n]HH:mm:ss') : 'N/A'}
   </ContentText>
 );
 
@@ -61,13 +61,13 @@ const getColumnConfig = () => {
     },
     {
       id: 'user',
-      label: '客戶名稱',
+      label: '購買人',
       sortable: false,
       align: 'left',
       size: 200,
       renderRowCell: (columnName, row, option) => (
         <ContentText>
-          {row.user.name}
+          {row.buyer.name}
         </ContentText>
       ),
     },
@@ -78,17 +78,17 @@ const getColumnConfig = () => {
       align: 'left',
       size: 200,
       compareFunc: (a, b, orderBy) => {
-        if (b.data.orderData.order.buyer.email > a.data.orderData.order.buyer.email) {
+        if (b.buyer.email1 > a.buyer.email1) {
           return -1;
         }
-        if (b.data.orderData.order.buyer.email < a.data.orderData.order.buyer.email) {
+        if (b.buyer.email1 < a.buyer.email1) {
           return 1;
         }
         return 0;
       },
       renderRowCell: (columnName, row, option) => (
         <ContentText>
-          {row.data.orderData.order.buyer.email}
+          {row.buyer.email1}
         </ContentText>
       ),
     },
@@ -190,9 +190,10 @@ export default (props) => {
       payWay
       user { id, name }
       memo
-      orderer
+      buyer
       recipient
       data
+      metadata
       created_at
       products {
         price
@@ -218,6 +219,7 @@ export default (props) => {
       // args: ['$name: String!'],
       // where: ['{name: {_ilike: $name}}'],
       orderBy: '{created_at: desc}',
+      limit: 3000,
     },
   );
   const { loading, error, data } = useQuery(gqlQuery, {

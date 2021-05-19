@@ -11,20 +11,23 @@ import {
 } from '~/domain-logic';
 import LiquidRouterBase from './LiquidRouterBase';
 import { buildQueryT1, Options } from 'common/graphQL';
-import { productGroupsToListLiquidScope } from '../services/router-manager/api/product';
+import {
+  productGroupsToListLiquidScope,
+  productsToListLiquidScope,
+} from '../services/router-manager/api/product';
 
 
 export default class LiquidRouter01 extends LiquidRouterBase {
   setupRoutes({ router }) {
-    const getProductListMiddlewares = (getProductGroups : ((ctx : any) => Promise<any[]>) | null = null) => [async (ctx, next) => {
-      let productGroups : any[] = [];
-      if (getProductGroups) {
-        productGroups = await getProductGroups(ctx);
+    const getProductListMiddlewares = (getProducts : ((ctx : any) => Promise<any[]>) | null = null) => [async (ctx, next) => {
+      let products : any[] = [];
+      if (getProducts) {
+        products = await getProducts(ctx);
       } else {
         const {
           buildQueryString,
         } = buildQueryT1(
-          'productGroups',
+          'products',
           null,
           `
             id
@@ -36,18 +39,21 @@ export default class LiquidRouter01 extends LiquidRouterBase {
             weight
             description
             data
-            products(where: {disabled: {_eq: false}, deleted_at: {_is_null: true}}, order_by: {priority: desc}, limit: 1) {
-              id
-              isLimit
-            }
           `,
+          {
+            where: [
+              '{ disabled: { _eq: false } }',
+              '{ group: { campaigns: { campaign: { type: { _eq: "seasonal" } } } } }',
+            ],
+            orderBy: '[{priority: desc}, {id: desc}]',
+          }
         );
         const { data } = await this.sendGraphQLRequest(buildQueryString());
-        productGroups = data && data.productGroups;
+        products = data && data.products;
       }
       ctx.local = ctx.local || {};
-      if (productGroups) {
-        ctx.local.products = productGroupsToListLiquidScope(productGroups);
+      if (products) {
+        ctx.local.products = productsToListLiquidScope(products);
       }
       return next();
     }, this.liquidFor({

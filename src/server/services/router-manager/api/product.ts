@@ -173,9 +173,24 @@ export const getProduct = async (id) => {
   return null;
 };
 
+export const productsToListLiquidScope = (products) => {
+  const sizeColorMap = {};
+  return {
+    // products: products,
+    sections: products.map(p => `
+      <section class="item"><a class="item-link" href="/products/${p.id}">
+        <div class="item-inner lazy" data-src="${(p.thumbnail && p.thumbnail.image && p.thumbnail.image.imgUrl) || ''}"></div>
+        <div class="item-title">
+          <div class="name">${p.name}${p.isLimit ? '(現貨)' : ''}</div>
+          <div class="price">NT$ ${p.price}</div>
+        </div>
+      </a></section>
+    `),
+  };
+};
 
 export const productGroupsToListLiquidScope = productGroups => ({
-  productGroups: productGroups.filter(p => p.products.length !== 0),
+  // productGroups: productGroups.filter(p => p.products.length !== 0),
   sections: productGroups.filter(p => p.products.length !== 0).map(p => `
     <section class="item"><a class="item-link" href="/products/${p.products[0].id}">
       <div class="item-inner lazy" data-src="${(p.thumbnail && p.thumbnail.image && p.thumbnail.image.imgUrl) || ''}"></div>

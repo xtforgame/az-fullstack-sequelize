@@ -70,24 +70,6 @@ query ProductGroupList {
     id
     uid
     customId
-    products_aggregate(where: {deleted_at: {_is_null: true}}) {
-      aggregate{ count }
-    }
-    products(where: {deleted_at: {_is_null: true}}) { id, name }
-    category { id, name }
-    campaigns(where: {deleted_at: {_is_null: true}}) { campaign {
-      id
-      name
-      type
-      durationType
-      state
-      start
-      end
-      data
-      created_at
-      updated_at
-      deleted_at
-    } }
     thumbnail
     pictures
     name
@@ -96,11 +78,6 @@ query ProductGroupList {
     description
     materials
     data
-  }
-  productGroupAggregate(where: {deleted_at: {_is_null: true}}) {
-    aggregate {
-      count
-    }
   }
 }
 `;

@@ -46,36 +46,6 @@ describe('Server Test Cases', () => {
     });
 
     it('should be get tables', async () => {
-      const hsrMgr = new HasuraManager();
-      const rm: ResourceManager = server?.ioc.get('resourceManager');
-      const { resourceManager } = rm;
-
-      const { data } = await axios({
-        url: `http://localhost:8082/v1/metadata`,
-        method: 'post',
-        headers: {
-          'X-Hasura-Role': 'admin',
-          'X-Hasura-Admin-Secret': 'xxxxhsr',
-          'Content-Type': 'application/json',
-        },
-        data: {
-          type: 'pg_add_source',
-          args: {
-            name: 'db_studiodoe',
-            configuration: {
-              connection_info: {
-                database_url: 'postgres://postgres:xxxx1234@pg-src:5432/db_studiodoe',
-                pool_settings: {
-                  max_connections: 50,
-                  idle_timeout: 180,
-                  retries: 1,
-                },
-              },
-            },
-          },
-        },
-      });
-      return hsrMgr.test();
     });
   });
 });

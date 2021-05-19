@@ -59,7 +59,7 @@ export default function DetailTable(props) {
         <TableBody>
           <TableRow>
             <TableCell component="th" scope="row">
-              {row.account}
+              {row.recipient.name}
             </TableCell>
             <TableCell align="right"> </TableCell>
             <TableCell align="right">

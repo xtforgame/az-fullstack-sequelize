@@ -12,9 +12,10 @@ const PRODUCT_GROUP_QUERY = gql`
       payWay
       user { id, name }
       memo
-      orderer
+      buyer
       recipient
       data
+      metadata
       created_at
       products {
         price

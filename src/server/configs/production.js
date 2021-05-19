@@ -26,6 +26,11 @@ const jwtSecretFiles = {
   public: 'jwtRS256.key.pub',
 };
 
+const awsSecrets = {
+  basePath: path.join(secretsFolder, 'aws'),
+  config: path.join(secretsFolder, 'aws', 'config.json'),
+};
+
 const httpPort = 80;
 const httpsPort = 443;
 
@@ -63,6 +68,7 @@ const postgresHost = 'postgres';
 export {
   credentialFiles,
   jwtSecretFiles,
+  awsSecrets,
   httpPort,
   httpsPort,
 

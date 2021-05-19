@@ -1,6 +1,6 @@
 import AmmOrm, { AssociationModelNameAsToInclude } from 'az-model-manager/core';
 import { UserI, AccountLinkI, UserOrganizationI } from '../../amm-schemas/interfaces';
-import { sha512gen_salt, crypt } from 'az-authn-kit-v2';
+import { hashPassword } from '../common';
 import drawIcon from '~/utils/drawIcon';
 import { addInitDataToAccountLink } from './accountLink';
 
@@ -24,7 +24,7 @@ export const createInitialAccountLinks = (username, password) => ([addInitDataTo
   provider_id: 'basic',
   provider_user_id: username,
   provider_user_access_info: {
-    password: crypt(password, sha512gen_salt()),
+    password: hashPassword(password),
   },
 })]);
 
@@ -52,7 +52,7 @@ export const createInitialUserData = ({
     ...labels,
   },
   accountLinks,
-  ordererInfos: [
+  buyerInfos: [
     // {
     //   name,
     //   mobile: '0987654321',

@@ -39,9 +39,9 @@ export type AccountLinkCreationAttributes = {
   provider_user_id?: string;
   provider_user_access_info?: any;
   data?: any;
-  user_id?: string;
   user?: UserCreationAttributes;
   recoveryToken?: RecoveryTokenCreationAttributes;
+  user_id?: string;
 };
 
 export type AccountLinkAttributes = {
@@ -50,9 +50,9 @@ export type AccountLinkAttributes = {
   provider_user_id?: string;
   provider_user_access_info?: any;
   data?: any;
-  user_id?: string;
   user?: ExtendedModel<UserI>;
   recoveryToken?: ExtendedModel<RecoveryTokenI>;
+  user_id?: string;
 };
 
 export type AccountLinkI = AccountLinkAttributes & {
@@ -77,13 +77,27 @@ export type AccountLinkI = AccountLinkAttributes & {
 // ============== start model: User ==============
 export type UserCreationAttributes = {
   name?: string;
+  realName?: string;
   type?: string;
   privilege?: string;
   labels?: any;
   accountLinks?: AccountLinkCreationAttributes[];
   picture?: string;
   data?: any;
-  org_mgr_id?: string;
+  confirmationSentAt?: Date;
+  confirmationToken?: string;
+  confirmedAt?: Date;
+  currentSignInAt?: string;
+  currentSignInIp?: string;
+  email?: string;
+  lastSignInAt?: string;
+  lastSignInIp?: string;
+  manageCoupon?: boolean;
+  mobile?: string;
+  unconfirmedEmail?: string;
+  signInCount?: number;
+  ordersPriceTotal?: number;
+  ordersCount?: number;
   managedBy?: OrganizationCreationAttributes;
   browserSessions?: BrowserSessionCreationAttributes[];
   notifications?: NotificationCreationAttributes[];
@@ -100,27 +114,44 @@ export type UserCreationAttributes = {
   assignedMessage?: ContactUsMessageCreationAttributes[];
   userSettings?: UserSettingCreationAttributes[];
   memos?: MemoCreationAttributes[];
-  defaultOrdererInfo?: OrdererInfoCreationAttributes;
+  defaultBuyerInfo?: BuyerInfoCreationAttributes;
   defaultRecipientInfo?: RecipientInfoCreationAttributes;
-  ordererInfos?: OrdererInfoCreationAttributes[];
+  buyerInfos?: BuyerInfoCreationAttributes[];
   recipientInfos?: RecipientInfoCreationAttributes[];
   orders?: OrderCreationAttributes[];
   subscriptionOrders?: SubscriptionOrderCreationAttributes[];
   coupons?: CouponCreationAttributes[];
   provideCoupons?: CouponCreationAttributes[];
   couponRecords?: CouponRecordCreationAttributes[];
+  asIssueAuthor?: IssueCreationAttributes[];
+  asIssueCommentAuthor?: IssueCommentCreationAttributes[];
+  org_mgr_id?: string;
 };
 
 export type UserAttributes = {
   id: string;
   name?: string;
+  realName?: string;
   type?: string;
   privilege?: string;
   labels?: any;
   accountLinks?: ExtendedModel<AccountLinkI>[];
   picture?: string;
   data?: any;
-  org_mgr_id?: string;
+  confirmationSentAt?: Date;
+  confirmationToken?: string;
+  confirmedAt?: Date;
+  currentSignInAt?: string;
+  currentSignInIp?: string;
+  email?: string;
+  lastSignInAt?: string;
+  lastSignInIp?: string;
+  manageCoupon?: boolean;
+  mobile?: string;
+  unconfirmedEmail?: string;
+  signInCount?: number;
+  ordersPriceTotal?: number;
+  ordersCount?: number;
   managedBy?: ExtendedModel<OrganizationI>;
   browserSessions?: ExtendedModel<BrowserSessionI>[];
   notifications?: ExtendedModel<NotificationI>[];
@@ -137,15 +168,18 @@ export type UserAttributes = {
   assignedMessage?: ExtendedModel<ContactUsMessageI>[];
   userSettings?: ExtendedModel<UserSettingI>[];
   memos?: ExtendedModel<MemoI>[];
-  defaultOrdererInfo?: ExtendedModel<OrdererInfoI>;
+  defaultBuyerInfo?: ExtendedModel<BuyerInfoI>;
   defaultRecipientInfo?: ExtendedModel<RecipientInfoI>;
-  ordererInfos?: ExtendedModel<OrdererInfoI>[];
+  buyerInfos?: ExtendedModel<BuyerInfoI>[];
   recipientInfos?: ExtendedModel<RecipientInfoI>[];
   orders?: ExtendedModel<OrderI>[];
   subscriptionOrders?: ExtendedModel<SubscriptionOrderI>[];
   coupons?: ExtendedModel<CouponI>[];
   provideCoupons?: ExtendedModel<CouponI>[];
   couponRecords?: ExtendedModel<CouponRecordI>[];
+  asIssueAuthor?: ExtendedModel<IssueI>[];
+  asIssueCommentAuthor?: ExtendedModel<IssueCommentI>[];
+  org_mgr_id?: string;
 };
 
 export type UserI = UserAttributes & {
@@ -362,27 +396,27 @@ export type UserI = UserAttributes & {
   createMemo: BelongsToManyCreateAssociationMixin<MemoI>;
 
 
-  // association: defaultOrdererInfo
-  getDefaultOrdererInfo: HasOneGetAssociationMixin<OrdererInfoI>;
-  setDefaultOrdererInfo: HasOneSetAssociationMixin<OrdererInfoI, string>;
-  createDefaultOrdererInfo: HasOneCreateAssociationMixin<OrdererInfoI>;
+  // association: defaultBuyerInfo
+  getDefaultBuyerInfo: HasOneGetAssociationMixin<BuyerInfoI>;
+  setDefaultBuyerInfo: HasOneSetAssociationMixin<BuyerInfoI, string>;
+  createDefaultBuyerInfo: HasOneCreateAssociationMixin<BuyerInfoI>;
 
   // association: defaultRecipientInfo
   getDefaultRecipientInfo: HasOneGetAssociationMixin<RecipientInfoI>;
   setDefaultRecipientInfo: HasOneSetAssociationMixin<RecipientInfoI, string>;
   createDefaultRecipientInfo: HasOneCreateAssociationMixin<RecipientInfoI>;
 
-  // association: ordererInfos
-  countOrdererInfos: HasManyCountAssociationsMixin;
-  hasOrdererInfo: HasManyHasAssociationMixin<OrdererInfoI, string>;
-  hasOrdererInfos: HasManyHasAssociationsMixin<OrdererInfoI, string>;
-  getOrdererInfos: HasManyGetAssociationsMixin<OrdererInfoI>;
-  setOrdererInfos: HasManySetAssociationsMixin<OrdererInfoI, string>;
-  addOrdererInfo: HasManyAddAssociationMixin<OrdererInfoI, string>;
-  addOrdererInfos: HasManyAddAssociationsMixin<OrdererInfoI, string>;
-  removeOrdererInfo: HasManyRemoveAssociationMixin<OrdererInfoI, string>;
-  removeOrdererInfos: HasManyRemoveAssociationsMixin<OrdererInfoI, string>;
-  createOrdererInfo: HasManyCreateAssociationMixin<OrdererInfoI>;
+  // association: buyerInfos
+  countBuyerInfos: HasManyCountAssociationsMixin;
+  hasBuyerInfo: HasManyHasAssociationMixin<BuyerInfoI, string>;
+  hasBuyerInfos: HasManyHasAssociationsMixin<BuyerInfoI, string>;
+  getBuyerInfos: HasManyGetAssociationsMixin<BuyerInfoI>;
+  setBuyerInfos: HasManySetAssociationsMixin<BuyerInfoI, string>;
+  addBuyerInfo: HasManyAddAssociationMixin<BuyerInfoI, string>;
+  addBuyerInfos: HasManyAddAssociationsMixin<BuyerInfoI, string>;
+  removeBuyerInfo: HasManyRemoveAssociationMixin<BuyerInfoI, string>;
+  removeBuyerInfos: HasManyRemoveAssociationsMixin<BuyerInfoI, string>;
+  createBuyerInfo: HasManyCreateAssociationMixin<BuyerInfoI>;
 
   // association: recipientInfos
   countRecipientInfos: HasManyCountAssociationsMixin;
@@ -455,6 +489,30 @@ export type UserI = UserAttributes & {
   removeCouponRecord: HasManyRemoveAssociationMixin<CouponRecordI, string>;
   removeCouponRecords: HasManyRemoveAssociationsMixin<CouponRecordI, string>;
   createCouponRecord: HasManyCreateAssociationMixin<CouponRecordI>;
+
+  // association: asIssueAuthor
+  countAsIssueAuthors: HasManyCountAssociationsMixin;
+  hasAsIssueAuthor: HasManyHasAssociationMixin<IssueI, string>;
+  hasAsIssueAuthors: HasManyHasAssociationsMixin<IssueI, string>;
+  getAsIssueAuthors: HasManyGetAssociationsMixin<IssueI>;
+  setAsIssueAuthors: HasManySetAssociationsMixin<IssueI, string>;
+  addAsIssueAuthor: HasManyAddAssociationMixin<IssueI, string>;
+  addAsIssueAuthors: HasManyAddAssociationsMixin<IssueI, string>;
+  removeAsIssueAuthor: HasManyRemoveAssociationMixin<IssueI, string>;
+  removeAsIssueAuthors: HasManyRemoveAssociationsMixin<IssueI, string>;
+  createAsIssueAuthor: HasManyCreateAssociationMixin<IssueI>;
+
+  // association: asIssueCommentAuthor
+  countAsIssueCommentAuthors: HasManyCountAssociationsMixin;
+  hasAsIssueCommentAuthor: HasManyHasAssociationMixin<IssueCommentI, string>;
+  hasAsIssueCommentAuthors: HasManyHasAssociationsMixin<IssueCommentI, string>;
+  getAsIssueCommentAuthors: HasManyGetAssociationsMixin<IssueCommentI>;
+  setAsIssueCommentAuthors: HasManySetAssociationsMixin<IssueCommentI, string>;
+  addAsIssueCommentAuthor: HasManyAddAssociationMixin<IssueCommentI, string>;
+  addAsIssueCommentAuthors: HasManyAddAssociationsMixin<IssueCommentI, string>;
+  removeAsIssueCommentAuthor: HasManyRemoveAssociationMixin<IssueCommentI, string>;
+  removeAsIssueCommentAuthors: HasManyRemoveAssociationsMixin<IssueCommentI, string>;
+  createAsIssueCommentAuthor: HasManyCreateAssociationMixin<IssueCommentI>;
 };
 // ============== end model: User ==============
 
@@ -462,16 +520,16 @@ export type UserI = UserAttributes & {
 export type UserSettingCreationAttributes = {
   type?: string;
   data?: any;
-  user_id?: string;
   user?: UserCreationAttributes;
+  user_id?: string;
 };
 
 export type UserSettingAttributes = {
   id: string;
   type?: string;
   data?: any;
-  user_id?: string;
   user?: ExtendedModel<UserI>;
+  user_id?: string;
 };
 
 export type UserSettingI = UserSettingAttributes & {
@@ -492,18 +550,18 @@ export type UserSettingI = UserSettingAttributes & {
 export type BrowserSessionCreationAttributes = {
   sessionId?: string;
   data?: any;
-  user_id?: string;
   user?: UserCreationAttributes;
   products?: ProductCreationAttributes[];
+  user_id?: string;
 };
 
 export type BrowserSessionAttributes = {
   id: string;
   sessionId?: string;
   data?: any;
-  user_id?: string;
   user?: ExtendedModel<UserI>;
   products?: ExtendedModel<ProductI>[];
+  user_id?: string;
 };
 
 export type BrowserSessionI = BrowserSessionAttributes & {
@@ -537,16 +595,16 @@ export type BrowserSessionI = BrowserSessionAttributes & {
 export type NotificationCreationAttributes = {
   sessionId?: string;
   data?: any;
-  user_id?: string;
   user?: UserCreationAttributes;
+  user_id?: string;
 };
 
 export type NotificationAttributes = {
   id: string;
   sessionId?: string;
   data?: any;
-  user_id?: string;
   user?: ExtendedModel<UserI>;
+  user_id?: string;
 };
 
 export type NotificationI = NotificationAttributes & {
@@ -589,8 +647,8 @@ export type RecoveryTokenCreationAttributes = {
   type?: string;
   key?: string;
   token?: string;
-  account_link_id?: string;
   accountLink?: AccountLinkCreationAttributes;
+  account_link_id?: string;
 };
 
 export type RecoveryTokenAttributes = {
@@ -598,8 +656,8 @@ export type RecoveryTokenAttributes = {
   type?: string;
   key?: string;
   token?: string;
-  account_link_id?: string;
   accountLink?: ExtendedModel<AccountLinkI>;
+  account_link_id?: string;
 };
 
 export type RecoveryTokenI = RecoveryTokenAttributes & {
@@ -780,10 +838,10 @@ export type ProjectCreationAttributes = {
   name?: string;
   data?: any;
   users?: UserCreationAttributes[];
-  organization_id?: string;
   organization?: OrganizationCreationAttributes;
   inviters?: UserCreationAttributes[];
   invitees?: UserCreationAttributes[];
+  organization_id?: string;
 };
 
 export type ProjectAttributes = {
@@ -792,10 +850,10 @@ export type ProjectAttributes = {
   name?: string;
   data?: any;
   users?: ExtendedModel<UserI>[];
-  organization_id?: string;
   organization?: ExtendedModel<OrganizationI>;
   inviters?: ExtendedModel<UserI>[];
   invitees?: ExtendedModel<UserI>[];
+  organization_id?: string;
 };
 
 export type ProjectI = ProjectAttributes & {
@@ -889,22 +947,22 @@ export type MemoI = MemoAttributes & {
 export type ContactUsMessageCreationAttributes = {
   message?: string;
   data?: any;
-  author_id?: string;
   author?: UserCreationAttributes;
-  assignee_id?: string;
   assignee?: UserCreationAttributes;
   state?: string;
+  author_id?: string;
+  assignee_id?: string;
 };
 
 export type ContactUsMessageAttributes = {
   id: string;
   message?: string;
   data?: any;
-  author_id?: string;
   author?: ExtendedModel<UserI>;
-  assignee_id?: string;
   assignee?: ExtendedModel<UserI>;
   state?: string;
+  author_id?: string;
+  assignee_id?: string;
 };
 
 export type ContactUsMessageI = ContactUsMessageAttributes & {
@@ -930,8 +988,14 @@ export type ContactUsMessageI = ContactUsMessageAttributes & {
 export type ProductCategoryCreationAttributes = {
   name?: string;
   nameEn?: string;
+  code?: string;
   priority?: number;
   active?: boolean;
+  specsText?: string;
+  specPic?: any;
+  specsDesc?: string;
+  modelsReference1?: string;
+  modelsReference2?: string;
   data?: any;
   groups?: ProductGroupCreationAttributes[];
 };
@@ -940,8 +1004,14 @@ export type ProductCategoryAttributes = {
   id: string;
   name?: string;
   nameEn?: string;
+  code?: string;
   priority?: number;
   active?: boolean;
+  specsText?: string;
+  specPic?: any;
+  specsDesc?: string;
+  modelsReference1?: string;
+  modelsReference2?: string;
   data?: any;
   groups?: ExtendedModel<ProductGroupI>[];
 };
@@ -994,10 +1064,12 @@ export type ProductCreationAttributes = {
   orderQuota?: number;
   isLimit?: boolean;
   soldout?: boolean;
-  group_id?: string;
   group?: ProductGroupCreationAttributes;
+  spec?: ProductSpecCreationAttributes;
   carts?: BrowserSessionCreationAttributes[];
   orders?: OrderCreationAttributes[];
+  group_id?: string;
+  spec_id?: string;
 };
 
 export type ProductAttributes = {
@@ -1027,10 +1099,12 @@ export type ProductAttributes = {
   orderQuota?: number;
   isLimit?: boolean;
   soldout?: boolean;
-  group_id?: string;
   group?: ExtendedModel<ProductGroupI>;
+  spec?: ExtendedModel<ProductSpecI>;
   carts?: ExtendedModel<BrowserSessionI>[];
   orders?: ExtendedModel<OrderI>[];
+  group_id?: string;
+  spec_id?: string;
 };
 
 export type ProductI = ProductAttributes & {
@@ -1044,6 +1118,11 @@ export type ProductI = ProductAttributes & {
   getGroup: BelongsToGetAssociationMixin<ProductGroupI>;
   setGroup: BelongsToSetAssociationMixin<ProductGroupI, string>;
   createGroup: BelongsToCreateAssociationMixin<ProductGroupI>;
+
+  // association: spec
+  getSpec: BelongsToGetAssociationMixin<ProductSpecI>;
+  setSpec: BelongsToSetAssociationMixin<ProductSpecI, string>;
+  createSpec: BelongsToCreateAssociationMixin<ProductSpecI>;
 
   // association: carts
   countCarts: BelongsToManyCountAssociationsMixin;
@@ -1089,9 +1168,10 @@ export type ProductGroupCreationAttributes = {
   data?: any;
   disabled?: boolean;
   products?: ProductCreationAttributes[];
-  category_id?: string;
   category?: ProductCategoryCreationAttributes;
+  spec?: ProductSpecCreationAttributes[];
   campaigns?: CampaignCreationAttributes[];
+  category_id?: string;
 };
 
 export type ProductGroupAttributes = {
@@ -1110,9 +1190,10 @@ export type ProductGroupAttributes = {
   data?: any;
   disabled?: boolean;
   products?: ExtendedModel<ProductI>[];
-  category_id?: string;
   category?: ExtendedModel<ProductCategoryI>;
+  spec?: ExtendedModel<ProductSpecI>[];
   campaigns?: ExtendedModel<CampaignI>[];
+  category_id?: string;
 };
 
 export type ProductGroupI = ProductGroupAttributes & {
@@ -1139,6 +1220,18 @@ export type ProductGroupI = ProductGroupAttributes & {
   setCategory: BelongsToSetAssociationMixin<ProductCategoryI, string>;
   createCategory: BelongsToCreateAssociationMixin<ProductCategoryI>;
 
+  // association: spec
+  countSpecs: HasManyCountAssociationsMixin;
+  hasSpec: HasManyHasAssociationMixin<ProductSpecI, string>;
+  hasSpecs: HasManyHasAssociationsMixin<ProductSpecI, string>;
+  getSpecs: HasManyGetAssociationsMixin<ProductSpecI>;
+  setSpecs: HasManySetAssociationsMixin<ProductSpecI, string>;
+  addSpec: HasManyAddAssociationMixin<ProductSpecI, string>;
+  addSpecs: HasManyAddAssociationsMixin<ProductSpecI, string>;
+  removeSpec: HasManyRemoveAssociationMixin<ProductSpecI, string>;
+  removeSpecs: HasManyRemoveAssociationsMixin<ProductSpecI, string>;
+  createSpec: HasManyCreateAssociationMixin<ProductSpecI>;
+
   // association: campaigns
   countCampaigns: BelongsToManyCountAssociationsMixin;
   hasCampaign: BelongsToManyHasAssociationMixin<CampaignI, string>;
@@ -1154,27 +1247,85 @@ export type ProductGroupI = ProductGroupAttributes & {
 };
 // ============== end model: ProductGroup ==============
 
+// ============== start model: ProductSpec ==============
+export type ProductSpecCreationAttributes = {
+  name?: string;
+  nameEn?: string;
+  code?: string;
+  priority?: number;
+  spec?: string;
+  data?: any;
+  products?: ProductCreationAttributes[];
+  group?: ProductGroupCreationAttributes;
+  group_id?: string;
+};
+
+export type ProductSpecAttributes = {
+  id: string;
+  name?: string;
+  nameEn?: string;
+  code?: string;
+  priority?: number;
+  spec?: string;
+  data?: any;
+  products?: ExtendedModel<ProductI>[];
+  group?: ExtendedModel<ProductGroupI>;
+  group_id?: string;
+};
+
+export type ProductSpecI = ProductSpecAttributes & {
+
+  // timestamps
+  readonly created_at: Date;
+  readonly updated_at: Date;
+  readonly deleted_at: Date;
+
+  // association: products
+  countProducts: HasManyCountAssociationsMixin;
+  hasProduct: HasManyHasAssociationMixin<ProductI, string>;
+  hasProducts: HasManyHasAssociationsMixin<ProductI, string>;
+  getProducts: HasManyGetAssociationsMixin<ProductI>;
+  setProducts: HasManySetAssociationsMixin<ProductI, string>;
+  addProduct: HasManyAddAssociationMixin<ProductI, string>;
+  addProducts: HasManyAddAssociationsMixin<ProductI, string>;
+  removeProduct: HasManyRemoveAssociationMixin<ProductI, string>;
+  removeProducts: HasManyRemoveAssociationsMixin<ProductI, string>;
+  createProduct: HasManyCreateAssociationMixin<ProductI>;
+
+  // association: group
+  getGroup: BelongsToGetAssociationMixin<ProductGroupI>;
+  setGroup: BelongsToSetAssociationMixin<ProductGroupI, string>;
+  createGroup: BelongsToCreateAssociationMixin<ProductGroupI>;
+};
+// ============== end model: ProductSpec ==============
+
 // ============== start model: Campaign ==============
 export type CampaignCreationAttributes = {
   name?: string;
+  nameEn?: string;
+  newIn?: boolean;
   type?: string;
   durationType?: string;
   start?: Date;
   end?: Date;
   state?: string;
   data?: any;
+  originData?: any;
   productGroups?: ProductGroupCreationAttributes[];
 };
 
 export type CampaignAttributes = {
   id: string;
   name?: string;
+  nameEn?: string;
+  newIn?: boolean;
   type?: string;
   durationType?: string;
   start?: Date;
   end?: Date;
   state?: string;
   data?: any;
+  originData?: any;
   productGroups?: ExtendedModel<ProductGroupI>[];
 };
 
@@ -1200,45 +1351,51 @@ export type CampaignI = CampaignAttributes & {
 };
 // ============== end model: Campaign ==============
 
-// ============== start model: OrdererInfo ==============
-export type OrdererInfoCreationAttributes = {
+// ============== start model: BuyerInfo ==============
+export type BuyerInfoCreationAttributes = {
   configName?: string;
   name?: string;
   mobile?: string;
   phone1?: string;
   phone2?: string;
+  country?: string;
   zipcode?: string;
   address?: string;
   area?: string;
+  region?: string;
   email1?: string;
   email2?: string;
+  memo?: string;
   data?: any;
-  user_id?: string;
   user?: UserCreationAttributes;
-  as_default_to?: string;
   asDefaultTo?: UserCreationAttributes;
+  user_id?: string;
+  as_default_to?: string;
 };
 
-export type OrdererInfoAttributes = {
+export type BuyerInfoAttributes = {
   id: string;
   configName?: string;
   name?: string;
   mobile?: string;
   phone1?: string;
   phone2?: string;
+  country?: string;
   zipcode?: string;
   address?: string;
   area?: string;
+  region?: string;
   email1?: string;
   email2?: string;
+  memo?: string;
   data?: any;
-  user_id?: string;
   user?: ExtendedModel<UserI>;
-  as_default_to?: string;
   asDefaultTo?: ExtendedModel<UserI>;
+  user_id?: string;
+  as_default_to?: string;
 };
 
-export type OrdererInfoI = OrdererInfoAttributes & {
+export type BuyerInfoI = BuyerInfoAttributes & {
 
   // timestamps
   readonly created_at: Date;
@@ -1255,7 +1412,7 @@ export type OrdererInfoI = OrdererInfoAttributes & {
   setAsDefaultTo: BelongsToSetAssociationMixin<UserI, string>;
   createAsDefaultTo: BelongsToCreateAssociationMixin<UserI>;
 };
-// ============== end model: OrdererInfo ==============
+// ============== end model: BuyerInfo ==============
 
 // ============== start model: RecipientInfo ==============
 export type RecipientInfoCreationAttributes = {
@@ -1264,16 +1421,18 @@ export type RecipientInfoCreationAttributes = {
   mobile?: string;
   phone1?: string;
   phone2?: string;
+  country?: string;
   zipcode?: string;
   address?: string;
   area?: string;
   email1?: string;
   email2?: string;
+  memo?: string;
   data?: any;
-  user_id?: string;
   user?: UserCreationAttributes;
-  as_default_to?: string;
   asDefaultTo?: UserCreationAttributes;
+  user_id?: string;
+  as_default_to?: string;
 };
 
 export type RecipientInfoAttributes = {
@@ -1283,16 +1442,18 @@ export type RecipientInfoAttributes = {
   mobile?: string;
   phone1?: string;
   phone2?: string;
+  country?: string;
   zipcode?: string;
   address?: string;
   area?: string;
   email1?: string;
   email2?: string;
+  memo?: string;
   data?: any;
-  user_id?: string;
   user?: ExtendedModel<UserI>;
-  as_default_to?: string;
   asDefaultTo?: ExtendedModel<UserI>;
+  user_id?: string;
+  as_default_to?: string;
 };
 
 export type RecipientInfoI = RecipientInfoAttributes & {
@@ -1319,11 +1480,14 @@ export type OrderCreationAttributes = {
   state?: string;
   memo?: string;
   shipmentId?: string;
-  orderer?: any;
+  buyer?: any;
   recipient?: any;
+  metadata?: any;
   data?: any;
+  legacyData?: any;
+  invoiceNumber?: string;
+  invoiceStatus?: string;
   payWay?: string;
-  payTime?: Date;
   selectedAt?: Date;
   expiredAt?: Date;
   paidAt?: Date;
@@ -1333,14 +1497,17 @@ export type OrderCreationAttributes = {
   esunOrderId?: string;
   esunTradeInfo?: string;
   esunTradeState?: string;
+  paypalData?: string;
+  paypalToken?: string;
   cvsName?: string;
   smseData?: string;
   smsePayno?: string;
   smseSmilepayno?: string;
-  user_id?: string;
   user?: UserCreationAttributes;
   products?: ProductCreationAttributes[];
   couponRecord?: CouponRecordCreationAttributes;
+  issues?: IssueCreationAttributes[];
+  user_id?: string;
 };
 
 export type OrderAttributes = {
@@ -1348,11 +1515,14 @@ export type OrderAttributes = {
   state?: string;
   memo?: string;
   shipmentId?: string;
-  orderer?: any;
+  buyer?: any;
   recipient?: any;
+  metadata?: any;
   data?: any;
+  legacyData?: any;
+  invoiceNumber?: string;
+  invoiceStatus?: string;
   payWay?: string;
-  payTime?: Date;
   selectedAt?: Date;
   expiredAt?: Date;
   paidAt?: Date;
@@ -1362,14 +1532,17 @@ export type OrderAttributes = {
   esunOrderId?: string;
   esunTradeInfo?: string;
   esunTradeState?: string;
+  paypalData?: string;
+  paypalToken?: string;
   cvsName?: string;
   smseData?: string;
   smsePayno?: string;
   smseSmilepayno?: string;
-  user_id?: string;
   user?: ExtendedModel<UserI>;
   products?: ExtendedModel<ProductI>[];
   couponRecord?: ExtendedModel<CouponRecordI>;
+  issues?: ExtendedModel<IssueI>[];
+  user_id?: string;
 };
 
 export type OrderI = OrderAttributes & {
@@ -1401,29 +1574,141 @@ export type OrderI = OrderAttributes & {
   getCouponRecord: HasOneGetAssociationMixin<CouponRecordI>;
   setCouponRecord: HasOneSetAssociationMixin<CouponRecordI, string>;
   createCouponRecord: HasOneCreateAssociationMixin<CouponRecordI>;
+
+  // association: issues
+  countIssues: HasManyCountAssociationsMixin;
+  hasIssue: HasManyHasAssociationMixin<IssueI, string>;
+  hasIssues: HasManyHasAssociationsMixin<IssueI, string>;
+  getIssues: HasManyGetAssociationsMixin<IssueI>;
+  setIssues: HasManySetAssociationsMixin<IssueI, string>;
+  addIssue: HasManyAddAssociationMixin<IssueI, string>;
+  addIssues: HasManyAddAssociationsMixin<IssueI, string>;
+  removeIssue: HasManyRemoveAssociationMixin<IssueI, string>;
+  removeIssues: HasManyRemoveAssociationsMixin<IssueI, string>;
+  createIssue: HasManyCreateAssociationMixin<IssueI>;
 };
 // ============== end model: Order ==============
+
+// ============== start model: Issue ==============
+export type IssueCreationAttributes = {
+  type?: string;
+  state?: string;
+  requirement?: any;
+  comments?: IssueCommentCreationAttributes[];
+  order?: OrderCreationAttributes;
+  title?: string;
+  user?: UserCreationAttributes;
+  content?: string;
+  metadata?: any;
+  order_id?: string;
+  user_id?: string;
+};
+
+export type IssueAttributes = {
+  id: string;
+  type?: string;
+  state?: string;
+  requirement?: any;
+  comments?: ExtendedModel<IssueCommentI>[];
+  order?: ExtendedModel<OrderI>;
+  title?: string;
+  user?: ExtendedModel<UserI>;
+  content?: string;
+  metadata?: any;
+  order_id?: string;
+  user_id?: string;
+};
+
+export type IssueI = IssueAttributes & {
+
+  // timestamps
+  readonly created_at: Date;
+  readonly updated_at: Date;
+  readonly deleted_at: Date;
+
+  // association: comments
+  countComments: HasManyCountAssociationsMixin;
+  hasComment: HasManyHasAssociationMixin<IssueCommentI, string>;
+  hasComments: HasManyHasAssociationsMixin<IssueCommentI, string>;
+  getComments: HasManyGetAssociationsMixin<IssueCommentI>;
+  setComments: HasManySetAssociationsMixin<IssueCommentI, string>;
+  addComment: HasManyAddAssociationMixin<IssueCommentI, string>;
+  addComments: HasManyAddAssociationsMixin<IssueCommentI, string>;
+  removeComment: HasManyRemoveAssociationMixin<IssueCommentI, string>;
+  removeComments: HasManyRemoveAssociationsMixin<IssueCommentI, string>;
+  createComment: HasManyCreateAssociationMixin<IssueCommentI>;
+
+  // association: order
+  getOrder: BelongsToGetAssociationMixin<OrderI>;
+  setOrder: BelongsToSetAssociationMixin<OrderI, string>;
+  createOrder: BelongsToCreateAssociationMixin<OrderI>;
+
+  // association: user
+  getUser: BelongsToGetAssociationMixin<UserI>;
+  setUser: BelongsToSetAssociationMixin<UserI, string>;
+  createUser: BelongsToCreateAssociationMixin<UserI>;
+};
+// ============== end model: Issue ==============
+
+// ============== start model: IssueComment ==============
+export type IssueCommentCreationAttributes = {
+  user?: UserCreationAttributes;
+  content?: any;
+  metadata?: any;
+  issue?: IssueCreationAttributes;
+  user_id?: string;
+  issue_id?: string;
+};
+
+export type IssueCommentAttributes = {
+  id: string;
+  user?: ExtendedModel<UserI>;
+  content?: any;
+  metadata?: any;
+  issue?: ExtendedModel<IssueI>;
+  user_id?: string;
+  issue_id?: string;
+};
+
+export type IssueCommentI = IssueCommentAttributes & {
+
+  // timestamps
+  readonly created_at: Date;
+  readonly updated_at: Date;
+  readonly deleted_at: Date;
+
+  // association: user
+  getUser: BelongsToGetAssociationMixin<UserI>;
+  setUser: BelongsToSetAssociationMixin<UserI, string>;
+  createUser: BelongsToCreateAssociationMixin<UserI>;
+
+  // association: issue
+  getIssue: BelongsToGetAssociationMixin<IssueI>;
+  setIssue: BelongsToSetAssociationMixin<IssueI, string>;
+  createIssue: BelongsToCreateAssociationMixin<IssueI>;
+};
+// ============== end model: IssueComment ==============
 
 // ============== start model: SubscriptionOrder ==============
 export type SubscriptionOrderCreationAttributes = {
   memo?: string;
   shipmentId?: string;
-  orderer?: any;
+  buyer?: any;
   recipient?: any;
   data?: any;
-  user_id?: string;
   user?: UserCreationAttributes;
+  user_id?: string;
 };
 
 export type SubscriptionOrderAttributes = {
   id: string;
   memo?: string;
   shipmentId?: string;
-  orderer?: any;
+  buyer?: any;
   recipient?: any;
   data?: any;
-  user_id?: string;
   user?: ExtendedModel<UserI>;
+  user_id?: string;
 };
 
 export type SubscriptionOrderI = SubscriptionOrderAttributes & {
@@ -1446,11 +1731,11 @@ export type CouponCreationAttributes = {
   isDeduct?: boolean;
   memo?: string;
   data?: any;
-  admin_user_id?: string;
   adminUser?: UserCreationAttributes;
-  user_id?: string;
   user?: UserCreationAttributes;
   couponRecord?: CouponRecordCreationAttributes;
+  admin_user_id?: string;
+  user_id?: string;
 };
 
 export type CouponAttributes = {
@@ -1459,11 +1744,11 @@ export type CouponAttributes = {
   isDeduct?: boolean;
   memo?: string;
   data?: any;
-  admin_user_id?: string;
   adminUser?: ExtendedModel<UserI>;
-  user_id?: string;
   user?: ExtendedModel<UserI>;
   couponRecord?: ExtendedModel<CouponRecordI>;
+  admin_user_id?: string;
+  user_id?: string;
 };
 
 export type CouponI = CouponAttributes & {
@@ -1494,24 +1779,24 @@ export type CouponI = CouponAttributes & {
 export type CouponRecordCreationAttributes = {
   action?: string;
   price?: number;
-  user_id?: string;
   user?: UserCreationAttributes;
-  coupon_id?: string;
   byCoupon?: CouponCreationAttributes;
-  order_id?: string;
   byOrder?: OrderCreationAttributes;
+  user_id?: string;
+  coupon_id?: string;
+  order_id?: string;
 };
 
 export type CouponRecordAttributes = {
   id: string;
   action?: string;
   price?: number;
-  user_id?: string;
   user?: ExtendedModel<UserI>;
-  coupon_id?: string;
   byCoupon?: ExtendedModel<CouponI>;
-  order_id?: string;
   byOrder?: ExtendedModel<OrderI>;
+  user_id?: string;
+  coupon_id?: string;
+  order_id?: string;
 };
 
 export type CouponRecordI = CouponRecordAttributes & {
@@ -1541,19 +1826,19 @@ export type CouponRecordI = CouponRecordAttributes & {
 // ============== start model: UserUserGroup ==============
 export type UserUserGroupCreationAttributes = {
   role?: string;
-  user_id?: string;
   user?: UserCreationAttributes;
-  group_id?: string;
   group?: UserGroupCreationAttributes;
+  user_id?: string;
+  group_id?: string;
 };
 
 export type UserUserGroupAttributes = {
   id: string;
   role?: string;
-  user_id?: string;
   user?: ExtendedModel<UserI>;
-  group_id?: string;
   group?: ExtendedModel<UserGroupI>;
+  user_id?: string;
+  group_id?: string;
 };
 
 export type UserUserGroupI = UserUserGroupAttributes & {
@@ -1578,23 +1863,23 @@ export type UserUserGroupI = UserUserGroupAttributes & {
 // ============== start model: GroupInvitation ==============
 export type GroupInvitationCreationAttributes = {
   state?: number;
-  invitee_id?: string;
   invitee?: UserCreationAttributes;
-  inviter_id?: string;
   inviter?: UserCreationAttributes;
-  group_id?: string;
   group?: UserGroupCreationAttributes;
+  invitee_id?: string;
+  inviter_id?: string;
+  group_id?: string;
 };
 
 export type GroupInvitationAttributes = {
   id: string;
   state?: number;
-  invitee_id?: string;
   invitee?: ExtendedModel<UserI>;
-  inviter_id?: string;
   inviter?: ExtendedModel<UserI>;
-  group_id?: string;
   group?: ExtendedModel<UserGroupI>;
+  invitee_id?: string;
+  inviter_id?: string;
+  group_id?: string;
 };
 
 export type GroupInvitationI = GroupInvitationAttributes & {
@@ -1626,10 +1911,10 @@ export type UserOrganizationCreationAttributes = {
   labels?: any;
   data?: any;
   role?: string;
-  user_id?: string;
   user?: UserCreationAttributes;
-  organization_id?: string;
   organization?: OrganizationCreationAttributes;
+  user_id?: string;
+  organization_id?: string;
 };
 
 export type UserOrganizationAttributes = {
@@ -1637,10 +1922,10 @@ export type UserOrganizationAttributes = {
   labels?: any;
   data?: any;
   role?: string;
-  user_id?: string;
   user?: ExtendedModel<UserI>;
-  organization_id?: string;
   organization?: ExtendedModel<OrganizationI>;
+  user_id?: string;
+  organization_id?: string;
 };
 
 export type UserOrganizationI = UserOrganizationAttributes & {
@@ -1665,23 +1950,23 @@ export type UserOrganizationI = UserOrganizationAttributes & {
 // ============== start model: OrganizationInvitation ==============
 export type OrganizationInvitationCreationAttributes = {
   state?: number;
-  invitee_id?: string;
   invitee?: UserCreationAttributes;
-  inviter_id?: string;
   inviter?: UserCreationAttributes;
-  organization_id?: string;
   organization?: OrganizationCreationAttributes;
+  invitee_id?: string;
+  inviter_id?: string;
+  organization_id?: string;
 };
 
 export type OrganizationInvitationAttributes = {
   id: string;
   state?: number;
-  invitee_id?: string;
   invitee?: ExtendedModel<UserI>;
-  inviter_id?: string;
   inviter?: ExtendedModel<UserI>;
-  organization_id?: string;
   organization?: ExtendedModel<OrganizationI>;
+  invitee_id?: string;
+  inviter_id?: string;
+  organization_id?: string;
 };
 
 export type OrganizationInvitationI = OrganizationInvitationAttributes & {
@@ -1713,10 +1998,10 @@ export type UserProjectCreationAttributes = {
   labels?: any;
   data?: any;
   role?: string;
-  user_id?: string;
   user?: UserCreationAttributes;
-  project_id?: string;
   project?: ProjectCreationAttributes;
+  user_id?: string;
+  project_id?: string;
 };
 
 export type UserProjectAttributes = {
@@ -1724,10 +2009,10 @@ export type UserProjectAttributes = {
   labels?: any;
   data?: any;
   role?: string;
-  user_id?: string;
   user?: ExtendedModel<UserI>;
-  project_id?: string;
   project?: ExtendedModel<ProjectI>;
+  user_id?: string;
+  project_id?: string;
 };
 
 export type UserProjectI = UserProjectAttributes & {
@@ -1752,23 +2037,23 @@ export type UserProjectI = UserProjectAttributes & {
 // ============== start model: ProjectInvitation ==============
 export type ProjectInvitationCreationAttributes = {
   state?: number;
-  invitee_id?: string;
   invitee?: UserCreationAttributes;
-  inviter_id?: string;
   inviter?: UserCreationAttributes;
-  project_id?: string;
   project?: ProjectCreationAttributes;
+  invitee_id?: string;
+  inviter_id?: string;
+  project_id?: string;
 };
 
 export type ProjectInvitationAttributes = {
   id: string;
   state?: number;
-  invitee_id?: string;
   invitee?: ExtendedModel<UserI>;
-  inviter_id?: string;
   inviter?: ExtendedModel<UserI>;
-  project_id?: string;
   project?: ExtendedModel<ProjectI>;
+  invitee_id?: string;
+  inviter_id?: string;
+  project_id?: string;
 };
 
 export type ProjectInvitationI = ProjectInvitationAttributes & {
@@ -1798,19 +2083,19 @@ export type ProjectInvitationI = ProjectInvitationAttributes & {
 // ============== start model: UserMemo ==============
 export type UserMemoCreationAttributes = {
   role?: string;
-  user_id?: string;
   user?: UserCreationAttributes;
-  memo_id?: string;
   memo?: MemoCreationAttributes;
+  user_id?: string;
+  memo_id?: string;
 };
 
 export type UserMemoAttributes = {
   id: string;
   role?: string;
-  user_id?: string;
   user?: ExtendedModel<UserI>;
-  memo_id?: string;
   memo?: ExtendedModel<MemoI>;
+  user_id?: string;
+  memo_id?: string;
 };
 
 export type UserMemoI = UserMemoAttributes & {
@@ -1839,10 +2124,10 @@ export type CartProductCreationAttributes = {
   subtotal?: number;
   assignedQuantity?: number;
   data?: any;
-  cart_id?: string;
   cart?: BrowserSessionCreationAttributes;
-  product_id?: string;
   product?: ProductCreationAttributes;
+  cart_id?: string;
+  product_id?: string;
 };
 
 export type CartProductAttributes = {
@@ -1852,10 +2137,10 @@ export type CartProductAttributes = {
   subtotal?: number;
   assignedQuantity?: number;
   data?: any;
-  cart_id?: string;
   cart?: ExtendedModel<BrowserSessionI>;
-  product_id?: string;
   product?: ExtendedModel<ProductI>;
+  cart_id?: string;
+  product_id?: string;
 };
 
 export type CartProductI = CartProductAttributes & {
@@ -1880,27 +2165,33 @@ export type CartProductI = CartProductAttributes & {
 // ============== start model: OrderProduct ==============
 export type OrderProductCreationAttributes = {
   quantity?: number;
+  returnedQuantity?: number;
   price?: number;
   subtotal?: number;
   assignedQuantity?: number;
+  soldout?: boolean;
+  snapshot?: any;
   data?: any;
-  product_id?: string;
   product?: ProductCreationAttributes;
-  order_id?: string;
   order?: OrderCreationAttributes;
+  product_id?: string;
+  order_id?: string;
 };
 
 export type OrderProductAttributes = {
   id: string;
   quantity?: number;
+  returnedQuantity?: number;
   price?: number;
   subtotal?: number;
   assignedQuantity?: number;
+  soldout?: boolean;
+  snapshot?: any;
   data?: any;
-  product_id?: string;
   product?: ExtendedModel<ProductI>;
-  order_id?: string;
   order?: ExtendedModel<OrderI>;
+  product_id?: string;
+  order_id?: string;
 };
 
 export type OrderProductI = OrderProductAttributes & {
@@ -1925,19 +2216,19 @@ export type OrderProductI = OrderProductAttributes & {
 // ============== start model: ProductGroupCampaign ==============
 export type ProductGroupCampaignCreationAttributes = {
   data?: any;
-  product_group_id?: string;
   productGroup?: ProductGroupCreationAttributes;
-  campaign_id?: string;
   campaign?: CampaignCreationAttributes;
+  product_group_id?: string;
+  campaign_id?: string;
 };
 
 export type ProductGroupCampaignAttributes = {
   id: string;
   data?: any;
-  product_group_id?: string;
   productGroup?: ExtendedModel<ProductGroupI>;
-  campaign_id?: string;
   campaign?: ExtendedModel<CampaignI>;
+  product_group_id?: string;
+  campaign_id?: string;
 };
 
 export type ProductGroupCampaignI = ProductGroupCampaignAttributes & {

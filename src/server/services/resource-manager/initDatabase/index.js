@@ -3,7 +3,7 @@ import AmmOrm from 'az-model-manager/core';
 import {
   toSeqPromise,
 } from 'common/utils';
-import { sha512gen_salt, crypt } from 'az-authn-kit-v2';
+import { hashPassword } from '~/domain-logic/common';
 import {
   createInitialUserData,
   addInitDataToAccountLink,
@@ -14,7 +14,7 @@ const getAccountLinks = (username, password) => ([addInitDataToAccountLink({
   provider_id: 'basic',
   provider_user_id: username,
   provider_user_access_info: {
-    password: crypt(password, sha512gen_salt()),
+    password: hashPassword(password),
   },
   data: {
     confirmed: true,

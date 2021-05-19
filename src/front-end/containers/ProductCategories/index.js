@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
 
 const renderRowCell = (columnName, row, option) => (
   <ContentText>
-    {row[columnName] ? moment(row[columnName]).format('YYYY/MM/DD[\n]hh:mm:ss') : 'N/A'}
+    {row[columnName] ? moment(row[columnName]).format('YYYY/MM/DD[\n]HH:mm:ss') : 'N/A'}
   </ContentText>
 );
 
@@ -152,7 +152,21 @@ export default (props) => {
   const gqlQuery = useGqlQuery(
     'productCategories',
     'productCategoryAggregate',
-    'id name nameEn priority active data',
+    `
+      id
+      name
+      nameEn
+      priority
+      active
+      data
+
+      code
+      specsText
+      specPic
+      specsDesc
+      modelsReference1
+      modelsReference2
+    `,
     {
       // args: ['$name: String!'],
       // where: ['{name: {_ilike: $name}}'],
