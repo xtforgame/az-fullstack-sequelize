@@ -97,9 +97,7 @@ export default [
       },
       label: 'Section',
       content: `<section data-agc-name="agc1/section" class="agc1-sect">
-        <div data-azbox class="agc1-sect-container">
-          <agjc-placeholder></agjc-placeholder>
-        </div>
+        <div data-azbox class="agc1-sect-container"></div>
       </section>
       <style>.agc1-sect{
         padding-top: var(--agc1-section-padding-top, var(--azg-section-padding-top, 100px));
@@ -118,9 +116,7 @@ export default [
     data: {
       componentName: 'agc1/section',
       html: `<section data-agc-name="agc1/section" class="agc1-sect">
-        <div data-azbox class="agc1-sect-container">
-          <agjc-placeholder></agjc-placeholder>
-        </div>
+        <div data-azbox class="agc1-sect-container"></div>
       </section>`,
       css: `.agc1-sect{
         padding-top: var(--agc1-section-padding-top, var(--azg-section-padding-top, 100px));
@@ -207,8 +203,6 @@ export default [
         <div class="bar3">
         </div>
         </div>
-        <agjc-placeholder>
-        </agjc-placeholder>
       </div>
       <style>.fab-bg{
         width:60px;
@@ -266,8 +260,6 @@ export default [
         <div class="bar3">
         </div>
         </div>
-        <agjc-placeholder>
-        </agjc-placeholder>
       </div>`,
       css: `.fab-bg{
         width:60px;
@@ -330,10 +322,7 @@ export default [
         class: 'gjs-fonts gjs-f-b1',
       },
       label: 'Img Cnt Ctner',
-      content: `<div data-agc-name="agc1/img-cnt-ctner" data-azbox="" class="img-cnt-ctner">
-        <agjc-placeholder>
-        </agjc-placeholder>
-      </div>
+      content: `<div data-agc-name="agc1/img-cnt-ctner" data-azbox="" class="img-cnt-ctner"></div>
       <style>.img-cnt-ctner {
           display:flex;
           flex-direction:column;
@@ -347,10 +336,7 @@ export default [
     },
     data: {
       componentName: 'agc1/img-cnt-ctner',
-      html: `<div data-agc-name="agc1/img-cnt-ctner" data-azbox="" class="img-cnt-ctner">
-        <agjc-placeholder>
-        </agjc-placeholder>
-      </div>`,
+      html: '<div data-agc-name="agc1/img-cnt-ctner" data-azbox="" class="img-cnt-ctner"></div>',
       css: `.img-cnt-ctner {
           display:flex;
           flex-direction:column;

@@ -52,7 +52,7 @@ export const azComponentsPlugin = (editor, options) => {
     category: 'Built-in',
     attributes: { class: 'gjs-fonts gjs-f-b1' },
     label: 'Box',
-    content: '<div data-azbox><agjc-placeholder></agjc-placeholder></div>',
+    content: '<div data-azbox></div>',
   });
 
   editor.DomComponents.addType('agjc-slot', createCommonCompTypeOptions(editor, 'agjc-slot', {
