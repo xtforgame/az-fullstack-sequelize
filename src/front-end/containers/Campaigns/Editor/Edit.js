@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import BasicSection from '~/components/Section/Basic';
-import LoadingMask from '~/components/EnhancedTable/LoadingMask';
+import LoadingMask from '~/components/TableShared/LoadingMask';
 import Editor from './Editor';
 
 const CAMPAIGN_QUERY = gql`

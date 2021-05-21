@@ -11,7 +11,9 @@ export default (listName : string, aggregateName : string, body: string = 'id', 
   } = buildQueryT1(listName, aggregateName, body, options);
   return useMemo<DocumentNode>(() => {
     const s = buildQueryString();
-    console.log('s :', s);
+    if (options.debug) {
+      console.log('GQL :', s);
+    }
     return gql(s);
   }, [...memoArray, wString, orderBy, options.offset, options.limit]);
 };

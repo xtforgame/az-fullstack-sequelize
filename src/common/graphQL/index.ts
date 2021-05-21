@@ -1,9 +1,10 @@
 export type Options = {
-  args?: string[],
-  where?: string[],
-  orderBy?: string,
-  offset?: number,
-  limit?: number,
+  args?: string[];
+  where?: string[];
+  orderBy?: string;
+  offset?: number;
+  limit?: number;
+  debug?: boolean;
 };
 
 export const buildQueryT1 = (listName : string, aggregateName : string | null, body: string = 'id', options : Options = {}) => {

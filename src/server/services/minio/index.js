@@ -146,7 +146,7 @@ export default class MinioApi extends ServiceBase {
       });
     }
 
-    const { etag, filename } = this.simpleSaveFile(hash, fileInfo);
+    const { etag, filename } = await this.simpleSaveFile(hash, fileInfo);
     return {
       etag,
       hash: filename,

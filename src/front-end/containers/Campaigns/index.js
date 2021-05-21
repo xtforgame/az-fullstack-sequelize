@@ -11,6 +11,7 @@ to your service.
 import React, { useEffect, useState } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import moment from 'moment';
+import qs from 'qs';
 /* eslint-disable react/sort-comp */
 import axios from 'axios';
 import { compose } from 'recompose';
@@ -32,7 +33,7 @@ import RefreshIcon from '@material-ui/icons/Refresh';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import ContentText from 'azrmui/core/Text/ContentText';
 import BasicSection from '~/components/Section/Basic';
-import EnhancedTable from '~/components/EnhancedTable';
+import ControlledEnhancedTable from '~/components/ControlledEnhancedTable';
 import useRouterQuery from '~/hooks/useRouterQuery';
 import useRouterPush from '~/hooks/useRouterPush';
 import useGqlQuery from '~/hooks/useGqlQuery';
@@ -47,6 +48,7 @@ import {
   campaignStateNameFunc,
   campaignStates,
 } from 'common/domain-logic/constants/campaign';
+import useGqlTable from './useGqlTable';
 import FilterSection from './FilterSection';
 import DetailTable from './DetailTable';
 
@@ -170,60 +172,26 @@ const getColumnConfig = () => {
   return data;
 };
 
-const CAMPAIGN_LIST_QUERY = gql`
-  query Query {
-    campaigns(
-      where: {
-        deleted_at: {_is_null: true}
-      },
-      order_by: {created_at: desc}
-    ) {
-      id
-      name
-      type
-      durationType
-      state
-      start
-      end
-      data
-      created_at
-      updated_at
-      deleted_at
-    }
-    campaignAggregate(where: {deleted_at: {_is_null: true}}) {
-      aggregate {
-        count
-      }
-    }
-  }
-`;
-
-
-const CAMPAIGN_LIST_SEARCH_QUERY = gql`
-  query CampaignListSearch($id: bigint! = 0, $name: String!) {
-    campaigns(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}, order_by: {created_at: desc}) {
-      id
-      name
-    }
-    campaignAggregate(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}) {
-      aggregate {
-        count
-      }
-    }
-    campaign(id: $id){
-      id
-    }
-  }
-`;
-
 export default (props) => {
+  const {
+    location,
+  } = props;
+  console.log('location :', location);
+
+  const search = qs.parse(location.search, { ignoreQueryPrefix: true });
+  console.log('search :', search);
+
   const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState([]);
-  const [refreshCount, setRefreshCount] = useState(0);
+
+  const [order, setOrder] = useState('desc');
+  const [orderBy, setOrderBy] = useState('id');
+  const [page, setPage] = useState(0);
+  const [dense, setDense] = useState('dense');
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
   const classes = useStyles();
 
-  const query = useRouterQuery();
-  // console.log('query.get("text") :', query.get('text'));
   const gqlQuery = useGqlQuery(
     'campaigns',
     'campaignAggregate',
@@ -231,23 +199,13 @@ export default (props) => {
     {
       // args: ['$name: String!'],
       // where: ['{name: {_ilike: $name}}'],
-      orderBy: '{created_at: desc}',
+      orderBy: `{${orderBy || 'id'}: ${order || 'desc'}}`,
+      offset: page * rowsPerPage,
+      limit: rowsPerPage,
     },
   );
 
-  const { loading, error, data } = useQuery(gqlQuery, {
-    variables: {
-      name: '%w%',
-      refreshCount: refreshCount.toString(),
-    },
-    fetchPolicy: 'network-only',
-  });
-
-  const refresh = async () => {
-    setRefreshCount(refreshCount + 1);
-  };
-
-  const handleAccept = async () => {
+  const handleAccept = async (refresh) => {
     await refresh();
   };
 
@@ -265,10 +223,10 @@ export default (props) => {
   };
 
   const push = useRouterPush();
-  const renderActions = numSelected => (numSelected > 0 ? (
+  const renderActions = (numSelected, { refresh }) => (numSelected > 0 ? (
     <React.Fragment>
       <Tooltip title="核准">
-        <IconButton aria-label="accept" onClick={() => handleAccept()}>
+        <IconButton aria-label="accept" onClick={() => handleAccept(refresh)}>
           <DoneIcon />
         </IconButton>
       </Tooltip>
@@ -303,41 +261,53 @@ export default (props) => {
     </React.Fragment>
   ));
 
-  useEffect(() => {
-    if (data && data.campaigns) {
-      setRows(data.campaigns);
-    }
-  }, [data]);
 
-  // if (loading || !data) return <pre>Loading</pre>;
-  if (error) {
-    return (
+  const { render } = useGqlTable({
+    getQueryConfig: () => ({
+      queryData: gqlQuery,
+      getQueryOption: refreshCount => ({
+        variables: {
+          name: '%w%',
+          refreshCount: refreshCount.toString(),
+        },
+        fetchPolicy: 'network-only',
+      }),
+      parseResult: ({ data, ...rest }) => ({
+        data,
+        ...rest,
+        list: data?.campaigns || [],
+        count: data?.campaignAggregate?.aggregate?.count || 0,
+      }),
+    }),
+    title: '活動管理',
+    renderActions,
+    getColumnConfig,
+    rowsPerPageOptions: [10, 25, 50, 75],
+    renderError: error => (
       <pre>
-        Error in CAMPAIGN_LIST_QUERY
+        Error
         {JSON.stringify(error, null, 2)}
       </pre>
-    );
-  }
+    ),
+    renderRowDetail: row => (<DetailTable row={row} />),
+
+    order,
+    setOrder,
+    orderBy,
+    setOrderBy,
+    page,
+    setPage,
+    dense,
+    setDense,
+    rowsPerPage,
+    setRowsPerPage,
+  });
 
   return (
     <React.Fragment>
       <FilterSection />
       <BasicSection>
-        <EnhancedTable
-          rows={rows}
-          loading={loading}
-          selected={selected}
-          setSelected={setSelected}
-          {...getColumnConfig()}
-          toolbarProps={{
-            title: '活動管理',
-            renderActions,
-          }}
-          paginationProps={{
-            rowsPerPageOptions: [10, 25, 50, 75],
-          }}
-          renderRowDetail={row => (<DetailTable row={row} />)}
-        />
+        {render()}
       </BasicSection>
     </React.Fragment>
   );

@@ -80,22 +80,20 @@ export default function EnhancedRow({
         <TableCell align="right">{row.date}</TableCell>
         <TableCell align="right">{row.comment}</TableCell> */}
       </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={columns.length + 2}>
-          {
-            renderRowDetail && (
-              <Collapse in={open} timeout="auto" unmountOnExit>
-                {
-                  renderRowDetail(row, index, {
-                    columns,
-                    columnSizes,
-                  })
-                }
-              </Collapse>
-            )
-          }
-        </TableCell>
-      </TableRow>
+      {renderRowDetail && (
+        <TableRow>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={columns.length + 2}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              {
+                renderRowDetail(row, index, {
+                  columns,
+                  columnSizes,
+                })
+              }
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      )}
     </React.Fragment>
   );
 }

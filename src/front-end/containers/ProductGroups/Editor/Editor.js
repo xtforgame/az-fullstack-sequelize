@@ -30,7 +30,7 @@ import {
 import DateRangeInput from '~/components/DateRangeInput';
 import useRouterPush from '~/hooks/useRouterPush';
 import FormAutocomplete from '~/components/FormAutocomplete';
-import LoadingMask from '~/components/EnhancedTable/LoadingMask';
+import LoadingMask from '~/components/TableShared/LoadingMask';
 
 const handleUpload = createHandleUploadFunction('/api/files');
 

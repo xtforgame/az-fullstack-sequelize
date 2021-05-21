@@ -56,6 +56,24 @@ export default function EnhancedTableHead(props) {
           if (column.size != null) {
             style.width = column.size;
           }
+          let render = () => (
+            <TableSortLabel
+              active={orderBy === column.id}
+              direction={orderBy === column.id ? order : 'asc'}
+              onClick={createSortHandler(column.id)}
+            >
+              {column.label}
+              {orderBy === column.id ? (
+                <span className={classes.visuallyHidden}>
+                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                </span>
+              ) : null}
+            </TableSortLabel>
+          );
+          if (column.sortable !== undefined && !column.sortable) {
+            render = () => column.label;
+          }
+
           return (
             <TableCell
               key={column.id}
@@ -64,18 +82,7 @@ export default function EnhancedTableHead(props) {
               sortDirection={orderBy === column.id ? order : false}
               style={style}
             >
-              <TableSortLabel
-                active={orderBy === column.id}
-                direction={orderBy === column.id ? order : 'asc'}
-                onClick={createSortHandler(column.id)}
-              >
-                {column.label}
-                {orderBy === column.id ? (
-                  <span className={classes.visuallyHidden}>
-                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                  </span>
-                ) : null}
-              </TableSortLabel>
+              {render()}
             </TableCell>
           );
         })}

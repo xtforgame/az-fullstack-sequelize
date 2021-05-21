@@ -15,47 +15,6 @@ import EnhancedRow from '../TableShared/EnhancedRow';
 import LoadingMask from '../TableShared/LoadingMask';
 import useHalfControllable from '../../hooks/useHalfControllable';
 
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function ascend(a, b, orderBy) {
-  if (b[orderBy] > a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] < a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(columns, order, orderBy) {
-  const column = columns.find(c => c.id === orderBy)
-  let compareFunc = ascend; // descendingComparator;
-  if (column && column.compareFunc) {
-    ({ compareFunc } = column);
-  }
-  return order === 'desc'
-    ? (a, b) => -compareFunc(a, b, orderBy)
-    : (a, b) => compareFunc(a, b, orderBy);
-}
-
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map(el => el[0]);
-}
-
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
@@ -84,32 +43,29 @@ const useStyles = makeStyles(theme => ({
 
 export default function EnhancedTable({
   rows,
+  loading,
+  totalCount,
+
   selected,
   setSelected,
-  loading,
+
+  order,
+  setOrder,
+
+  orderBy,
+  setOrderBy,
+
+  page,
+  setPage,
+
+  dense,
+  setDense,
+
+  rowsPerPage,
+  setRowsPerPage,
 
   toolbarProps,
   paginationProps,
-
-  defaultSorting = {
-    order: 'desc',
-    orderBy: '',
-  },
-
-  order: orderProp,
-  onOrderChange,
-
-  orderBy: orderByProp,
-  onOrderByChange,
-
-  page: pageProp,
-  onPageChange,
-
-  dense: denseProp,
-  onDenseChange,
-
-  rowsPerPage: rowsPerPageProp,
-  onRowsPerPageChange,
 
   columns: columnsProp,
   columnSizes: columnSizesProp,
@@ -118,11 +74,6 @@ export default function EnhancedTable({
   hidePagination,
 }) {
   const classes = useStyles();
-  const [order, setOrder] = useHalfControllable(orderProp || defaultSorting.order, onOrderChange, defaultSorting.order || 'desc');
-  const [orderBy, setOrderBy] = useHalfControllable(orderByProp || defaultSorting.orderBy, onOrderByChange, defaultSorting.orderBy || 'id');
-  const [page, setPage] = useHalfControllable(pageProp || 0, onPageChange, 0);
-  const [dense, setDense] = useHalfControllable(denseProp != null ? denseProp : true, onDenseChange, true);
-  const [rowsPerPage, setRowsPerPage] = useHalfControllable(rowsPerPageProp || 10, onRowsPerPageChange, 10);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -202,25 +153,23 @@ export default function EnhancedTable({
               renderRowDetail={renderRowDetail}
             />
             <TableBody>
-              {stableSort(rows, getComparator(columnsProp, order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.id);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+              {rows.map((row, index) => {
+                const isItemSelected = isSelected(row.id);
+                const labelId = `enhanced-table-checkbox-${index}`;
 
-                  return (
-                    <EnhancedRow
-                      key={row.id}
-                      index={index}
-                      columns={columnsProp}
-                      columnSizes={columnSizesProp}
-                      renderRowDetail={renderRowDetail}
-                      {...({
-                        handleClick, row, isItemSelected, labelId,
-                      })}
-                    />
-                  );
-                })}
+                return (
+                  <EnhancedRow
+                    key={row.id}
+                    index={index}
+                    columns={columnsProp}
+                    columnSizes={columnSizesProp}
+                    renderRowDetail={renderRowDetail}
+                    {...({
+                      handleClick, row, isItemSelected, labelId,
+                    })}
+                  />
+                );
+              })}
               {/* {emptyRows > 0 && (
                 <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
                   <TableCell colSpan={6} />
@@ -234,7 +183,7 @@ export default function EnhancedTable({
             <TablePagination
               {...paginationProps}
               component="div"
-              count={rows.length}
+              count={totalCount || rows.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onChangePage={handleChangePage}

@@ -151,6 +151,11 @@ export default (props) => {
     };
     try {
       if (isCreating) {
+        // Promise.all(Array.from({ length: 300 }).map(async () => axios({
+        //   method: 'post',
+        //   url: 'api/campaigns',
+        //   data,
+        // })));
         await axios({
           method: 'post',
           url: 'api/campaigns',

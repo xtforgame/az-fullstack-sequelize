@@ -75,10 +75,11 @@ module.exports = function({ mode }) {
           exclude: /node_modules/,
         },
         {
-          test: /\.css$/,
+          test: /\.(css|sass|scss)$/,
           use: [
             'style-loader',
             'css-loader',
+            'sass-loader',
           ],
         },
         {

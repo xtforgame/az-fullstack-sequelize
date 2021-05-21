@@ -13,10 +13,10 @@ var config = {
         js: {
           glob: '**/*.{js,ts}',
         },
-        ts: {
-          tsconfig: 'tsconfig.build.json',
-          glob: '**/*.ts',
-        },
+        // ts: {
+        //   tsconfig: 'tsconfig.build.json',
+        //   glob: '**/*.ts',
+        // },
       },
       output: {
         default: {
@@ -35,10 +35,10 @@ var config = {
         js: {
           glob: '**/*.{js,ts}',
         },
-        ts: {
-          tsconfig: 'tsconfig.build.json',
-          glob: '**/*.ts',
-        },
+        // ts: {
+        //   tsconfig: 'tsconfig.build.json',
+        //   glob: '**/*.ts',
+        // },
       },
       output: {
         default: {
