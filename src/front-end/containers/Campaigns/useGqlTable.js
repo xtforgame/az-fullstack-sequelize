@@ -54,7 +54,7 @@ export default (props) => {
   // const query = useRouterQuery();
   // console.log('query.get("text") :', query.get('text'));
 
-  const { queryData, getQueryOption, parseResult } = getQueryConfig({
+  const { queryData, getQueryOption, getRowsAndCount } = getQueryConfig({
     orderBy,
     order,
     page,
@@ -62,8 +62,12 @@ export default (props) => {
   });
 
   const {
-    loading, error, data, list, count,
-  } = parseResult(useQuery(queryData, getQueryOption(refreshCount)));
+    loading, error, data,
+  } = useQuery(queryData, getQueryOption(refreshCount));
+
+  const {
+    list, count,
+  } = getRowsAndCount(data);
 
   const refresh = async () => {
     setRefreshCount(refreshCount + 1);

@@ -172,6 +172,11 @@ export default function EnhancedTable({
     setDense(event.target.checked);
   };
 
+  let extraColumnNum = 1;
+  if (renderRowDetail) {
+    extraColumnNum++;
+  }
+
   const isSelected = id => selected.indexOf(id) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -218,6 +223,7 @@ export default function EnhancedTable({
                       {...({
                         handleClick, row, isItemSelected, labelId,
                       })}
+                      extraColumnNum={extraColumnNum}
                     />
                   );
                 })}

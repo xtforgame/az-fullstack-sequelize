@@ -11,12 +11,12 @@ import {
   runningMode,
 } from 'config';
 
+import HeaderManager from 'azrmui/utils/HeaderManager';
 import configureStore from './configureStore';
 import getRoutes from './getRoutes';
 import fontLoader from './fontLoader';
 import { loadState } from './localStorage';
 import modelMapEx from '~/containers/App/modelMapEx';
-import HeaderManager from 'azrmui/utils/HeaderManager';
 
 import App from '~/containers/App';
 import { changeLocale } from '~/containers/LanguageProvider/actions';
@@ -24,6 +24,7 @@ import {
   sessionVerified,
 } from '~/containers/App/actions';
 import { i18nextInited, appLocaleMap } from './i18next';
+import liffManager from './liff-manager';
 import 'react-image-lightbox/style.css';
 import 'grapesjs/dist/css/grapes.min.css';
 import './containers/Home/GrapesJs/grapesjs/plugins/webPresetPlugin/dist/grapesjs-preset-webpage.min.css';
@@ -91,11 +92,16 @@ class AppWrapper extends React.PureComponent {
   }
 }
 
-i18nextInited.then((i18n) => {
+const renderDom = async () => {
+  const i18n = await i18nextInited;
   const locale = appLocaleMap[i18n.language] || 'en';
   store.dispatch(changeLocale(locale));
+  await liffManager.login();
   ReactDOM.render(
     <AppWrapper />,
     document.getElementById('page_main')
   );
-});
+};
+
+
+renderDom();

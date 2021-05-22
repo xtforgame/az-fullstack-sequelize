@@ -272,9 +272,7 @@ export default (props) => {
         },
         fetchPolicy: 'network-only',
       }),
-      parseResult: ({ data, ...rest }) => ({
-        data,
-        ...rest,
+      getRowsAndCount: data => ({
         list: data?.campaigns || [],
         count: data?.campaignAggregate?.aggregate?.count || 0,
       }),

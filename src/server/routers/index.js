@@ -17,6 +17,7 @@ import ContactUsMessageRouter from '~/routers/ContactUsMessageRouter';
 import NopgRouter from '~/routers/NopgRouter';
 import LiquidRouter01 from '~/routers/LiquidRouter01';
 import LiquidRouterLast from '~/routers/LiquidRouterLast';
+import LineBotRouter from '~/routers/LineBotRouter';
 
 export default [
   SystemInfoRouter,
@@ -38,4 +39,5 @@ export default [
   NopgRouter,
   LiquidRouter01,
   LiquidRouterLast,
+  LineBotRouter,
 ];

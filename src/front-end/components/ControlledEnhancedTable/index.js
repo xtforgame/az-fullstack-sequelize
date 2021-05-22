@@ -1,6 +1,8 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
+import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@material-ui/core/TableCell';
 import TableBody from '@material-ui/core/TableBody';
 import TableContainer from '@material-ui/core/TableContainer';
 import TablePagination from '@material-ui/core/TablePagination';
@@ -39,6 +41,14 @@ const useStyles = makeStyles(theme => ({
     top: 20,
     width: 1,
   },
+  emptyCell: {
+    width: '100%',
+    height: '50%',
+    minHeight: 200,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 }));
 
 export default function EnhancedTable({
@@ -70,10 +80,13 @@ export default function EnhancedTable({
   columns: columnsProp,
   columnSizes: columnSizesProp,
   renderRowDetail,
+  renderEmptyContent,
 
   hidePagination,
 }) {
   const classes = useStyles();
+
+  const rec = renderEmptyContent || (() => <div className={classes.emptyCell}>{'<No Data>'}</div>);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -123,6 +136,11 @@ export default function EnhancedTable({
     setDense(event.target.checked);
   };
 
+  let extraColumnNum = 1;
+  if (renderRowDetail) {
+    extraColumnNum++;
+  }
+
   const isSelected = id => selected.indexOf(id) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -153,6 +171,13 @@ export default function EnhancedTable({
               renderRowDetail={renderRowDetail}
             />
             <TableBody>
+              {!rows.length && (
+                <TableRow>
+                  <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={columnsProp.length + extraColumnNum}>
+                    {rec()}
+                  </TableCell>
+                </TableRow>
+              )}
               {rows.map((row, index) => {
                 const isItemSelected = isSelected(row.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
@@ -167,6 +192,7 @@ export default function EnhancedTable({
                     {...({
                       handleClick, row, isItemSelected, labelId,
                     })}
+                    extraColumnNum={extraColumnNum}
                   />
                 );
               })}

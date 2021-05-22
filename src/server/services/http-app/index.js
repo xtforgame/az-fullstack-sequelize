@@ -33,7 +33,6 @@ export default class HttpApp extends ServiceBase {
     this.app = new Koa();
     this.app.proxy = !!process.env.KOA_PROXY_ENABLED;
     // prevent any error to be sent to user
-    addHasuraProxy(this.app);
     this.app.use((ctx, next) => {
       ctx.local = ctx.local || {};
       ctx.local.azIp = ctx.request.headers['x-forwarded-for'] || ctx.ip;
@@ -58,6 +57,7 @@ export default class HttpApp extends ServiceBase {
     }));
     /* let credentials = */this.credentials = envCfg.credentials;
 
+    addHasuraProxy(this.app);
     const KoaRouter = createRouterClass({
       methods,
     });

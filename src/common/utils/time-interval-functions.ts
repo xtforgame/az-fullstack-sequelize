@@ -1,13 +1,30 @@
 /* eslint-disable max-len, no-useless-escape */
 // import validator from 'validator';
-export const defaultTimeGetter = item => ({ start: item.start, end: item.end });
-export const defaultNewItem = (range, srcItem, tarItem, isLeftPart) => ({
+export type Interval = {
+  start: number,
+  end: number,
+}
+
+export const defaultTimeGetter = <IntervalType extends Interval>(item: IntervalType) => ({ start: item.start, end: item.end });
+export const defaultNewItem = <IntervalType extends Interval>(range: Interval, srcItem: IntervalType, tarItem: IntervalType, isLeftPart: boolean) => ({
   ...srcItem,
   start: range.start,
   end: range.end,
 });
 
-export const intersectionSplitItemByItem = (srcItem, tarItem, options) => {
+export type Option<IntervalType extends Interval> = {
+  timeGetter: (item: IntervalType) => Interval;
+  newItem: (range: Interval, srcItem: IntervalType, tarItem: IntervalType, isLeftPart: boolean) => IntervalType;
+}
+
+export type SplitItemByItemResultType<IntervalType extends Interval> = [IntervalType | null, IntervalType | null];
+export type SplitItemByItemResult<IntervalType extends Interval> = null | SplitItemByItemResultType<IntervalType>;
+export type SplitItemByItemResultWithIndex<IntervalType extends Interval> = null | {
+  result: SplitItemByItemResultType<IntervalType>,
+  index: number,
+};
+
+export const intersectionSplitItemByItem = <IntervalType extends Interval>(srcItem: IntervalType, tarItem: IntervalType, options?: Option<IntervalType>) : SplitItemByItemResult<IntervalType> => {
   const {
     timeGetter = defaultTimeGetter,
     newItem = defaultNewItem,
@@ -53,7 +70,7 @@ export const intersectionSplitItemByItem = (srcItem, tarItem, options) => {
   }, srcItem, tarItem, true)];
 };
 
-export const intersectionSplitItemByArray = (srcItem, tarArray, startFrom = 0, options) => {
+export const intersectionSplitItemByArray = <IntervalType extends Interval>(srcItem: IntervalType, tarArray: IntervalType[], startFrom = 0, options?: Option<IntervalType>) : SplitItemByItemResultWithIndex<IntervalType> => {
   const {
     timeGetter = defaultTimeGetter,
     // newItem = defaultNewItem,
@@ -71,7 +88,7 @@ export const intersectionSplitItemByArray = (srcItem, tarArray, startFrom = 0, o
     if (tarEnd <= srcStart) {
       continue;
     }
-    const result = intersectionSplitItemByItem(srcItem, tarItem, options);
+    const result = intersectionSplitItemByItem<IntervalType>(srcItem, tarItem, options);
     if (result) {
       return {
         index,
@@ -82,8 +99,8 @@ export const intersectionSplitItemByArray = (srcItem, tarArray, startFrom = 0, o
   return null;
 };
 
-export const getIntersectionArray = (srcArray, tarArray, options) => {
-  const newSet = [];
+export const getIntersectionArray = <IntervalType extends Interval>(srcArray: IntervalType[], tarArray: IntervalType[], options?: Option<IntervalType>) : IntervalType[] => {
+  const newSet: IntervalType[] = [];
   srcArray.forEach((srcItem) => {
     let part = srcItem;
     let index = 0;
@@ -107,7 +124,9 @@ export const getIntersectionArray = (srcArray, tarArray, options) => {
   return newSet;
 };
 
-export const differenceSplitItemByItem = (srcItem, tarItem, options) => {
+// ======================
+
+export const differenceSplitItemByItem = <IntervalType extends Interval>(srcItem: IntervalType, tarItem: IntervalType, options?: Option<IntervalType>) : SplitItemByItemResult<IntervalType> => {
   const {
     timeGetter = defaultTimeGetter,
     newItem = defaultNewItem,
@@ -128,7 +147,6 @@ export const differenceSplitItemByItem = (srcItem, tarItem, options) => {
       return [null, null];
     } else {
       return [null, newItem({
-
         start: tarEnd,
         end: srcEnd,
       }, srcItem, tarItem, true)];
@@ -148,7 +166,7 @@ export const differenceSplitItemByItem = (srcItem, tarItem, options) => {
   }, srcItem, tarItem, true)];
 };
 
-export const differenceSplitItemByArray = (srcItem, tarArray, startFrom = 0, options) => {
+export const differenceSplitItemByArray = <IntervalType extends Interval>(srcItem: IntervalType, tarArray: IntervalType[], startFrom = 0, options?: Option<IntervalType>) : SplitItemByItemResultWithIndex<IntervalType> => {
   const {
     timeGetter = defaultTimeGetter,
     // newItem = defaultNewItem,
@@ -177,8 +195,8 @@ export const differenceSplitItemByArray = (srcItem, tarArray, startFrom = 0, opt
   return null;
 };
 
-export const getDifferenceArray = (srcArray, tarArray, options) => {
-  const newSet = [];
+export const getDifferenceArray = <IntervalType extends Interval>(srcArray: IntervalType[], tarArray: IntervalType[], options?: Option<IntervalType>) : IntervalType[] => {
+  const newSet : IntervalType[] = [];
   srcArray.forEach((srcItem) => {
     let part = srcItem;
     let index = 0;

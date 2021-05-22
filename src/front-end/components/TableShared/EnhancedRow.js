@@ -16,6 +16,7 @@ export default function EnhancedRow({
   isItemSelected,
   labelId,
   renderRowDetail,
+  extraColumnNum,
 }) {
   const [open, setOpen] = React.useState(false);
   const options = {
@@ -82,7 +83,7 @@ export default function EnhancedRow({
       </TableRow>
       {renderRowDetail && (
         <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={columns.length + 2}>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={columns.length + extraColumnNum}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               {
                 renderRowDetail(row, index, {
