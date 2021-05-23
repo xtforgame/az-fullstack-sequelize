@@ -49,7 +49,7 @@ const mailerConfig = {
 };
 
 const minioInfoConfig = {
-  endPoint: 'minio1',
+  endPoint: 'minio01',
   port: 9000,
   useSSL: false,
   accessKey: 'minioxxxak',

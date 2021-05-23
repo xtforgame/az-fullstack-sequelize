@@ -15,10 +15,10 @@ to: docker-compose.yml
 version: '3'
 services:
 <% if(docker.dockerMinioType === 'mine'){ -%>
-  minio1-<%= project.safename %>:
+  minio01-<%= project.safename %>:
     image: minio/minio:RELEASE.2019-04-09T01-22-30Z
 
-    container_name: ${<%= prefixUpper %>_CONTAINER_NS:-<%= prefixLower %>internal}-${<%= prefixUpper %>_CONTAINER_PROJ:-default}-minio1
+    container_name: ${<%= prefixUpper %>_CONTAINER_NS:-<%= prefixLower %>internal}-${<%= prefixUpper %>_CONTAINER_PROJ:-default}-minio01
 
     volumes:
       - ../minio_data:/data
@@ -111,7 +111,7 @@ services:
     links:
 <% } -%>
 <% if(docker.dockerMinioType === 'mine'){ -%>
-      - "minio1-<%= project.safename %>:minio1"
+      - "minio01-<%= project.safename %>:minio01"
 <% } -%>
 <% if(docker.dockerPostgresType === 'mine'){ -%>
       - "pg-master-<%= project.safename %>:postgres"
@@ -121,7 +121,7 @@ services:
     depends_on:
 <% } -%>
 <% if(docker.dockerMinioType === 'mine'){ -%>
-      - "minio1-<%= project.safename %>"
+      - "minio01-<%= project.safename %>"
 <% } -%>
 <% if(docker.dockerPostgresType === 'mine'){ -%>
       - "pg-master-<%= project.safename %>"
@@ -131,7 +131,7 @@ services:
     external_links:
 <% } -%>
 <% if(docker.dockerMinioType === 'external_link'){ -%>
-      - <%= docker.minioExternalLink %>:minio1
+      - <%= docker.minioExternalLink %>:minio01
 <% } -%>
 <% if(docker.dockerPostgresType === 'external_link'){ -%>
       - <%= docker.postgresExternalLink %>:pg-master-<%= project.safename %>

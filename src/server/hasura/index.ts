@@ -113,7 +113,7 @@ class HasuraMgr extends HasuraMgrBase {
           name: postgresDbName,
           configuration: {
             connection_info: {
-              database_url: 'postgres://postgres:xxxx1234@pg-master:5432/db_rick_data',
+              database_url: `postgres://${postgresUser}:${postgresPassword}@postgres:5432/${postgresDbName}`,
               pool_settings: {
                 max_connections: 50,
                 idle_timeout: 180,
