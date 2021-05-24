@@ -34,6 +34,8 @@ import '../grapesjs/plugins/customCodePlugin';
 import '../grapesjs/plugins/imgConatinerPlugin';
 import azFinalizePlugin from '../grapesjs/plugins/azFinalizePlugin';
 import EventsBinder from './EventsBinder';
+import ComponentEditor from './ComponentEditor';
+import fixedCustomComponents from './fixedCustomComponents';
 
 const drawerWidth = 250;
 const useStyles = makeStyles(theme => ({
@@ -177,6 +179,7 @@ const GrapesJsEditor = (props) => {
   const [dialogState, setDialogState] = useState(null);
   const [dialogValue, setDialogValue] = useState([]);
   const [editingData, setEditingData] = useState(null);
+  const [editingComponent, setEditingComponent] = useState(null);
 
 
   const [{
@@ -218,6 +221,31 @@ const GrapesJsEditor = (props) => {
   const eventsBinderHandleOpen = (data) => {
     setEditingData(data);
     eventsBinderHandleOpen_(data);
+  };
+
+
+  const [{
+    exited: componentEditorExited,
+    dialogProps: componentEditorDialogProps,
+  }, {
+    handleOpen: componentEditorHandleOpen_,
+    // handleClose,
+    // handleExited,
+  }] = useDialogState({
+    dialogProps: {},
+    open: (v) => {
+      console.log('componentEditor v :', v);
+      setEditingComponent(v);
+    },
+    close: (v2) => {
+      console.log('v2 :', v2);
+      setEditingComponent(null);
+    },
+  });
+
+  const componentEditorHandleOpen = (data) => {
+    setEditingData(data);
+    componentEditorHandleOpen_(data);
   };
 
   useLayoutEffect(() => {
@@ -325,7 +353,7 @@ const GrapesJsEditor = (props) => {
               editor,
               exCfg,
             }) => {
-              const list = await componentMinioApi.loadComponentList();
+              const list = fixedCustomComponents || await componentMinioApi.loadComponentList();
               const newComponent = {
                 name: componentName,
                 version: '1.0.0',
@@ -348,7 +376,7 @@ const GrapesJsEditor = (props) => {
                 newList = [...list];
                 newList.splice(currentCompnentIndex, 1, newComponent);
               }
-              await componentMinioApi.saveComponentList(newList);
+              fixedCustomComponents || await componentMinioApi.saveComponentList(newList);
               setCustomCompnents(newList);
               // bm.render();
               // editor.DomComponents.getWrapper().set('content', '');
@@ -378,7 +406,8 @@ const GrapesJsEditor = (props) => {
 
     componentMinioApi.loadComponentList()
     .then((list) => {
-      setCustomCompnents(list);
+      // setCustomCompnents(list);
+      setCustomCompnents(fixedCustomComponents || list);
     })
     .catch((e) => {});
     fragmentMinioApi.loadFile(fPath)
@@ -456,7 +485,26 @@ const GrapesJsEditor = (props) => {
       const bm = editorRef.current.BlockManager;
       customCompnents.forEach((c) => {
         bm.remove(c.name);
-        bm.add(c.name, c.grapesjsData);
+        bm.add(c.name, {
+          ...c.grapesjsData,
+          render({ el, model, className, prefix: ppfx }) {
+            const label = model.get('label');
+            const media = model.get('media');
+            el.innerHTML = `
+              ${media ? `<div class="${className}__media">${media}</div>` : ''}
+              <div class="${className}-label">${label}</div>
+              <i class="${className}-custom__edit is-abs--b-r u-p--xs fa fa-pencil is-clickable is-anim"></i>
+            `;
+            const editButton = el.querySelector(`.${className}-custom__edit`);
+            editButton.onclick = (e) => {
+              componentEditorHandleOpen({
+                ...c.data,
+                fullJson: JSON.stringify(c, null, 2),
+              });
+            };
+            return '';
+          },
+        });
       });
       bm.render();
     };
@@ -531,6 +579,17 @@ const GrapesJsEditor = (props) => {
           api={fragmentMinioApi}
           defaultFileName="save-data-1-10.js"
           dialogProps={eventsBinderDialogProps}
+          value={dialogValue}
+          onChange={setDialogValue}
+        />
+      )}
+
+      {!componentEditorExited && (
+        <ComponentEditor
+          editingData={editingComponent}
+          api={fragmentMinioApi}
+          defaultFileName="save-data-1-10.js"
+          dialogProps={componentEditorDialogProps}
           value={dialogValue}
           onChange={setDialogValue}
         />
