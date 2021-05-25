@@ -32,12 +32,6 @@ import EditIcon from '@material-ui/icons/Edit';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import ContentText from 'azrmui/core/Text/ContentText';
-import BasicSection from '~/components/Section/Basic';
-import ControlledEnhancedTable from '~/components/ControlledEnhancedTable';
-import useRouterQuery from '~/hooks/useRouterQuery';
-import useRouterPush from '~/hooks/useRouterPush';
-import useGqlQuery from '~/hooks/useGqlQuery';
-
 import {
   campaignTypeInfo,
   campaignTypeNameMap,
@@ -48,7 +42,13 @@ import {
   campaignStateNameFunc,
   campaignStates,
 } from 'common/domain-logic/constants/campaign';
-import useGqlTable from './useGqlTable';
+import BasicSection from '~/components/Section/Basic';
+import ControlledEnhancedTable from '~/components/ControlledEnhancedTable';
+import useRouterQuery from '~/hooks/useRouterQuery';
+import useRouterPush from '~/hooks/useRouterPush';
+import useGqlQuery from '~/hooks/useGqlQuery';
+import useGqlTable from '~/containers/hooks/useGqlTable';
+
 import FilterSection from './FilterSection';
 import DetailTable from './DetailTable';
 
