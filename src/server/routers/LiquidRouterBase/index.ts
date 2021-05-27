@@ -30,7 +30,7 @@ const normalizeUrl = (u) => {
 
 export default class LiquidRouterBase extends RouterBase {
   liquidFor = (options : any = {}) => async (ctx, next) => {
-    if (ctx.path.startsWith('/azadmin')) {
+    if (ctx.path.startsWith('/azadmin') || ctx.path.startsWith('/pages')) {
       return next();
     }
 

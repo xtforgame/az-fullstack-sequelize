@@ -21,6 +21,10 @@ module.exports = function({ mode }) {
     mode,
     devtool: 'inline-source-map',
     entry: {
+      'page-form': [
+        '@babel/polyfill',
+        path.resolve(projRoot, 'src/front-end/pages/form/index.js'),
+      ],
       webapp: [
         '@babel/polyfill',
         path.resolve(projRoot, 'src/front-end/web/app.js'),
@@ -111,6 +115,11 @@ module.exports = function({ mode }) {
           to: path.resolve(projRoot, frontEndJsOutputFolder),
         },
       ]),
+      new HtmlWebpackPlugin({
+        chunks: ['page-form'],
+        template: path.resolve(projRoot, 'src/front-end/pages/form/index.html'),
+        filename: 'pages/form/index.html',
+      }),
       new HtmlWebpackPlugin({
         chunks: ['app'],
         template: path.resolve(projRoot, frontEndJsEntryFolder, 'index.html'),

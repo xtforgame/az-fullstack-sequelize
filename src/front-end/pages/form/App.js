@@ -1,9 +1,9 @@
 import React from 'react';
 import { useConnect } from 'azrmui/hooks/redux-react-hook-ex';
 import { createStructuredSelector } from 'reselect';
-import { ConnectedRouter } from 'connected-react-router';
 import useStylesByNs from 'azrmui/styles/useStylesByNs';
 import ThemeContainer from '~/containers/core/ThemeContainer';
+import SubContent03 from '~/containers/Home/SubContent03';
 import {
   makeUiThemeSelector,
 } from './selectors';
@@ -18,9 +18,9 @@ const mapDispatchToProps = {};
 const AppInternal = ({ history, routes }) => {
   useStylesByNs(['global']);
   return (
-    <ConnectedRouter history={history}>
-      {routes}
-    </ConnectedRouter>
+    <div>
+      <SubContent03 />
+    </div>
   );
 };
 

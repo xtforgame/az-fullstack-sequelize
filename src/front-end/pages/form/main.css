@@ -1,0 +1,170 @@
+/* @import url(//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css); */
+@import url(//fonts.googleapis.com/earlyaccess/notosanstc.css);
+@import url(//fonts.googleapis.com/earlyaccess/notosanssc.css);
+@import url(//fonts.googleapis.com/earlyaccess/notosansjp.css);
+@import url(//fonts.googleapis.com/css?family=Roboto);
+
+body * {
+  font-family: 'Noto Sans TC', 'Noto Sans SC', 'Noto Sans JP', 'Roboto', sans-serif;
+  margin: 0px;
+}
+
+html,
+body,
+#page_main {
+  height: 100%;
+}
+
+#loading-page,
+#loading-page * {
+  font-family: '';
+}
+
+rt {
+  user-select: none;
+}
+rt::selection { display: none; }
+
+/* ============== */
+
+.gjs-pn-buttons {
+  justify-content: space-evenly;
+}
+
+.gjs-mdl-dialog {
+  max-width: unset;
+}
+
+/* https://github.com/artf/grapesjs/issues/2505 */
+/* https://codepen.io/neocoder/pen/bGNMyQK */
+
+.editor-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
+  flex-wrap: nowrap;
+}
+
+.editor-canvas {
+  flex-grow: 1;
+}
+
+.panel-left {
+  flex-basis: 250px;
+  position: relative;
+  overflow-y: auto;
+  background-color: #2c303b;
+}
+
+span.gjs-pn-btn.fa.fa-bars {
+    display: none;
+}
+
+span.gjs-layer-name {
+  font-family: Helvetica,sans-serif;
+  font-size: 10px;
+  text-transform: uppercase;
+  margin: 2px 0 0 8px;
+}
+
+.panel-left .gjs-one-bg,
+.gjs-pn-views-container .gjs-one-bg {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.gjs-btnt.gjs-pn-active,
+.gjs-color-active,
+.gjs-pn-btn.gjs-pn-active,
+.gjs-pn-btn:active,
+.gjs-block:hover {
+  color: #eee;
+}
+
+#gjs-rte-toolbar .gjs-rte-btn,
+.gjs-btn-prim,
+.gjs-btnt,
+.gjs-clm-tags .gjs-sm-composite.gjs-clm-field,
+.gjs-clm-tags .gjs-sm-field.gjs-sm-composite,
+.gjs-clm-tags .gjs-sm-stack #gjs-sm-add,
+.gjs-color-main,
+.gjs-mdl-dialog,
+.gjs-off-prv,
+.gjs-pn-btn,
+.gjs-pn-panel,
+.gjs-sm-sector .gjs-sm-composite.gjs-clm-field,
+.gjs-sm-sector .gjs-sm-field.gjs-sm-composite,
+.gjs-sm-sector .gjs-sm-stack #gjs-sm-add {
+  color: #eee;
+}
+
+#gjs-rte-toolbar,
+.gjs-bg-main,
+.gjs-clm-select option,
+.gjs-clm-tags .gjs-sm-colorp-c,
+.gjs-editor,
+.gjs-mdl-dialog,
+.gjs-nv-item .gjs-nv-title-c,
+.gjs-off-prv,
+.gjs-pn-panel,
+.gjs-block,
+.gjs-select option,
+.gjs-sm-sector .gjs-sm-colorp-c,
+.gjs-sm-select option,
+.gjs-sm-unit option,
+.sp-container {
+  background-color: #2c303b;
+}
+
+.gjs-pn-btn.gjs-pn-active {
+    background-color: rgba( 255, 255, 255, 0.1 );
+    box-shadow: none;
+}
+
+.gjs-pn-views .gjs-pn-btn {
+    margin: 0;
+    padding: 5px 15px;
+}
+
+#gjs-sm-float,
+.gjs-pn-views .fa-cog {
+  display: none;
+}
+
+
+/* ====== grapedrop ====== */
+
+.gjs-block:hover .gjs-block-custom__edit {
+  opacity: 1;
+}
+
+.gjs-block-custom__edit {
+  font-size: 12px!important;
+  opacity: 0;
+}
+.is-abs--b-l, .is-abs--b-r {
+  position: absolute;
+  bottom: 0;
+}
+.is-abs--b-r {
+  right: 0;
+}
+.is-click, .is-clickable {
+  cursor: pointer;
+}
+.is-anim {
+  transition: opacity .25s,transform .25s;
+}
+.u-p--xs {
+  padding: 5px!important;
+}
+.is-abs--b-l, .is-abs--b-r {
+  position: absolute;
+  bottom: 0;
+}
+.is-abs--b-r {
+  right: 0;
+}
+
+.gjs-block {
+  position: relative;
+}
