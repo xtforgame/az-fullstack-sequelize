@@ -51,11 +51,16 @@ export default (props) => {
     );
   }
 
+  const refresh = async () => {
+    setRefreshCount(refreshCount + 1);
+  };
+
   return (
     <BasicSection withMaxWith>
       {(!loading && !error && data && data.campaign) && (
         <Editor
           editingData={data.campaign}
+          refresh={refresh}
         />
       )}
       <LoadingMask loading={loading || !data} />

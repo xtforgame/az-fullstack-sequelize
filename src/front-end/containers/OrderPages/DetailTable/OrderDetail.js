@@ -13,6 +13,13 @@ import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import { deepOrange, green, yellow, red, grey } from '@material-ui/core/colors';
 import FlightLandIcon from '@material-ui/icons/FlightLand';
+import ContentText from 'azrmui/core/Text/ContentText';
+import {
+  orderStates,
+  orderStateNameFunc,
+  orderPayWayNameFunc,
+} from 'common/domain-logic/constants/order';
+import { getDisplayTime } from '~/utils';
 
 const useStyles = makeStyles(theme => ({
   square: {
@@ -45,29 +52,31 @@ export default function DetailTable(props) {
   return (
     <Paper className={classes.paper} elevation={0}>
       <Typography variant="h6" gutterBottom component="div">
-        收件人資訊
+        訂單資訊
       </Typography>
       <Table size="small" aria-label="purchases">
         <TableHead>
           <TableRow>
-            <TableCell>姓名</TableCell>
-            <TableCell align="left">地址</TableCell>
-            <TableCell align="left">電話</TableCell>
-            <TableCell>取貨方式</TableCell>
+            {/* <TableCell>姓名</TableCell>
+            <TableCell align="right">付款方式</TableCell>
+            <TableCell align="right">付款時間</TableCell> */}
+            <TableCell>後台備註</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           <TableRow>
-            <TableCell component="th" scope="row">
-              {row.recipient.name}
+            {/* <TableCell component="th" scope="row">
+              {row.buyer.name}
             </TableCell>
-            <TableCell align="left">
-              {`${row.recipient.zipcode} ${row.recipient.area} ${row.recipient.address}`}
+            <TableCell align="right">
+              {orderPayWayNameFunc(row.payWay)}
             </TableCell>
-            <TableCell align="left">
-              {row.recipient.mobile}
-            </TableCell>
-            <TableCell>台灣本島</TableCell>
+            <TableCell align="right">
+              <ContentText>
+                {getDisplayTime(row.paidAt)}
+              </ContentText>
+            </TableCell> */}
+            <TableCell>{row.memo}</TableCell>
           </TableRow>
         </TableBody>
       </Table>

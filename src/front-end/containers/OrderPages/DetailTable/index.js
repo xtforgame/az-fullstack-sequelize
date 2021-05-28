@@ -13,6 +13,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import { deepOrange, green, yellow, red, grey } from '@material-ui/core/colors';
 import FlightLandIcon from '@material-ui/icons/FlightLand';
+import OrderDetail from './OrderDetail';
 import BuyerDetail from './BuyerDetail';
 import RecipientDetail from './RecipientDetail';
 import ProductDetail from './ProductDetail';
@@ -40,7 +41,7 @@ export default function DetailTable(props) {
   const {
     row,
     isItemSelected,
-    assign,
+    onRefresh = () => null,
   } = props;
 
   const classes = useStyles();
@@ -51,6 +52,9 @@ export default function DetailTable(props) {
       <Box className={classes.box} margin={1}>
         <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
           <div>
+            <OrderDetail
+              row={row}
+            />
             <BuyerDetail
               row={row}
             />
@@ -62,7 +66,7 @@ export default function DetailTable(props) {
           <div>
             <ProductDetail
               row={row}
-              assign={assign}
+              onRefresh={onRefresh}
             />
           </div>
         </div>

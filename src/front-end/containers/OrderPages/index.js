@@ -11,6 +11,7 @@ to your service.
 import React, { useEffect, useState } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import moment from 'moment';
+import qs from 'qs';
 /* eslint-disable react/sort-comp */
 import axios from 'axios';
 import { compose } from 'recompose';
@@ -18,6 +19,7 @@ import FileSaver from 'file-saver';
 import { makeStyles } from '@material-ui/core/styles';
 // import { getDefaultBeforeDaysConfig, makeDaysFilter } from '~/utils/beforeDaysHelper';
 // import { compareString, formatTime } from '~/utils/tableUtils';
+import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import SearchIcon from '@material-ui/icons/Search';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
@@ -36,6 +38,13 @@ import EnhancedTable from '~/components/EnhancedTable';
 import useRouterQuery from '~/hooks/useRouterQuery';
 import useRouterPush from '~/hooks/useRouterPush';
 import useGqlQuery from '~/hooks/useGqlQuery';
+import useGqlTable from '~/containers/hooks/useGqlTable';
+import {
+  orderStates,
+  orderStateNameFunc,
+  orderPayWayNameFunc,
+} from 'common/domain-logic/constants/order';
+
 import FilterSection from './FilterSection';
 import DetailTable from './DetailTable';
 
@@ -72,6 +81,14 @@ const getColumnConfig = () => {
       ),
     },
     {
+      id: 'state',
+      label: '狀態',
+      sortable: true,
+      align: 'left',
+      size: 200,
+      rowCellToString: (columnName, row, option) => orderStateNameFunc(row[columnName]),
+    },
+    {
       id: 'buyer_email',
       label: 'Email',
       sortable: false,
@@ -92,14 +109,6 @@ const getColumnConfig = () => {
         </ContentText>
       ),
     },
-
-    // {
-    //   id: 'price',
-    //   label: '價格（新台幣）',
-    //   sortable: false,
-    //   align: 'right',
-    //   size: 200,
-    // },
     // {
     //   id: 'weight',
     //   label: '重量',
@@ -129,7 +138,7 @@ const getColumnConfig = () => {
     {
       id: 'created_at',
       label: '建立時間',
-      sortable: false,
+      sortable: true,
       align: 'right',
       renderRowCell,
       size: 200,
@@ -174,27 +183,105 @@ const getColumnConfig = () => {
 };
 
 export default (props) => {
+  const {
+    location,
+  } = props;
+  console.log('location :', location);
+
+  const search = qs.parse(location.search, { ignoreQueryPrefix: true });
+  console.log('search :', search);
+
+  const [filter, setFilter] = useState({});
+
   const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState([]);
-  const [refreshCount, setRefreshCount] = useState(0);
-  const classes = useStyles();
+
+  const [order, setOrder] = useState('desc');
+  const [orderBy, setOrderBy] = useState('id');
+  const [page, setPage] = useState(0);
+  const [dense, setDense] = useState('dense');
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const query = useRouterQuery();
   // console.log('query.get("text") :', query.get('text'));
+  
+  const args = [];
+  const where = [];
+
+  let searchText = '';
+  let searchId = '';
+  if (filter && filter.searchText && filter.searchText !== 'all') {
+    searchText = `%${filter.searchText}%`;
+    searchId = parseInt(filter.searchText) || 0;
+    args.push('$searchText: String!');
+    if (searchId) {
+      args.push('$searchId: bigint!');
+    }
+    
+    const orArray = [];
+    orArray.push('{ user: { name: { _ilike: $searchText } } }');
+    if (searchId) {
+      orArray.push('{ id: { _eq: $searchId } }');
+    }
+    where.push(`{_or: [${orArray.join(',')}]}`);
+  }
+
+  let state = 'all';
+  if (filter && filter.state && filter.state !== 'all') {
+    state = filter.state;
+    args.push('$state: String!');
+    where.push('{ state: { _eq: $state } }');
+  }
+  let startTime = '1970-01-01T00:00:00.000+00:00';
+  let endTime = '1970-01-01T00:00:00.000+00:00';
+
+  if (filter && filter.dateRange && filter.dateRange[0]) {
+    startTime = moment(filter.dateRange[0]).utc().toISOString();
+    args.push('$startTime: timestamptz!');
+    where.push('{ created_at: { _gte: $startTime } }');
+  }
+
+  if (filter && filter.dateRange && filter.dateRange[1]) {
+    endTime = moment(filter.dateRange[1]).utc().toISOString();
+    args.push('$endTime: timestamptz!');
+    where.push('{ created_at: { _lte: $endTime } }');
+  }
+
+  console.log('startTime, endTime :', startTime, endTime);
+
   const gqlQuery = useGqlQuery(
     'orders',
     'orderAggregate',
     `
       id
-      state
-      payWay
       user { id, name }
-      memo
       buyer
       recipient
       data
       metadata
       created_at
+
+      state
+      memo
+      payWay
+      selectedAt
+      expiredAt
+      paidAt
+      shippedAt
+      invoiceNumber
+      invoiceStatus
+      atmAccount
+      esunData
+      esunOrderId
+      esunTradeInfo
+      esunTradeState
+      paypalData
+      paypalToken
+      cvsName
+      smseData
+      smsePayno
+      smseSmilepayno
+
       products {
         price
         quantity
@@ -216,61 +303,63 @@ export default (props) => {
       }
     `,
     {
-      // args: ['$name: String!'],
-      // where: ['{name: {_ilike: $name}}'],
-      orderBy: '{created_at: desc}',
-      limit: 3000,
+      // args: ['$name: String!', '$state: String!'],
+      // where: ['{ user: { name: { _ilike: $name } } }', `{ state: { _eq: $state } }`],
+      args,
+      where,
+      orderBy: `{${orderBy || 'id'}: ${order || 'desc'}}`,
+      offset: page * rowsPerPage,
+      limit: rowsPerPage,
+      debug: true,
     },
   );
-  const { loading, error, data } = useQuery(gqlQuery, {
-    variables: {
-      name: refreshCount.toString(),
-    },
-    fetchPolicy: 'network-only',
-  });
-
-  const refresh = async () => {
-    setRefreshCount(refreshCount + 1);
-  };
-
-  const handleAccept = async () => {
-    await refresh();
-  };
-
-  const handleReject = async () => {
-
-  };
-
-  const handleDownload = async () => {
-    await Promise.all(
-      selected.map(i => rows[i - 1])
-      .map(async (row) => {
-        FileSaver.saveAs('rma.xls', `${row.shipmentId}.xls`);
-      })
-    );
-  };
 
   const push = useRouterPush();
-  const renderActions = numSelected => (numSelected > 0 ? (
+  const renderActions = (numSelected, { refresh }) => (numSelected > 0 ? (
     <React.Fragment>
       <Tooltip title="核准">
-        <IconButton aria-label="accept" onClick={() => handleAccept()}>
+        <IconButton aria-label="accept" onClick={async () => {
+          await refresh();
+        }}>
           <DoneIcon />
         </IconButton>
       </Tooltip>
       <Tooltip title="駁回">
-        <IconButton aria-label="reject" onClick={() => handleReject()}>
+        <IconButton aria-label="reject" onClick={async () => {
+
+        }}>
           <ClearIcon />
         </IconButton>
       </Tooltip>
       <Tooltip title="下載報告">
-        <IconButton aria-label="download report" onClick={() => handleDownload()}>
+        <IconButton aria-label="download report" onClick={async () => {
+          await Promise.all(
+            selected.map(i => rows[i - 1])
+            .map(async (row) => {
+              FileSaver.saveAs('rma.xls', `${row.shipmentId}.xls`);
+            })
+          );
+        }}>
           <SaveAltIcon />
         </IconButton>
       </Tooltip>
     </React.Fragment>
   ) : (
     <React.Fragment>
+      <Button
+        variant="outlined"
+        color="secondary"
+        onClick={async (e) => {
+          await axios({
+            method: 'post',
+            url: 'api/assign-all',
+          });
+          refresh();
+        }}
+        style={{ flexShrink: 0 }}
+      >
+        自動備貨
+      </Button>
       {/* <Tooltip title="新增商品群組">
         <IconButton color="primary" aria-label="新增商品群組" onClick={() => push('/product-group/edit/new')}>
           <AddIcon />
@@ -289,51 +378,60 @@ export default (props) => {
     </React.Fragment>
   ));
 
-  useEffect(() => {
-    if (data && data.orders) {
-      setRows(data.orders);
-    }
-  }, [data]);
-
-  // if (loading || !data) return <pre>Loading</pre>;
-  if (error) {
-    return (
+  const { render } = useGqlTable({
+    getQueryConfig: () => ({
+      queryData: gqlQuery,
+      getQueryOption: refreshCount => ({
+        variables: {
+          name: '%w%',
+          searchText,
+          searchId,
+          state,
+          refreshCount: refreshCount.toString(),
+          startTime,
+          endTime,
+        },
+        fetchPolicy: 'network-only',
+      }),
+      getRowsAndCount: data => ({
+        list: data?.orders || [],
+        count: data?.orderAggregate?.aggregate?.count || 0,
+      }),
+    }),
+    title: '訂單管理',
+    renderActions,
+    getColumnConfig,
+    rowsPerPageOptions: [10, 25, 50, 75],
+    renderError: error => (
       <pre>
-        Error in ORDER_LIST_QUERY
+        Error
         {JSON.stringify(error, null, 2)}
       </pre>
-    );
-  }
+    ),
+    renderRowDetail: (row, _, __, { refresh }) => (
+      <DetailTable
+        row={row}
+        onRefresh={refresh}
+      />
+    ),
+
+    order,
+    setOrder,
+    orderBy,
+    setOrderBy,
+    page,
+    setPage,
+    dense,
+    setDense,
+    rowsPerPage,
+    setRowsPerPage,
+  });
 
   return (
     <React.Fragment>
-      <FilterSection />
+      <FilterSection defaultValue={filter} onChange={setFilter} />
       <BasicSection>
-        <EnhancedTable
-          rows={rows}
-          loading={loading}
-          selected={selected}
-          setSelected={setSelected}
-          {...getColumnConfig()}
-          toolbarProps={{
-            title: '訂單管理',
-            renderActions,
-          }}
-          paginationProps={{
-            rowsPerPageOptions: [10, 25, 50, 75],
-          }}
-          renderRowDetail={row => (<DetailTable assign={async (orderId, productId) => {
-            await axios({
-              method: 'post',
-              url: 'api/assign-order-product',
-              data: {
-                orderId,
-                productId,
-              },
-            });
-            refresh();
-          }} row={row} products={row.products} />)}
-        />
+        {render()}
       </BasicSection>
     </React.Fragment>
   );

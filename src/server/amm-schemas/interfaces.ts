@@ -2169,6 +2169,7 @@ export type OrderProductCreationAttributes = {
   price?: number;
   subtotal?: number;
   assignedQuantity?: number;
+  fulfilled?: boolean;
   soldout?: boolean;
   snapshot?: any;
   data?: any;
@@ -2185,6 +2186,7 @@ export type OrderProductAttributes = {
   price?: number;
   subtotal?: number;
   assignedQuantity?: number;
+  fulfilled?: boolean;
   soldout?: boolean;
   snapshot?: any;
   data?: any;

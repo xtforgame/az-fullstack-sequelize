@@ -34,7 +34,7 @@ export default (props) => {
     rangeInpuProps = {
       PickerProps: { ampm: false },
       Picker1Props: { initialFocusedDate: moment().startOf('day') },
-      Picker2Props: { initialFocusedDate: moment().startOf('day').add(18, 'hours') },
+      Picker2Props: { initialFocusedDate: moment().startOf('day')/* .add(18, 'hours') */ },
     },
   } = props;
 

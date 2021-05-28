@@ -13,6 +13,13 @@ import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import { deepOrange, green, yellow, red, grey } from '@material-ui/core/colors';
 import FlightLandIcon from '@material-ui/icons/FlightLand';
+import ContentText from 'azrmui/core/Text/ContentText';
+import {
+  orderStates,
+  orderStateNameFunc,
+  orderPayWayNameFunc,
+} from 'common/domain-logic/constants/order';
+import { getDisplayTime } from '~/utils';
 
 const useStyles = makeStyles(theme => ({
   square: {
@@ -51,8 +58,8 @@ export default function DetailTable(props) {
         <TableHead>
           <TableRow>
             <TableCell>姓名</TableCell>
-            <TableCell align="right">地址</TableCell>
-            <TableCell align="right">電話</TableCell>
+            <TableCell align="left">付款方式</TableCell>
+            <TableCell align="right">付款時間</TableCell>
             <TableCell>備註</TableCell>
           </TableRow>
         </TableHead>
@@ -61,11 +68,15 @@ export default function DetailTable(props) {
             <TableCell component="th" scope="row">
               {row.buyer.name}
             </TableCell>
-            <TableCell align="right"> </TableCell>
-            <TableCell align="right">
-              {Math.round(15 * 12 * 100 * 5) / 100}
+            <TableCell align="left">
+              {orderPayWayNameFunc(row.payWay)}
             </TableCell>
-            <TableCell> </TableCell>
+            <TableCell align="right">
+              <ContentText>
+                {getDisplayTime(row.paidAt)}
+              </ContentText>
+            </TableCell>
+            <TableCell>{row.recipient.memo}</TableCell>
           </TableRow>
         </TableBody>
       </Table>

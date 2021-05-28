@@ -39,7 +39,7 @@ export const buildQueryT1 = (listName : string, aggregateName : string | null, b
   `;
 
   const buildQueryString = () => `
-    query Query ${options.args ? `(${options.args.join(',')})` : ''} {
+    query Query ${options.args && options.args.length ? `(${options.args.join(',')})` : ''} {
       ${buildBodyString()}
     }
   `;

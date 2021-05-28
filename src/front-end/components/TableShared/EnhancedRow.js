@@ -61,9 +61,13 @@ export default function EnhancedRow({
             if (column.size != null) {
               style.width = column.size;
             }
+            const toStringFunction = row.cellToString
+              || column.rowCellToString
+              || ((columnId, row) => row[columnId]);
             const renderFunction = row.renderCell
               || column.renderRowCell
-              || ((columnId, row) => row[columnId]);
+              || ((columnId, row, options) => toStringFunction(columnId, row, options));
+
             return (
               <TableCell
                 key={column.id}
@@ -71,7 +75,10 @@ export default function EnhancedRow({
                 align={column.align ? column.align : 'left'}
                 style={style}
               >
-                {renderFunction(column.id, row, options)}
+                {renderFunction(column.id, row, {
+                  ...options,
+                  toStringFunction,
+                })}
               </TableCell>
             );
           })

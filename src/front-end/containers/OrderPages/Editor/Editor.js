@@ -47,6 +47,9 @@ import {
   orderPayWayNameFunc,
 } from 'common/domain-logic/constants/order';
 import ProductDetail from '../DetailTable/ProductDetail';
+import OrderDetail from '../DetailTable/OrderDetail';
+import BuyerDetail from '../DetailTable/BuyerDetail';
+import RecipientDetail from '../DetailTable/RecipientDetail';
 import ActionsPaper from './ActionsPaper';
 
 const useStyles = makeStyles(theme => ({
@@ -92,6 +95,7 @@ const getDefaultColor = (editingData) => {
 export default (props) => {
   const {
     editingData,
+    refresh,
   } = props;
 
   const isCreating = !editingData;
@@ -176,7 +180,10 @@ export default (props) => {
               {/* <FormSpace variant="content1" />
               {selectedStateInput.render()} */}
               <FormSpace variant="content1" />
-              <ProductDetail row={editingData} assign={() => {}} />
+              <OrderDetail row={editingData} />
+              <RecipientDetail row={editingData} />
+              <BuyerDetail row={editingData} />
+              <ProductDetail row={editingData} onRefresh={refresh} />
               <FormSpace variant="content1" />
             </div>
           </div>
@@ -192,7 +199,6 @@ export default (props) => {
         <div className={classes.actionsPaperContainer}>
           <ActionsPaper row={editingData} assign={() => {}} />
         </div>
-        <LoadingMask loading={loading} />
       </div>
     </React.Fragment>
   );

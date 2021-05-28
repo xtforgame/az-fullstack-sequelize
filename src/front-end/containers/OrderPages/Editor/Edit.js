@@ -8,15 +8,34 @@ const PRODUCT_GROUP_QUERY = gql`
   query Order($id: bigint! = 0) {
     order(id: $id){
       id
-      state
-      payWay
       user { id, name }
-      memo
       buyer
       recipient
       data
       metadata
       created_at
+
+      state
+      memo
+      payWay
+      selectedAt
+      expiredAt
+      paidAt
+      shippedAt
+      invoiceNumber
+      invoiceStatus
+      atmAccount
+      esunData
+      esunOrderId
+      esunTradeInfo
+      esunTradeState
+      paypalData
+      paypalToken
+      cvsName
+      smseData
+      smsePayno
+      smseSmilepayno
+
       products {
         price
         quantity
@@ -69,11 +88,17 @@ export default (props) => {
     );
   }
 
+  const refresh = async () => {
+    setRefreshCount(refreshCount + 1);
+  };
+
+
   return (
     <BasicSection withMaxWith>
       {(!loading && !error && data && data.order) && (
         <Editor
           editingData={data.order}
+          refresh={refresh}
         />
       )}
       <LoadingMask loading={loading || !data} />

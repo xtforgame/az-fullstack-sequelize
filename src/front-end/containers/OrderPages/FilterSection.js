@@ -7,7 +7,11 @@ import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import { FormDatePicker, FormFieldButtonSelect, FormTextField, FormSpace } from 'azrmui/core/FormInputs';
 import MenuItem from '@material-ui/core/MenuItem';
-
+import {
+  orderStates,
+  orderStateNameFunc,
+  orderPayWayNameFunc,
+} from 'common/domain-logic/constants/order';
 import DateRangeInput from '~/components/DateRangeInput';
 import TagsAutocomplete from '~/components/TagsAutocomplete';
 import BasicSection from '~/components/Section/Basic';
@@ -30,36 +34,48 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default () => {
+const orderStateOptions = [{
+  id: '',
+  name: '全部'
+}, ...orderStates];
+
+export default ({
+  defaultValue,
+  onChange = () => null,
+}) => {
   const classes = useStyles();
   const [
     [searchText, setSearchText, searchTextError, setSearchTextError],
     searchInput,
-  ] = useTextField('', '', {
+  ] = useTextField((defaultValue && defaultValue.searchText) || '', '', {
     label: '搜尋文字',
   });
   // const [searchText, setSearchText, searchTextError, setSearchTextError] = useStateWithError('');
   const [
     [dateRange, setDateRange],
     selectDateRange,
-  ] = useDateRange([null, null], '', {
+  ] = useDateRange((defaultValue && defaultValue.dateRange) || [null, null], '', {
     title: '選取時間範圍',
   });
 
   const [
-    [selectedState, setSelectedState],
-    selectInput,
-  ] = useFormSelect('', '', {
+    [state, setState],
+    stateInput,
+  ] = useFormSelect((defaultValue && defaultValue.state) || '', '', {
     label: '訂單狀態',
-    items: [
-      { value: 0, label: '<全部>' },
-      { value: 1, label: '已付款' },
-      { value: 2, label: '已取消' },
-      { value: 3, label: '已退款' },
-      { value: 4, label: '已出貨' },
-      { value: 5, label: '已完成' },
-    ],
+    items: orderStateOptions,
+    idKey: 'id',
+    valueKey: 'id',
+    labelKey: 'name',
   });
+
+  const submit = () => {
+    onChange({
+      searchText,
+      dateRange,
+      state,
+    });
+  }
 
   return (
     <BasicSection withMaxWith>
@@ -71,33 +87,15 @@ export default () => {
             <FormSpace variant="content1" />
             {selectDateRange.render()}
             <FormSpace variant="content1" />
-            {/* selectInput.render() */}
+            {stateInput.render()}
           </div>
           <div className={classes.flex1}>
-            <TagsAutocomplete
-              label="搜尋包含商品"
-              // label={label}
-              // onKeyPress={handleEnterForTextField}
-              // value={searchText}
-              // onChange={e => setSearchText(e.target.value)}
-              margin="dense"
-              fullWidth
-            />
             <FormSpace variant="content1" />
-            <TagsAutocomplete
-              label="搜尋活動"
-              // label={label}
-              // onKeyPress={handleEnterForTextField}
-              // value={searchText}
-              // onChange={e => setSearchText(e.target.value)}
-              margin="dense"
-              fullWidth
-            />
           </div>
         </div>
       </DialogContent>
       <DialogActions>
-        <Button variant="contained" onClick={() => {}} color="primary">
+        <Button variant="contained" onClick={submit} color="primary">
           搜尋
         </Button>
       </DialogActions>

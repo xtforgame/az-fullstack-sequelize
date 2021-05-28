@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -33,33 +34,56 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 24,
     padding: 8,
   },
+  flexContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
 }));
 
 export default function DetailTable(props) {
   const {
     row,
-    assign,
+    onRefresh = () => null,
   } = props;
+
+  const assign = async (orderId, productId, mode = '') => {
+    await axios({
+      method: 'post',
+      url: 'api/assign-order-product',
+      data: {
+        orderId,
+        productId,
+        mode,
+      },
+    });
+    onRefresh();
+  }
 
   const classes = useStyles();
 
   return (
     <Paper className={classes.paper} elevation={0}>
-      <Typography variant="h6" gutterBottom component="div">
-        商品清單
-      </Typography>
+      <div className={classes.flexContainer}>
+        <Typography variant="h6" gutterBottom component="div">
+          商品清單
+        </Typography>
+        <Button color="primary" variant="contained" onClick={() => assign(row.id, null, 'all')}>
+          自動備貨
+        </Button>
+      </div>
       <Table size="small" aria-label="purchases">
         <TableHead>
           <TableRow>
             <TableCell>商品</TableCell>
             <TableCell>名稱</TableCell>
+            <TableCell align="right">單價</TableCell>
             <TableCell align="right">數量</TableCell>
             <TableCell align="right">總價 ($)</TableCell>
             <TableCell>備註</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {row.products.map(opMn => console.log('opMn :', opMn) || (
+          {row.products.map(opMn => (
             <TableRow key={opMn.id}>
               <TableCell>
                 <Avatar variant="square" className={classes.square}>
@@ -67,15 +91,16 @@ export default function DetailTable(props) {
                 </Avatar>
               </TableCell>
               <TableCell component="th" scope="row">
-                {opMn.product.name}
+                <a href={`#product/edit/${opMn.product.id}`}>{opMn.product.name}</a>
               </TableCell>
               <TableCell align="right">{opMn.quantity}</TableCell>
+              <TableCell align="right">{opMn.price}</TableCell>
               <TableCell align="right">
                 {opMn.subtotal}
               </TableCell>
               <TableCell>
                 {opMn.product.soldout ? '[斷貨] ' : ''}備貨數量：{opMn.assignedQuantity}
-                <Button variant="contained" onClick={() => assign(opMn.order_id, opMn.product_id)}>
+                <Button style={{ marginLeft: 20 }} variant="contained" onClick={() => assign(opMn.order_id, opMn.product_id)}>
                   備貨
                 </Button>
               </TableCell>
@@ -86,6 +111,7 @@ export default function DetailTable(props) {
             <TableCell component="th" scope="row">
               總價
             </TableCell>
+            <TableCell align="right"> </TableCell>
             <TableCell align="right"> </TableCell>
             <TableCell align="right">
               {row.metadata.total}
@@ -102,6 +128,7 @@ export default function DetailTable(props) {
               運費
             </TableCell>
             <TableCell align="right"> </TableCell>
+            <TableCell align="right"> </TableCell>
             <TableCell align="right">
               {(row.metadata.shippingFee || 0)}
             </TableCell>
@@ -112,6 +139,7 @@ export default function DetailTable(props) {
             <TableCell component="th" scope="row">
               總金額
             </TableCell>
+            <TableCell align="right"> </TableCell>
             <TableCell align="right"> </TableCell>
             <TableCell align="right">
               {row.metadata.total + (row.metadata.shippingFee || 0)}

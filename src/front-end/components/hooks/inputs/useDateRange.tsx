@@ -15,7 +15,7 @@ const t1Preset : DateRangeProps = {
   rangeInpuProps: {
     PickerProps: { ampm: false, margin: 'dense' },
     Picker1Props: { initialFocusedDate: moment().startOf('day') },
-    Picker2Props: { initialFocusedDate: moment().startOf('day').add(18, 'hours') },
+    Picker2Props: { initialFocusedDate: moment().startOf('day')/* .add(18, 'hours') */ },
   },
 };
 

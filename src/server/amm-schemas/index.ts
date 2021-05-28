@@ -1280,6 +1280,17 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           foreignKey: 'order_id',
         }],
       },
+      options: {
+        indexes: [
+          {
+            name: 'order_state',
+            fields: ['state'],
+            where: {
+              deleted_at: null,
+            },
+          },
+        ],
+      },
       extraOptions: {
         hasura: {
           views: {
@@ -1829,6 +1840,7 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         price: 'integer',
         subtotal: 'integer',
         assignedQuantity: 'integer',
+        fulfilled: 'boolean',
         soldout: 'boolean',
         snapshot: {
           type: 'jsonb',
