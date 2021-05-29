@@ -66,7 +66,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2),
   },
   table: {
-    minWidth: 750,
+    // minWidth: 750,
     tableLayout: 'fixed',
   },
   visuallyHidden: {
@@ -139,7 +139,7 @@ export default function EnhancedTable({
     setSelected([]);
   };
 
-  const handleClick = (event, id) => {
+  const onRowCheck = (event, id) => {
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
 
@@ -221,7 +221,7 @@ export default function EnhancedTable({
                       columnSizes={columnSizesProp}
                       renderRowDetail={renderRowDetail}
                       {...({
-                        handleClick, row, isItemSelected, labelId,
+                        onRowCheck, row, isItemSelected, labelId,
                       })}
                       extraColumnNum={extraColumnNum}
                     />

@@ -30,7 +30,12 @@ export default (props) => {
         {JSON.stringify(error, null, 2)}
       </pre>
     ),
-    renderRowDetail,
+    renderRowDetail: rrd,
+
+    rows = [],
+    setRows,
+    selected = [],
+    setSelected,
 
     order,
     setOrder,
@@ -44,8 +49,7 @@ export default (props) => {
     setRowsPerPage,
   } = props;
 
-  const [rows, setRows] = useState([]);
-  const [selected, setSelected] = useState([]);
+
   const [refreshCount, setRefreshCount] = useState(0);
   // const classes = useStyles();
 
@@ -93,6 +97,8 @@ export default (props) => {
       refresh,
     };
 
+    const renderRowDetail = rrd && ((...args) => renderRowDetail(...args, api));
+
     return (
       <ControlledEnhancedTable
         rows={rows}
@@ -107,7 +113,7 @@ export default (props) => {
         paginationProps={{
           rowsPerPageOptions,
         }}
-        renderRowDetail={(...args) => renderRowDetail(...args, api)}
+        renderRowDetail={renderRowDetail}
         //
         totalCount={totalCount.current || 0}
         order={order}

@@ -2,9 +2,13 @@ import React from 'react';
 import Fade from '@material-ui/core/Fade';
 import ProgressWithMask from 'azrmui/core/Progress/ProgressWithMask';
 
+export type LoadingMaskProps = {
+  loading?: boolean;
+};
+
 export default ({
   loading,
-}) => (
+}: LoadingMaskProps) => (
   <Fade
     in={loading}
     timeout={{

@@ -6,19 +6,42 @@ import IconButton from '@material-ui/core/IconButton';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Collapse from '@material-ui/core/Collapse';
+import {
+  Columns,
+  RenderRowDetail,
+  RowTypeBase,
+  ColumnSizes,
+  OnRowCheck,
+} from './shared';
 
-export default function EnhancedRow({
-  columns,
-  columnSizes,
-  handleClick,
+export type EnhancedTableRowProps<RowType extends RowTypeBase = RowTypeBase> = {
+  renderRowDetail?: RenderRowDetail<RowType>;
+  index: number;
+  row: RowType;
+  onRowCheck?: OnRowCheck;
+  isItemSelected: boolean;
+  extraColumnNum?: number;
+  labelId?: string;
+  numSelected?: number;
+  rowCount?: number;
+  columns?: Columns;
+  columnSizes?: ColumnSizes;
+  defaultOpen?: boolean;
+};
+
+export default function EnhancedRow<RowType extends RowTypeBase = RowTypeBase>({
+  columns = [],
+  columnSizes = [],
+  onRowCheck,
   row,
   index,
   isItemSelected,
-  labelId,
+  labelId = 'ckb',
   renderRowDetail,
-  extraColumnNum,
-}) {
-  const [open, setOpen] = React.useState(false);
+  extraColumnNum = 0,
+  defaultOpen,
+} : EnhancedTableRowProps<RowType>) {
+  const [open, setOpen] = React.useState(defaultOpen || false);
   const options = {
     columns,
     columnSizes,
@@ -44,20 +67,24 @@ export default function EnhancedRow({
             </TableCell>
           )
         }
-        <TableCell padding="checkbox">
-          <Checkbox
-            checked={isItemSelected}
-            inputProps={{ 'aria-labelledby': labelId }}
-            onClick={event => event.stopPropagation()}
-            onChange={event => handleClick(event, row.id)}
-          />
-        </TableCell>
+        {
+          onRowCheck && (
+            <TableCell padding="checkbox">
+              <Checkbox
+                checked={isItemSelected}
+                inputProps={{ 'aria-labelledby': labelId }}
+                onClick={event => event.stopPropagation()}
+                onChange={event => onRowCheck(event, row.id)}
+              />
+            </TableCell>
+          )
+        }
         {/* <TableCell component="th" id={labelId} scope="row" padding="none">
           {row.name}
         </TableCell> */}
         {
           columns.map((column, i) => {
-            const style = (columnSizes && columnSizes[i] != null) ? { width: columnSizes[i] } : {};
+            const style : React.CSSProperties = ((columnSizes && columnSizes[i] != null) ? { width: columnSizes[i] } : {}) as any;
             if (column.size != null) {
               style.width = column.size;
             }

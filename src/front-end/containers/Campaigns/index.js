@@ -289,6 +289,11 @@ export default (props) => {
     ),
     renderRowDetail: row => (<DetailTable row={row} />),
 
+    rows,
+    setRows,
+    selected,
+    setSelected,
+
     order,
     setOrder,
     orderBy,

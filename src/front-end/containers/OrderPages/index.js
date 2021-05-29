@@ -415,6 +415,11 @@ export default (props) => {
       />
     ),
 
+    rows,
+    setRows,
+    selected,
+    setSelected,
+
     order,
     setOrder,
     orderBy,

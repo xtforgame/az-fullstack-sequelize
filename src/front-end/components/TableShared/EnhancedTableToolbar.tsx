@@ -3,8 +3,9 @@ import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import { RenderAction } from './shared';
 
-const useToolbarStyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(1),
@@ -24,12 +25,19 @@ const useToolbarStyles = makeStyles(theme => ({
   },
 }));
 
-export default (props) => {
-  const classes = useToolbarStyles();
+export type EnhancedTableToolbarProps = {
+  title?: string;
+  renderActions?: RenderAction;
+  numSelected?: number;
+};
+
+
+export default (props: EnhancedTableToolbarProps) => {
+  const classes = useStyles();
   const {
-    title,
+    title = '',
     renderActions = () => null,
-    numSelected,
+    numSelected = 0,
   } = props;
 
   return (
