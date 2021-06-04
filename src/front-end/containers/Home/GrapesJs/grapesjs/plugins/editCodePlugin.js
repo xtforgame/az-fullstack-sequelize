@@ -39,12 +39,12 @@ export const azEditCodePlugin = (editor, options = {}) => {
       codeName: 'htmlmixed',
       readOnly: 0,
       theme: 'hopscotch',
-      autoBeautify: true,
+      // autoBeautify: true,
       autoCloseTags: true,
       autoCloseBrackets: true,
-      lineWrapping: true,
+      // lineWrapping: true,
       styleActiveLine: true,
-      smartIndent: true,
+      // smartIndent: true,
       indentWithTabs: true,
     });
   }

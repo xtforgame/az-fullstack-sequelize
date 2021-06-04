@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import {
   typeCustomCode,
 } from './config';
@@ -14,7 +15,15 @@ export default (editor, opts = {}) => {
     category: 'Extra',
     activate: true,
     select: true,
-    content: { type: typeCustomCode },
-    ...blockCustomCode
+    content: {
+      type: typeCustomCode,
+      classes: [{ name: 'bcc', active: false }],
+      attributes: {
+        'data-xcss': `<style>.bcc {
+          background-color: blue;
+        }</style>`,
+      },
+    },
+    ...blockCustomCode,
   });
-}
+};

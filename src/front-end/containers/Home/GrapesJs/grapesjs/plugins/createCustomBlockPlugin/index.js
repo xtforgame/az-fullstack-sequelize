@@ -36,7 +36,11 @@ export const azCreateCustomBlockPlugin = (editor, options = {}) => {
   const rightContainer = document.createElement('div');
   rightContainer.style.flex = 1;
   topContainer.appendChild(rightContainer);
-  const btnEdit = document.createElement('button');
+  const btnSave = document.createElement('button');
+  const btnReplace = document.createElement('button');
+  btnReplace.style.float = 'right';
+
+  let allRules = [];
 
   htmlCodeViewer.set({
     codeName: 'htmlmixed',
@@ -64,9 +68,9 @@ export const azCreateCustomBlockPlugin = (editor, options = {}) => {
     indentWithTabs: true,
   });
 
-  btnEdit.innerHTML = 'Save';
-  btnEdit.className = `${pfx}btn-prim ${pfx}btn-import`;
-  btnEdit.onclick = function () {
+  btnSave.innerHTML = 'Save';
+  btnSave.className = `${pfx}btn-prim ${pfx}btn-import`;
+  btnSave.onclick = function () {
     const exCfg = {
       category: 'Custom',
       attributes: { class: 'fa fa-link' },
@@ -112,6 +116,52 @@ export const azCreateCustomBlockPlugin = (editor, options = {}) => {
     }
   };
 
+  btnReplace.innerHTML = 'Replace';
+  btnReplace.className = `${pfx}btn-prim ${pfx}btn-import`;
+  btnReplace.onclick = function () {
+    // const doReplace = confirm('Replace?');
+    // if (!doReplace) {
+    //   return;
+    // }
+
+    const allRulesMain = editor.CssComposer.getAll();
+    allRulesMain.remove(allRules);
+
+    // const component = editor.getSelected();
+    // const html = htmlCodeViewer.editor.getValue();
+    // component.components(html);
+
+    const component = editor.getSelected();
+    const parent = component.parent();
+    if (parent) {
+      const html = htmlCodeViewer.editor.getValue();
+      // https://github.com/artf/grapesjs/issues/1077
+      const coll = component.collection;
+      const at = coll.indexOf(component);
+      coll.remove(component);
+      coll.add(html, { at });
+    }
+
+
+    const allRulesPe = previewEditor.CssComposer.getAll();
+    allRulesPe.forEach((rule) => {
+      const mediaText = rule.get('mediaText');
+      const style = rule.get('style');
+      const cc = editor.CssComposer;
+      const selectorsString = rule.selectorsToString();
+      if (mediaText) {
+        const r = cc.setRule(selectorsString, style, {
+          atRuleType: 'media',
+          atRuleParams: mediaText,
+        });
+      } else {
+        const cc = editor.CssComposer;
+        const r = cc.setRule(selectorsString, style);
+      }
+    });
+    modal.close();
+  };
+
   cmdm.add('az-create-custom-block', {
     run(editor, sender) {
       let htmlViewer = htmlCodeViewer.editor;
@@ -123,7 +173,8 @@ export const azCreateCustomBlockPlugin = (editor, options = {}) => {
 
         leftContainer.appendChild(txtarea);
         rightContainer.appendChild(cssarea);
-        container.appendChild(btnEdit);
+        container.appendChild(btnSave);
+        container.appendChild(btnReplace);
         htmlCodeViewer.init(txtarea);
         cssCodeViewer.init(cssarea);
         htmlViewer = htmlCodeViewer.editor;
@@ -147,7 +198,10 @@ export const azCreateCustomBlockPlugin = (editor, options = {}) => {
       const {
         html: InnerHtml,
         css: Css,
+        allRules: ar,
       } = getComponentHtmlCss(editor, component);
+
+      allRules = ar;
 
       modal.setContent('');
       modal.setContent(container);
@@ -221,6 +275,42 @@ export const azCreateCustomBlockPlugin = (editor, options = {}) => {
 
     // check if this command already exists on this component toolbar
     const commandExists = defaultToolbar.some(item => item.command === commandToAdd);
+
+    // {
+    //   // https://github.com/artf/grapesjs/issues/789
+    //   const getAllComponents = (model, result = []) => {
+    //     result.push(model);
+    //     model.components().each(mod => getAllComponents(mod, result))
+    //     return result;
+    //   };
+    //   const all = getAllComponents(editor.DomComponents.getWrapper());
+    //   all.forEach((ac) => {
+    //     const { ccid } = ac;
+    //     // https://github.com/artf/grapesjs/issues/3000
+    //     const willBeRemoveRules = editor.CssComposer.getRule(`#${ccid}`);
+    //     console.log('willBeRemoveRules :', willBeRemoveRules);
+    //     if (willBeRemoveRules) {
+    //       const ss = willBeRemoveRules.selectorsToString().split(',');
+    //       console.log('ss :', ss);
+    //       willBeRemoveRules.setStyle({});
+
+    //       const cc = editor.CssComposer;
+    //       // Simple class-based rule
+    //       const rule = cc.setRule('.class1.class2', { color: 'red' });
+    //       console.log(rule.toCSS()) // output: .class1.class2 { color: red }
+    //       // With state and other mixed selector
+    //       const rule1 = cc.setRule('.class1.class2:hover, div#myid', { color: 'red' });
+    //       // output: .class1.class2:hover, div#myid { color: red }
+    //       // With media
+    //       const rule2 = cc.setRule('.class1:hover', { color: 'red' }, {
+    //         atRuleType: 'media',
+    //         atRuleParams: '(min-width: 500px)',
+    //       });
+    //     }
+    //     // const allRules = editor.CssComposer.getAll();
+    //     // allRules.remove(willBeRemoveRules);
+    //   });
+    // }
 
     // if it doesn't already exist, add it
     if (!commandExists) {

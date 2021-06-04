@@ -25,6 +25,8 @@ import { i18nextInited, appLocaleMap } from './i18next';
 import liffManager from './liff-manager';
 import 'react-image-lightbox/style.css';
 import 'grapesjs/dist/css/grapes.min.css';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/material.css';
 import './containers/Home/GrapesJs/grapesjs/plugins/webPresetPlugin/dist/grapesjs-preset-webpage.min.css';
 import './main.css';
 

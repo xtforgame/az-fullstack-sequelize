@@ -26,6 +26,10 @@ import AddIcon from '@material-ui/icons/Add';
 import Typography from '@material-ui/core/Typography';
 import { blue } from '@material-ui/core/colors';
 
+import {Controlled as CodeMirror} from 'react-codemirror2';
+require('codemirror/mode/xml/xml');
+require('codemirror/mode/javascript/javascript');
+
 const emails = ['username@gmail.com', 'user02@gmail.com'];
 const useStyles = makeStyles({
   avatar: {
@@ -49,6 +53,34 @@ export default (p) => {
 
   const { component } = editingData || {};
   console.log('component :', component);
+
+  const [code, setCode] = useState(`
+  <header class="site-header">
+  <div class="container">
+    <h1>Example #2</h1>
+    <nav role="navigation" class="site-navigation">
+      <ul>
+        <li><a href="#">Link</a></li>
+        <li><a href="#">Link</a></li>
+        <li><a href="#">Link</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<section role="main" class="container"><img src="http://placehold.it/1400x400/ff694d/f6f2eb" class="banner-image" />
+  <div class="grid-row col-3">
+    <div class="grid-unit"><img src="http://placehold.it/650x300/ff694d/f6f2eb" />
+      <p>Nullam quis risus eget urna mollis ornare vel eu leo. Donec id elit non mi porta gravida at eget metus. Curabitur blandit tempus porttitor.</p>
+    </div>
+    <div class="grid-unit"><img src="http://placehold.it/650x300/ff694d/f6f2eb" />
+      <p>Nullam quis risus eget urna mollis ornare vel eu leo. Donec id elit non mi porta gravida at eget metus. Curabitur blandit tempus porttitor.</p>
+    </div>
+    <div class="grid-unit"><img src="http://placehold.it/650x300/ff694d/f6f2eb" />
+      <p>Nullam quis risus eget urna mollis ornare vel eu leo. Donec id elit non mi porta gravida at eget metus. Curabitur blandit tempus porttitor.</p>
+    </div>
+  </div>
+</section>
+  `);
 
   const [filename, setFilename, filenameError, setFilenameError] = useStateWithError(defaultFileName || '');
   const [viewCallbacks, updateViewCallbacks] = useState({
@@ -132,6 +164,15 @@ export default (p) => {
       >
         <DialogTitle id="simple-dialog-title">Set backup account</DialogTitle>
         <DialogContent>
+          <CodeMirror
+            value={code}
+            options={{}}
+            onBeforeChange={(editor, data, value) => {
+              setCode(value);
+            }}
+            onChange={(editor, data, value) => {
+            }}
+          />
           <FormFieldButtonSelect
             id="ex-event-selector"
             label="專案"

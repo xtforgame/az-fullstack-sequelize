@@ -36,6 +36,7 @@ import azFinalizePlugin from '../grapesjs/plugins/azFinalizePlugin';
 import EventsBinder from './EventsBinder';
 import ComponentEditor from './ComponentEditor';
 import fixedCustomComponents from './fixedCustomComponents';
+import LocalStorageProvider from '../grapesjs/plugins/simpleStoragePlugin/LocalStorageProvider';
 
 const drawerWidth = 250;
 const useStyles = makeStyles(theme => ({
@@ -119,10 +120,12 @@ export class MinioStorageProvider extends ProviderBase {
     super();
     this.fragmentMinioApi = fragmentMinioApi;
     this.fPath = fPath;
+    this.localStorageProvider = new LocalStorageProvider();
   }
 
   init(editor, options = {}) {
-
+    this.editor = editor;
+    this.localStorageProvider.init(editor, options);
   }
 
   load(keys, clb, clbErr) {
@@ -134,6 +137,7 @@ export class MinioStorageProvider extends ProviderBase {
   }
 
   store(data, clb, clbErr) {
+    console.log('data :', data);
     this.fragmentMinioApi.saveFragmentFile(this.fPath, data)
     .then(({ data }) => {
       clb();
@@ -319,6 +323,17 @@ const GrapesJsEditor = (props) => {
       },
       layerManager: {
         appendTo: '.layers-container',
+        extend: {
+          setName(name) {
+            console.log('name :', name);
+            this.model.set('name', name);
+            const attrs = this.model.getAttributes();
+            attrs['data-gjs-name'] = name;
+            this.model.setAttributes(attrs);
+            // // this.model is the component of the layer
+            // this.model.set('another-prop-for-name', name);
+          },
+        },
       },
       plugins: [
         'az-global-script',

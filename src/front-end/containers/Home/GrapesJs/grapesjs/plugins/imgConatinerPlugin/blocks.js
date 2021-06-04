@@ -14,7 +14,16 @@ export default (editor, opts = {}) => {
     category: 'Extra',
     activate: true,
     select: true,
-    content: { type: typeCustomCode },
+    content: `
+    <div data-azbox="" class="agjs-image-container" data-gjs-type="${typeCustomCode}"></div>
+    <style>
+      .agjs-image-container {
+        background-position:center center;
+        background-size:cover;
+        background-repeat:no-repeat;
+      }
+    </style>
+    `, // { type: typeCustomCode },
     ...blockCustomCode
   });
 }

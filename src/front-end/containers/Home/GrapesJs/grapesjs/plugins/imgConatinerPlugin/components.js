@@ -25,7 +25,7 @@ export default (editor, opts = {}) => {
     model: defaultModel.extend({
       defaults: {
         ...defaultModel.prototype.defaults,
-        name: 'Custom Code',
+        name: 'Image Container',
         editable: true,
         ...opts.propsCustomCode,
       },
@@ -110,7 +110,8 @@ export default (editor, opts = {}) => {
             onSelect: (asset) => {
               const url = typeof asset === 'string' ? asset : asset.get('src');
               console.log('url :', url);
-              editor.getSelectedToStyle().setStyle({ 'background-image': `url(${url})` });
+              const style = editor.getSelectedToStyle().getStyle();
+              editor.getSelectedToStyle().setStyle({ ...style, 'background-image': `url(${url})` });
               editor.Modal.close();
               editor.AssetManager.setTarget(null);
             },

@@ -34,11 +34,33 @@ export default (editor, opts = {}) => {
        * Initilize the component
        */
       init() {
+        console.log('this :', this);
         this.listenTo(this, `change:${keyCustomCode}`, this.onCustomCodeChange);
         const initialCode = this.get(keyCustomCode) || opts.placeholderContent;
         !this.components().length && this.components(initialCode);
         const toolbar = this.get('toolbar');
         const id = 'custom-code';
+
+        const attrs = this.getAttributes();
+        if (attrs['data-xcss']) {
+          const parsed = editor.Parser.parseHtml(attrs['data-xcss']);
+          const selectorManager = editor.SelectorManager;
+          const css = parsed.css.filter((c) => {
+            const selectors = selectorManager.get(c.selectors);
+            // console.log('selectors :', selectors);
+            const existedRule = editor.CssComposer.getRule(selectors.map(s => s.getFullName({})).join(', '));
+            // console.log('existedRule :', existedRule);
+            return !existedRule;
+          });
+
+          editor.CssComposer.addCollection(css, {
+            // ...opt,
+            extend: 1,
+          });
+          delete attrs['data-xcss'];
+          this.setAttributes(attrs);
+        }
+
 
         // Add the custom code toolbar button if requested and it's not already in
         if (toolbarBtnCustomCode && !toolbar.filter(tlb => tlb.id === id ).length) {

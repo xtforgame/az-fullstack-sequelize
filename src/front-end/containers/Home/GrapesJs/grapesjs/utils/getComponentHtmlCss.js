@@ -7,7 +7,8 @@ export const saveCss = (config = {}) => ({
     const rules = cssc.getAll();
     let result = '';
 
-    const { atRules, notAtRules } = this.splitRules(this.matchedRules(component, rules));
+    const allRules = this.matchedRules(component, rules);
+    const { atRules, notAtRules } = this.splitRules(allRules);
     notAtRules.forEach(rule => result += rule.toCSS());
     this.sortMediaObject(atRules).forEach((item) => {
       let rulesStr = '';
@@ -27,7 +28,12 @@ export const saveCss = (config = {}) => ({
       if (rulesStr) result += `${atRule}{${rulesStr}}`;
     });
 
-    return result;
+    return {
+      css: result,
+      allRules,
+      atRules,
+      notAtRules,
+    };
   },
 
   /**
@@ -126,11 +132,13 @@ export const saveCss = (config = {}) => ({
   },
 });
 
+
+export const getComponentCss = (editor, component) => saveCss({}).run(editor, null, { target: component });
+
 export default (editor, component) => {
   const html = component.toHTML({});
-  const css = saveCss({}).run(editor, null, { target: component });
   return {
     html,
-    css,
+    ...getComponentCss(editor, component),
   };
 };

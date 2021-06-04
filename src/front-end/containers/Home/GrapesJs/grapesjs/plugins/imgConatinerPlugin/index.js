@@ -6,7 +6,7 @@ import loadCommands from './commands';
 const imgConatinerPlugin = (editor, opts = {}) => {
   const options = { ...{
     // Label of the custom code block
-    blockLabel: 'Custom Code',
+    blockLabel: 'Image Container',
 
     // Object to extend the default custom code block, eg. { label: 'Custom Code', category: 'Extra', ... }.
     // Pass a falsy value to avoid adding the block
@@ -16,7 +16,7 @@ const imgConatinerPlugin = (editor, opts = {}) => {
     propsCustomCode: {},
 
     // Initial content of the custom code component
-    placeholderContent: '<span>Insert here your custom code</span>',
+    placeholderContent: '', // '<span>Insert here your custom code</span>',
 
     // Object to extend the default component's toolbar button for the code, eg. `{ label: '</>', attributes: { title: 'Open custom code' } }`
     // Pass a falsy value to avoid adding the button
