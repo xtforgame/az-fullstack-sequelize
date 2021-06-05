@@ -1,12 +1,12 @@
 import {
-  typeCustomCode,
+  typeImgConatiner,
 } from './config';
 
 export default (editor, opts = {}) => {
   const bm = editor.BlockManager;
-  const { blockCustomCode, blockLabel } = opts;
+  const { blockImgConatiner, blockLabel } = opts;
 
-  blockCustomCode && bm.add(typeCustomCode, {
+  blockImgConatiner && bm.add(typeImgConatiner, {
     label: `<svg viewBox="0 0 24 24">
         <path d="M14.6 16.6l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4m-5.2 0L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4z"></path>
       </svg>
@@ -15,7 +15,7 @@ export default (editor, opts = {}) => {
     activate: true,
     select: true,
     content: `
-    <div data-azbox="" class="agjs-image-container" data-gjs-type="${typeCustomCode}"></div>
+    <div data-azbox="" class="agjs-image-container" data-gjs-type="${typeImgConatiner}"></div>
     <style>
       .agjs-image-container {
         background-position:center center;
@@ -23,7 +23,7 @@ export default (editor, opts = {}) => {
         background-repeat:no-repeat;
       }
     </style>
-    `, // { type: typeCustomCode },
-    ...blockCustomCode
+    `, // { type: typeImgConatiner },
+    ...blockImgConatiner
   });
 }

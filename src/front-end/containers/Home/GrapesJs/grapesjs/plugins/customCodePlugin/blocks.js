@@ -19,7 +19,7 @@ export default (editor, opts = {}) => {
       type: typeCustomCode,
       classes: [{ name: 'bcc', active: false }],
       attributes: {
-        'data-xcss': `<style>.bcc {
+        'data-agjs-css': `<style>.bcc {
           background-color: blue;
         }</style>`,
       },

@@ -77,6 +77,38 @@ export default (editor, options) => {
     },
   });
 
+  editor.on('component:mount', (component) => {
+    {
+      const name = component.get('name');
+      const attrs = component.getAttributes();
+      if (attrs['data-gjs-name'] !== name) {
+        attrs['data-gjs-name'] = name;
+        component.setAttributes(attrs);
+      }
+    }
+    {
+      const attrs = component.getAttributes();
+      if (attrs['data-agjs-css']) {
+        const parsed = editor.Parser.parseHtml(attrs['data-agjs-css']);
+        const selectorManager = editor.SelectorManager;
+        const css = parsed.css.filter((c) => {
+          const selectors = selectorManager.get(c.selectors);
+          // console.log('selectors :', selectors);
+          const existedRule = editor.CssComposer.getRule(selectors.map(s => s.getFullName({})).join(', '));
+          // console.log('existedRule :', existedRule);
+          return !existedRule;
+        });
+
+        editor.CssComposer.addCollection(css, {
+          // ...opt,
+          extend: 1,
+        });
+        delete attrs['data-agjs-css'];
+        component.setAttributes(attrs);
+      }
+    }
+  });
+
   const defaultType = editor.DomComponents.getType('default');
   const _initialize = defaultType.model.prototype.initialize;
   defaultType.model.prototype.initialize = function () {

@@ -1,7 +1,6 @@
 import grapesjs from 'grapesjs';
 import loadComponents from './components';
 import loadBlocks from './blocks';
-import loadCommands from './commands';
 
 const imgConatinerPlugin = (editor, opts = {}) => {
   const options = { ...{
@@ -10,17 +9,17 @@ const imgConatinerPlugin = (editor, opts = {}) => {
 
     // Object to extend the default custom code block, eg. { label: 'Custom Code', category: 'Extra', ... }.
     // Pass a falsy value to avoid adding the block
-    blockCustomCode: {},
+    blockImgConatiner: {},
 
     // Object to extend the default custom code properties, eg. `{ name: 'Custom Code', droppable: false, ... }`
-    propsCustomCode: {},
+    propsImgConatiner: {},
 
     // Initial content of the custom code component
     placeholderContent: '', // '<span>Insert here your custom code</span>',
 
     // Object to extend the default component's toolbar button for the code, eg. `{ label: '</>', attributes: { title: 'Open custom code' } }`
     // Pass a falsy value to avoid adding the button
-    toolbarBtnCustomCode: {},
+    toolbarBtnImgConatiner: {},
 
     // Content to show when the custom code contains `<script>`
     placeholderScript: `<div style="pointer-events: none; padding: 10px;">
@@ -41,7 +40,7 @@ const imgConatinerPlugin = (editor, opts = {}) => {
 
     // Object to extend the default custom code command.
     // Check the source to see all available methods
-    commandCustomCode: {},
+    commandImgConatiner: {},
   },  ...opts };
 
   // Add components
@@ -49,9 +48,6 @@ const imgConatinerPlugin = (editor, opts = {}) => {
 
   // Add blocks
   loadBlocks(editor, options);
-
-  // Add commands
-  loadCommands(editor, options);
 };
 
 export default imgConatinerPlugin;

@@ -1,9 +1,7 @@
-const keyCustomCode = 'img-container-plugin__code';
-const typeCustomCode = 'img-container';
-const commandNameCustomCode = 'img-container:open-modal';
+const keyImgConatiner = 'img-container-plugin__code';
+const typeImgConatiner = 'img-container';
 
 export {
-  keyCustomCode,
-  typeCustomCode,
-  commandNameCustomCode,
-}
+  keyImgConatiner,
+  typeImgConatiner,
+};
