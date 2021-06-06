@@ -31,10 +31,10 @@ export const azCreateCustomBlockPlugin = (editor, options = {}) => {
   bottomContainer.classList.add('azgjs-view');
   container.appendChild(bottomContainer);
   const leftContainer = document.createElement('div');
-  leftContainer.style.flex = 1;
+  leftContainer.style.width = '50%';
   topContainer.appendChild(leftContainer);
   const rightContainer = document.createElement('div');
-  rightContainer.style.flex = 1;
+  rightContainer.style.width = '50%';
   topContainer.appendChild(rightContainer);
   const btnSave = document.createElement('button');
   const btnReplace = document.createElement('button');

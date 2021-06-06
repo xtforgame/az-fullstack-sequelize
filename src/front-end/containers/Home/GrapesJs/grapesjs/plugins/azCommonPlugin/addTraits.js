@@ -79,10 +79,19 @@ export default (editor, options) => {
 
   editor.on('component:mount', (component) => {
     {
-      const name = component.get('name');
+      let changed = false;
       const attrs = component.getAttributes();
-      if (attrs['data-gjs-name'] !== name) {
+      const name = component.get('name');
+      if (name && attrs['data-gjs-name'] !== name) {
         attrs['data-gjs-name'] = name;
+        changed = true;
+      }
+      const type = component.get('type');
+      if (type && attrs['data-gjs-type'] !== type) {
+        attrs['data-gjs-type'] = type;
+        changed = true;
+      }
+      if (changed) {
         component.setAttributes(attrs);
       }
     }

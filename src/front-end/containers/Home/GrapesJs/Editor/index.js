@@ -258,6 +258,7 @@ const GrapesJsEditor = (props) => {
       forceClass: true,
       allowScripts: 1, // will remove by some-hack scripts
       showOffsets: 1,
+      multipleSelection: false,
       noticeOnUnload: 0,
       storageManager: {
         type: 'simple-storage',

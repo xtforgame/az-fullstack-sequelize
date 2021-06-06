@@ -45,7 +45,9 @@ export const azSimpleStoragePlugin = (editor, options = {}) => {
   editor.Commands.add('save-db', {
     run(editor, sender) {
       sender && sender.set('active', 0); // turn off the button
-      editor.store();
+      editor.store(() => {
+        console.log('editor.store');
+      });
     },
   });
 
