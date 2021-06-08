@@ -1,5 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
+var MiniCssExtractPlugin = require('mini-css-extract-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var gulpConfig = require('../.azdata/gulp-config');
@@ -81,9 +82,17 @@ module.exports = function({ mode }) {
         {
           test: /\.(css|sass|scss)$/,
           use: [
-            'style-loader',
+            MiniCssExtractPlugin.loader, // 'style-loader',
             'css-loader',
-            'sass-loader',
+            {
+              loader: "sass-loader",
+              options: {
+                sassOptions: {
+                  indentWidth: 2,
+                  includePaths: [path.resolve(projRoot, 'src/front-end/scss')],
+                },
+              },
+            },
           ],
         },
         {
@@ -108,6 +117,9 @@ module.exports = function({ mode }) {
       ],
     },
     plugins: [
+      new MiniCssExtractPlugin({
+        filename: baseFolderName + '/css/[name].css',
+      }),
       new webpack.DefinePlugin({'process.env': {'NODE_ENV': JSON.stringify(mode)}}),
       new CopyWebpackPlugin([
         {
@@ -115,6 +127,11 @@ module.exports = function({ mode }) {
           to: path.resolve(projRoot, frontEndJsOutputFolder),
         },
       ]),
+      // new HtmlWebpackPlugin({
+      //   chunks: ['webapp'],
+      //   template: path.resolve(projRoot, 'src/front-end/web', 'index.html'),
+      //   filename: 'webapp/index.html',
+      // }),
       new HtmlWebpackPlugin({
         chunks: ['page-form'],
         template: path.resolve(projRoot, 'src/front-end/pages/form/index.html'),
