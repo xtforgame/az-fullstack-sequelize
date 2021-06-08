@@ -29,9 +29,9 @@ const azgjsRunOnceFunc = (azwc_export) => {
     // console.log('inst.host.id :', inst.host.id);
   };
   AzwcSwiper.createSwiper = inst => new Swiper(inst.container, Object.assign({}, AzwcSwiper.getDefaultOptions(inst), {
-    effect: 'fade',
+    // effect: 'fade',
     // direction: 'vertical',
-    mousewheel: true,
+    // mousewheel: true,
   }));
   window.customRunOnceFuncs.forEach(f => f({ azwc_export }));
   window.azgjsRunOnceDone = true;

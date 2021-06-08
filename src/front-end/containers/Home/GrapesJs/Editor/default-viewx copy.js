@@ -574,9 +574,9 @@ export const defaultHtml = `
     }
     AzwcSwiper.createSwiper = (inst) => {
       return new Swiper(inst.container, Object.assign({}, AzwcSwiper.getDefaultOptions(inst), {
-        effect: 'fade',
+        // effect: 'fade',
         // direction: 'vertical',
-        mousewheel: true,
+        // mousewheel: true,
       })
       );
     }
