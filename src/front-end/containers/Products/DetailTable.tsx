@@ -186,48 +186,6 @@ const PRODUCT_LIST_QUERY = gql`
   }
 `;
 
-
-const PRODUCT_LIST_SEARCH_QUERY = gql`
-  query ProductGroupListSearch($name: String!) {
-    productGroups(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}, order_by: {created_at: desc}) {
-      id
-      uid
-      customId
-      products_aggregate(where: {deleted_at: {_is_null: true}}) {
-        aggregate{ count }
-      }
-      products(where: {deleted_at: {_is_null: true}}) { id, name }
-      category { id, name }
-      campaigns(where: {deleted_at: {_is_null: true}}) { campaign {
-        id
-        name
-        type
-        durationType
-        state
-        start
-        end
-        data
-        created_at
-        updated_at
-        deleted_at
-      } }
-      thumbnail
-      pictures
-      name
-      price
-      weight
-      description
-      materials
-      data
-    }
-    productGroupAggregate(where: {deleted_at: {_is_null: true}, name: { _ilike: $name }}) {
-      aggregate {
-        count
-      }
-    }
-  }
-`;
-
 export default (props) => {
   const [rows, setRows] = useState([]);
   const [selected, setSelected] = useState([]);

@@ -29,25 +29,14 @@ import SubContent08 from '~/containers/Home/SubContent08';
 import SubContent09 from '~/containers/Home/SubContent09';
 
 import OrderPages from '~/containers/OrderPages';
-import CreateOrder from '~/containers/OrderPages/Editor/Create';
-import EditOrder from '~/containers/OrderPages/Editor/Edit';
-
 
 import Campaigns from '~/containers/Campaigns';
-import CreateCampaign from '~/containers/Campaigns/Editor/Create';
-import EditCampaign from '~/containers/Campaigns/Editor/Edit';
 
 import ProductCategories from '~/containers/ProductCategories';
-import CreateProductCategory from '~/containers/ProductCategories/Editor/Create';
-import EditProductCategory from '~/containers/ProductCategories/Editor/Edit';
 
 import ProductGroups from '~/containers/ProductGroups';
-import CreateProductGroup from '~/containers/ProductGroups/Editor/Create';
-import EditProductGroup from '~/containers/ProductGroups/Editor/Edit';
 
 import Products from '~/containers/Products';
-import CreateProduct from '~/containers/Products/Editor/Create';
-import EditProduct from '~/containers/Products/Editor/Edit';
 
 import AdminPages from '~/containers/AdminPages';
 import OrganizationManagement from '~/containers/AdminPages/OrganizationManagement';
@@ -300,18 +289,6 @@ const campaignRoutes = [
     navbar: {
       title: '活動管理',
     },
-    exact: true,
-  },
-  {
-    name: 'create-campaign',
-    path: '/campaign/edit/new',
-    component: CreateCampaign,
-    exact: true,
-  },
-  {
-    name: 'edit-campaign',
-    path: '/campaign/edit/:id',
-    component: EditCampaign,
   },
 ];
 
@@ -323,18 +300,6 @@ const productCategoryRoutes = [
     navbar: {
       title: '商品分類管理',
     },
-    exact: true,
-  },
-  {
-    name: 'create-product-category',
-    path: '/product-category/edit/new',
-    component: CreateProductCategory,
-    exact: true,
-  },
-  {
-    name: 'edit-product-category',
-    path: '/product-category/edit/:id',
-    component: EditProductCategory,
   },
 ];
 
@@ -346,18 +311,6 @@ const productGroupRoutes = [
     navbar: {
       title: '商品群組管理',
     },
-    exact: true,
-  },
-  {
-    name: 'create-product-group',
-    path: '/product-group/edit/new',
-    component: CreateProductGroup,
-    exact: true,
-  },
-  {
-    name: 'edit-product-group',
-    path: '/product-group/edit/:id',
-    component: EditProductGroup,
   },
 ];
 
@@ -369,18 +322,6 @@ const productRoutes = [
     navbar: {
       title: '商品管理',
     },
-    exact: true,
-  },
-  {
-    name: 'create-product',
-    path: '/product/edit/new',
-    component: CreateProduct,
-    exact: true,
-  },
-  {
-    name: 'edit-product',
-    path: '/product/edit/:id',
-    component: EditProduct,
   },
 ];
 
@@ -392,18 +333,6 @@ const otherEcRoutes = [
     navbar: {
       title: '訂單管理',
     },
-    exact: true,
-  },
-  {
-    name: 'create-order',
-    path: '/order/edit/new',
-    component: CreateOrder,
-    exact: true,
-  },
-  {
-    name: 'edit-order',
-    path: '/order/edit/:id',
-    component: EditOrder,
   },
   {
     name: 'goods',

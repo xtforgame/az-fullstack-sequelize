@@ -30,6 +30,11 @@ import {
   FormNumberInput, FormImagesInput, FormDatePicker, FormFieldButtonSelect, FormTextField, FormSpace,
 } from 'azrmui/core/FormInputs';
 import { createHandleUploadFunction } from 'azrmui/core/FormInputs/FormImagesInput';
+import {
+  orderStates,
+  orderStateNameFunc,
+  orderPayWayNameFunc,
+} from 'common/domain-logic/constants/order';
 import ColorInput from '~/components/ColorInput';
 import DateRangeInput from '~/components/DateRangeInput';
 import useRouterPush from '~/hooks/useRouterPush';
@@ -41,15 +46,10 @@ import useFormSelect from '~/components/hooks/inputs/useFormSelect';
 import useDateRange from '~/components/hooks/inputs/useDateRange';
 import useSwitch from '~/components/hooks/inputs/useSwitch';
 import useCheckbox from '~/components/hooks/inputs/useCheckbox';
-import {
-  orderStates,
-  orderStateNameFunc,
-  orderPayWayNameFunc,
-} from 'common/domain-logic/constants/order';
-import ProductDetail from '../DetailTable/ProductDetail';
-import OrderDetail from '../DetailTable/OrderDetail';
-import BuyerDetail from '../DetailTable/BuyerDetail';
-import RecipientDetail from '../DetailTable/RecipientDetail';
+import ProductDetail from './DetailTable/ProductDetail';
+import OrderDetail from './DetailTable/OrderDetail';
+import BuyerDetail from './DetailTable/BuyerDetail';
+import RecipientDetail from './DetailTable/RecipientDetail';
 import ActionsPaper from './ActionsPaper';
 
 const useStyles = makeStyles(theme => ({

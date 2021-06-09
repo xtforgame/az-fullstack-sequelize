@@ -8,8 +8,7 @@ to your service.
     "graphql-tag": "^2.10.0",
     "react-apollo": "^2.5.5"
 */
-import React, { useEffect, useState } from 'react';
-import moment from 'moment';
+import React, { useState } from 'react';
 import path from 'path';
 import { useQuery, gql } from '@apollo/client';
 import useStateWithError from 'azrmui/hooks/useStateWithError';
@@ -135,7 +134,7 @@ export default (props) => {
       return;
     }
     const ii = imageInfos.map(({ imageUploadInfo, image, ...rest }) => ({ image: { ...image, imgUrl: path.join('/api/files', image.hash) }, ...rest }));
-    const data = {
+    const data: any = {
       name,
       price,
       materials,
@@ -204,8 +203,6 @@ export default (props) => {
                   label: '關聯活動',
                 }}
                 noOptionsText="查無資料"
-                label="關聯活動"
-                fullWidth
                 size="small"
                 multiple
                 options={data.campaigns}

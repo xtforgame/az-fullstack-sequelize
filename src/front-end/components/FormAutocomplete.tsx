@@ -1,13 +1,15 @@
 /* eslint-disable no-use-before-define */
 import React, { useState } from 'react';
+import { Overwrite } from 'common/utils';
 import Chip from '@material-ui/core/Chip';
-import Autocomplete, { AutocompleteProps } from '@material-ui/lab/Autocomplete';
+import Autocomplete, { AutocompleteProps, RenderInputParams } from '@material-ui/lab/Autocomplete';
 import { UseAutocompleteProps } from '@material-ui/lab/useAutocomplete';
 import FormTextField, { FormTextFieldProps } from 'azrmui/core/FormInputs/FormTextField';
 
-export type FormAutocompleteProps<T> = AutocompleteProps<T> & UseAutocompleteProps<T> & {
+export type FormAutocompleteProps<T> = Overwrite<AutocompleteProps<T> & UseAutocompleteProps<T>, {
   inputProps?: FormTextFieldProps;
-};
+  renderInput?: (params: RenderInputParams) => React.ReactNode
+}>;
 
 
 export default function FormAutocomplete<T>(props : FormAutocompleteProps<T>) {
@@ -55,7 +57,7 @@ export default function FormAutocomplete<T>(props : FormAutocompleteProps<T>) {
       renderOption={renderOption}
       renderTags={renderTags}
       renderInput={renderInputFunc}
-      {...rest}
+      {...rest as { [s: string]: any; }}
     />
   );
 }

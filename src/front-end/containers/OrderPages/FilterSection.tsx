@@ -5,7 +5,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
-import { FormDatePicker, FormFieldButtonSelect, FormTextField, FormSpace } from 'azrmui/core/FormInputs';
+import {
+  FormDatePicker, FormFieldButtonSelect, FormTextField, FormSpace,
+} from 'azrmui/core/FormInputs';
 import MenuItem from '@material-ui/core/MenuItem';
 import {
   orderStates,
@@ -36,13 +38,18 @@ const useStyles = makeStyles(theme => ({
 
 const orderStateOptions = [{
   id: '',
-  name: '全部'
+  name: '全部',
 }, ...orderStates];
+
+export type FilterSectionProps = {
+  defaultValue: any;
+  onChange: Function;
+};
 
 export default ({
   defaultValue,
   onChange = () => null,
-}) => {
+}: FilterSectionProps) => {
   const classes = useStyles();
   const [
     [searchText, setSearchText, searchTextError, setSearchTextError],
@@ -75,7 +82,7 @@ export default ({
       dateRange,
       state,
     });
-  }
+  };
 
   return (
     <BasicSection withMaxWith>

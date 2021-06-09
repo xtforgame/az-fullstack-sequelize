@@ -2,6 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { useQuery, gql, DocumentNode } from '@apollo/client';
 import { buildQueryT1, OptionsT1 } from 'common/graphQL';
 
+export {
+  OptionsT1,
+};
+
 export default (collectionName : string, aggregateName : string, body: string = 'id', options : OptionsT1 = {}, memoArray : string[] = []) => {
   const {
     orderBy,

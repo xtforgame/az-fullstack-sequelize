@@ -24,7 +24,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default ({ children, withMaxWith }) => {
+export type PropType = {
+  children: React.ReactNode;
+  withMaxWith?: boolean;
+};
+
+export default ({ children, withMaxWith } : PropType) => {
   const classes = useStyles();
   return (
     <section className={classes.root}>

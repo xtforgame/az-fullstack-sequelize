@@ -36,7 +36,7 @@ import BasicSection from '~/components/Section/Basic';
 import EnhancedTable from '~/components/EnhancedTable';
 import useRouterQuery from '~/hooks/useRouterQuery';
 import useRouterPush from '~/hooks/useRouterPush';
-import useGqlQuery from '~/hooks/useGqlQuery';
+import useGqlQueryT1 from '~/hooks/useGqlQueryT1';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -88,9 +88,11 @@ const getColumnConfig = () => {
       renderRowCell: (columnName, row, option) => {
         const color = JSON.parse(row[columnName]);
         return (
-          <div style={{ display: 'flex', }}>
-            <div style={{ marginRight: 12, width: 24, height: 24, border: '1px solid black', backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})` }}>
-            </div>
+          <div style={{ display: 'flex' }}>
+            <div style={{
+              marginRight: 12, width: 24, height: 24, border: '1px solid black', backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})`,
+            }}
+            />
             {row.colorName}
           </div>
         );
@@ -121,9 +123,7 @@ const getColumnConfig = () => {
       align: 'right',
       padding: 'checkbox',
       size: 120,
-      renderRowCell: (columnName, row, option) => {
-        return toCurrency(row[columnName]);
-      },
+      renderRowCell: (columnName, row, option) => toCurrency(row[columnName]),
     },
     {
       id: 'disabled',
@@ -132,9 +132,7 @@ const getColumnConfig = () => {
       align: 'right',
       padding: 'checkbox',
       size: 100,
-      renderRowCell: (columnName, row, option) => {
-        return row[columnName] ? '下架' : '';
-      },
+      renderRowCell: (columnName, row, option) => (row[columnName] ? '下架' : ''),
     },
     {
       id: 'isLimit',
@@ -143,9 +141,7 @@ const getColumnConfig = () => {
       align: 'right',
       padding: 'checkbox',
       size: 100,
-      renderRowCell: (columnName, row, option) => {
-        return row[columnName] ? '是' : '';
-      },
+      renderRowCell: (columnName, row, option) => (row[columnName] ? '是' : ''),
     },
     {
       id: 'soldout',
@@ -154,9 +150,7 @@ const getColumnConfig = () => {
       align: 'right',
       padding: 'checkbox',
       size: 100,
-      renderRowCell: (columnName, row, option) => {
-        return row[columnName] ? '是' : '';
-      },
+      renderRowCell: (columnName, row, option) => (row[columnName] ? '是' : ''),
     },
     {
       id: 'instock',
@@ -165,9 +159,7 @@ const getColumnConfig = () => {
       align: 'right',
       padding: 'checkbox',
       size: 100,
-      renderRowCell: (columnName, row, option) => {
-        return row[columnName];
-      },
+      renderRowCell: (columnName, row, option) => row[columnName],
     },
     {
       id: 'x',
@@ -185,9 +177,7 @@ const getColumnConfig = () => {
         }
         return 0;
       },
-      renderRowCell: (columnName, row, option) => {
-        return 0;
-      },
+      renderRowCell: (columnName, row, option) => 0,
     },
     {
       id: 'x2',
@@ -196,12 +186,8 @@ const getColumnConfig = () => {
       align: 'right',
       padding: 'checkbox',
       size: 100,
-      compareFunc: (a, b, orderBy) => {
-        return 0;
-      },
-      renderRowCell: (columnName, row, option) => {
-        return 0;
-      },
+      compareFunc: (a, b, orderBy) => 0,
+      renderRowCell: (columnName, row, option) => 0,
     },
     {
       id: 'orderSum',
@@ -210,12 +196,8 @@ const getColumnConfig = () => {
       align: 'right',
       padding: 'checkbox',
       size: 100,
-      compareFunc: (a, b, orderBy) => {
-        return 0;
-      },
-      renderRowCell: (columnName, row, option) => {
-        return row.orderSum.aggregate.sum.quantity || 0;
-      },
+      compareFunc: (a, b, orderBy) => 0,
+      renderRowCell: (columnName, row, option) => row.orderSum.aggregate.sum.quantity || 0,
     },
     // {
     //   id: 'data',
@@ -269,7 +251,7 @@ export default (props) => {
   if (groupId) {
     where.push(`{group_id: {_eq: ${groupId}}}`);
   }
-  const gqlQuery = useGqlQuery(
+  const gqlQuery = useGqlQueryT1(
     'products',
     'productAggregate',
     `
@@ -361,24 +343,26 @@ export default (props) => {
   };
 
   const push = useRouterPush();
-  const renderActions = numSelected => (numSelected > 0 ? (asDetailTable ? null : 
-    <React.Fragment>
-      <Tooltip title="核准">
-        <IconButton aria-label="accept" onClick={() => handleAccept()}>
-          <DoneIcon />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="駁回">
-        <IconButton aria-label="reject" onClick={() => handleReject()}>
-          <ClearIcon />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="下載報告">
-        <IconButton aria-label="download report" onClick={() => handleDownload()}>
-          <SaveAltIcon />
-        </IconButton>
-      </Tooltip>
-    </React.Fragment>
+  const renderActions = numSelected => (numSelected > 0 ? (asDetailTable ? null
+    : (
+      <React.Fragment>
+        <Tooltip title="核准">
+          <IconButton aria-label="accept" onClick={() => handleAccept()}>
+            <DoneIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="駁回">
+          <IconButton aria-label="reject" onClick={() => handleReject()}>
+            <ClearIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="下載報告">
+          <IconButton aria-label="download report" onClick={() => handleDownload()}>
+            <SaveAltIcon />
+          </IconButton>
+        </Tooltip>
+      </React.Fragment>
+    )
   ) : (
     <React.Fragment>
       {
@@ -441,7 +425,7 @@ export default (props) => {
       size: 64,
     });
   }
-  
+
   const render = () => (
     <EnhancedTable
       rows={rows}

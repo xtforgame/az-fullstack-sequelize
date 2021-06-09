@@ -30,7 +30,15 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default () => {
+export type FilterSectionProps = {
+  defaultValue: any;
+  onChange: Function;
+};
+
+export default ({
+  defaultValue,
+  onChange = () => null,
+}: FilterSectionProps) => {
   const classes = useStyles();
   const [
     [searchText, setSearchText, searchTextError, setSearchTextError],

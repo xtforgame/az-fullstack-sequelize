@@ -61,13 +61,15 @@ export type RenderAction = (numSelected: number, api: RenderActionApi) => ReactN
 
 export type RenderRowDetail<RowType extends RowTypeBase = RowTypeBase> = (row: RowType, index: number, option: RenderRowOption, api: RenderActionApi) => ReactNode;
 
-export type GetColumnConfig = () => {
+export type GetColumnConfigResult = {
   columns: Columns;
   defaultSorting: {
     order: OrderType;
     orderBy: string;
   },
-};
+}
+
+export type GetColumnConfig = () => GetColumnConfigResult;
 
 export type TablePropsEx<RowType extends RowTypeBase = RowTypeBase> = Overwrite<TableProps<RowType>, {
   title?: string;

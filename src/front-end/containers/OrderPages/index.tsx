@@ -1,7 +1,7 @@
 /* eslint-disable react/sort-comp */
 import { makeStyles } from '@material-ui/core/styles';
 import useCrudPages from '~/containers/hooks/useCrudPages';
-import { collectionConfig } from '~/domain-logic/resourceHelpers/campaign';
+import { collectionConfig } from '~/domain-logic/resourceHelpers/order';
 import Editor from './Editor';
 import FilterSection from './FilterSection';
 import DetailTable from './DetailTable';

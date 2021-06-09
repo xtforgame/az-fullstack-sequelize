@@ -35,7 +35,7 @@ import BasicSection from '~/components/Section/Basic';
 import EnhancedTable from '~/components/EnhancedTable';
 import useRouterQuery from '~/hooks/useRouterQuery';
 import useRouterPush from '~/hooks/useRouterPush';
-import useGqlQuery from '~/hooks/useGqlQuery';
+import useGqlQueryT1 from '~/hooks/useGqlQueryT1';
 import FilterSection from './FilterSection';
 import DetailTable from './DetailTable';
 
@@ -225,7 +225,7 @@ export default (props) => {
 
   const query = useRouterQuery();
   // console.log('query.get("text") :', query.get('text'));
-  const gqlQuery = useGqlQuery(
+  const gqlQuery = useGqlQueryT1(
     'orders',
     'orderAggregate',
     `

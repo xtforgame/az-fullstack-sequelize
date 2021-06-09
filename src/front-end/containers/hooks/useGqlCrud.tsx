@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState, ReactNode } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import BasicSection from '~/components/Section/Basic';
 import LoadingMask from '~/components/TableShared/LoadingMask';
-import Editor from './Editor';
 
 const PRODUCT_GROUP_QUERY = gql`
   query Order($id: bigint! = 0) {
@@ -59,7 +58,26 @@ const PRODUCT_GROUP_QUERY = gql`
   }
 `;
 
-export default (props) => {
+export type Options = {
+  Editor?: React.FC<any>;
+  Section?: React.FC<any>;
+  getQueryConfig: Function;
+  renderError?: (error?: Error) => ReactNode;
+  [s: string]: any;
+}
+
+export const DefaultEditor = () => <div />;
+
+export const createEditComponent = ({
+  Editor = DefaultEditor,
+  getQueryConfig,
+  Section = BasicSection,
+  renderError = error => (
+    <pre>
+      Error
+    </pre>
+  ),
+} : Options) => (props) => {
   const [refreshCount, setRefreshCount] = useState(0);
 
   const {
@@ -70,38 +88,49 @@ export default (props) => {
     id,
   } = match.params;
 
-  const { loading, error, data } = useQuery(PRODUCT_GROUP_QUERY, {
-    variables: {
-      name: refreshCount.toString(),
-      id,
-    },
-    fetchPolicy: 'network-only',
+
+  const { queryData, getQueryOption, getEditingData } = getQueryConfig({
+    id,
   });
+
+  const {
+    loading, error, data,
+  } = useQuery(queryData, getQueryOption(refreshCount));
+
 
   // if (loading || !data) return <pre>Loading</pre>;
   if (error) {
-    return (
-      <pre>
-        Error in PRODUCT_GROUP_QUERY
-        {JSON.stringify(error, null, 2)}
-      </pre>
-    );
+    return renderError(error);
   }
 
   const refresh = async () => {
     setRefreshCount(refreshCount + 1);
   };
 
+  const editingData = getEditingData(data);
 
   return (
-    <BasicSection withMaxWith>
-      {(!loading && !error && data && data.order) && (
+    <Section withMaxWith>
+      {(!loading && !error && editingData) && (
         <Editor
-          editingData={data.order}
+          editingData={editingData}
           refresh={refresh}
         />
       )}
       <LoadingMask loading={loading || !data} />
-    </BasicSection>
+    </Section>
   );
+};
+
+
+export default (op: Options) => {
+  const {
+    Editor = DefaultEditor,
+  } = op;
+  const CreateComponent = Editor;
+  const EditComponent = useMemo(() => createEditComponent(op), []);
+  return {
+    CreateComponent,
+    EditComponent,
+  };
 };

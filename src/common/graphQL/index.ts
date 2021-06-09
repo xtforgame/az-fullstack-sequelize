@@ -1,4 +1,4 @@
-export type Options = {
+export type OptionsT1 = {
   args?: string[];
   where?: string[];
   orderBy?: string;
@@ -7,7 +7,7 @@ export type Options = {
   debug?: boolean;
 };
 
-export const buildQueryT1 = (listName : string, aggregateName : string | null, body: string = 'id', options : Options = {}) => {
+export const buildQueryT1 = (collectionName : string, aggregateName : string | null, body: string = 'id', options : OptionsT1 = {}) => {
   const orderBy = options.orderBy || '{created_at: desc}';
 
   const where = options.where || [];
@@ -25,7 +25,7 @@ export const buildQueryT1 = (listName : string, aggregateName : string | null, b
   }` : '';
 
   const buildBodyString = () => `
-    ${listName}(
+    ${collectionName}(
       where: {
         _and: [${wString}]
       },
@@ -47,6 +47,34 @@ export const buildQueryT1 = (listName : string, aggregateName : string | null, b
     orderBy,
     where,
     wString,
+    buildBodyString,
+    buildQueryString,
+  };
+};
+
+export type OptionsT2 = {
+  args?: string[];
+  id?: any;
+  debug?: boolean;
+};
+
+export const buildQueryT2 = (collectionName : string, body: string = 'id', options: OptionsT2 = {}) => {
+  const {
+    id = '$id',
+    args = ['$id: bigint!'],
+  } = options;
+  const buildBodyString = () => `
+    ${collectionName}(id: ${id}) {
+      ${body}
+    }
+  `;
+
+  const buildQueryString = () => `
+    query Query ${args && args.length ? `(${args.join(',')})` : ''} {
+      ${buildBodyString()}
+    }
+  `;
+  return {
     buildBodyString,
     buildQueryString,
   };
