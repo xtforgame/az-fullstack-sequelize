@@ -26,6 +26,7 @@ import {
 
   assignProduct,
   assignAllProduct,
+  releaseProduct,
 } from '~/domain-logic';
 import RouterBase from '../core/router-base';
 
@@ -179,6 +180,18 @@ export default class ECommerceRouter extends RouterBase {
         mode,
       } = ctx.request.body;
       return ctx.body = await assignProduct(this.resourceManager, productId, orderId, mode);
+    });
+
+    router.post('/api/release-order-product', this.authKit.koaHelperEx.getIdentity, async (ctx, next) => {
+      if (!ctx.local.userSession || !ctx.local.userSession.user_id || ctx.local.userSession.privilege !== 'admin') {
+        return RestfulError.koaThrowWith(ctx, 404, 'User not found');
+      }
+      const {
+        productId,
+        orderId,
+        mode,
+      } = ctx.request.body;
+      return ctx.body = await releaseProduct(this.resourceManager, productId, orderId, mode);
     });
 
     router.post('/api/assign-all', this.authKit.koaHelperEx.getIdentity, async (ctx, next) => {

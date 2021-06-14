@@ -101,11 +101,11 @@ export function promiseWait(waitMillisec) {
 
 export function toMap<T1, T2 = T1>(
   inArray : T1[],
-  getId : (t: T1) => any,
+  getId : (t: T1, i: number, array: T1[]) => any,
   trans : (t: T1, i: number, array: T1[]) => T2 = (t => <T2><any>t),
 ) {
   return inArray.reduce((prev, curr, index, array) => {
-    prev[getId(curr)] = trans(curr, index, array);
+    prev[getId(curr, index, array)] = trans(curr, index, array);
     return prev;
   }, <{ [s: string]: T2 }>{});
 }

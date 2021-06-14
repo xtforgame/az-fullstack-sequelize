@@ -1053,6 +1053,9 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         },
         name: ['string', 900],
         nameEn: ['string', 900],
+        description: 'text',
+        prTitle: 'text',
+        prDescription: 'text',
         newIn: 'boolean',
         type: ['string', 191],
         durationType: ['string', 900], // 'time-range', 'permanent'
@@ -1076,6 +1079,16 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           },
           foreignKey: 'campaign_id',
           otherKey: 'product_group_id',
+        }],
+        orders: ['belongsToMany', 'order', {
+          through: {
+            unique: false,
+            ammModelName: 'orderCampaign',
+            ammThroughTableColumnAs: 'campaign',
+            ammThroughAs: 'relation',
+          },
+          foreignKey: 'campaign_id',
+          otherKey: 'order_id',
         }],
       },
       extraOptions: {
@@ -1240,6 +1253,9 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         invoiceStatus: 'string',
 
         payWay: 'string',
+        logistics: 'string',
+        countryCode: 'string',
+        foreign: 'boolean',
 
         selectedAt: 'date',
         expiredAt: 'date',
@@ -1262,6 +1278,16 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
 
         user: ['belongsTo', 'user', {
           foreignKey: 'user_id',
+        }],
+        campaigns: ['belongsToMany', 'campaign', {
+          through: {
+            unique: false,
+            ammModelName: 'orderCampaign',
+            ammThroughTableColumnAs: 'order',
+            ammThroughAs: 'relation',
+          },
+          foreignKey: 'order_id',
+          otherKey: 'campaign_id',
         }],
         products: ['belongsToMany', 'product', {
           through: {
@@ -1473,6 +1499,10 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
           type: 'integer',
           defaultValue: 0,
         },
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
         user: ['belongsTo', 'user', {
           foreignKey: 'user_id',
         }],
@@ -1482,6 +1512,39 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         byOrder: ['belongsTo', 'order', {
           foreignKey: 'order_id',
         }],
+      },
+      extraOptions: {
+        hasura: {
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(null),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(userIdF('user_id')),
+            // },
+          },
+          restrictedColumns: [],
+        },
+      },
+    },
+    shippingFee: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        countryCode: 'string',
+        weight: {
+          type: 'double',
+          defaultValue: 0,
+        },
+        price: {
+          type: 'integer',
+          defaultValue: 0,
+        },
       },
       extraOptions: {
         hasura: {
@@ -1898,6 +1961,47 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
             name: 'product_group_campaign_uniqueness',
             unique: true,
             fields: ['product_group_id', 'campaign_id'],
+            where: {
+              deleted_at: null,
+            },
+          },
+        ],
+      },
+      extraOptions: {
+        hasura: {
+          publicColumns: ['id'],
+          views: {
+            privateVd: {
+              columns: 'all',
+              permissions: getViewPermissions(null),
+            },
+            // orgSharedVd: {
+            //   columns: 'all',
+            //   permissions: getViewPermissions(null),
+            // },
+          },
+          restrictedColumns: [],
+        },
+      },
+    },
+    orderCampaign: {
+      columns: {
+        id: {
+          type: 'bigint',
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        data: {
+          type: 'jsonb',
+          defaultValue: {},
+        },
+      },
+      options: {
+        indexes: [
+          {
+            name: 'order_campaign_uniqueness',
+            unique: true,
+            fields: ['order_id', 'campaign_id'],
             where: {
               deleted_at: null,
             },

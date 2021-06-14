@@ -1,4 +1,4 @@
-export const roleLevels = {
+export const roleLevels : { [s: string]: number } = {
   owner: 1,
   master: 2,
   member: 3,

@@ -27,6 +27,10 @@ services:
     ports:
       - "5432:5432"
 
+    volumes:
+      - "../pgdata-m:/var/lib/postgresql/data/pgdata"
+
+
   graphql-engine:
     image: hasura/graphql-engine:v2.0.0-alpha.3
     ports:
@@ -68,7 +72,7 @@ services:
     restart: always
     environment:
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:xxxx1234@pg-src:5432/postgres
-      ## HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:xxxx1234@pg-master:5432/db_studiodoe
+      ## HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:xxxx1234@pg-master:5432/db_rick_data
       ## enable the console served by server
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
       ## enable debugging mode. It is recommended to disable this in production

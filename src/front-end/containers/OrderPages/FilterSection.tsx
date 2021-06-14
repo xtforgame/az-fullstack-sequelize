@@ -13,6 +13,8 @@ import {
   orderStates,
   orderStateNameFunc,
   orderPayWayNameFunc,
+
+  logisticsTypes,
 } from 'common/domain-logic/constants/order';
 import DateRangeInput from '~/components/DateRangeInput';
 import TagsAutocomplete from '~/components/TagsAutocomplete';
@@ -30,7 +32,7 @@ const useStyles = makeStyles(theme => ({
     flexWrap: 'wrap',
   },
   flex1: {
-    maxWidth: 800,
+    maxWidth: 1200,
     padding: 24,
     flex: 1,
   },
@@ -40,6 +42,11 @@ const orderStateOptions = [{
   id: '',
   name: '全部',
 }, ...orderStates];
+
+const logisticsTypeOptions = [{
+  id: '',
+  name: '全部',
+}, ...logisticsTypes];
 
 export type FilterSectionProps = {
   defaultValue: any;
@@ -51,6 +58,12 @@ export default ({
   onChange = () => null,
 }: FilterSectionProps) => {
   const classes = useStyles();
+  const [
+    [searchId, setSearchId, searchIdError, setSearchIdError],
+    searchIdInput,
+  ] = useTextField((defaultValue && defaultValue.id) || '', '', {
+    label: '搜尋ID',
+  });
   const [
     [searchText, setSearchText, searchTextError, setSearchTextError],
     searchInput,
@@ -76,11 +89,24 @@ export default ({
     labelKey: 'name',
   });
 
+  const [
+    [logistics, setLogistics],
+    logisticsInput,
+  ] = useFormSelect((defaultValue && defaultValue.logistics) || '', '', {
+    label: '貨運類型',
+    items: logisticsTypeOptions,
+    idKey: 'id',
+    valueKey: 'id',
+    labelKey: 'name',
+  });
+
   const submit = () => {
     onChange({
+      id: searchId,
       searchText,
       dateRange,
       state,
+      logistics,
     });
   };
 
@@ -90,11 +116,15 @@ export default ({
       <DialogContent>
         <div className={classes.flexContainer}>
           <div className={classes.flex1}>
+            {searchIdInput.render()}
+            <FormSpace variant="content1" />
             {searchInput.render()}
             <FormSpace variant="content1" />
             {selectDateRange.render()}
             <FormSpace variant="content1" />
             {stateInput.render()}
+            <FormSpace variant="content1" />
+            {logisticsInput.render()}
           </div>
           <div className={classes.flex1}>
             <FormSpace variant="content1" />

@@ -1,3 +1,8 @@
+export type GqlResult<T = any> = {
+  data?: T;
+  errors?: any;
+}
+
 export type OptionsT1 = {
   args?: string[];
   where?: string[];
@@ -5,6 +10,7 @@ export type OptionsT1 = {
   offset?: number;
   limit?: number;
   debug?: boolean;
+  extraBodyString?: string;
 };
 
 export const buildQueryT1 = (collectionName : string, aggregateName : string | null, body: string = 'id', options : OptionsT1 = {}) => {
@@ -41,6 +47,7 @@ export const buildQueryT1 = (collectionName : string, aggregateName : string | n
   const buildQueryString = () => `
     query Query ${options.args && options.args.length ? `(${options.args.join(',')})` : ''} {
       ${buildBodyString()}
+      ${options.extraBodyString || ''}
     }
   `;
   return {
@@ -56,6 +63,7 @@ export type OptionsT2 = {
   args?: string[];
   id?: any;
   debug?: boolean;
+  extraBodyString?: string;
 };
 
 export const buildQueryT2 = (collectionName : string, body: string = 'id', options: OptionsT2 = {}) => {
@@ -72,6 +80,7 @@ export const buildQueryT2 = (collectionName : string, body: string = 'id', optio
   const buildQueryString = () => `
     query Query ${args && args.length ? `(${args.join(',')})` : ''} {
       ${buildBodyString()}
+      ${options.extraBodyString || ''}
     }
   `;
   return {

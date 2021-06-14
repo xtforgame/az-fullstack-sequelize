@@ -1,13 +1,3 @@
-/* This is an example snippet - you should consider tailoring it
-to your service.
-*/
-/*
-  Add these to your `package.json`:
-    "apollo-boost": "^0.3.1",
-    "graphql": "^14.2.1",
-    "graphql-tag": "^2.10.0",
-    "react-apollo": "^2.5.5"
-*/
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { useQuery, gql } from '@apollo/client';
@@ -35,6 +25,11 @@ import {
   orderStateNameFunc,
   orderPayWayNameFunc,
 } from 'common/domain-logic/constants/order';
+import {
+  Order, Campaign, Product, ShippingFee, calcOrderInfo,
+  toShippingFeeTableMap,
+  ShippingFeeTableMap, OrderInfo,
+} from 'common/domain-logic/gql-helpers';
 import ColorInput from '~/components/ColorInput';
 import DateRangeInput from '~/components/DateRangeInput';
 import useRouterPush from '~/hooks/useRouterPush';
@@ -60,7 +55,7 @@ const useStyles = makeStyles(theme => ({
     flexWrap: 'wrap',
   },
   flex1: {
-    maxWidth: 800,
+    maxWidth: 1200,
     padding: 24,
     flex: 1,
   },
@@ -96,7 +91,18 @@ export default (props) => {
   const {
     editingData,
     refresh,
+    shippingFeeTableMap,
   } = props;
+
+  const [orderInfo, setOrderInfo] = useState<OrderInfo | undefined>();
+
+  useEffect(() => {
+    if (editingData && shippingFeeTableMap) {
+      setOrderInfo(calcOrderInfo(editingData, shippingFeeTableMap));
+    } else {
+      setOrderInfo(undefined);
+    }
+  }, [editingData, shippingFeeTableMap ]);
 
   const isCreating = !editingData;
 
@@ -123,7 +129,7 @@ export default (props) => {
 
   const push = useRouterPush();
   const submit = async () => {
-    let errorOccurred = false; d
+    let errorOccurred = false;
 
     if (errorOccurred) {
       return;
@@ -143,6 +149,11 @@ export default (props) => {
     }
   };
 
+  if (!orderInfo) {
+    return null;
+  }
+
+  console.log('orderInfo :', orderInfo);
   console.log('editingData :', editingData);
   return (
     <React.Fragment>
@@ -183,7 +194,7 @@ export default (props) => {
               <OrderDetail row={editingData} />
               <RecipientDetail row={editingData} />
               <BuyerDetail row={editingData} />
-              <ProductDetail row={editingData} onRefresh={refresh} />
+              <ProductDetail row={editingData} orderInfo={orderInfo} onRefresh={refresh} />
               <FormSpace variant="content1" />
             </div>
           </div>

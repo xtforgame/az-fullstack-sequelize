@@ -22,6 +22,7 @@ import Divider from '@material-ui/core/Divider';
 import DialogContent from '@material-ui/core/DialogContent';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
+import Chip from '@material-ui/core/Chip';
 import {
   FormNumberInput, FormOutlinedSelect, FormFieldButtonSelect, FormTextField, FormSpace,
 } from 'azrmui/core/FormInputs';
@@ -32,7 +33,8 @@ import useTextField from '~/components/hooks/inputs/useTextField';
 import useFormSelect from '~/components/hooks/inputs/useFormSelect';
 import useNumberInput from '~/components/hooks/inputs/useNumberInput';
 import useSwitch from '~/components/hooks/inputs/useSwitch';
-import { isFunctionV2 } from 'common/utils';
+import FormAutocomplete from '~/components/FormAutocomplete';
+import { isFunctionV2, toMap } from 'common/utils';
 
 export const dicountMethods = [
   { id: 'fixed-number', name: '固定折扣' },
@@ -49,6 +51,14 @@ const useStyles = makeStyles(theme => ({
     padding: 8,
   },
 }));
+
+const freeShippingAreaOptions = [
+  { id: 'ship', name: '台灣本島' },
+  { id: 'outlying', name: '台灣離島' },
+  { id: 'oversea', name: '海外寄送' },
+];
+
+const freeShippingAreaOptionMap = toMap(freeShippingAreaOptions, o => o.id);
 
 export default (props) => {
   const {
@@ -74,7 +84,7 @@ export default (props) => {
   const [
     [totalAmount, setTotalAmount, totalAmountError, setTotalAmountError],
     totalAmountInput,
-  ] = useNumberInput(value.totalPrice || 1, '', {
+  ] = useNumberInput(value.totalAmount || 1, '', {
     label: '滿量數量(件)',
     required: true,
     InputProps: {
@@ -119,6 +129,10 @@ export default (props) => {
     },
   });
 
+  const [freeShippingAreaList, setFreeShippingAreaList, freeShippingAreaListError, setFreeShippingAreaListError] = useStateWithError(
+    (value.freeShippingAreaList || ['ship']).map(c => freeShippingAreaOptionMap[c]).filter(c => c),
+  );
+
   const [
     [canCombine, setCanCombine, canCombineError, setCanCombineError],
     canCombineInput,
@@ -135,6 +149,7 @@ export default (props) => {
       dicountMethod,
       disconutPrice,
       disconutPercentage,
+      freeShippingAreaList,
       canCombine,
     });
   }, [
@@ -143,6 +158,7 @@ export default (props) => {
     dicountMethod,
     disconutPrice,
     disconutPercentage,
+    freeShippingAreaList,
     canCombine,
   ]);
 
@@ -154,6 +170,10 @@ export default (props) => {
       || (selectedType === 'discount-total-amount')
     ) {
       let errorOccurred = false;
+      if (dicountMethod === 'free-shipping' && !freeShippingAreaList.length) {
+        setFreeShippingAreaListError('請至少指定一個免運區域');
+        errorOccurred = true;
+      }
       if (errorOccurred) {
         return;
       }
@@ -163,6 +183,7 @@ export default (props) => {
         dicountMethod: dicountMethod,
         disconutPrice: parseInt(disconutPrice),
         disconutPercentage: parseFloat(disconutPercentage),
+        freeShippingAreaList: freeShippingAreaList.map(o => o.id),
         canCombine,
       };
     }
@@ -219,6 +240,46 @@ export default (props) => {
                 </React.Fragment>
               )
             }
+            {(dicountMethod === 'free-shipping')
+              && (
+                <React.Fragment>
+                  <FormSpace variant="content2" />
+                  {disconutPriceInput.render()}
+                  <FormSpace variant="content2" />
+                  <FormAutocomplete
+                    inputProps={{
+                      error: !!freeShippingAreaListError,
+                      helperText: freeShippingAreaListError,
+                      variant: 'outlined',
+                      placeholder: '新增免運區域',
+                      margin: 'dense',
+                      fullWidth: true,
+                      label: '免運區域',
+                    }}
+                    noOptionsText="查無資料"
+                    size="small"
+                    multiple
+                    options={freeShippingAreaOptions}
+                    value={freeShippingAreaList}
+                    onChange={(event, newValue) => {
+                      setFreeShippingAreaList(newValue);
+                    }}
+                    renderOption={option => (
+                      <React.Fragment>
+                        {option.name}
+                      </React.Fragment>
+                    )}
+                    filterOptions={(options, state) => options.filter(o => !freeShippingAreaList.find(c => c.id === o.id))}
+                    getOptionLabel={option => option.name}
+                    renderTags={(value, getTagProps) => value.map((option, index) => (
+                      <Chip size="small" variant="outlined" label={option.name} {...getTagProps({ index })} />
+                    ))}
+                  />
+                </React.Fragment>
+              )
+            }
+
+
             <FormSpace variant="content2" />
             {canCombineInput.render({
               label: canCombine ? '可合併其他折扣' : '不可合併其他折扣(擇優計算)',

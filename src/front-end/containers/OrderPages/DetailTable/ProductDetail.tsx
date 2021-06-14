@@ -14,6 +14,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import { deepOrange, green, yellow, red, grey } from '@material-ui/core/colors';
 import FlightLandIcon from '@material-ui/icons/FlightLand';
+import {
+  Order, Campaign, Product, ShippingFee, calcOrderInfo,
+  toShippingFeeTableMap,
+  ShippingFeeTableMap, OrderInfo,
+} from 'common/domain-logic/gql-helpers';
 import BuyerDetail from './BuyerDetail';
 import RecipientDetail from './RecipientDetail';
 
@@ -38,6 +43,11 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
   },
+  actions: {
+    '& > * + *': {
+      marginTop: theme.spacing(3),
+    },
+  }
 }));
 
 export default function DetailTable(props) {
@@ -45,6 +55,8 @@ export default function DetailTable(props) {
     row,
     onRefresh = () => null,
   } = props;
+
+  const orderInfo : OrderInfo = props.orderInfo;
 
   const assign = async (orderId, productId, mode = '') => {
     await axios({
@@ -59,7 +71,24 @@ export default function DetailTable(props) {
     onRefresh();
   }
 
+  const release = async (orderId, productId, mode = '') => {
+    await axios({
+      method: 'post',
+      url: 'api/release-order-product',
+      data: {
+        orderId,
+        productId,
+        mode,
+      },
+    });
+    onRefresh();
+  }
+
   const classes = useStyles();
+
+  if (!orderInfo) {
+    return null;
+  }
 
   return (
     <Paper className={classes.paper} elevation={0}>
@@ -99,10 +128,24 @@ export default function DetailTable(props) {
                 {opMn.subtotal}
               </TableCell>
               <TableCell>
-                {opMn.product.soldout ? '[斷貨] ' : ''}備貨數量：{opMn.assignedQuantity}
-                <Button style={{ marginLeft: 20 }} variant="contained" onClick={() => assign(opMn.order_id, opMn.product_id)}>
-                  備貨
-                </Button>
+                <div style={{ display: 'flex' }}>
+                  <div>
+                    <div>{opMn.product.soldout ? '[斷貨] ' : ''}備貨數量：{opMn.assignedQuantity}</div>
+                    <div>尚餘數量：{opMn.product.instock}</div>
+                  </div>
+                  <div className={classes.actions}>
+                    {opMn.assignedQuantity < opMn.quantity && (
+                       <Button style={{ marginLeft: 20 }} variant="contained" onClick={() => assign(opMn.order_id, opMn.product_id)}>
+                        備貨
+                      </Button>
+                    )}
+                    {opMn.assignedQuantity > 0 && (
+                      <Button style={{ marginLeft: 20 }} variant="contained" onClick={() => release(opMn.order_id, opMn.product_id)}>
+                        取消備貨
+                      </Button>
+                    )}
+                  </div>
+                </div>
               </TableCell>
             </TableRow>
           ))}
@@ -114,7 +157,7 @@ export default function DetailTable(props) {
             <TableCell align="right"> </TableCell>
             <TableCell align="right"> </TableCell>
             <TableCell align="right">
-              {row.metadata.total}
+              {orderInfo.originalPrice}
             </TableCell>
             <TableCell> </TableCell>
           </TableRow>
@@ -130,7 +173,7 @@ export default function DetailTable(props) {
             <TableCell align="right"> </TableCell>
             <TableCell align="right"> </TableCell>
             <TableCell align="right">
-              {(row.metadata.shippingFee || 0)}
+              {orderInfo.shippingFee}
             </TableCell>
             <TableCell> </TableCell>
           </TableRow>
@@ -142,7 +185,7 @@ export default function DetailTable(props) {
             <TableCell align="right"> </TableCell>
             <TableCell align="right"> </TableCell>
             <TableCell align="right">
-              {row.metadata.total + (row.metadata.shippingFee || 0)}
+              {row.metadata.total}
             </TableCell>
             <TableCell> </TableCell>
           </TableRow>

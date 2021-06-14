@@ -27,6 +27,8 @@ id
 uid
 customId
 group {
+  id
+  name
   products(where: {deleted_at: {_is_null: true}}) {
     id
     name
@@ -65,7 +67,27 @@ data
 disabled
 isLimit
 soldout
-
+assignedQuantitySum: orders_aggregate(where: {deleted_at: {_is_null: true}, order: {state: {_eq: "paid"}}}) {
+  aggregate {
+    sum {
+      assignedQuantity
+    }
+  }
+}
+quantitySum: orders_aggregate(where: {deleted_at: {_is_null: true}, order: {state: {_eq: "paid"}}}) {
+  aggregate {
+    sum {
+      quantity
+    }
+  }
+}
+priceSum: orders_aggregate(where: {deleted_at: {_is_null: true}, soldout: {_eq: false}, fulfilled: {_eq: true}}) {
+  aggregate {
+    sum {
+      subtotal
+    }
+  }
+}
 orderSum: orders_aggregate(where: {deleted_at: {_is_null: true}}) {
   aggregate{
     sum {
@@ -201,7 +223,7 @@ export const collectionConfig : CollectionConfig = {
         align: 'right',
         padding: 'checkbox',
         size: 100,
-        renderRowCell: (columnName, row, option) => 0,
+        renderRowCell: (columnName, row, option) => row.assignedQuantitySum.aggregate.sum.quantity || 0,
       },
       {
         id: 'x2',
@@ -210,7 +232,15 @@ export const collectionConfig : CollectionConfig = {
         align: 'right',
         padding: 'checkbox',
         size: 100,
-        renderRowCell: (columnName, row, option) => 0,
+        renderRowCell: (columnName, row, option) => {
+          const needed = row.quantitySum.aggregate.sum.quantity || 0;
+          const assigned = row.assignedQuantitySum.aggregate.sum.quantity || 0;
+          const instock = row.instock || 0;
+          if (instock + assigned >= needed) {
+            return 0;
+          }
+          return needed - (instock + assigned);
+        }
       },
       {
         id: 'orderSum',

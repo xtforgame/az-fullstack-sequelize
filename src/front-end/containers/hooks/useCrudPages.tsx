@@ -9,12 +9,13 @@ import useGqlQueryT2 from '~/hooks/useGqlQueryT2';
 import useGqlTable, { useTableStates } from '~/containers/hooks/useGqlTable';
 import useGqlCrud from '~/containers/hooks/useGqlCrud';
 import { CollectionConfig } from '~/domain-logic/resourceHelpers/common';
+import useRouterQuery from '~/hooks/useRouterQuery';
 
 export type Options = {
   collectionConfig: CollectionConfig;
   Editor: React.FC<any>;
   FilterSection: React.FC<any>;
-  DetailTable: React.FC<any>;
+  DetailTable?: React.FC<any>;
   [s: string]: any;
 }
 
@@ -39,14 +40,15 @@ export const createListComponent = (op: Options) => {
       resourceFieldsText,
       getColumnConfig,
       useRenderActions,
-      useGqlQueryT1Option = o => o,
+      useGqlQueryT1Option = options => ({ options, variables: {} }),
     },
   } = op;
   return (props) => {
-    const [filter, setFilter] = useState<any>({});
+    const query = useRouterQuery();
+    const [filter, setFilter] = useState<any>(query);
     const tableStates = useTableStates({});
 
-    const optT1 = useGqlQueryT1Option({
+    const { options, variables } = useGqlQueryT1Option({
       // args: ['$name: String!'],
       // where: ['{name: {_ilike: $name}}'],
       args: [],
@@ -61,10 +63,10 @@ export const createListComponent = (op: Options) => {
       collectionName,
       aggregateName,
       resourceFieldsText,
-      optT1,
+      options,
     );
 
-    const renderActions = useRenderActions();
+    const renderActions = useRenderActions({ filter, tableStates });
 
     const { render } = useGqlTable({
       getQueryConfig: () => ({
@@ -73,6 +75,7 @@ export const createListComponent = (op: Options) => {
           variables: {
             name: '%w%',
             refreshCount: refreshCount.toString(),
+            ...variables,
           },
           fetchPolicy: 'network-only',
         }),
@@ -93,12 +96,13 @@ export const createListComponent = (op: Options) => {
           {JSON.stringify(error, null, 2)}
         </pre>
       ),
-      renderRowDetail: (row, _, __, { refresh }) => (
+      renderRowDetail: DetailTable ? (row, _, __, { refresh }) => (
         <DetailTable
+          {...props}
           row={row}
           onRefresh={refresh as any}
         />
-      ),
+      ): undefined,
       ...tableStates,
     });
 
@@ -106,7 +110,7 @@ export const createListComponent = (op: Options) => {
       <React.Fragment>
         <FilterSection defaultValue={filter} onChange={setFilter as any} />
         <BasicSection>
-          {render()}
+          {render(props)}
         </BasicSection>
       </React.Fragment>
     );
@@ -128,9 +132,11 @@ export default (op: Options) => {
       resourceFieldsText,
       getColumnConfig,
       useRenderActions,
-      useGqlQueryT1Option = o => o,
+      useGqlQueryT1Option = options => ({ options, variables: {} }),
+      useStates = () => ({}),
     },
   } = op;
+  const extraStates = useStates();
   const ListComponent = useMemo(() => createListComponent(op), []);
   const gqlQuery = useGqlQueryT2(
     resourceName,
@@ -154,23 +160,41 @@ export default (op: Options) => {
       getEditingData: data => data?.[resourceName],
     }),
   });
-  const render = () => (
+  const render = (extraProps?) => (
     <Switch>
       <Route
         name="list"
         path={basePath}
-        component={ListComponent}
+        render={p => (
+          <ListComponent
+            {...p}
+            {...extraStates}
+            {...extraProps}
+          />
+        )}
         exact
       />
       <Route
         name="create"
         path={`${basePath}/new`}
-        component={CreateComponent}
+        render={p => (
+          <CreateComponent
+            {...p}
+            {...extraStates}
+            {...extraProps}
+          />
+        )}
       />
       <Route
         name="edit"
         path={`${basePath}/edit/:id`}
-        component={EditComponent}
+        render={p => (
+          <EditComponent
+            {...p}
+            {...extraStates}
+            {...extraProps}
+          />
+        )}
       />
     </Switch>
   );

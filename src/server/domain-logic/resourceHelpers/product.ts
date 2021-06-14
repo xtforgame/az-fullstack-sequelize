@@ -150,7 +150,7 @@ export const updateFulfilledOrders = async (resourceManager : AmmOrm, transactio
   });
 
   console.log('fulfilledOrderIds :', fulfilledOrderIds);
-
+  return fulfilledOrderIds;
 }
 
 export const assignProduct = async (resourceManager : AmmOrm, productId: any, orderId: any, mode: string) => {
@@ -237,6 +237,106 @@ export const assignAllProduct = async (resourceManager : AmmOrm) => {
     }, null);
 
     await updateFulfilledOrders(resourceManager, transaction);
+    await transaction.commit();
+    return true;
+  } catch (error) {
+    await transaction.rollback();
+    return Promise.reject(error);
+  }
+};
+
+
+const releaseMain = async (resourceManager : AmmOrm, productId: string, orderProduct: OrderProductI, transaction: sequelize.Transaction) => {
+  const Product = resourceManager.getSqlzModel<ProductI>('product')!;
+  if (orderProduct.assignedQuantity! === 0) {
+    return;
+  }
+  const product = await Product.findOne({
+    where: {
+      id: productId,
+    },
+    transaction,
+  })!;
+  if(!product) {
+    throw Error('');
+  }
+  product.instock! += orderProduct.assignedQuantity!;
+  orderProduct.assignedQuantity! = 0;
+  orderProduct.fulfilled = false;
+  await (<any>product).save({ transaction });
+  await (<any>orderProduct).save({ transaction });
+}
+
+export const updateUnfulfilledOrders = async (resourceManager : AmmOrm, transaction: sequelize.Transaction) => {
+  const Product = resourceManager.getSqlzModel<ProductI>('product')!;
+  const Order = resourceManager.getSqlzModel<OrderI>('order')!;
+  const OrderProduct = resourceManager.getSqlzAssociationModel<OrderProductI>('orderProduct')!;
+
+  const orders = await Order.findAll({
+    where: {
+      // id: {
+      //   [Op.in]: orderIds,
+      // },
+      state: 'selected',
+    },
+    transaction,
+    include: [
+      {
+        model: Product,
+        as: 'products',
+      },
+    ],
+  });
+
+  const unfulfilledOrderIds : string[] = [];
+
+  orders.map((o) => {
+    const products = o.products!;
+    let done = true;
+    for (let i = 0; i < products.length; i++) {
+      const op = (<OrderProductI>(<any>products[i]).orderProduct);
+      if (op.quantity !== op.assignedQuantity) {
+        done = false;
+        break
+      }
+    }
+    if (!done) {
+      unfulfilledOrderIds.push(o.id);
+    }
+  });
+
+  await Order.update({
+    state: 'paid',
+  }, {
+    transaction,
+    where: {
+      id: {
+        [Op.in]: unfulfilledOrderIds,
+      },
+    },
+  });
+
+  console.log('unfulfilledOrderIds :', unfulfilledOrderIds);
+  return unfulfilledOrderIds;
+}
+
+export const releaseProduct = async (resourceManager : AmmOrm, productId: any, orderId: any, mode: string) => {
+  const Product = resourceManager.getSqlzModel<ProductI>('product')!;
+  const OrderProduct = resourceManager.getSqlzAssociationModel<OrderProductI>('orderProduct')!;
+  const transaction = await resourceManager.db.transaction();
+  try {
+    const orderProduct = await OrderProduct.findOne({
+      where: {
+        product_id: productId,
+        order_id: orderId,
+      },
+      transaction,
+    })!;
+    if(!orderProduct) {
+      throw Error('');
+    }
+    await releaseMain(resourceManager, productId, orderProduct, transaction);
+    await updateUnfulfilledOrders(resourceManager, transaction);
     await transaction.commit();
     return true;
   } catch (error) {

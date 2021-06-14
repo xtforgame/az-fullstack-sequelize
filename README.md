@@ -9,9 +9,20 @@ Run `npm install`
 
 yarn stop-db&&yarn start-db&&yarn start
 
-yarn stop-db&&yarn start-db&&yarn test:hasura&&yarn build-server-dev&&yarn amm-sync
+yarn build-server&&yarn c-cmd-dev RemoteSchemaCompare \
+    rick.cloud -- \
+    --postgresPort 22002 \
+    --postgresPassword xxxx1234
 
-postgres://postgres:xxxx1234@pg-master:5432/db_rick_data
+yarn stop-db&&yarn start-db&&yarn build-server-dev&&yarn test:hasura&&yarn amm-sync&&yarn graphql-codegen
+
+rm -rf ../pgdata-m
+yarn stop-mig&&yarn start-mig&&yarn test:hasura&&yarn test:migration
+
+
+postgres://postgres:xxxx1234@postgres:5432/db_rick_data
+
+
 
 X-Hasura-Role user
 X-Hasura-User-Id 1

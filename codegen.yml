@@ -1,0 +1,8 @@
+schema:
+  - http://localhost:8081/v1/graphql:
+      headers:
+        x-hasura-admin-secret: xxxxhsr
+generates:
+  ./src/common/domain-logic/gql-types.ts:
+    plugins:
+      - typescript

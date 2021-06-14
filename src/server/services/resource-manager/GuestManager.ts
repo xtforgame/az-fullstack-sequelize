@@ -58,12 +58,19 @@ export class CookieManager {
   }
 }
 
+export type SnackbarMessage = {
+  text: string;
+  done: boolean;
+}
+
 export class GuestData {
   id: string;
 
   lastVisit: number;
 
   data: { [s: string]: any };
+
+  redirectPath: string;
 
   cart: {
     id: string;
@@ -74,6 +81,7 @@ export class GuestData {
     this.id = id;
     this.lastVisit = new Date().getTime();
     this.data = {};
+    this.redirectPath = '';
     this.cart = {
       id: '',
       items: [],

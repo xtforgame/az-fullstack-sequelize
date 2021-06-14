@@ -3,8 +3,8 @@ import { useQuery, gql, DocumentNode } from '@apollo/client';
 import { buildQueryT2, OptionsT2 } from 'common/graphQL';
 
 export {
-  OptionsT2,
-};
+  OptionsT2
+} from 'common/graphQL';
 
 export default (resourceName : string, body: string = 'id', options : OptionsT2 = {}, memoArray : string[] = []) => {
   const {

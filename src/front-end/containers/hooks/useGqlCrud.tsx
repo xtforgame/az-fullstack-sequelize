@@ -77,7 +77,7 @@ export const createEditComponent = ({
       Error
     </pre>
   ),
-} : Options) => (props) => {
+} : Options) => ((props) => {
   const [refreshCount, setRefreshCount] = useState(0);
 
   const {
@@ -113,6 +113,7 @@ export const createEditComponent = ({
     <Section withMaxWith>
       {(!loading && !error && editingData) && (
         <Editor
+          {...props}
           editingData={editingData}
           refresh={refresh}
         />
@@ -120,7 +121,7 @@ export const createEditComponent = ({
       <LoadingMask loading={loading || !data} />
     </Section>
   );
-};
+}) as React.FC<any>;
 
 
 export default (op: Options) => {

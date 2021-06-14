@@ -17,7 +17,7 @@ export default (props) => {
     collectionConfig,
     Editor,
     FilterSection,
-    DetailTable,
+    // DetailTable,
   });
   return render();
 };

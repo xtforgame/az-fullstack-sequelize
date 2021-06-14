@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -13,6 +13,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import { deepOrange, green, yellow, red, grey } from '@material-ui/core/colors';
 import FlightLandIcon from '@material-ui/icons/FlightLand';
+import {
+  Order, Campaign, Product, ShippingFee, calcOrderInfo,
+  toShippingFeeTableMap,
+  ShippingFeeTableMap, OrderInfo,
+} from 'common/domain-logic/gql-helpers';
 import OrderDetail from './OrderDetail';
 import BuyerDetail from './BuyerDetail';
 import RecipientDetail from './RecipientDetail';
@@ -42,10 +47,19 @@ export default function DetailTable(props) {
     row,
     isItemSelected,
     onRefresh = () => null,
+    shippingFeeTableMap,
   } = props;
 
   const classes = useStyles();
-  console.log('row :', row.products);
+  const [orderInfo, setOrderInfo] = useState<OrderInfo | undefined>();
+
+  useEffect(() => {
+    if (row && shippingFeeTableMap) {
+      setOrderInfo(calcOrderInfo(row, shippingFeeTableMap));
+    } else {
+      setOrderInfo(undefined);
+    }
+  }, [row, shippingFeeTableMap ]);
 
   return (
     <React.Fragment>
@@ -65,6 +79,7 @@ export default function DetailTable(props) {
           </div>
           <div>
             <ProductDetail
+              orderInfo={orderInfo}
               row={row}
               onRefresh={onRefresh}
             />

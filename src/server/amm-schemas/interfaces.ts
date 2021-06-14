@@ -1303,6 +1303,9 @@ export type ProductSpecI = ProductSpecAttributes & {
 export type CampaignCreationAttributes = {
   name?: string;
   nameEn?: string;
+  description?: string;
+  prTitle?: string;
+  prDescription?: string;
   newIn?: boolean;
   type?: string;
   durationType?: string;
@@ -1312,12 +1315,16 @@ export type CampaignCreationAttributes = {
   data?: any;
   originData?: any;
   productGroups?: ProductGroupCreationAttributes[];
+  orders?: OrderCreationAttributes[];
 };
 
 export type CampaignAttributes = {
   id: string;
   name?: string;
   nameEn?: string;
+  description?: string;
+  prTitle?: string;
+  prDescription?: string;
   newIn?: boolean;
   type?: string;
   durationType?: string;
@@ -1327,6 +1334,7 @@ export type CampaignAttributes = {
   data?: any;
   originData?: any;
   productGroups?: ExtendedModel<ProductGroupI>[];
+  orders?: ExtendedModel<OrderI>[];
 };
 
 export type CampaignI = CampaignAttributes & {
@@ -1347,6 +1355,19 @@ export type CampaignI = CampaignAttributes & {
   removeProductGroup: BelongsToManyRemoveAssociationMixin<ProductGroupI, string>;
   removeProductGroups: BelongsToManyRemoveAssociationsMixin<ProductGroupI, string>;
   createProductGroup: BelongsToManyCreateAssociationMixin<ProductGroupI>;
+
+
+  // association: orders
+  countOrders: BelongsToManyCountAssociationsMixin;
+  hasOrder: BelongsToManyHasAssociationMixin<OrderI, string>;
+  hasOrders: BelongsToManyHasAssociationsMixin<OrderI, string>;
+  getOrders: BelongsToManyGetAssociationsMixin<OrderI>;
+  setOrders: BelongsToManySetAssociationsMixin<OrderI, string>;
+  addOrder: BelongsToManyAddAssociationMixin<OrderI, string>;
+  addOrders: BelongsToManyAddAssociationsMixin<OrderI, string>;
+  removeOrder: BelongsToManyRemoveAssociationMixin<OrderI, string>;
+  removeOrders: BelongsToManyRemoveAssociationsMixin<OrderI, string>;
+  createOrder: BelongsToManyCreateAssociationMixin<OrderI>;
 
 };
 // ============== end model: Campaign ==============
@@ -1488,6 +1509,9 @@ export type OrderCreationAttributes = {
   invoiceNumber?: string;
   invoiceStatus?: string;
   payWay?: string;
+  logistics?: string;
+  countryCode?: string;
+  foreign?: boolean;
   selectedAt?: Date;
   expiredAt?: Date;
   paidAt?: Date;
@@ -1504,6 +1528,7 @@ export type OrderCreationAttributes = {
   smsePayno?: string;
   smseSmilepayno?: string;
   user?: UserCreationAttributes;
+  campaigns?: CampaignCreationAttributes[];
   products?: ProductCreationAttributes[];
   couponRecord?: CouponRecordCreationAttributes;
   issues?: IssueCreationAttributes[];
@@ -1523,6 +1548,9 @@ export type OrderAttributes = {
   invoiceNumber?: string;
   invoiceStatus?: string;
   payWay?: string;
+  logistics?: string;
+  countryCode?: string;
+  foreign?: boolean;
   selectedAt?: Date;
   expiredAt?: Date;
   paidAt?: Date;
@@ -1539,6 +1567,7 @@ export type OrderAttributes = {
   smsePayno?: string;
   smseSmilepayno?: string;
   user?: ExtendedModel<UserI>;
+  campaigns?: ExtendedModel<CampaignI>[];
   products?: ExtendedModel<ProductI>[];
   couponRecord?: ExtendedModel<CouponRecordI>;
   issues?: ExtendedModel<IssueI>[];
@@ -1556,6 +1585,19 @@ export type OrderI = OrderAttributes & {
   getUser: BelongsToGetAssociationMixin<UserI>;
   setUser: BelongsToSetAssociationMixin<UserI, string>;
   createUser: BelongsToCreateAssociationMixin<UserI>;
+
+  // association: campaigns
+  countCampaigns: BelongsToManyCountAssociationsMixin;
+  hasCampaign: BelongsToManyHasAssociationMixin<CampaignI, string>;
+  hasCampaigns: BelongsToManyHasAssociationsMixin<CampaignI, string>;
+  getCampaigns: BelongsToManyGetAssociationsMixin<CampaignI>;
+  setCampaigns: BelongsToManySetAssociationsMixin<CampaignI, string>;
+  addCampaign: BelongsToManyAddAssociationMixin<CampaignI, string>;
+  addCampaigns: BelongsToManyAddAssociationsMixin<CampaignI, string>;
+  removeCampaign: BelongsToManyRemoveAssociationMixin<CampaignI, string>;
+  removeCampaigns: BelongsToManyRemoveAssociationsMixin<CampaignI, string>;
+  createCampaign: BelongsToManyCreateAssociationMixin<CampaignI>;
+
 
   // association: products
   countProducts: BelongsToManyCountAssociationsMixin;
@@ -1779,6 +1821,7 @@ export type CouponI = CouponAttributes & {
 export type CouponRecordCreationAttributes = {
   action?: string;
   price?: number;
+  data?: any;
   user?: UserCreationAttributes;
   byCoupon?: CouponCreationAttributes;
   byOrder?: OrderCreationAttributes;
@@ -1791,6 +1834,7 @@ export type CouponRecordAttributes = {
   id: string;
   action?: string;
   price?: number;
+  data?: any;
   user?: ExtendedModel<UserI>;
   byCoupon?: ExtendedModel<CouponI>;
   byOrder?: ExtendedModel<OrderI>;
@@ -1822,6 +1866,29 @@ export type CouponRecordI = CouponRecordAttributes & {
   createByOrder: BelongsToCreateAssociationMixin<OrderI>;
 };
 // ============== end model: CouponRecord ==============
+
+// ============== start model: ShippingFee ==============
+export type ShippingFeeCreationAttributes = {
+  countryCode?: string;
+  weight?: number;
+  price?: number;
+};
+
+export type ShippingFeeAttributes = {
+  id: string;
+  countryCode?: string;
+  weight?: number;
+  price?: number;
+};
+
+export type ShippingFeeI = ShippingFeeAttributes & {
+
+  // timestamps
+  readonly created_at: Date;
+  readonly updated_at: Date;
+  readonly deleted_at: Date;
+};
+// ============== end model: ShippingFee ==============
 
 // ============== start model: UserUserGroup ==============
 export type UserUserGroupCreationAttributes = {
@@ -2251,4 +2318,41 @@ export type ProductGroupCampaignI = ProductGroupCampaignAttributes & {
   createCampaign: BelongsToCreateAssociationMixin<CampaignI>;
 };
 // ============== end model: ProductGroupCampaign ==============
+
+// ============== start model: OrderCampaign ==============
+export type OrderCampaignCreationAttributes = {
+  data?: any;
+  campaign?: CampaignCreationAttributes;
+  order?: OrderCreationAttributes;
+  campaign_id?: string;
+  order_id?: string;
+};
+
+export type OrderCampaignAttributes = {
+  id: string;
+  data?: any;
+  campaign?: ExtendedModel<CampaignI>;
+  order?: ExtendedModel<OrderI>;
+  campaign_id?: string;
+  order_id?: string;
+};
+
+export type OrderCampaignI = OrderCampaignAttributes & {
+
+  // timestamps
+  readonly created_at: Date;
+  readonly updated_at: Date;
+  readonly deleted_at: Date;
+
+  // association: campaign
+  getCampaign: BelongsToGetAssociationMixin<CampaignI>;
+  setCampaign: BelongsToSetAssociationMixin<CampaignI, string>;
+  createCampaign: BelongsToCreateAssociationMixin<CampaignI>;
+
+  // association: order
+  getOrder: BelongsToGetAssociationMixin<OrderI>;
+  setOrder: BelongsToSetAssociationMixin<OrderI, string>;
+  createOrder: BelongsToCreateAssociationMixin<OrderI>;
+};
+// ============== end model: OrderCampaign ==============
 

@@ -38,6 +38,11 @@ import ProductGroups from '~/containers/ProductGroups';
 
 import Products from '~/containers/Products';
 
+import Members from '~/containers/Members';
+
+import Coupons from '~/containers/Coupons';
+import CouponRecords from '~/containers/CouponRecords';
+
 import AdminPages from '~/containers/AdminPages';
 import OrganizationManagement from '~/containers/AdminPages/OrganizationManagement';
 import ProjectManagement from '~/containers/AdminPages/ProjectManagement';
@@ -325,6 +330,39 @@ const productRoutes = [
   },
 ];
 
+
+const memberRoutes = [
+  {
+    name: 'member-list',
+    path: '/member',
+    component: Members,
+    navbar: {
+      title: '會員管理',
+    },
+  },
+];
+
+
+const couponRoutes = [
+  {
+    name: 'coupon-list',
+    path: '/coupon',
+    component: Coupons,
+    navbar: {
+      title: '購物金管理',
+    },
+  },
+  {
+    name: 'coupon-record-list',
+    path: '/coupon-record',
+    component: CouponRecords,
+    navbar: {
+      title: '購物金紀錄',
+    },
+  },
+  
+];
+
 const otherEcRoutes = [
   {
     name: 'order',
@@ -334,174 +372,174 @@ const otherEcRoutes = [
       title: '訂單管理',
     },
   },
-  {
-    name: 'goods',
-    path: '/goods',
-    component: Home,
-    // navbar: {
-    //   title: 'Home',
-    //   level: 0,
-    //   // level: currentLevel => (currentLevel ? (currentLevel - 1) : 0),
-    // },
-    // navbar: true,
-    navbar: {
-      title: '商品/活動管理',
-    },
-    routeViews: [{
-      routes: [{
-        name: 'goods-index',
-        path: '/goods',
-        component: () => <Redirect to={{ pathname: '/goods/sub01' }} />,
-        exact: true,
-      },
-      {
-        name: 'sub01',
-        path: '/goods/sub01',
-        component: SubContent01,
-        navbar: {
-          title: '商品管理',
-        },
-      },
-      {
-        name: 'sub02',
-        path: '/goods/sub02',
-        component: SubContent02,
-        navbar: {
-          title: '活動管理',
-        },
-      }],
-    }],
-  },
-  {
-    name: 'orders',
-    path: '/orders',
-    component: Home,
-    // navbar: {
-    //   title: 'Home',
-    //   level: 0,
-    //   // level: currentLevel => (currentLevel ? (currentLevel - 1) : 0),
-    // },
-    // navbar: true,
-    navbar: {
-      title: '訂單',
-    },
-    routeViews: [{
-      routes: [{
-        name: 'orders-index',
-        path: '/orders',
-        component: () => <Redirect to={{ pathname: '/orders/sub01' }} />,
-        exact: true,
-      },
-      {
-        name: 'sub01',
-        path: '/orders/sub01',
-        component: SubContent01,
-        navbar: {
-          title: '所有訂單',
-        },
-      },
-      {
-        name: 'sub02',
-        path: '/orders/sub02',
-        component: SubContent02,
-        navbar: {
-          title: '未付款訂單',
-        },
-      },
-      {
-        name: 'sub03',
-        path: '/orders/sub03',
-        component: SubContent03,
-        navbar: {
-          title: '已付款訂單',
-        },
-      },
-      {
-        name: 'sub04',
-        path: '/orders/sub04',
-        component: SubContent04,
-        navbar: {
-          title: '待出貨訂單',
-        },
-      },
-      {
-        name: 'sub05',
-        path: '/orders/sub05',
-        component: SubContent05,
-        navbar: {
-          title: '已出貨訂單',
-        },
-      },
-      {
-        name: 'sub06',
-        path: '/orders/sub06',
-        component: SubContent06,
-        navbar: {
-          title: '已過期訂單',
-        },
-      },
-      {
-        name: 'sub07',
-        path: '/orders/sub07',
-        component: SubContent07,
-        navbar: {
-          title: '已退貨訂單',
-        },
-      }],
-    }],
-  },
-  {
-    name: 'shipment',
-    path: '/shipment',
-    component: Home,
-    // navbar: {
-    //   title: 'Home',
-    //   level: 0,
-    //   // level: currentLevel => (currentLevel ? (currentLevel - 1) : 0),
-    // },
-    // navbar: true,
-    navbar: {
-      title: '運費管理',
-    },
-    routeViews: [{
-      routes: [{
-        name: 'shipment-index',
-        path: '/shipment',
-        component: () => <Redirect to={{ pathname: '/shipment/sub01' }} />,
-        exact: true,
-      },
-      {
-        name: 'sub01',
-        path: '/shipment/sub01',
-        component: SubContent01,
-        navbar: {
-          title: '國際運費管理',
-        },
-      },
-      {
-        name: 'sub02',
-        path: '/shipment/sub02',
-        component: SubContent01,
-        navbar: {
-          title: '免運管理',
-        },
-      }],
-    }],
-  },
-  {
-    name: 'coupon',
-    path: '/coupon',
-    // navbar: {
-    //   title: 'Home',
-    //   level: 0,
-    //   // level: currentLevel => (currentLevel ? (currentLevel - 1) : 0),
-    // },
-    // navbar: true,
-    navbar: {
-      title: '購物金管理',
-    },
-    component: SubContent01,
-  },
+  // {
+  //   name: 'goods',
+  //   path: '/goods',
+  //   component: Home,
+  //   // navbar: {
+  //   //   title: 'Home',
+  //   //   level: 0,
+  //   //   // level: currentLevel => (currentLevel ? (currentLevel - 1) : 0),
+  //   // },
+  //   // navbar: true,
+  //   navbar: {
+  //     title: '商品/活動管理',
+  //   },
+  //   routeViews: [{
+  //     routes: [{
+  //       name: 'goods-index',
+  //       path: '/goods',
+  //       component: () => <Redirect to={{ pathname: '/goods/sub01' }} />,
+  //       exact: true,
+  //     },
+  //     {
+  //       name: 'sub01',
+  //       path: '/goods/sub01',
+  //       component: SubContent01,
+  //       navbar: {
+  //         title: '商品管理',
+  //       },
+  //     },
+  //     {
+  //       name: 'sub02',
+  //       path: '/goods/sub02',
+  //       component: SubContent02,
+  //       navbar: {
+  //         title: '活動管理',
+  //       },
+  //     }],
+  //   }],
+  // },
+  // {
+  //   name: 'orders',
+  //   path: '/orders',
+  //   component: Home,
+  //   // navbar: {
+  //   //   title: 'Home',
+  //   //   level: 0,
+  //   //   // level: currentLevel => (currentLevel ? (currentLevel - 1) : 0),
+  //   // },
+  //   // navbar: true,
+  //   navbar: {
+  //     title: '訂單',
+  //   },
+  //   routeViews: [{
+  //     routes: [{
+  //       name: 'orders-index',
+  //       path: '/orders',
+  //       component: () => <Redirect to={{ pathname: '/orders/sub01' }} />,
+  //       exact: true,
+  //     },
+  //     {
+  //       name: 'sub01',
+  //       path: '/orders/sub01',
+  //       component: SubContent01,
+  //       navbar: {
+  //         title: '所有訂單',
+  //       },
+  //     },
+  //     {
+  //       name: 'sub02',
+  //       path: '/orders/sub02',
+  //       component: SubContent02,
+  //       navbar: {
+  //         title: '未付款訂單',
+  //       },
+  //     },
+  //     {
+  //       name: 'sub03',
+  //       path: '/orders/sub03',
+  //       component: SubContent03,
+  //       navbar: {
+  //         title: '已付款訂單',
+  //       },
+  //     },
+  //     {
+  //       name: 'sub04',
+  //       path: '/orders/sub04',
+  //       component: SubContent04,
+  //       navbar: {
+  //         title: '待出貨訂單',
+  //       },
+  //     },
+  //     {
+  //       name: 'sub05',
+  //       path: '/orders/sub05',
+  //       component: SubContent05,
+  //       navbar: {
+  //         title: '已出貨訂單',
+  //       },
+  //     },
+  //     {
+  //       name: 'sub06',
+  //       path: '/orders/sub06',
+  //       component: SubContent06,
+  //       navbar: {
+  //         title: '已過期訂單',
+  //       },
+  //     },
+  //     {
+  //       name: 'sub07',
+  //       path: '/orders/sub07',
+  //       component: SubContent07,
+  //       navbar: {
+  //         title: '已退貨訂單',
+  //       },
+  //     }],
+  //   }],
+  // },
+  // {
+  //   name: 'shipment',
+  //   path: '/shipment',
+  //   component: Home,
+  //   // navbar: {
+  //   //   title: 'Home',
+  //   //   level: 0,
+  //   //   // level: currentLevel => (currentLevel ? (currentLevel - 1) : 0),
+  //   // },
+  //   // navbar: true,
+  //   navbar: {
+  //     title: '運費管理',
+  //   },
+  //   routeViews: [{
+  //     routes: [{
+  //       name: 'shipment-index',
+  //       path: '/shipment',
+  //       component: () => <Redirect to={{ pathname: '/shipment/sub01' }} />,
+  //       exact: true,
+  //     },
+  //     {
+  //       name: 'sub01',
+  //       path: '/shipment/sub01',
+  //       component: SubContent01,
+  //       navbar: {
+  //         title: '國際運費管理',
+  //       },
+  //     },
+  //     {
+  //       name: 'sub02',
+  //       path: '/shipment/sub02',
+  //       component: SubContent01,
+  //       navbar: {
+  //         title: '免運管理',
+  //       },
+  //     }],
+  //   }],
+  // },
+  // {
+  //   name: 'coupon',
+  //   path: '/coupon',
+  //   // navbar: {
+  //   //   title: 'Home',
+  //   //   level: 0,
+  //   //   // level: currentLevel => (currentLevel ? (currentLevel - 1) : 0),
+  //   // },
+  //   // navbar: true,
+  //   navbar: {
+  //     title: '購物金管理',
+  //   },
+  //   component: SubContent01,
+  // },
 ];
 
 const adminRoutes = [
@@ -688,15 +726,17 @@ const globalRouteConfig = {
         switch: true,
         name: defaultName,
         routes: [
-          homeRoute,
+          // homeRoute,
           ...campaignRoutes,
           ...productCategoryRoutes,
           ...productGroupRoutes,
           ...productRoutes,
+          ...memberRoutes,
+          ...couponRoutes,
           ...otherEcRoutes,
 
-          ...adminRoutes,
-          ...idleRoutes,
+          // ...adminRoutes,
+          // ...idleRoutes,
           {
             name: 'user-profile',
             path: '/user-profile',

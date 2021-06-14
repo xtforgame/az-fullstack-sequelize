@@ -175,6 +175,14 @@ export const getProduct = async (id) => {
 
 export const productsToListLiquidScope = (products) => {
   const sizeColorMap = {};
+  const specs : {[s: string]: string} = {};
+  products = products.filter((p) => {
+    if (!specs[p.group_id] || specs[p.group_id] === p.spec_id) {
+      specs[p.group_id] = p.spec_id;
+      return true;
+    }
+    return false;
+  });
   return {
     // products: products,
     sections: products.map(p => `
@@ -202,7 +210,7 @@ export const productGroupsToListLiquidScope = productGroups => ({
   `),
 });
 
-export const getProducts = async () => {
+export const getProducts = async (ids : (number | string)[]) => {
   const {
     buildQueryString,
   } = buildQueryT1(
@@ -247,6 +255,9 @@ export const getProducts = async () => {
       description
       data
     `,
+    {
+      where: [`{id: {_in: [${ids.join(', ')}]}}`],
+    }
   );
   const { data } = await axios({
     url: hasuraEndpoint,

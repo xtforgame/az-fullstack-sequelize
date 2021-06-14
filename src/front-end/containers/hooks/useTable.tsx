@@ -98,7 +98,7 @@ export default function <RowType extends RowTypeBase = RowTypeBase> (props: Tabl
     ...rest
   } = props;
 
-  const render = () => {
+  const render = (props?) => {
     // if (loading || !data) return <pre>Loading</pre>;
     if (error) {
       return renderError(error);
@@ -121,6 +121,7 @@ export default function <RowType extends RowTypeBase = RowTypeBase> (props: Tabl
         renderRowDetail={renderRowDetail}
         //
         {...rest}
+        {...props}
       />
     );
   };

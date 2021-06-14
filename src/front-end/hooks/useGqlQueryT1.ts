@@ -4,7 +4,7 @@ import { buildQueryT1, OptionsT1 } from 'common/graphQL';
 
 export {
   OptionsT1,
-};
+} from 'common/graphQL';
 
 export default (collectionName : string, aggregateName : string, body: string = 'id', options : OptionsT1 = {}, memoArray : string[] = []) => {
   const {

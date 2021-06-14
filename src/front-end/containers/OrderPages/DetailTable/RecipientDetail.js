@@ -13,6 +13,14 @@ import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import { deepOrange, green, yellow, red, grey } from '@material-ui/core/colors';
 import FlightLandIcon from '@material-ui/icons/FlightLand';
+import {
+  orderStates,
+  orderStateNameFunc,
+  orderPayWayNameFunc,
+
+  logisticsTypes,
+  logisticsTypeNameFunc,
+} from 'common/domain-logic/constants/order';
 
 const useStyles = makeStyles(theme => ({
   square: {
@@ -67,7 +75,7 @@ export default function DetailTable(props) {
             <TableCell align="left">
               {row.recipient.mobile}
             </TableCell>
-            <TableCell>台灣本島</TableCell>
+            <TableCell>{logisticsTypeNameFunc(row.logistics)}</TableCell>
           </TableRow>
         </TableBody>
       </Table>
