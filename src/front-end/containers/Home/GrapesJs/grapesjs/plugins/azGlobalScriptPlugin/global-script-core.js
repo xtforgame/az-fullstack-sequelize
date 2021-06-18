@@ -297,7 +297,10 @@ export default (editor, options) => {
     console.log('globalScriptManager.handleUpdate');
     const storageManager = editor.StorageManager;
     storageManager.setAutosave(false);
+    const um = editor.UndoManager;
+    um.stop();
     globalScriptManager.handleUpdate();
+    um.start();
 
     // const selected = editor.getSelected();
     // selected.remove({ temporary: true }); // temporary option will avoid removing component related styles
