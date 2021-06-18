@@ -518,7 +518,27 @@ const GrapesJsEditor = (props) => {
       //   blockManager.render(filtered);
       // }, 3000);
       const x = $('.gjs-blocks-cs')[0];
-      x.parentNode.insertBefore($('<div>Xxxxxxxx</div>')[0], x);
+      x.parentNode.insertBefore($(`<select id="block-set-selector" style="width: 100%;">
+      <option value="All" selected>All</option>
+      <option value="Basic,Extra">Basic</option>
+    </select>`)[0], x);
+
+      $('#block-set-selector').on('change', (e) => {
+        // Render new set of blocks
+        const setName = e.target.value;
+        console.log('setName :', setName);
+        const blockManager = editor.BlockManager;
+        if (setName === 'All') {
+          const blocks = blockManager.getAll();
+          console.log('blocks :', blocks);
+          blockManager.render();
+        } else {
+          const sets = setName.split(',').map(s => s.trim());
+          const blocks = blockManager.getAll();
+          const filtered = blocks.filter(block => sets.includes(block.get('category').id));
+          blockManager.render(filtered);
+        }
+      });
 
 
       editor.on('update', (...args) => {

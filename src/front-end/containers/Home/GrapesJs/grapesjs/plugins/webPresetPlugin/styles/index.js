@@ -61,6 +61,19 @@ export default (editor, config) => {
       name: '字型', // 'Typography',
       open: false,
       buildProps: ['font-family', 'font-size', 'font-weight', 'letter-spacing', 'color', 'line-height', 'text-align', 'text-shadow'],
+      properties: [
+        {
+          property: 'font-family',
+          type: '',
+
+          // property: 'font-family',
+          // name: 'Font',
+          // list: [
+          //   { name: 'Arial', value: 'Arial, Helvetica, sans-serif' },
+          //   { name: 'Arial2', value: 'Arial, Helvetica, sans-serif' },
+          // ],
+        },
+      ],
     }, {
       name: '背景/框線/陰影', // 'Decorations',
       open: false,
