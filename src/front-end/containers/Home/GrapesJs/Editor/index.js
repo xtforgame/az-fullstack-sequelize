@@ -30,6 +30,7 @@ import '../grapesjs/plugins/assetManagerPlugin';
 import { ProviderBase } from '../grapesjs/plugins/simpleStoragePlugin';
 import '../grapesjs/plugins/editCodePlugin';
 import '../grapesjs/plugins/azComponentsPlugin';
+import '../grapesjs/plugins/azReplacedComponentsPlugin';
 import '../grapesjs/plugins/customCodePlugin';
 import '../grapesjs/plugins/imgConatinerPlugin';
 import azFinalizePlugin from '../grapesjs/plugins/azFinalizePlugin';
@@ -376,6 +377,7 @@ const GrapesJsEditor = (props) => {
         'az-edit-code',
         'az-simple-storage',
         'az-components',
+        'az-replaced-components',
         'custom-code-p',
         'img-container',
         // 'az-finalize',
