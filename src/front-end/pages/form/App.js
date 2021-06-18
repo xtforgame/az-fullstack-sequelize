@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import { useConnect } from 'azrmui/hooks/redux-react-hook-ex';
 import { createStructuredSelector } from 'reselect';
 import useStylesByNs from 'azrmui/styles/useStylesByNs';
@@ -7,6 +8,15 @@ import SubContent03 from '~/containers/Home/SubContent03';
 import {
   makeUiThemeSelector,
 } from './selectors';
+// import { urlPrefix } from './env';
+
+// axios({
+//   method: 'get',
+//   url: `${urlPrefix}api`,
+// })
+// .then(({ data }) => {
+//   console.log('data :', data);
+// });
 
 
 const mapStateToProps = createStructuredSelector({

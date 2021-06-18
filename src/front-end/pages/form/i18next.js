@@ -3,6 +3,7 @@ import { initReactI18next } from 'react-i18next';
 
 import Backend from 'i18next-xhr-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
+import { urlPrefix } from './env';
 // not like to use this?
 // have a look at the Quick start guide
 // for passing in lng and translations on init
@@ -43,6 +44,8 @@ export const i18nextInited = new Promise((resolve) => {
 })
 .then(() => i18n);
 
+console.log('urlPrefix :', urlPrefix);
+
 i18n
   // load translation using xhr -> see /public/locales
   // learn more: https://github.com/i18next/i18next-xhr-backend
@@ -73,7 +76,7 @@ i18n
       escapeValue: false, // not needed for react as it escapes by default
     },
     backend: {
-      loadPath: 'translations/{{ns}}/{{lng}}.json',
+      loadPath: `${urlPrefix}translations/{{ns}}/{{lng}}.json`,
     },
     react: {
       useSuspense: false,

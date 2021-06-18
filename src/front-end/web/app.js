@@ -1,3 +1,3 @@
 import axios from 'axios';
-import '../scss/application.scss';
+import '../scss/main.scss';
 import { env } from './utils';

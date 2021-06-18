@@ -1,6 +1,6 @@
 // https://github.com/artf/grapesjs/issues/324
 import grapesjs from 'grapesjs';
-
+import { debounce } from 'lodash';
 import getComponentHtmlCss from '../../utils/getComponentHtmlCss';
 
 export const azCreateCustomBlockPlugin = (editor, options = {}) => {
@@ -211,19 +211,23 @@ export const azCreateCustomBlockPlugin = (editor, options = {}) => {
       htmlViewer.refresh();
       cssViewer.refresh();
 
-      htmlViewer.on('change', (cm, change) => {
+      htmlViewer.on('change', debounce((cm, change) => {
         const html = htmlViewer.getValue();
         if (previewEditor) {
           previewEditor.setComponents(html.trim());
         }
-      });
-
-      cssViewer.on('change', (cm, change) => {
         const css = cssViewer.getValue();
         if (previewEditor) {
           previewEditor.setStyle(css);
         }
-      });
+      }, 500));
+
+      cssViewer.on('change', debounce((cm, change) => {
+        const css = cssViewer.getValue();
+        if (previewEditor) {
+          previewEditor.setStyle(css);
+        }
+      }, 500));
       const previewarea = document.createElement('div');
       bottomContainer.appendChild(previewarea);
       previewarea.id = 'az-gjs-preview';

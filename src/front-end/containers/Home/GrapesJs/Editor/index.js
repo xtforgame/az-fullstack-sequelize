@@ -125,24 +125,55 @@ export class MinioStorageProvider extends ProviderBase {
 
   init(editor, options = {}) {
     this.editor = editor;
+    this.editor.localState = this.editor.localState || {};
+    this.editor.localState.saveToCloud = false;
+    this.editor.localState.loadFromCloud = true;
     this.localStorageProvider.init(editor, options);
   }
 
   load(keys, clb, clbErr) {
-    this.fragmentMinioApi.loadFile(this.fPath)
-    .then(({ data: { grapesjsData } }) => {
-      clb(grapesjsData);
-    })
-    .catch(e => clbErr(e));
+    const storageManager = this.editor.StorageManager;
+    const cb = (...args) => {
+      // setTimeout(() => {
+      //   storageManager.setAutosave(true);
+      // }, 3000);
+      clb(...args);
+    };
+    const cbE = (...args) => {
+      // setTimeout(() => {
+      //   storageManager.setAutosave(true);
+      // }, 3000);
+      clbErr(...args);
+    };
+    storageManager.setAutosave(false);
+    if (!this.editor.localState.loadFromCloud) {
+      console.log('load');
+      this.editor.localState.loadFromCloud = true;
+      this.localStorageProvider.load(keys, cb, cbE);
+    } else {
+      this.fragmentMinioApi.loadFile(this.fPath)
+      .then(({ data: { grapesjsData } }) => {
+        cb(grapesjsData);
+      })
+      .catch(e => cbE(e));
+    }
   }
 
   store(data, clb, clbErr) {
-    console.log('data :', data);
-    this.fragmentMinioApi.saveFragmentFile(this.fPath, data)
-    .then(({ data }) => {
-      clb();
-    })
-    .catch(e => clbErr(e));
+    let cb = clb;
+    if (this.editor.localState.saveToCloud) {
+      this.editor.localState.saveToCloud = false;
+      console.log('data :', data);
+      cb = () => {
+        this.fragmentMinioApi.saveFragmentFile(this.fPath, data)
+        .then(({ data }) => {
+          clb();
+        })
+        .catch(e => clbErr(e));
+      };
+    }
+    console.log('store');
+    this.localStorageProvider.store(data, cb, clbErr);
   }
 }
 
@@ -433,6 +464,8 @@ const GrapesJsEditor = (props) => {
         editor.setComponents(html);
         editor.setStyle(css);
       } else {
+        const storageManager = editor.StorageManager;
+        storageManager.setAutosave(false);
         editor.load((res) => {
           // console.log('res :', res);
           console.log('Load callback');
@@ -484,6 +517,12 @@ const GrapesJsEditor = (props) => {
       // }, 3000);
       const x = $('.gjs-blocks-cs')[0];
       x.parentNode.insertBefore($('<div>Xxxxxxxx</div>')[0], x);
+
+
+      editor.on('update', (...args) => {
+        const storageManager = editor.StorageManager;
+        storageManager.setAutosave(true);
+      });
     });
 
     // handleOpen(1);

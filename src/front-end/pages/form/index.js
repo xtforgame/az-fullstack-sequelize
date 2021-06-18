@@ -17,11 +17,10 @@ import {
 } from './constants';
 import appReducer from './reducer';
 import appEpic from './epic';
+import { urlPrefix } from './env';
 import { loadState, middleware as localStorageMiddleware } from '../../localStorage';
-import { i18nextInited, appLocaleMap } from '../../i18next';
+import { i18nextInited, appLocaleMap } from './i18next';
 import 'react-image-lightbox/style.css';
-import 'grapesjs/dist/css/grapes.min.css';
-import '../../containers/Home/GrapesJs/grapesjs/plugins/webPresetPlugin/dist/grapesjs-preset-webpage.min.css';
 import './main.css';
 
 // Create a history of your choosing (we're using a browser history in this case)
@@ -44,7 +43,7 @@ console.log('runningMode :', runningMode);
 const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
   link: new HttpLink({
-    uri: 'v1/graphql',
+    uri: `${urlPrefix}v1/graphql`,
     headers: {
       'x-hasura-admin-secret': 'xxxxhsr',
     },

@@ -295,6 +295,8 @@ export default (editor, options) => {
 
   editor.on('update', (...args) => {
     console.log('globalScriptManager.handleUpdate');
+    const storageManager = editor.StorageManager;
+    storageManager.setAutosave(false);
     globalScriptManager.handleUpdate();
 
     // const selected = editor.getSelected();

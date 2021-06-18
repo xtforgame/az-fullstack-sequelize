@@ -726,7 +726,7 @@ const globalRouteConfig = {
         switch: true,
         name: defaultName,
         routes: [
-          // homeRoute,
+          homeRoute,
           ...campaignRoutes,
           ...productCategoryRoutes,
           ...productGroupRoutes,
@@ -735,8 +735,8 @@ const globalRouteConfig = {
           ...couponRoutes,
           ...otherEcRoutes,
 
-          // ...adminRoutes,
-          // ...idleRoutes,
+          ...adminRoutes,
+          ...idleRoutes,
           {
             name: 'user-profile',
             path: '/user-profile',

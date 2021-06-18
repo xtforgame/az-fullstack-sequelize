@@ -85,11 +85,23 @@ module.exports = function({ mode }) {
             MiniCssExtractPlugin.loader, // 'style-loader',
             'css-loader',
             {
-              loader: "sass-loader",
+              loader: 'sass-loader',
               options: {
                 sassOptions: {
                   indentWidth: 2,
                   includePaths: [path.resolve(projRoot, 'src/front-end/scss')],
+                },
+                additionalData: (content, loaderContext) => {
+                  // // More information about available properties https://webpack.js.org/api/loaders/
+                  // const { resourcePath, rootContext } = loaderContext;
+                  // const relativePath = path.relative(rootContext, resourcePath);
+  
+                  // if (relativePath === 'styles/foo.scss') {
+                  //   return '$value: 100px;' + content;
+                  // }
+  
+                  // return '$value: 200px;' + content;
+                  return content;
                 },
               },
             },

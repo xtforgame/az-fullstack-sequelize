@@ -35,6 +35,14 @@ export const azSimpleStoragePlugin = (editor, options = {}) => {
 
   // Add the button
   editor.Panels.addButton('options', [{
+    id: 'load-from-local',
+    className: 'fa fa-folder-open',
+    command: 'load-from-local',
+    attributes: { title: 'Load From Local' },
+  }]);
+
+  // Add the button
+  editor.Panels.addButton('options', [{
     id: 'save-db',
     className: 'fa fa-save',
     command: 'save-db',
@@ -44,12 +52,25 @@ export const azSimpleStoragePlugin = (editor, options = {}) => {
   // Add the command
   editor.Commands.add('save-db', {
     run(editor, sender) {
+      // to cloud
       sender && sender.set('active', 0); // turn off the button
+      editor.localState.saveToCloud = true;
       editor.store(() => {
         console.log('editor.store');
       });
     },
   });
+
+    // Add the command
+    editor.Commands.add('save-to-local', {
+      run(editor, sender) {
+        // to cloud
+        sender && sender.set('active', 0); // turn off the button
+        editor.store(() => {
+          console.log('editor.store');
+        });
+      },
+    });
 
   // Add the button
   editor.Panels.addButton('options', [{
@@ -62,6 +83,15 @@ export const azSimpleStoragePlugin = (editor, options = {}) => {
   // Add the command
   editor.Commands.add('load-db', {
     run(editor, sender) {
+      sender && sender.set('active', 0); // turn off the button
+      editor.load();
+    },
+  });
+
+  // Add the command
+  editor.Commands.add('load-from-local', {
+    run(editor, sender) {
+      editor.localState.loadFromCloud = false;
       sender && sender.set('active', 0); // turn off the button
       editor.load();
     },
