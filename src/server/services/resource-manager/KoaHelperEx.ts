@@ -26,9 +26,9 @@ export default class KoaHelperEx {
   loginSessionCookie: CookieManager;
   loginSessionExistCookie: CookieManager;
 
-  constructor(koaHelper: KoaHelper) {
+  constructor(koaHelper: KoaHelper, resourceManager : AmmOrm) {
     this.koaHelper = koaHelper;
-    this.guestManager = new GuestManager();
+    this.guestManager = new GuestManager(resourceManager);
     this.loginSessionCookie = new CookieManager('login-session');
     this.loginSessionExistCookie = new CookieManager('login-session-exists');
   }

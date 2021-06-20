@@ -5,24 +5,14 @@ import { hasuraEndpoint } from 'common/config';
 import { externalUrl } from 'config';
 import mime from 'mime-types';
 import { Liquid } from 'liquidjs';
+import { logisticsTypeNameFunc, orderStateNameFunc } from 'common/domain-logic/constants/order';
 import { buildQueryT1, GqlResult } from 'common/graphQL';
 import moment from 'moment';
+import { hasuraAdminSecret } from 'config';
+import sendGraphQLRequest from '~/utils/sendGraphQLRequest';
 import RouterBase from '../../core/router-base';
 import renderEx from './LiquidRenderEx';
 import { liquidFor, LiquidForOptions } from './utils';
-
-const normalizeUrl = (u) => {
-  let url = u.split('?')[0];
-  if (url.split('.').length === 1) {
-    // fs.mkdirSync(`pages${url}`, { recursive: true });
-    url += '/index.html';
-  }
-  url += '.liquid';
-  if (url.startsWith('//')) {
-    url = url.replace('//', '/');
-  }
-  return url;
-};
 
 export default class LiquidRouterBase extends RouterBase {
   liquidFor = (options : LiquidForOptions = {}) => {
@@ -43,17 +33,8 @@ export default class LiquidRouterBase extends RouterBase {
       const guestData = await this.authKit.koaHelperEx.guestManager.getGuestData(cbData.ctx);
       const filters = await glf(cbData);
       return {
-        orderStateName: (orderState) => {
-          const orderStateNames = {
-            unpaid: '未付款',
-            paid: '已付款',
-            selected: '待出貨',
-            shipped: '已出貨',
-            returned: '已退貨',
-            expired: '已過期',
-          };
-          return orderStateNames[orderState] || '<未確認>';
-        },
+        orderStateName: orderStateNameFunc,
+        logisticsTypeName: logisticsTypeNameFunc,
         consumeSnackbar: () => guestData.consumeSnackbar(),
         ...filters,
       };
@@ -71,8 +52,16 @@ export default class LiquidRouterBase extends RouterBase {
       // }
       const guestData = await this.authKit.koaHelperEx.guestManager.getGuestData(ctx);
 
-      guestData.data.read = true;
-      guestData.update();
+      const now = new Date().getTime();
+      if (!guestData.lastRead) {
+        guestData.lastRead = now;
+        guestData.read = false;
+      } else if (now - guestData.lastRead > 120000) {
+        guestData.lastRead = now;
+        guestData.read = false;
+      } else {
+        guestData.read = true;
+      }
 
       const {
         buildQueryString,
@@ -93,8 +82,9 @@ export default class LiquidRouterBase extends RouterBase {
       return {
         userSession,
         productCategories: data.productCategories,
-        newUser: !guestData.data.read,
-        cart: guestData.cart,
+        newUser: !guestData.read,
+        cart: guestData.bs,
+        snackbar: guestData.snackbar,
         ...sd,
       };
     }
@@ -107,19 +97,7 @@ export default class LiquidRouterBase extends RouterBase {
     });
   }
 
-  async sendGraphQLRequest<T = any>(query: string) : Promise<GqlResult<T>> {
-    const { data } = await axios({
-      url: hasuraEndpoint,
-      method: 'post',
-      headers: {
-        'X-Hasura-Role': 'admin',
-        'X-Hasura-Admin-Secret': 'xxxxhsr',
-        'Content-Type': 'application/json',
-      },
-      data: {
-        query,
-      },
-    });
-    return data;
+  async sendGraphQLRequest<T = any>(query: string, variables?: any) : Promise<GqlResult<T>> {
+    return sendGraphQLRequest<T>(query, variables);
   }
 }

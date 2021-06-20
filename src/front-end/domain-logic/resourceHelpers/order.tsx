@@ -88,12 +88,26 @@ products {
   product {
     name
     customId
+    thumbnail
     id
     size
     instock
     orderQuota
     soldout
     weight
+    group {
+      campaigns {
+        campaign {
+          id
+          type
+          data
+          name
+          state
+          start
+          end
+        }
+      }
+    }
   }
   soldout
   fulfilled

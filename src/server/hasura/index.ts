@@ -32,6 +32,8 @@ import {
   postgresUser,
   postgresDbName,
   postgresPassword,
+
+  hasuraAdminSecret,
 } from 'config';
 import { supportedHasuraRoles } from '../amm-schemas/index';
 import HasuraMgrBase, { ViewsInfo, ViewInfo } from './HasuraMgrBase';
@@ -59,7 +61,7 @@ class HasuraMgr extends HasuraMgrBase {
   getHeaders() : any {
     return {
       'X-Hasura-Role': 'admin',
-      'X-Hasura-Admin-Secret': 'xxxxhsr',
+      'X-Hasura-Admin-Secret': hasuraAdminSecret,
       'Content-Type': 'application/json',
     };
   }

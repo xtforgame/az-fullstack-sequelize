@@ -64,6 +64,7 @@ const postgresUser = 'rick';
 const postgresPassword = 'xxxx1234';
 const postgresHost = 'localhost';
 
+const hasuraAdminSecret = 'xxxxhsr';
 
 export {
   credentialFiles,
@@ -85,4 +86,6 @@ export {
   postgresDbName,
   postgresPassword,
   postgresHost,
+
+  hasuraAdminSecret,
 };

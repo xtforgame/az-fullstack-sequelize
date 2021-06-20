@@ -2,6 +2,7 @@ import { promiseReduce } from 'common/utils';
 import sanitizeHtml from 'sanitize-html';
 import axios from 'axios';
 import { hasuraEndpoint } from 'common/config';
+import { hasuraAdminSecret } from 'config';
 import { externalUrl } from 'config';
 import { buildQueryT1, Options } from 'common/graphQL';
 
@@ -159,7 +160,7 @@ export const getProduct = async (id) => {
     method: 'post',
     headers: {
       'X-Hasura-Role': 'admin',
-      'X-Hasura-Admin-Secret': 'xxxxhsr',
+      'X-Hasura-Admin-Secret': hasuraAdminSecret,
       'Content-Type': 'application/json',
     },
     data: {
@@ -264,7 +265,7 @@ export const getProducts = async (ids : (number | string)[]) => {
     method: 'post',
     headers: {
       'X-Hasura-Role': 'admin',
-      'X-Hasura-Admin-Secret': 'xxxxhsr',
+      'X-Hasura-Admin-Secret': hasuraAdminSecret,
       'Content-Type': 'application/json',
     },
     data: {

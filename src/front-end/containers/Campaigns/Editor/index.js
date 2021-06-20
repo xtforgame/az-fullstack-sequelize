@@ -32,6 +32,7 @@ import useFormSelect from '~/components/hooks/inputs/useFormSelect';
 import useDateRange from '~/components/hooks/inputs/useDateRange';
 import DiscountInput from './DiscountInput';
 import FreebieInput from './FreebieInput';
+import CustomMadeInput from './CustomMadeInput';
 import {
   campaignTypes,
   campaignStates,
@@ -100,6 +101,9 @@ export default (props) => {
   const [freebie, setFreebie] = useState(editingData && editingData.data && editingData.data.freebie);
   const freebieFormApiRef = useRef();
 
+  const [customMade, setCustomMade] = useState(editingData && editingData.data && editingData.data.customMade);
+  const customMadeFormApiRef = useRef();
+
   const push = useRouterPush();
   const submit = async () => {
     let errorOccurred = false;
@@ -134,6 +138,15 @@ export default (props) => {
       errorOccurred = true;
     }
 
+    const { getDataToSubmit: getCustomMade } = customMadeFormApiRef.current;
+    if (!getCustomMade) {
+      return;
+    }
+    const customMade = getCustomMade();
+    if (!customMade) {
+      errorOccurred = true;
+    }
+
     if (errorOccurred) {
       return;
     }
@@ -147,15 +160,11 @@ export default (props) => {
         ...(editingData && editingData.data),
         discount,
         freebie,
+        customMade,
       },
     };
     try {
       if (isCreating) {
-        // Promise.all(Array.from({ length: 300 }).map(async () => axios({
-        //   method: 'post',
-        //   url: 'api/campaigns',
-        //   data,
-        // })));
         await axios({
           method: 'post',
           url: 'api/campaigns',
@@ -204,6 +213,12 @@ export default (props) => {
               onChange={setFreebie}
               selectedType={selectedType}
               formApiRef={freebieFormApiRef}
+            />
+            <CustomMadeInput
+              value={customMade}
+              onChange={setCustomMade}
+              selectedType={selectedType}
+              formApiRef={customMadeFormApiRef}
             />
           </div>
         </div>

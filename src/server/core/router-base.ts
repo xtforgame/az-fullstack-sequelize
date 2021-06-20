@@ -1,5 +1,5 @@
 import AmmOrm from 'az-model-manager/core';
-import { AuthKit } from '../services/resource-manager/insterfaces';
+import { AuthKit } from '../services/resource-manager/interfaces';
 import RouterApi from '../services/router-manager/api';
 
 

@@ -1,5 +1,10 @@
 import { Order } from '../gql-types';
-import { ShippingFee } from '../gql-types';
+import {
+  ShippingFee,
+  Maybe,
+  Scalars,
+  Product,
+} from '../gql-types';
 
 export type ShippingFeeTableMap = { [s: string] : ShippingFee[] };
 
@@ -19,19 +24,39 @@ export const toShippingFeeTableMap = (shippingFee: ShippingFee[]) => {
   return shippingFeeTableMap;
 };
 
-export const calcTotalWeight = (order: Order) => {
+export type OrderLike = {
+  isInCart?: boolean;
+  metadata?: Order["metadata"];
+  countryCode?: Order["countryCode"];
+  legacyData?: Order["legacyData"];
+  logistics?: Order["logistics"];
+  products: {
+    data?: Maybe<Scalars['jsonb']>;
+    deleted_at?: Maybe<Scalars['timestamptz']>;
+    price?: Maybe<Scalars['Int']>;
+    product: Product;
+    product_id?: Maybe<Scalars['bigint']>;
+    quantity?: Maybe<Scalars['Int']>;
+    fulfilled?: Maybe<Scalars['Boolean']>;
+    soldout?: Maybe<Scalars['Boolean']>;
+  }[];
+  campaigns?: Order["campaigns"];
+  couponRecord?: Order["couponRecord"];
+};
+
+export const calcTotalWeight = (order: OrderLike) => {
   return order.products.reduce((n, p) => {
-    if (p.fulfilled && !p.soldout) {
-      return n + p.product.weight!;
+    if (order.isInCart || (p.fulfilled && !p.soldout)) {
+      return n + (p.product.weight! * p.quantity!);
     }
     return n;
   }, 0);
 };
 
-export const calcOriginalPriceAndTotalQuantity = (order: Order) => {
+export const calcOriginalPriceAndTotalQuantity = (order: OrderLike) => {
   let totalQuantity = 0;
   const originalPrice = order.products.reduce((n, p) => {
-    if (p.fulfilled && !p.soldout) {
+    if (order.isInCart || (p.fulfilled && !p.soldout)) {
       totalQuantity += p.quantity!;
       return n + (p.price! * p.quantity!)
     }
@@ -57,7 +82,8 @@ export const convertGToKg = (g : number) => {
   return remainder > 500 ? quotient + 1 : quotient + 0.5;
 }
 
-export const calcOrderInfo = ((order: Order, shippingFeeTableMap: ShippingFeeTableMap) => {
+export const calcOrderInfo = ((order: OrderLike, shippingFeeTableMap: ShippingFeeTableMap) => {
+  const isLegacyData = order?.legacyData?.isLegacyData || false;
   const {
     totalQuantity,
     originalPrice,
@@ -93,20 +119,21 @@ export const calcOrderInfo = ((order: Order, shippingFeeTableMap: ShippingFeeTab
   let campaignDiscount = 0;
   // finalPrice -= totalDiscount;
   finalPrice += shippingFee;
-  if (order.couponRecord[0]) {
+  if (order.couponRecord?.[0]) {
     couponDiscount = order.couponRecord[0].price!;
     finalPrice -= couponDiscount;
   }
-  if (order.campaigns[0]) {
+  if (order.campaigns?.[0]) {
     campaignDiscount = order.campaigns[0]?.campaign?.data?.discount?.disconutPrice;
     finalPrice -= campaignDiscount;
   }
 
   return {
+    isLegacyData,
     originalPrice,
     totalQuantity,
     totalWeight,
-    totalDiscount: order.metadata.totalDiscount || 0,
+    totalDiscount: order.metadata?.totalDiscount || 0,
     shippingFeeCalced,
     shippingWeight,
     shippingFee,

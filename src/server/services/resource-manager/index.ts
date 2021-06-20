@@ -23,7 +23,7 @@ import { getJsonSchema, getJsonSchemasX } from '../../amm-schemas';
 
 import initDatabase from './initDatabase';
 import KoaHelperEx from './KoaHelperEx';
-import { AuthKit } from './insterfaces';
+import { AuthKit } from './interfaces';
 
 const liquidRoot = appRootPath.resolve('./node_modules/az-model-manager/liquids');
 
@@ -74,7 +74,6 @@ export default class ResourceManager extends ServiceBase {
       ),
     };
     this.authKit.koaHelper = new KoaHelper(this.authKit.authCore, this.authKit.authProviderManager);
-    this.authKit.koaHelperEx = new KoaHelperEx(this.authKit.koaHelper);
 
     const jsonSchemaX = new JsonSchemasX('public', <any>getJsonSchema());
     jsonSchemaX.parseRawSchemas();
@@ -94,6 +93,7 @@ export default class ResourceManager extends ServiceBase {
       fs.writeFileSync('schemas.json', JSON.stringify(schemas, null, 2), { encoding: 'utf-8' });
     }
     this.resourceManager = new AmmOrm(this.database, ammSchemas);
+    this.authKit.koaHelperEx = new KoaHelperEx(this.authKit.koaHelper, this.resourceManager);
   }
 
   onStart() {

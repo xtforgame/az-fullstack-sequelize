@@ -5,13 +5,11 @@ import { GqlResult } from 'common/graphQL';
 export const sendGraphQLRequest = async <T = any>(query: string) : Promise<GqlResult<T>> => {
   const { data } = await axios({
     url: 'v1/graphql',
-    headers: {
-      'x-hasura-admin-secret': 'xxxxhsr',
-    },
+    headers: {},
     method: 'post',
     data: {
       query,
     },
   });
   return data;
-}
+};

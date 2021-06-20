@@ -59,9 +59,7 @@ const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
   link: new HttpLink({
     uri: 'v1/graphql',
-    headers: {
-      'x-hasura-admin-secret': 'xxxxhsr',
-    },
+    headers: {},
   }),
 });
 

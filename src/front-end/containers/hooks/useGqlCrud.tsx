@@ -3,61 +3,6 @@ import { useQuery, gql } from '@apollo/client';
 import BasicSection from '~/components/Section/Basic';
 import LoadingMask from '~/components/TableShared/LoadingMask';
 
-const PRODUCT_GROUP_QUERY = gql`
-  query Order($id: bigint! = 0) {
-    order(id: $id){
-      id
-      user { id, name }
-      buyer
-      recipient
-      data
-      metadata
-      created_at
-
-      state
-      memo
-      payWay
-      selectedAt
-      expiredAt
-      paidAt
-      shippedAt
-      invoiceNumber
-      invoiceStatus
-      atmAccount
-      esunData
-      esunOrderId
-      esunTradeInfo
-      esunTradeState
-      paypalData
-      paypalToken
-      cvsName
-      smseData
-      smsePayno
-      smseSmilepayno
-
-      products {
-        price
-        quantity
-        subtotal
-        assignedQuantity
-        order_id
-        id
-        data
-        product_id
-        product {
-          name
-          customId
-          id
-          size
-          instock
-          orderQuota
-          soldout
-        }
-      }
-    }
-  }
-`;
-
 export type Options = {
   Editor?: React.FC<any>;
   Section?: React.FC<any>;
