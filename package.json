@@ -96,7 +96,7 @@
     "fontfaceobserver": "^2.0.13",
     "generic-router": "git+https://github.com/xtforgame/generic-router.git#v1.2.0",
     "google-libphonenumber": "^3.1.5",
-    "googleapis": "27",
+    "googleapis": "39",
     "grapesjs": "^0.17.4",
     "grapesjs-blocks-basic": "^0.1.8",
     "grapesjs-parser-postcss": "^0.1.1",
