@@ -14,6 +14,7 @@ import axios from 'axios';
 import useDialogState, { Cancel } from 'azrmui/hooks/useDialogState';
 import useEffectIgnoreFirstRun from 'azrmui/hooks/useEffectIgnoreFirstRun';
 import { getHeaders } from 'azrmui/utils/HeaderManager';
+import parserPostCSS from 'grapesjs-parser-postcss';
 import updateScript from 'raw-loader!./update-script';
 import MinioFolderApiEx from '../ui/MinioFolderApiEx';
 import FilePicker from '../ui/FilePicker';
@@ -370,6 +371,7 @@ const GrapesJsEditor = (props) => {
       },
       plugins: [
         'az-global-script',
+        parserPostCSS,
         'az-common',
         'az-create-custom-block',
         'gjs-preset-webpage',

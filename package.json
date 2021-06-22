@@ -99,6 +99,7 @@
     "googleapis": "27",
     "grapesjs": "^0.17.4",
     "grapesjs-blocks-basic": "^0.1.8",
+    "grapesjs-parser-postcss": "^0.1.1",
     "grapesjs-plugin-forms": "^2.0.1",
     "graphql": "^15.5.0",
     "history": "^4.9.0",

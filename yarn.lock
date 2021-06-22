@@ -7686,6 +7686,13 @@ grapesjs-blocks-basic@^0.1.8:
   resolved "https://registry.yarnpkg.com/grapesjs-blocks-basic/-/grapesjs-blocks-basic-0.1.8.tgz#9eab7c8fd7bc30537143677320b07d85b9bd2e8f"
   integrity sha512-Iy5M4qGkEE2llb5ZFxitDolRJ3CrQkcK1SQIjRRlkWIAC99On3T/09iFR7NkpTBfsgfdNwcwnSVOMOhSnVLDtw==
 
+grapesjs-parser-postcss@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/grapesjs-parser-postcss/-/grapesjs-parser-postcss-0.1.1.tgz#a5168a849cecaafbbe4cfda05611d55c80d41dde"
+  integrity sha512-e4qMdElAQtYE+MtO+bYdwSisrThfyemxXVW+PhRACGDD6U8Hw6EgL0aSMHTVnChcYWKyc0rYmiCVn6+T741zDw==
+  dependencies:
+    postcss "^7.0.2"
+
 grapesjs-plugin-forms@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/grapesjs-plugin-forms/-/grapesjs-plugin-forms-2.0.1.tgz#8ecb3b30c074f5aac9cef7d0218987f315888bd2"
@@ -12029,6 +12036,15 @@ postcss@^6.0.1, postcss@^6.0.23:
     chalk "^2.4.1"
     source-map "^0.6.1"
     supports-color "^5.4.0"
+
+postcss@^7.0.2:
+  version "7.0.36"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-7.0.36.tgz#056f8cffa939662a8f5905950c07d5285644dfcb"
+  integrity sha512-BebJSIUMwJHRH0HAQoxN4u1CN86glsrwsW0q7T+/m44eXOUAxSNdHRkNZPYz5vVUbg17hFgOQDE7fZk7li3pZw==
+  dependencies:
+    chalk "^2.4.2"
+    source-map "^0.6.1"
+    supports-color "^6.1.0"
 
 postcss@^8.0.2:
   version "8.2.13"
