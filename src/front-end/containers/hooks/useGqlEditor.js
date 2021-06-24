@@ -23,7 +23,7 @@ export default (props) => {
     title,
     renderActions,
     getColumnConfig,
-    rowsPerPageOptions = [10, 25, 50, 75],
+    rowsPerPageOptions = [10, 25, 50, 75, { value: 0, label: 'All' }],
     renderError = error => (
       <pre>
         Error

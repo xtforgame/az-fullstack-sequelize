@@ -1167,6 +1167,8 @@ export type ProductGroupCreationAttributes = {
   materials?: string;
   data?: any;
   disabled?: boolean;
+  modelsReference1?: string;
+  modelsReference2?: string;
   products?: ProductCreationAttributes[];
   category?: ProductCategoryCreationAttributes;
   spec?: ProductSpecCreationAttributes[];
@@ -1189,6 +1191,8 @@ export type ProductGroupAttributes = {
   materials?: string;
   data?: any;
   disabled?: boolean;
+  modelsReference1?: string;
+  modelsReference2?: string;
   products?: ExtendedModel<ProductI>[];
   category?: ExtendedModel<ProductCategoryI>;
   spec?: ExtendedModel<ProductSpecI>[];
@@ -1501,6 +1505,8 @@ export type OrderCreationAttributes = {
   state?: string;
   memo?: string;
   shipmentId?: string;
+  buyerName?: string;
+  recipientName?: string;
   buyer?: any;
   recipient?: any;
   metadata?: any;
@@ -1540,6 +1546,8 @@ export type OrderAttributes = {
   state?: string;
   memo?: string;
   shipmentId?: string;
+  buyerName?: string;
+  recipientName?: string;
   buyer?: any;
   recipient?: any;
   metadata?: any;

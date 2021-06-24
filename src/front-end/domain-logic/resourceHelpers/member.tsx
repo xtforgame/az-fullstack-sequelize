@@ -165,11 +165,11 @@ export const collectionConfig : CollectionConfig = {
       </React.Fragment>
     ) : (
       <React.Fragment>
-        <Tooltip title={`新增${resourceLabelName}`}>
+        {/* <Tooltip title={`新增${resourceLabelName}`}>
           <IconButton color="primary" aria-label={`新增${resourceLabelName}`} onClick={() => push(`${basePath}/new`)}>
             <AddIcon />
           </IconButton>
-        </Tooltip>
+        </Tooltip> */}
         <Tooltip title="重新整理">
           <IconButton aria-label="重新整理" onClick={refresh as any}>
             <RefreshIcon />

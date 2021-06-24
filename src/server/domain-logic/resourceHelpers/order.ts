@@ -78,3 +78,17 @@ export const patchOrder = async (resourceManager : AmmOrm, orderId, data = {}) =
     },
   });
 };
+
+export const patchOrder2 = async (resourceManager : AmmOrm, orderId, data = {}) => {
+  const Order = resourceManager.getSqlzModel<OrderI>('order')!;
+  await Order.update(data, {
+    where: {
+      id: orderId,
+    },
+  });
+  return Order.findOne({
+    where: {
+      id: orderId,
+    },
+  });
+};

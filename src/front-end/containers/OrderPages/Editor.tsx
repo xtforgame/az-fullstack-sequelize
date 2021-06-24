@@ -6,6 +6,7 @@ import useStateWithError from 'azrmui/hooks/useStateWithError';
 import axios from 'axios';
 import path from 'path';
 import List from '@material-ui/core/List';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Chip from '@material-ui/core/Chip';
@@ -164,30 +165,67 @@ export default (props) => {
         <DialogContent>
           <div className={classes.flexContainer}>
             <div className={classes.flex1}>
-              <ListItem>
-                <ListItemText
-                  primary="訂單編號"
-                  secondary={editingData?.id}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemText
-                  primary="購買人"
-                  secondary={editingData?.data?.orderData?.order?.buyer?.email}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemText
-                  primary="付款方式"
-                  secondary={orderPayWayNameFunc(editingData?.payWay)}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemText
-                  primary="訂單狀態"
-                  secondary={orderStateNameFunc(editingData?.state)}
-                />
-              </ListItem>
+              <List>
+                <ListItem>
+                  <ListItemText
+                    primary="訂單編號"
+                    secondary={editingData?.id}
+                  />
+                  <ListItemSecondaryAction>
+                  </ListItemSecondaryAction>
+                </ListItem>
+                <ListItem>
+                  <ListItemText
+                    primary="購買人"
+                    secondary={editingData?.data?.orderData?.order?.buyer?.email}
+                  />
+                  <ListItemSecondaryAction>
+                  </ListItemSecondaryAction>
+                </ListItem>
+                <ListItem>
+                  <ListItemText
+                    primary="付款方式"
+                    secondary={orderPayWayNameFunc(editingData?.payWay)}
+                  />
+                  <ListItemSecondaryAction>
+                  </ListItemSecondaryAction>
+                </ListItem>
+                <ListItem>
+                  <ListItemText
+                    primary="訂單狀態"
+                    secondary={orderStateNameFunc(editingData?.state)}
+                  />
+                  <ListItemSecondaryAction>
+                  </ListItemSecondaryAction>
+                </ListItem>
+                <ListItem>
+                  <ListItemText
+                    primary="發票號碼"
+                    secondary={editingData?.invoiceNumber}
+                  />
+                  <ListItemSecondaryAction>
+                    {
+                      !editingData?.invoiceNumber && editingData?.state && editingData?.state !== 'unpaid' && (
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          onClick={async () => {
+                            await axios({
+                              method: 'post',
+                              url: `/api/upload-invoice/${editingData?.id}`,
+                            })
+                            .then(() => {
+                              refresh();
+                            });
+                          }}
+                        >
+                          手動上傳發票
+                        </Button>
+                      )
+                    }
+                  </ListItemSecondaryAction>
+                </ListItem>
+              </List>
               {/* <FormSpace variant="content1" />
               {selectedStateInput.render()} */}
               <FormSpace variant="content1" />
@@ -208,7 +246,7 @@ export default (props) => {
           </Button>
         </DialogActions>
         <div className={classes.actionsPaperContainer}>
-          <ActionsPaper row={editingData} assign={() => {}} />
+          <ActionsPaper row={editingData} onRefresh={refresh} assign={() => {}} />
         </div>
       </div>
     </React.Fragment>

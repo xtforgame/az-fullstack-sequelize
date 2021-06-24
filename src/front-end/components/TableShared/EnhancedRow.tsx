@@ -12,6 +12,7 @@ import {
   RowTypeBase,
   ColumnSizes,
   OnRowCheck,
+  GetRowDefaultOpenFunc,
 } from './shared';
 
 export type EnhancedTableRowProps<RowType extends RowTypeBase = RowTypeBase> = {
@@ -27,6 +28,7 @@ export type EnhancedTableRowProps<RowType extends RowTypeBase = RowTypeBase> = {
   columns?: Columns;
   columnSizes?: ColumnSizes;
   defaultOpen?: boolean;
+  getRowDefaultOpen?: GetRowDefaultOpenFunc<RowType>;
 };
 
 export default function EnhancedRow<RowType extends RowTypeBase = RowTypeBase>({
@@ -39,9 +41,10 @@ export default function EnhancedRow<RowType extends RowTypeBase = RowTypeBase>({
   labelId = 'ckb',
   renderRowDetail,
   extraColumnNum = 0,
+  getRowDefaultOpen = () => false,
   defaultOpen,
 } : EnhancedTableRowProps<RowType>) {
-  const [open, setOpen] = React.useState(defaultOpen || false);
+  const [open, setOpen] = React.useState(getRowDefaultOpen(row, index, columns) || defaultOpen || false);
   const options = {
     columns,
     columnSizes,

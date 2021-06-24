@@ -2,6 +2,7 @@ import fs from 'fs';
 import sass from 'sass';
 import {
   FilterImplOptions,
+  Liquid,
 } from 'liquidjs';
 import {
   toCamel,
@@ -9,9 +10,12 @@ import {
   capitalizeFirstLetter,
   leftJustify,
 } from 'common/utils';
+import {
+  orderPayWayNameFunc,
+} from 'common/domain-logic/constants/order';
 import { externalUrl } from 'config';
 import mime from 'mime-types';
-import { Liquid } from 'liquidjs';
+
 import moment from 'moment';
 import renderEx from './LiquidRenderEx';
 
@@ -133,6 +137,9 @@ export const liquidFor = (options : LiquidForOptions = {}) => async (ctx, next) 
       return (result && result.css && result.css.toString('utf8')) || '';
     });
 
+    this.registerFilter('getImage', imageObject => (imageObject && imageObject.image && imageObject.image.imgUrl) || '');
+
+
     this.registerFilter('azIf', (condition, y, n) => (condition ? y : n));
     this.registerFilter('dateFormat', (date, format = 'YYYY/MM/DD HH:mm:ss') => moment(date).format(format));
     Object.keys(extraFilters).forEach(k => this.registerFilter(k, extraFilters[k]));
@@ -154,4 +161,4 @@ export const liquidFor = (options : LiquidForOptions = {}) => async (ctx, next) 
   cbData.rendered = rendered;
   await callback(cbData);
   return ctx.body = rendered;
-}
+};

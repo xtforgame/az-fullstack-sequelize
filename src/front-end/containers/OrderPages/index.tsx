@@ -13,11 +13,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default (props) => {
+  const restProps : any = (collectionConfig.getTableRestProps ? collectionConfig.getTableRestProps() : ({}));
   const { render } = useCrudPages({
     collectionConfig,
     Editor,
     FilterSection,
     DetailTable,
+    restProps,
   });
   return render();
 };

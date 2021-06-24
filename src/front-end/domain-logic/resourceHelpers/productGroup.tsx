@@ -50,7 +50,18 @@ price
 weight
 description
 materials
+spec {
+  id
+  name
+  nameEn
+  code
+  priority
+  spec
+  data
+}
 data
+modelsReference1
+modelsReference2
 `;
 
 export const collectionConfig : CollectionConfig = {

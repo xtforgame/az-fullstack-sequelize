@@ -10,12 +10,17 @@ import useGqlTable, { useTableStates } from '~/containers/hooks/useGqlTable';
 import useGqlCrud from '~/containers/hooks/useGqlCrud';
 import { CollectionConfig } from '~/domain-logic/resourceHelpers/common';
 import useRouterQuery from '~/hooks/useRouterQuery';
+import {
+  TableProps,
+  RowTypeBase,
+} from '~/components/ControlledEnhancedTable';
 
-export type Options = {
+export type Options<RowType extends RowTypeBase = RowTypeBase> = {
   collectionConfig: CollectionConfig;
   Editor: React.FC<any>;
   FilterSection: React.FC<any>;
   DetailTable?: React.FC<any>;
+  restProps?: Partial<TableProps<RowType>>,
   [s: string]: any;
 }
 
@@ -42,11 +47,12 @@ export const createListComponent = (op: Options) => {
       useRenderActions,
       useGqlQueryT1Option = options => ({ options, variables: {} }),
     },
+    restProps,
   } = op;
   return (props) => {
     const query = useRouterQuery();
     const [filter, setFilter] = useState<any>(query);
-    const tableStates = useTableStates({});
+    const tableStates = useTableStates({}, {}, restProps);
 
     const { options, variables } = useGqlQueryT1Option({
       // args: ['$name: String!'],
@@ -55,7 +61,7 @@ export const createListComponent = (op: Options) => {
       where: [],
       orderBy: `{${tableStates.orderBy || 'id'}: ${tableStates.order || 'desc'}}`,
       offset: tableStates.page! * tableStates.rowsPerPage!,
-      limit: tableStates.rowsPerPage,
+      limit: tableStates.rowsPerPage || undefined,
       debug: true,
     }, { filter, tableStates });
 
@@ -87,7 +93,7 @@ export const createListComponent = (op: Options) => {
       title: `${collectionLabelName}管理`,
       renderActions,
       getColumnConfig,
-      rowsPerPageOptions: [10, 25, 50, 75],
+      rowsPerPageOptions: [10, 25, 50, 75, { value: 0, label: 'All' }],
       renderError: error => (
         <pre>
           取得

@@ -23,6 +23,7 @@ import {
   ColumnSizes,
   RenderRowDetail,
   OnRowCheck,
+  GetRowDefaultOpenFunc,
 } from '../TableShared/interfaces';
 
 export * from '../TableShared/interfaces';
@@ -93,7 +94,7 @@ const useStyles = makeStyles(theme => ({
 
 export type TableBasicProps<RowType extends RowTypeBase = RowTypeBase> = {
   isSimple?: boolean;
-  rowsPerPageOptions?: number[];
+  rowsPerPageOptions?: Array<number | { value: number; label: string }>;
   hidePagination?: boolean;
   loading?: boolean;
   columns?: Columns;
@@ -103,6 +104,7 @@ export type TableBasicProps<RowType extends RowTypeBase = RowTypeBase> = {
   renderRowDetail?: RenderRowDetail<RowType>;
   renderEmptyContent?: () => React.ReactNode;
   defaultOpen?: boolean;
+  getRowDefaultOpen?: GetRowDefaultOpenFunc<RowType>;
 }
 
 export type TableProps<RowType extends RowTypeBase = RowTypeBase> = Overwrite<TableStatesBaseWithSetter<RowType> & TableBasicProps<RowType>, {
@@ -126,7 +128,7 @@ export type UseTableStatesOptions = {
   isSimple?: boolean;
 };
 
-export function useTableStates<RowType extends RowTypeBase = RowTypeBase>(defaults : TableStatesDefaultValues<RowType> = {}, options: UseTableStatesOptions = {}) : TableProps<RowType> {
+export function useTableStates<RowType extends RowTypeBase = RowTypeBase>(defaults : TableStatesDefaultValues<RowType> = {}, options: UseTableStatesOptions = {}, restProps : Partial<TableProps<RowType>> = {}) : TableProps<RowType> {
   const [rows, setRows] = useState<RowType[]>(defaults.rows || []);
   const [selected, setSelected] = useState<any[]>(defaults.selected || []);
 
@@ -151,6 +153,7 @@ export function useTableStates<RowType extends RowTypeBase = RowTypeBase>(defaul
     setDense,
     rowsPerPage: options.isSimple ? undefined : rowsPerPage,
     setRowsPerPage: options.isSimple ? undefined : setRowsPerPage,
+    ...restProps,
   };
 }
 
@@ -182,7 +185,7 @@ export default function EnhancedTable<RowType extends RowTypeBase = RowTypeBase>
     setRowsPerPage,
 
     toolbarProps,
-    rowsPerPageOptions = [10, 25, 50, 75],
+    rowsPerPageOptions = [10, 25, 50, 75, { value: 0, label: 'All' }],
 
     columns: columnsProp = [],
     columnSizes: columnSizesProp = [],
@@ -190,6 +193,7 @@ export default function EnhancedTable<RowType extends RowTypeBase = RowTypeBase>
     renderEmptyContent,
 
     hidePagination,
+    getRowDefaultOpen,
   } = props;
 
   const classes = useStyles();
@@ -313,6 +317,7 @@ export default function EnhancedTable<RowType extends RowTypeBase = RowTypeBase>
                       onRowCheck, row, isItemSelected, labelId,
                     })}
                     extraColumnNum={extraColumnNum}
+                    getRowDefaultOpen={getRowDefaultOpen}
                   />
                 );
               })}

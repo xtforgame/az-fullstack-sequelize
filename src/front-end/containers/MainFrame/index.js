@@ -131,7 +131,7 @@ class MainFrame extends React.PureComponent {
             // onClick={this.toggleMainMenuDrawer(false)}
             // onKeyDown={this.toggleMainMenuDrawer(false)}
           >
-            <div
+            {/* <div
               style={{
                 width: '100%',
                 paddingTop: 16,
@@ -141,7 +141,7 @@ class MainFrame extends React.PureComponent {
               }}
             >
               <ProjectDropdown key="projectSelector" style={{ width: '100%' }} />
-            </div>
+            </div> */}
             <Divider />
             {leftSideList}
           </div>

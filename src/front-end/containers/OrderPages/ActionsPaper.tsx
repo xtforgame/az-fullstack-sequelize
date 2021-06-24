@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -11,10 +12,14 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
-import { deepOrange, green, yellow, red, grey } from '@material-ui/core/colors';
+import {
+  deepOrange, green, yellow, red, grey,
+} from '@material-ui/core/colors';
 import FlightLandIcon from '@material-ui/icons/FlightLand';
 import { FormSpace } from 'azrmui/core/FormInputs';
-import { Order, Campaign, Product, ShippingFee, calcOrderInfo, toShippingFeeTableMap } from 'common/domain-logic/gql-helpers';
+import {
+  Order, Campaign, Product, ShippingFee, calcOrderInfo, toShippingFeeTableMap,
+} from 'common/domain-logic/gql-helpers';
 
 
 const useStyles = makeStyles(theme => ({
@@ -46,19 +51,42 @@ export default function DetailTable(props) {
     row,
     isItemSelected,
     assign,
+    onRefresh,
   } = props;
 
   const order : Order = row;
   const classes = useStyles();
 
-  let actions : any = undefined;
+  let actions : any;
   if (order.state === 'unpaid') {
     actions = (
       <>
-        <Button variant="contained" color="primary">
+        <Button onClick={async () => {
+          await axios({
+            method: 'post',
+            url: `/api/change-state/${row.id}`,
+            data: {
+              state: 'paid',
+            }
+          })
+          .then(() => {
+            onRefresh();
+          });
+        }} variant="contained" color="primary">
           已付款
         </Button>
-        <Button variant="contained" color="secondary">
+        <Button onClick={async () => {
+          await axios({
+            method: 'post',
+            url: `/api/change-state/${row.id}`,
+            data: {
+              state: 'expired',
+            }
+          })
+          .then(() => {
+            onRefresh();
+          });
+        }} variant="contained" color="secondary">
           直接改為過期
         </Button>
       </>
@@ -66,10 +94,18 @@ export default function DetailTable(props) {
   } else if (order.state === 'paid') {
     actions = (
       <>
-        <Button variant="contained" color="primary">
-          自動備貨
-        </Button>
-        <Button variant="contained" color="secondary">
+        <Button onClick={async () => {
+          await axios({
+            method: 'post',
+            url: `/api/change-state/${row.id}`,
+            data: {
+              state: 'returned',
+            }
+          })
+          .then(() => {
+            onRefresh();
+          });
+        }} variant="contained" color="secondary">
           直接改為退貨
         </Button>
       </>
@@ -77,10 +113,32 @@ export default function DetailTable(props) {
   } else if (order.state === 'selected') {
     actions = (
       <>
-        <Button variant="contained" color="primary">
+        <Button onClick={async () => {
+          await axios({
+            method: 'post',
+            url: `/api/change-state/${row.id}`,
+            data: {
+              state: 'shipped',
+            }
+          })
+          .then(() => {
+            onRefresh();
+          });
+        }} variant="contained" color="primary">
           已出貨
         </Button>
-        <Button variant="contained" color="secondary">
+        <Button onClick={async () => {
+          await axios({
+            method: 'post',
+            url: `/api/change-state/${row.id}`,
+            data: {
+              state: 'returned',
+            }
+          })
+          .then(() => {
+            onRefresh();
+          });
+        }} variant="contained" color="secondary">
           直接改為退貨
         </Button>
       </>
@@ -88,7 +146,18 @@ export default function DetailTable(props) {
   } else if (order.state === 'shipped') {
     actions = (
       <>
-        <Button variant="contained" color="secondary">
+        <Button onClick={async () => {
+          await axios({
+            method: 'post',
+            url: `/api/change-state/${row.id}`,
+            data: {
+              state: 'returned',
+            }
+          })
+          .then(() => {
+            onRefresh();
+          });
+        }} variant="contained" color="secondary">
           直接改為退貨
         </Button>
       </>
@@ -96,10 +165,32 @@ export default function DetailTable(props) {
   } else if (order.state === 'expired') {
     actions = (
       <>
-        <Button variant="contained" color="primary">
+        <Button onClick={async () => {
+          await axios({
+            method: 'post',
+            url: `/api/change-state/${row.id}`,
+            data: {
+              state: 'paid',
+            }
+          })
+          .then(() => {
+            onRefresh();
+          });
+        }} variant="contained" color="primary">
           已付款
         </Button>
-        <Button variant="contained" color="secondary">
+        <Button onClick={async () => {
+          await axios({
+            method: 'post',
+            url: `/api/change-state/${row.id}`,
+            data: {
+              state: 'expired',
+            }
+          })
+          .then(() => {
+            onRefresh();
+          });
+        }} variant="contained" color="secondary">
           直接改為過期
         </Button>
       </>

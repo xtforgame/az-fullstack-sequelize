@@ -47,13 +47,13 @@ class MainAppBar extends React.PureComponent {
               {t('appTitle')}
             </Typography>
             <LocaleDropdown />
-            {isUserLoggedIn && (
+            {/* {isUserLoggedIn && (
               <IconButton color="inherit" onClick={onToggleNotificationPanel} aria-label="NotificationList">
                 <Badge badgeContent={4} color="secondary">
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
-            )}
+            )} */}
             {/* <Button color="inherit" onClick={() => clearSessionCache('me')}>
               <FormattedMessage {...messages.logout} />
             </Button> */}

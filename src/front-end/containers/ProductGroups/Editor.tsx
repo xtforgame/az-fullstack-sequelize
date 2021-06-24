@@ -9,6 +9,7 @@ to your service.
     "react-apollo": "^2.5.5"
 */
 import React, { useState } from 'react';
+import uuidv4 from 'uuid/v4';
 import path from 'path';
 import { useQuery, gql } from '@apollo/client';
 import useStateWithError from 'azrmui/hooks/useStateWithError';
@@ -30,6 +31,8 @@ import DateRangeInput from '~/components/DateRangeInput';
 import useRouterPush from '~/hooks/useRouterPush';
 import FormAutocomplete from '~/components/FormAutocomplete';
 import LoadingMask from '~/components/TableShared/LoadingMask';
+import useTextField from '~/components/hooks/inputs/useTextField';
+import ListInput from './ListInput';
 
 const handleUpload = createHandleUploadFunction('/api/files');
 
@@ -87,6 +90,69 @@ const CAMPAIGN_LIST_QUERY = gql`
   }
 `;
 
+const SizeEditor = (props) => {
+  const {
+    value,
+    onChange = () => null,
+  } = props;
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        paddingRight: 20,
+      }}
+    >
+      <FormTextField
+        label="尺寸名稱"
+        // error={!!materialsError}
+        // helperText={materialsError}
+        // label={label}
+        // onKeyPress={handleEnterForTextField}
+        value={value.name}
+        onChange={(e) => {
+          onChange({
+            ...value,
+            name: e.target.value,
+          });
+        }}
+        margin="dense"
+        fullWidth
+      />
+      <FormTextField
+        label="尺寸描述"
+        // error={!!materialsError}
+        // helperText={materialsError}
+        // label={label}
+        // onKeyPress={handleEnterForTextField}
+        value={value.spec}
+        onChange={(e) => {
+          onChange({
+            ...value,
+            spec: e.target.value,
+          });
+        }}
+        margin="dense"
+        fullWidth
+        multiline
+        rows={5}
+        rowsMax={20}
+      />
+    </div>
+  );
+};
+
+const jsonParse = (s, v = null) => {
+  try {
+    return JSON.parse(s);
+  } catch (error) {
+    return v;
+  }
+};
+
 export default (props) => {
   const {
     editingData,
@@ -101,10 +167,15 @@ export default (props) => {
   const [category, setCategory, categoryError, setCategoryError] = useStateWithError(isCreating ? 0 : editingData.category.id);
   const [name, setName, nameError, setNameError] = useStateWithError(isCreating ? '' : editingData.name);
   const [price, setPrice, priceError, setPriceError] = useStateWithError(isCreating ? 0 : editingData.price);
+  const [specList, setSpecList, specListError, setSpecListError] = useStateWithError(isCreating ? [] : editingData.spec);
+
   const [materials, setMaterials, materialsError, setMaterialsError] = useStateWithError(isCreating ? '' : editingData.materials);
   const [description, setDescription, descriptionError, setDescriptionError] = useStateWithError(isCreating ? '' : editingData.description);
   const [weight, setWeight, weightError, setWeightError] = useStateWithError(isCreating ? '' : editingData.weight);
   const [imageInfos, setImageInfos] = useState(isCreating ? [] : editingData.pictures);
+
+  const [modelsReference1List, setModelsReference1List, modelsReference1ListError, setModelsReference1ListError] = useState(isCreating ? [] : jsonParse(editingData.modelsReference1, []));
+  const [modelsReference2List, setModelsReference2List, modelsReference2ListError, setModelsReference2ListError] = useState(isCreating ? [] : jsonParse(editingData.modelsReference2, []));
 
   const push = useRouterPush();
   const submit = async () => {
@@ -143,6 +214,9 @@ export default (props) => {
       campaigns: campaigns.map(c => c.id),
       description,
       pictures: ii,
+      modelsReference1: JSON.stringify(modelsReference1List),
+      modelsReference2: JSON.stringify(modelsReference2List),
+      specList,
     };
     if (ii[0]) {
       [data.thumbnail] = ii;
@@ -263,6 +337,35 @@ export default (props) => {
               fullWidth
             />
             <FormSpace variant="content1" />
+            <ListInput
+              label="尺寸資訊"
+              fullWidth
+              renderInput={({ id, value, onChange }) => (
+                <SizeEditor
+                  key={id}
+                  value={value}
+                  onChange={onChange}
+                />
+              )}
+              getId={v => v.id}
+              newId={index => `new:${uuidv4()}`}
+              value={specList}
+              onChange={(change) => {
+                if (change.type === 'add') {
+                  setSpecList(l => [...l, {
+                    id: change.id,
+                    name: '',
+                    spec: '',
+                  }]);
+                } else if (change.type === 'remove') {
+                  setSpecList(change.value);
+                } else if (change.type === 'modify') {
+                  setSpecList(change.value);
+                }
+              }}
+              newRowTitle="<新增尺寸>"
+            />
+            <FormSpace variant="content1" />
             <FormImagesInput
               label="商品首圖"
               value={imageInfos}
@@ -322,6 +425,74 @@ export default (props) => {
                   suffix: ' (g)',
                 },
               }}
+            />
+            <FormSpace variant="content1" />
+            <ListInput
+              label="小編試穿"
+              fullWidth
+              renderInput={({ id, value, onChange }) => (
+                <FormTextField
+                  label="描述"
+                  placeholder={`格式:\n尺寸名1:數值1\n尺寸名2:數值2`}
+                  key={id}
+                  value={value}
+                  onChange={(e) => {
+                    onChange(e.target.value);
+                  }}
+                  margin="dense"
+                  fullWidth
+                  multiline
+                  rows={5}
+                  rowsMax={20}
+                />
+              )}
+              getId={(v, index) => index}
+              newId={index => index}
+              value={modelsReference1List}
+              onChange={(change) => {
+                if (change.type === 'add') {
+                  setModelsReference1List(l => [...l, '']);
+                } else if (change.type === 'remove') {
+                  setModelsReference1List(change.value);
+                } else if (change.type === 'modify') {
+                  setModelsReference1List(change.value);
+                }
+              }}
+              newRowTitle="<新增>"
+            />
+            <FormSpace variant="content1" />
+            <ListInput
+              label="model試穿"
+              fullWidth
+              renderInput={({ id, value, onChange }) => (
+                <FormTextField
+                  label="描述"
+                  placeholder={`格式:\n尺寸名1:數值1\n尺寸名2:數值2`}
+                  key={id}
+                  value={value}
+                  onChange={(e) => {
+                    onChange(e.target.value);
+                  }}
+                  margin="dense"
+                  fullWidth
+                  multiline
+                  rows={5}
+                  rowsMax={20}
+                />
+              )}
+              getId={(v, index) => index}
+              newId={index => index}
+              value={modelsReference2List}
+              onChange={(change) => {
+                if (change.type === 'add') {
+                  setModelsReference2List(l => [...l, '']);
+                } else if (change.type === 'remove') {
+                  setModelsReference2List(change.value);
+                } else if (change.type === 'modify') {
+                  setModelsReference2List(change.value);
+                }
+              }}
+              newRowTitle="<新增>"
             />
           </div>
         </div>

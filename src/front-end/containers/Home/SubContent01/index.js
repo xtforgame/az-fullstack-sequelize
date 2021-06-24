@@ -45,12 +45,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const renderRowCell = (columnName, row, option) => (
-  <ContentText>
-    {row[columnName] ? moment(row[columnName]).format('YYYY/MM/DD[\n]HH:mm:ss') : 'N/A'}
-  </ContentText>
-);
-
 const getColumnConfig = () => {
   const columns = [
     {
@@ -372,7 +366,7 @@ export default (props) => {
             renderActions,
           }}
           paginationProps={{
-            rowsPerPageOptions: [10, 25, 50, 75],
+            rowsPerPageOptions: [10, 25, 50, 75, { value: 0, label: 'All' }],
           }}
           renderRowDetail={row => (
             <DetailTable

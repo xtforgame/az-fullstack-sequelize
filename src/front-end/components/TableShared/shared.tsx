@@ -30,18 +30,18 @@ export type Column<RowType = any> = {
   }) => ReactNode;
 };
 
-export type Columns = Column[];
+export type Columns<RowType = any> = Column<RowType>[];
 
-export type RenderRowOption = {
-  columns: Columns;
+export type RenderRowOption<RowType = any> = {
+  columns: Columns<RowType>;
   columnSizes: ColumnSizes;
 }
 
 export type RowTypeBase = {
   id: any;
-  cellToString?: <RowType extends RowTypeBase = RowTypeBase>(cloumn: string, row: RowType, option: RenderRowOption) => string;
-  renderCell?: <RowType extends RowTypeBase = RowTypeBase>(cloumn: string, row: RowType, option: RenderRowOption & {
-    toStringFunction: (cloumn: string, row: RowType, option: RenderRowOption) => string;
+  cellToString?: <RowType extends RowTypeBase = RowTypeBase>(cloumn: string, row: RowType, option: RenderRowOption<RowType>) => string;
+  renderCell?: <RowType extends RowTypeBase = RowTypeBase>(cloumn: string, row: RowType, option: RenderRowOption<RowType> & {
+    toStringFunction: (cloumn: string, row: RowType, option: RenderRowOption<RowType>) => string;
   }) => ReactNode;
 }
 
@@ -52,3 +52,6 @@ export type RenderAction = (numSelected: number) => ReactNode;
 export type OnRequestSort = (e: Event, x: string) => void;
 
 export type OnRowCheck = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
+
+
+export type GetRowDefaultOpenFunc<RowType extends RowTypeBase = RowTypeBase> = (row: RowType, index: number, columns?: Columns) => boolean;

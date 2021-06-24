@@ -79,9 +79,14 @@ export default (props) => {
   const [imageInfos, setImageInfos, imageInfosError, setImageInfosError] = useStateWithError(isCreating ? [] : (editingData.specPic ? [editingData.specPic] : []));
 
   const [
-    [specsDesc, setSpecsDesc, specsDescError, setSpecsDescError],
-    specsDescInput,
-  ] = useTextField(isCreating ? '' : editingData.specsDesc, '', {
+    [specsText, setSpecsText, specsTextError, setSpecsTextError],
+    specsTextInput,
+  ] = useTextField(isCreating ? `胸寬: cm
+腰寬: cm
+臀寬: cm
+肩寬: cm
+袖長: cm
+衣長: cm` : editingData.specsText, '', {
     label: '尺寸表',
     placeholder: `格式:\n尺寸名1:數值1\n尺寸名2:數值2`,
     required: true,
@@ -93,11 +98,23 @@ export default (props) => {
   });
 
   const [
-    [modelsReference1, setModelsReference1, modelsReference1Error, setModelsReference1Error],
-    modelsReference1Input,
-  ] = useTextField(isCreating ? '' : editingData.modelsReference1, '', {
-    label: '小編試穿',
-    placeholder: `格式:\n尺寸名1:數值1\n尺寸名2:數值2`,
+    [specsDesc, setSpecsDesc, specsDescError, setSpecsDescError],
+    specsDescInput,
+  ] = useTextField(isCreating ? `1.衣長/側頸點量至下擺長度
+2.肩寬/兩側肩點之平量寬度
+3.胸寬/兩側腋下點之平量寬度
+4.腰寬/側頸點向下測量前長41cm,與其垂直方向之寬度
+5.臀寬/腰下20cm之平量寬度
+6.袖長/肩點量至袖口長度
+7.連肩袖長/由後領圍中心開始,經過肩端點至袖口之連肩長度` : editingData.specsDesc, '', {
+    label: '尺寸表描述',
+    placeholder: `1.衣長/側頸點量至下擺長度
+2.肩寬/兩側肩點之平量寬度
+3.胸寬/兩側腋下點之平量寬度
+4.腰寬/側頸點向下測量前長41cm,與其垂直方向之寬度
+5.臀寬/腰下20cm之平量寬度
+6.袖長/肩點量至袖口長度
+7.連肩袖長/由後領圍中心開始,經過肩端點至袖口之連肩長度`,
     required: true,
     margin: 'dense',
     fullWidth: true,
@@ -106,19 +123,33 @@ export default (props) => {
     rowsMax: 20,
   });
 
-  const [
-    [modelsReference2, setModelsReference2, modelsReference2Error, setModelsReference2Error],
-    modelsReference2Input,
-  ] = useTextField(isCreating ? '' : editingData.modelsReference2, '', {
-    label: 'model試穿',
-    placeholder: `格式:\n尺寸名1:數值1\n尺寸名2:數值2`,
-    required: true,
-    margin: 'dense',
-    fullWidth: true,
-    multiline: true,
-    rows: 5,
-    rowsMax: 20,
-  });
+  // const [
+  //   [modelsReference1, setModelsReference1, modelsReference1Error, setModelsReference1Error],
+  //   modelsReference1Input,
+  // ] = useTextField(isCreating ? '' : editingData.modelsReference1, '', {
+  //   label: '小編試穿',
+  //   placeholder: `格式:\n尺寸名1:數值1\n尺寸名2:數值2`,
+  //   required: true,
+  //   margin: 'dense',
+  //   fullWidth: true,
+  //   multiline: true,
+  //   rows: 5,
+  //   rowsMax: 20,
+  // });
+
+  // const [
+  //   [modelsReference2, setModelsReference2, modelsReference2Error, setModelsReference2Error],
+  //   modelsReference2Input,
+  // ] = useTextField(isCreating ? '' : editingData.modelsReference2, '', {
+  //   label: 'model試穿',
+  //   placeholder: `格式:\n尺寸名1:數值1\n尺寸名2:數值2`,
+  //   required: true,
+  //   margin: 'dense',
+  //   fullWidth: true,
+  //   multiline: true,
+  //   rows: 5,
+  //   rowsMax: 20,
+  // });
 
   // console.log('imageInfos :', imageInfos);
   // code
@@ -152,9 +183,10 @@ export default (props) => {
       priority,
       active,
       specPic: ii[0],
+      specsText,
       specsDesc,
-      modelsReference1,
-      modelsReference2,
+      // modelsReference1,
+      // modelsReference2,
     };
     try {
       if (isCreating) {
@@ -239,11 +271,13 @@ export default (props) => {
               handleUpload={handleUpload}
             />
             <FormSpace variant="content1" />
-            {specsDescInput.render()}
+            {specsTextInput.render()}
             <FormSpace variant="content1" />
+            {specsDescInput.render()}
+            {/* <FormSpace variant="content1" />
             {modelsReference1Input.render()}
             <FormSpace variant="content1" />
-            {modelsReference2Input.render()}
+            {modelsReference2Input.render()} */}
           </div>
         </div>
       </DialogContent>

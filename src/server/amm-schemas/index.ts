@@ -962,6 +962,8 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         uid: 'string',
         customId: 'string',
         ...productColumns,
+        modelsReference1: 'text',
+        modelsReference2: 'text',
         products: ['hasMany', 'product', {
           foreignKey: 'group_id',
         }],
@@ -1227,6 +1229,8 @@ export const getJsonSchema : () => IJsonSchemas<ModelExtraOptions> = () => ({
         },
         memo: 'text',
         shipmentId: 'text',
+        buyerName: 'string',
+        recipientName: 'string',
         buyer: {
           type: 'jsonb',
           defaultValue: {},

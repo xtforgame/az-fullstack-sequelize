@@ -2,10 +2,11 @@
 import React from 'react';
 import moment from 'moment';
 import ContentText from 'azrmui/core/Text/ContentText';
+import { getDisplayTime } from '~/utils';
 
 export const renderDateTime = (columnName, row, option) => (
   <ContentText>
-    {row[columnName] ? moment(row[columnName]).format('YYYY/MM/DD[\n]HH:mm:ss') : 'N/A'}
+    {getDisplayTime(row[columnName])}
   </ContentText>
 );
 

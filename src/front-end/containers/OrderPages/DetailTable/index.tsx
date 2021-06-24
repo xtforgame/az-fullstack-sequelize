@@ -65,7 +65,7 @@ export default function DetailTable(props) {
     <React.Fragment>
       <Box className={classes.box} margin={1}>
         <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-          <div>
+          <div style={{ minWidth: '45%' }}>
             <OrderDetail
               row={row}
             />
@@ -77,7 +77,7 @@ export default function DetailTable(props) {
             />
             {/* <Divider /> */}
           </div>
-          <div>
+          <div style={{ minWidth: '45%' }}>
             <ProductDetail
               orderInfo={orderInfo}
               row={row}

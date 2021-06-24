@@ -170,6 +170,20 @@ export default class ECommerceRouter extends RouterBase {
       return ctx.body = await patchProduct(this.resourceManager, ctx.params.id, rest);
     });
 
+    router.patch('/api/products/:id/priority', this.authKit.koaHelperEx.getIdentity, async (ctx, next) => {
+      if (!ctx.local.userSession || !ctx.local.userSession.user_id || ctx.local.userSession.privilege !== 'admin') {
+        return RestfulError.koaThrowWith(ctx, 404, 'User not found');
+      }
+      const {
+        priority,
+      } = ctx.request.body;
+      if (priority) {
+        await patchProduct(this.resourceManager, ctx.params.id, { priority });
+        return ctx.body = { priority };
+      }
+      return ctx.body = { error: '錯誤的排序' };
+    });
+
     router.post('/api/assign-order-product', this.authKit.koaHelperEx.getIdentity, async (ctx, next) => {
       if (!ctx.local.userSession || !ctx.local.userSession.user_id || ctx.local.userSession.privilege !== 'admin') {
         return RestfulError.koaThrowWith(ctx, 404, 'User not found');

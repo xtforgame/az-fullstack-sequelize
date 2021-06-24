@@ -2,6 +2,9 @@
 import { GetColumnConfig, RenderAction } from '~/containers/hooks/useGqlTable';
 import { TableStates } from '~/containers/hooks/useGqlTable';
 import { OptionsT1 } from '~/hooks/useGqlQueryT1';
+import {
+  TableProps,
+} from '~/components/ControlledEnhancedTable';
 
 export type ExtraOptions = {
   filter: any;
@@ -24,4 +27,5 @@ export type CollectionConfig = {
     variables: any,
   };
   useStates?: () => { [s: string]: any; };
+  getTableRestProps?: () => Partial<TableProps>,
 };

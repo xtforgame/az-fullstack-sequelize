@@ -17,15 +17,19 @@ import ContentText from 'azrmui/core/Text/ContentText';
 import {
   // orderStates,
   orderStateNameFunc,
-  // orderPayWayNameFunc,
+  orderPayWayNameFunc,
+  logisticsTypeNameFunc,
 } from 'common/domain-logic/constants/order';
-import { Order, Campaign, Product, ShippingFee, calcOrderInfo, toShippingFeeTableMap, ShippingFeeTableMap } from 'common/domain-logic/gql-helpers';
+import {
+  Order, Campaign, Product, ShippingFee, calcOrderInfo, toShippingFeeTableMap, ShippingFeeTableMap,
+} from 'common/domain-logic/gql-helpers';
 import { renderDateTime } from '~/components/TableShared';
 // import useRouterQuery from '~/hooks/useRouterQuery';
 import useRouterPush from '~/hooks/useRouterPush';
 import { Columns, GetColumnConfigResult } from '~/containers/hooks/useGqlTable';
 import { CollectionConfig } from './common';
 import { sendGraphQLRequest } from './utils';
+
 export const basePath = '/order';
 export const resourceName = 'order';
 export const resourceLabelName = '訂單';
@@ -34,7 +38,9 @@ export const collectionLabelName = '訂單';
 export const aggregateName = 'orderAggregate';
 export const resourceFieldsText = `
 id
-user { id, name }
+user { id, name, email }
+buyerName
+recipientName
 logistics
 countryCode
 foreign
@@ -162,14 +168,26 @@ export const collectionConfig : CollectionConfig = {
         rowCellToString: (columnName, row, option) => orderStateNameFunc(row[columnName]),
       },
       {
-        id: 'buyer_email',
-        label: 'Email',
+        id: 'logistics',
+        label: '貨運方式',
         sortable: false,
         align: 'left',
         size: 200,
         renderRowCell: (columnName, row, option) => (
           <ContentText>
-            {row.buyer.email1}
+            {logisticsTypeNameFunc(row.logistics)}
+          </ContentText>
+        ),
+      },
+      {
+        id: 'recipient_area',
+        label: '區域',
+        sortable: false,
+        align: 'left',
+        size: 200,
+        renderRowCell: (columnName, row, option) => (
+          <ContentText>
+            {row.recipient.area}
           </ContentText>
         ),
       },
@@ -275,23 +293,93 @@ export const collectionConfig : CollectionConfig = {
               rows,
               selected,
             } = tableStates;
+            const {
+              buildQueryString,
+            } = buildQueryT1(
+              'shippingFees',
+              null,
+              `
+                id
+                price
+                countryCode
+                weight
+              `,
+            );
+
+            const { data } = await sendGraphQLRequest<{shippingFees: ShippingFee[]}>(buildQueryString());
+            const shippingFeeTableMap = toShippingFeeTableMap(data!.shippingFees);
+
+            const rowMap = toMap(rows!, r => r.id);
+            const rowsToDownload = (selected || []).map(s => rowMap[s]);
+            const priceInfoArray = rowsToDownload.map(r => calcOrderInfo(r as any, shippingFeeTableMap));
+            const priceInfoMap = toMap(priceInfoArray, (_, i) => rowsToDownload[i].id);
+
+
+            const header = [
+              { title: '訂單 id', get: row => row.id },
+              { title: '訂單狀態', get: row => orderStateNameFunc(row.state) },
+              { title: '訂單成立時間', get: row => moment(row.created_at).format('YYYY/MM/DD HH:mm:ss') },
+              { title: '付款時間', get: row => (row.paidAt ? moment(row.paidAt).format('YYYY/MM/DD HH:mm:ss') : '-') },
+              { title: '出貨時間', get: row => (row.shippedAt ? moment(row.shippedAt).format('YYYY/MM/DD HH:mm:ss') : '-') },
+              { title: '處理天數', get: row => (row.shippedAt ? Math.ceil(moment.duration(moment(row.shippedAt).valueOf() - moment(row.created_at).valueOf(), 'milliseconds').asDays()) : '-') },
+              { title: '付款方式', get: row => orderPayWayNameFunc(row.payWay) },
+              { title: '會員 id', get: row => row.user.id },
+              { title: '會員姓名', get: row => row.user.name },
+              { title: '會員 email', get: row => row.user.email },
+              { title: '聯絡電話', get: row => row.recipient.mobile },
+
+              // { title: '商品 id', get: row => row.recipient.mobile },
+              // { title: '商品名稱', get: row => row.recipient.mobile },
+              // { title: '顏色', get: row => row.recipient.mobile },
+              // { title: '尺寸', get: row => row.recipient.mobile },
+              // { title: '單價', get: row => row.recipient.mobile },
+              // { title: '購買數量', get: row => row.recipient.mobile },
+              // { title: '小計', get: row => row.recipient.mobile },
+              { title: '訂單總金額（不含運費）', get: row => priceInfoMap[row.id].originalPrice - priceInfoMap[row.id].couponDiscount },
+              { title: '運費', get: row => priceInfoMap[row.id].shippingFee },
+              { title: '訂單總金額', get: row => priceInfoMap[row.id].finalPrice },
+              { title: '發票號碼', get: row => row.invoiceNumber },
+              { title: '發票狀態', get: row => row.invoiceStatus },
+              { title: '備註', get: row => row.recipient.memo },
+            ];
+            const transform = row => header.reduce((m, h) => ({ ...m, [h.title]: h.get(row) }), {});
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(rowsToDownload.map(transform), { header: header.map(h => h.title) });
+            const wscols = header.map(h => ({ wch: 20 }));
+            ws['!cols'] = wscols;
+
+            XLSX.utils.book_append_sheet(wb, ws, '訂單');
+            XLSX.writeFile(wb, 'orders.xlsx');
+          }}
+          style={{ flexShrink: 0 }}
+        >
+          輸出Excel
+        </Button>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={async (e) => {
+            const {
+              rows,
+              selected,
+            } = tableStates;
             const rowMap = toMap(rows!, r => r.id);
             const rowsToDownload = (selected || []).map(s => rowMap[s]);
             const COUNTRIES = {
-              hk: "香港",
-              mo: "澳門",
-              cnn: "中國以北",
-              cns: "中國以南",
-              my: "馬來西亞",
-              sg: "新加坡",
-              kr: "韓國",
-              jp: "日本",
-              us: "美國",
-              ca: "加拿大",
-              au: "澳洲",
-              uk: "英國"
-            }
-            const toCountryName = countryCode => (COUNTRIES[countryCode] || '')
+              hk: '香港',
+              mo: '澳門',
+              cnn: '中國以北',
+              cns: '中國以南',
+              my: '馬來西亞',
+              sg: '新加坡',
+              kr: '韓國',
+              jp: '日本',
+              us: '美國',
+              ca: '加拿大',
+              au: '澳洲',
+              uk: '英國',
+            };
+            const toCountryName = countryCode => (COUNTRIES[countryCode] || '');
             console.log('rowsToDownload :', rowsToDownload);
             const header = [
               { title: '訂單編號', get: row => row.id },
@@ -300,21 +388,19 @@ export const collectionConfig : CollectionConfig = {
               { title: '收件人電話', get: row => row.recipient.phone1 },
               { title: '郵遞區號', get: row => row.recipient.zipcode },
               { title: '區域', get: row => row.recipient.area },
-              { title: '地址', get: row => `${ row.logisticsType == 'oversea' ? `${toCountryName(row.recipient.country)} ` : '' }${ row.recipient.zipcode } ${ row.recipient.area } ${ row.recipient.address }` },
+              { title: '地址', get: row => `${row.logisticsType === 'oversea' ? `${toCountryName(row.recipient.country)} ` : ''}${row.recipient.zipcode} ${row.recipient.area} ${row.recipient.address}` },
               { title: '指定收件時間（編號）', get: row => row.recipient.preferTime },
               { title: '備註', get: row => row.recipient.memo },
               { title: '公司名稱', get: row => row.buyer.company },
             ];
-            const transform = row => header.reduce((m, h) => {
-              return ({ ...m, [h.title]: h.get(row) });
-            }, {});
+            const transform = row => header.reduce((m, h) => ({ ...m, [h.title]: h.get(row) }), {});
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.json_to_sheet(rowsToDownload.map(transform), { header: header.map(h => h.title) });
             const wscols = header.map(h => ({ wch: 20 }));
             ws['!cols'] = wscols;
-      
+
             XLSX.utils.book_append_sheet(wb, ws, '出貨單');
-            XLSX.writeFile(wb, `shipping.xlsx`);
+            XLSX.writeFile(wb, 'shipping.xlsx');
           }}
           style={{ flexShrink: 0 }}
         >
@@ -333,7 +419,7 @@ export const collectionConfig : CollectionConfig = {
 
             const form = document.createElement('form');
             form.method = 'post';
-            form.action = `/account/orders/shipping_list`;
+            form.action = '/account/orders/shipping_list';
             form.target = '_blank';
             rowsToExport.forEach((r, i) => {
               const hiddenField = document.createElement('input');
@@ -360,7 +446,7 @@ export const collectionConfig : CollectionConfig = {
               rows,
               selected,
             } = tableStates;
-            
+
             const {
               buildQueryString,
             } = buildQueryT1(
@@ -381,7 +467,7 @@ export const collectionConfig : CollectionConfig = {
             const rowsToDownload = (selected || []).map(s => rowMap[s]);
             const priceInfoArray = rowsToDownload.map(r => calcOrderInfo(r as any, shippingFeeTableMap));
             const priceInfoMap = toMap(priceInfoArray, (_, i) => rowsToDownload[i].id);
-            
+
             const header = [
               { title: '商家帳號', get: row => '54136807' },
               { title: '商家訂單編號', get: row => row.id },
@@ -392,24 +478,22 @@ export const collectionConfig : CollectionConfig = {
               { title: '單品數量', get: row => 1 },
               { title: '小計', get: row => priceInfoMap[row.id].originalPrice - priceInfoMap[row.id].couponDiscount },
               { title: '商品描述', get: row => `衣物${priceInfoMap[row.id].totalQuantity}件` },
-              { title: '是否三聯', get: row => (row.logistics !== 'oversea') && row.buyer.taxid && row.buyer.company ? 'TRUE' : 'FALSE'  },
+              { title: '是否三聯', get: row => ((row.logistics !== 'oversea') && row.buyer.taxid && row.buyer.company ? 'TRUE' : 'FALSE') },
               { title: '是否紙本', get: row => 'FALSE' },
               { title: '愛心碼', get: row => '' },
               { title: '載具', get: row => '' },
               { title: '寄送地址', get: row => '' },
               { title: '消費者手機', get: row => '' },
-              { title: '備註', get: row => priceInfoMap[row.id].couponDiscount ? `使用購物金：${priceInfoMap[row.id].couponDiscount}元` : '' },
+              { title: '備註', get: row => (priceInfoMap[row.id].couponDiscount ? `使用購物金：${priceInfoMap[row.id].couponDiscount}元` : '') },
             ];
-            const transform = row => header.reduce((m, h) => {
-              return ({ ...m, [h.title]: h.get(row) });
-            }, {});
+            const transform = row => header.reduce((m, h) => ({ ...m, [h.title]: h.get(row) }), {});
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.json_to_sheet(rowsToDownload.map(transform), { header: header.map(h => h.title) });
             const wscols = header.map(h => ({ wch: 20 }));
             ws['!cols'] = wscols;
-      
+
             XLSX.utils.book_append_sheet(wb, ws, '電子發票檔');
-            XLSX.writeFile(wb, `shipping.xlsx`);
+            XLSX.writeFile(wb, 'shipping.xlsx');
           }}
           style={{ flexShrink: 0 }}
         >
@@ -468,7 +552,14 @@ export const collectionConfig : CollectionConfig = {
     if (filter && filter.searchText && filter.searchText !== 'all') {
       searchText = `%${filter.searchText}%`;
       args.push('$searchText: String!');
-      where.push('{ user: { name: { _ilike: $searchText } } }');
+      const orList : string[] = [
+        '{ user: { name: { _ilike: $searchText } } }',
+        '{ user: { email: { _ilike: $searchText } } }',
+        '{ products: { product: { name: { _ilike: $searchText } } } }',
+        '{ buyerName: { _ilike: $searchText } }',
+        '{ recipientName: { _ilike: $searchText } }',
+      ];
+      where.push(`{ _or: [${orList.join(',')}] }`);
     }
 
     let logistics = 'all';
@@ -513,7 +604,7 @@ export const collectionConfig : CollectionConfig = {
         logistics,
         startTime,
         endTime,
-      }
+      },
     };
   },
   useStates: () => {
@@ -542,7 +633,10 @@ export const collectionConfig : CollectionConfig = {
         loading, error, data, refresh,
       },
     };
-  }
+  },
+  getTableRestProps: () => ({
+    getRowDefaultOpen: (row: any) => row.state === 'paid' || row.state === 'selected',
+  }),
 };
 
 export const x = 1;

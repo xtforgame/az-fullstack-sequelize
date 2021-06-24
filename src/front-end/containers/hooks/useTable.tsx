@@ -87,7 +87,7 @@ export default function <RowType extends RowTypeBase = RowTypeBase> (props: Tabl
     error,
     renderActions = (() => null) as any,
     getColumnConfig,
-    rowsPerPageOptions = [10, 25, 50, 75],
+    rowsPerPageOptions = [10, 25, 50, 75, { value: 0, label: 'All' }],
     renderError = error => (
       <pre>
         Error

@@ -287,7 +287,6 @@ export default class GuestManager {
     );
 
     const id = this.cookieManager.ensure(ctx, () => v4());
-    console.log('id :', id);
     let { data, errors } = await sendGraphQLRequest<{browserSessions: BrowserSession[]}>(buildQueryString(), {
       sessionId: `${id}`,
     });

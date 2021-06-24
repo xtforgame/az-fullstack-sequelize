@@ -9,7 +9,6 @@ import { logisticsTypeNameFunc, orderStateNameFunc } from 'common/domain-logic/c
 import { buildQueryT1, GqlResult } from 'common/graphQL';
 import moment from 'moment';
 import { hasuraAdminSecret } from 'config';
-import sendGraphQLRequest from '~/utils/sendGraphQLRequest';
 import RouterBase from '../../core/router-base';
 import renderEx from './LiquidRenderEx';
 import { liquidFor, LiquidForOptions } from './utils';
@@ -97,7 +96,5 @@ export default class LiquidRouterBase extends RouterBase {
     });
   }
 
-  async sendGraphQLRequest<T = any>(query: string, variables?: any) : Promise<GqlResult<T>> {
-    return sendGraphQLRequest<T>(query, variables);
-  }
+
 }

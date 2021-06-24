@@ -102,7 +102,7 @@ export default class LiquidRouter01 extends LiquidRouterBase {
     //   });
     // }
     // x();
-    const getProductListMiddlewares = (getProducts : ((ctx : any) => Promise<any[]>) | null = null) => [async (ctx, next) => {
+    const getProductListMiddlewares = (getProducts : ((ctx : any) => Promise<any[]>) | null = null, isHome : boolean = false) => [async (ctx, next) => {
       let products : any[] | undefined = [];
       if (getProducts) {
         products = await getProducts(ctx);
@@ -144,10 +144,13 @@ export default class LiquidRouter01 extends LiquidRouterBase {
       return next();
     }, this.liquidFor({
       getFilename: ({ ctx }) => 'pages/index.html.liquid',
-      getScopeData: async ({ ctx }) => ctx.local.products,
+      getScopeData: async ({ ctx }) => ({
+        ...ctx.local.products,
+        isHome,
+      }),
     })];
 
-    router.get('/', ...getProductListMiddlewares());
+    router.get('/', ...getProductListMiddlewares(null, true));
 
     const getProductsFromCampaign = (campaign?: Campaign) => {
       console.log('campaign?.productGroups :', campaign?.productGroups);
@@ -168,6 +171,8 @@ export default class LiquidRouter01 extends LiquidRouterBase {
           productGroups {
             productGroup {
               id
+              modelsReference1
+              modelsReference2
               customId
               thumbnail
               pictures
@@ -244,6 +249,8 @@ export default class LiquidRouter01 extends LiquidRouterBase {
           productGroups(where: {deleted_at: {_is_null: true}}) {
             productGroup {
               id
+              modelsReference1
+              modelsReference2
               customId
               thumbnail
               pictures
@@ -289,6 +296,8 @@ export default class LiquidRouter01 extends LiquidRouterBase {
           productGroups(where: {deleted_at: {_is_null: true}}) {
             productGroup {
               id
+              modelsReference1
+              modelsReference2
               customId
               thumbnail
               pictures

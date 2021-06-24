@@ -43,108 +43,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-
-const renderRowCell = (columnName, row, option) => (
-  <ContentText>
-    {row[columnName] ? moment(row[columnName]).format('YYYY/MM/DD[\n]HH:mm:ss') : 'N/A'}
-  </ContentText>
-);
-
-const getColumnConfig = () => {
-  const columns = [
-    {
-      id: 'id',
-      label: 'ID',
-      align: 'left',
-      size: 120,
-    },
-    {
-      id: 'name',
-      label: '商品名稱',
-      sortable: false,
-      align: 'left',
-      size: 200,
-    },
-    {
-      id: 'price',
-      label: '價格（新台幣）',
-      sortable: false,
-      align: 'right',
-      size: 200,
-    },
-    {
-      id: 'weight',
-      label: '重量',
-      sortable: false,
-      align: 'right',
-      size: 200,
-    },
-    {
-      id: 'productCount',
-      label: '商品數量',
-      sortable: false,
-      align: 'right',
-      size: 200,
-      renderRowCell: (columnName, row, option) => (
-        <ContentText>
-          {row.products_aggregate.aggregate.count}
-        </ContentText>
-      ),
-    },
-    // {
-    //   id: 'data',
-    //   label: '客戶名稱',
-    //   sortable: false,
-    //   align: 'left',
-    //   size: 60,
-    // },
-    // {
-    //   id: 'created_at',
-    //   label: '建立時間',
-    //   sortable: false,
-    //   align: 'right',
-    //   renderRowCell,
-    //   size: 200,
-    // },
-    // {
-    //   id: 'updated_at',
-    //   label: '最後更新時間',
-    //   sortable: false,
-    //   align: 'right',
-    //   renderRowCell,
-    //   size: 200,
-    // },
-    {
-      id: '__action__',
-      label: '',
-      sortable: false,
-      align: 'right',
-      padding: 'checkbox',
-      renderRowCell: (columnName, row, option) => {
-        const push = useRouterPush();
-        return (
-          <Tooltip title="修改">
-            <IconButton color="primary" aria-label="修改" onClick={() => push(`/product-category/edit/${row.id}`)}>
-              <EditIcon />
-            </IconButton>
-          </Tooltip>
-        );
-      },
-      size: 64,
-    },
-  ];
-
-  const data = {
-    columns,
-    defaultSorting: {
-      order: 'desc',
-      orderBy: 'date',
-    },
-    // columnSizes: [120, 120, 180, 150, null],
-  };
-  return data;
-};
-
 const PRODUCT_GROUP_LIST_QUERY = gql`
   query ProductGroupList {
     productGroups(where: {deleted_at: {_is_null: true}}, order_by: {created_at: desc}) {
@@ -334,7 +232,7 @@ export default (props) => {
             renderActions,
           }}
           paginationProps={{
-            rowsPerPageOptions: [10, 25, 50, 75],
+            rowsPerPageOptions: [10, 25, 50, 75, { value: 0, label: 'All' }],
           }}
           renderRowDetail={row => (<div />)}
         />

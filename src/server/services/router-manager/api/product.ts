@@ -16,6 +16,8 @@ const PRODUCT_QUERY = `
         name
         description
         materials
+        modelsReference1
+        modelsReference2
         products(where: {disabled: { _eq: false }, deleted_at: {_is_null: true}}, order_by: {priority: desc}) {
           id
           name
@@ -29,6 +31,15 @@ const PRODUCT_QUERY = `
         category {
           id
           name
+          nameEn
+          priority
+          active
+          data
+
+          code
+          specsText
+          specPic
+          specsDesc
         }
         campaigns(where: {deleted_at: {_is_null: true}}) {
           campaign {
@@ -64,12 +75,14 @@ const PRODUCT_QUERY = `
   }
 `;
 
+const getImage = imageObject => (imageObject && imageObject.image && imageObject.image.imgUrl) || '';
+
 export const productToDetailLiquidScope = (product) => {
   const descriptionText = sanitizeHtml(product.description, {
     allowedTags: ['br'],
   }).replace(/<br \/>/g, '\n');
   const seoTitle = `${product.name} (${product.colorName}) (${product.size})`;
-  const thumbnailImage = (product.thumbnail && product.thumbnail.image && product.thumbnail.image.imgUrl) || '';
+  const thumbnailImage = getImage(product.thumbnail);
 
   const sizeMap = {};
   const colorMap = {};
@@ -125,6 +138,42 @@ export const productToDetailLiquidScope = (product) => {
     .sort((a : any, b : any) => a.forOrder.priority - b.forOrder.priority)
     .map((p: any) => colorToView(p.current) || colorToView(p.forOrder));
 
+  const specsProps = (product?.group?.category?.specsText || '').split('\n')
+    .map((s) => {
+      const [key, value] = s.split(':');
+      if (!key || !value) {
+        return null;
+      }
+      return ({ key, value: value.replace(/\r/gm, '') });
+    }).filter(s => s);
+  const specsDescRows = (product?.group?.category?.specsDesc || '').split('\n')
+    .map(s => s.replace(/(^[0-9]*\.)/gm, '')).filter(s => s);
+
+  const jsonParse = (s, v = null) => {
+    try {
+      return JSON.parse(s);
+    } catch (error) {
+      return v;
+    }
+  };
+  const model1 = (jsonParse(product?.group?.modelsReference1, <any>[]) || []).map(v => v.split('\n')
+  .map((s) => {
+    const [key, value] = s.split(':');
+    if (!key || !value) {
+      return null;
+    }
+    return ({ key, value: value.replace(/\r/gm, '') });
+  }).filter(s => s));
+
+  const model2 = (jsonParse(product?.group?.modelsReference2, <any>[]) || []).map(v => v.split('\n')
+    .map((s) => {
+      const [key, value] = s.split(':');
+      if (!key || !value) {
+        return null;
+      }
+      return ({ key, value: value.replace(/\r/gm, '') });
+    }).filter(s => s));
+
   return {
     title: `${seoTitle} | studiodoe`,
     meta: {
@@ -142,6 +191,7 @@ export const productToDetailLiquidScope = (product) => {
       'viewed-content-event': `[${product.id},"tops","TWD",980]`,
     },
     product: {
+      ...product,
       id: product.id,
       title: product.name,
       price: product.price,
@@ -150,6 +200,10 @@ export const productToDetailLiquidScope = (product) => {
       materials: product.materials || product.group.materials,
       sizes,
       colors,
+      specsProps,
+      specsDescRows,
+      model1,
+      model2,
     },
   };
 };
@@ -171,6 +225,7 @@ export const getProduct = async (id) => {
   if (data.data && data.data.product) {
     return productToDetailLiquidScope(data.data.product);
   }
+  console.log('data :', data.errors);
   return null;
 };
 

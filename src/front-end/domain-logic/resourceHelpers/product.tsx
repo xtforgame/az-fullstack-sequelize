@@ -1,5 +1,6 @@
 /* eslint-disable react/sort-comp */
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
@@ -15,6 +16,7 @@ import { toCurrency } from 'common/utils';
 import useRouterPush from '~/hooks/useRouterPush';
 import { Columns, GetColumnConfigResult } from '~/containers/hooks/useGqlTable';
 import { CollectionConfig } from './common';
+import XInput from './XInput';
 
 export const basePath = '/product';
 export const resourceName = 'product';
@@ -62,6 +64,7 @@ name
 instock
 price
 weight
+priority
 description
 data
 disabled
@@ -107,12 +110,12 @@ export const collectionConfig : CollectionConfig = {
   resourceFieldsText,
   getColumnConfig: () => {
     const columns : Columns = [
-      // {
-      //   id: 'id',
-      //   label: 'ID',
-      //   align: 'left',
-      //   size: 120,
-      // },
+      {
+        id: 'id',
+        label: 'ID',
+        align: 'left',
+        size: 120,
+      },
       {
         id: 'uid',
         label: '編號',
@@ -186,7 +189,7 @@ export const collectionConfig : CollectionConfig = {
         sortable: false,
         align: 'right',
         padding: 'checkbox',
-        size: 100,
+        size: 80,
         renderRowCell: (columnName, row, option) => (row[columnName] ? '下架' : ''),
       },
       {
@@ -195,7 +198,7 @@ export const collectionConfig : CollectionConfig = {
         sortable: false,
         align: 'right',
         padding: 'checkbox',
-        size: 100,
+        size: 80,
         renderRowCell: (columnName, row, option) => (row[columnName] ? '是' : ''),
       },
       {
@@ -204,7 +207,7 @@ export const collectionConfig : CollectionConfig = {
         sortable: false,
         align: 'right',
         padding: 'checkbox',
-        size: 100,
+        size: 80,
         renderRowCell: (columnName, row, option) => (row[columnName] ? '是' : ''),
       },
       {
@@ -213,7 +216,7 @@ export const collectionConfig : CollectionConfig = {
         sortable: false,
         align: 'right',
         padding: 'checkbox',
-        size: 100,
+        size: 80,
         renderRowCell: (columnName, row, option) => row[columnName],
       },
       {
@@ -222,7 +225,7 @@ export const collectionConfig : CollectionConfig = {
         sortable: false,
         align: 'right',
         padding: 'checkbox',
-        size: 100,
+        size: 80,
         renderRowCell: (columnName, row, option) => row.assignedQuantitySum.aggregate.sum.quantity || 0,
       },
       {
@@ -231,7 +234,7 @@ export const collectionConfig : CollectionConfig = {
         sortable: false,
         align: 'right',
         padding: 'checkbox',
-        size: 100,
+        size: 80,
         renderRowCell: (columnName, row, option) => {
           const needed = row.quantitySum.aggregate.sum.quantity || 0;
           const assigned = row.assignedQuantitySum.aggregate.sum.quantity || 0;
@@ -240,7 +243,7 @@ export const collectionConfig : CollectionConfig = {
             return 0;
           }
           return needed - (instock + assigned);
-        }
+        },
       },
       {
         id: 'orderSum',
@@ -248,7 +251,7 @@ export const collectionConfig : CollectionConfig = {
         sortable: false,
         align: 'right',
         padding: 'checkbox',
-        size: 100,
+        size: 80,
         renderRowCell: (columnName, row, option) => row.orderSum.aggregate.sum.quantity || 0,
       },
       // {
@@ -271,6 +274,52 @@ export const collectionConfig : CollectionConfig = {
         // label: '最後更新時間',
         sortable: false,
         align: 'left',
+      },
+      {
+        id: 'priority',
+        label: '排序',
+        sortable: true,
+        align: 'right',
+        padding: 'checkbox',
+        renderRowCell: (columnName, row, option) => {
+          if (!row) {
+            console.log('row :', row);
+          }
+          const submit = async (val) => {
+            const priority = parseInt(val);
+            if (!priority) {
+              throw new Error('錯誤的排序');
+            }
+            const { data } = await axios({
+              method: 'patch',
+              url: `api/products/${row.id}/priority`,
+              data: {
+                priority,
+              },
+            });
+            if (data?.priority) {
+              return data.priority;
+            }
+            throw new Error(data.error || '更新失敗');
+          };
+          return (
+            <div style={{ display: 'flex' }}>
+              <XInput
+                label="排序"
+                margin="dense"
+                fullWidth
+                value={row.priority}
+                submit={submit}
+              />
+              {/* <Tooltip title="修改">
+                <IconButton color="primary" aria-label="修改" onClick={() => push(`${basePath}/edit/${row.id}`)}>
+                  <EditIcon />
+                </IconButton>
+              </Tooltip> */}
+            </div>
+          );
+        },
+        size: 160,
       },
       {
         id: '__action__',

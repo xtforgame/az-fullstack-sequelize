@@ -11959,6 +11959,7 @@ export type Order = {
   __typename?: 'order';
   atmAccount?: Maybe<Scalars['String']>;
   buyer?: Maybe<Scalars['jsonb']>;
+  buyerName?: Maybe<Scalars['String']>;
   /** An array relationship */
   campaigns: Array<OrderCampaign>;
   /** An aggregate relationship */
@@ -12000,6 +12001,7 @@ export type Order = {
   /** An aggregate relationship */
   products_aggregate: OrderProduct_Aggregate;
   recipient?: Maybe<Scalars['jsonb']>;
+  recipientName?: Maybe<Scalars['String']>;
   selectedAt?: Maybe<Scalars['timestamptz']>;
   shipmentId?: Maybe<Scalars['String']>;
   shippedAt?: Maybe<Scalars['timestamptz']>;
@@ -12786,6 +12788,7 @@ export type OrderPrivateVd = {
   __typename?: 'orderPrivateVd';
   atmAccount?: Maybe<Scalars['String']>;
   buyer?: Maybe<Scalars['jsonb']>;
+  buyerName?: Maybe<Scalars['String']>;
   /** An array relationship */
   campaigns: Array<OrderCampaign>;
   /** An aggregate relationship */
@@ -12827,6 +12830,7 @@ export type OrderPrivateVd = {
   /** An object relationship */
   publicData?: Maybe<Order>;
   recipient?: Maybe<Scalars['jsonb']>;
+  recipientName?: Maybe<Scalars['String']>;
   selectedAt?: Maybe<Scalars['timestamptz']>;
   shipmentId?: Maybe<Scalars['String']>;
   shippedAt?: Maybe<Scalars['timestamptz']>;
@@ -13003,6 +13007,7 @@ export type OrderPrivateVd_Bool_Exp = {
   _or?: Maybe<Array<OrderPrivateVd_Bool_Exp>>;
   atmAccount?: Maybe<String_Comparison_Exp>;
   buyer?: Maybe<Jsonb_Comparison_Exp>;
+  buyerName?: Maybe<String_Comparison_Exp>;
   campaigns?: Maybe<OrderCampaign_Bool_Exp>;
   countryCode?: Maybe<String_Comparison_Exp>;
   couponRecord?: Maybe<CouponRecord_Bool_Exp>;
@@ -13031,6 +13036,7 @@ export type OrderPrivateVd_Bool_Exp = {
   products?: Maybe<OrderProduct_Bool_Exp>;
   publicData?: Maybe<Order_Bool_Exp>;
   recipient?: Maybe<Jsonb_Comparison_Exp>;
+  recipientName?: Maybe<String_Comparison_Exp>;
   selectedAt?: Maybe<Timestamptz_Comparison_Exp>;
   shipmentId?: Maybe<String_Comparison_Exp>;
   shippedAt?: Maybe<Timestamptz_Comparison_Exp>;
@@ -13080,6 +13086,7 @@ export type OrderPrivateVd_Inc_Input = {
 export type OrderPrivateVd_Insert_Input = {
   atmAccount?: Maybe<Scalars['String']>;
   buyer?: Maybe<Scalars['jsonb']>;
+  buyerName?: Maybe<Scalars['String']>;
   campaigns?: Maybe<OrderCampaign_Arr_Rel_Insert_Input>;
   countryCode?: Maybe<Scalars['String']>;
   couponRecord?: Maybe<CouponRecord_Arr_Rel_Insert_Input>;
@@ -13108,6 +13115,7 @@ export type OrderPrivateVd_Insert_Input = {
   products?: Maybe<OrderProduct_Arr_Rel_Insert_Input>;
   publicData?: Maybe<Order_Obj_Rel_Insert_Input>;
   recipient?: Maybe<Scalars['jsonb']>;
+  recipientName?: Maybe<Scalars['String']>;
   selectedAt?: Maybe<Scalars['timestamptz']>;
   shipmentId?: Maybe<Scalars['String']>;
   shippedAt?: Maybe<Scalars['timestamptz']>;
@@ -13124,6 +13132,7 @@ export type OrderPrivateVd_Insert_Input = {
 export type OrderPrivateVd_Max_Fields = {
   __typename?: 'orderPrivateVd_max_fields';
   atmAccount?: Maybe<Scalars['String']>;
+  buyerName?: Maybe<Scalars['String']>;
   countryCode?: Maybe<Scalars['String']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   cvsName?: Maybe<Scalars['String']>;
@@ -13142,6 +13151,7 @@ export type OrderPrivateVd_Max_Fields = {
   payWay?: Maybe<Scalars['String']>;
   paypalData?: Maybe<Scalars['String']>;
   paypalToken?: Maybe<Scalars['String']>;
+  recipientName?: Maybe<Scalars['String']>;
   selectedAt?: Maybe<Scalars['timestamptz']>;
   shipmentId?: Maybe<Scalars['String']>;
   shippedAt?: Maybe<Scalars['timestamptz']>;
@@ -13157,6 +13167,7 @@ export type OrderPrivateVd_Max_Fields = {
 export type OrderPrivateVd_Min_Fields = {
   __typename?: 'orderPrivateVd_min_fields';
   atmAccount?: Maybe<Scalars['String']>;
+  buyerName?: Maybe<Scalars['String']>;
   countryCode?: Maybe<Scalars['String']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   cvsName?: Maybe<Scalars['String']>;
@@ -13175,6 +13186,7 @@ export type OrderPrivateVd_Min_Fields = {
   payWay?: Maybe<Scalars['String']>;
   paypalData?: Maybe<Scalars['String']>;
   paypalToken?: Maybe<Scalars['String']>;
+  recipientName?: Maybe<Scalars['String']>;
   selectedAt?: Maybe<Scalars['timestamptz']>;
   shipmentId?: Maybe<Scalars['String']>;
   shippedAt?: Maybe<Scalars['timestamptz']>;
@@ -13204,6 +13216,7 @@ export type OrderPrivateVd_Obj_Rel_Insert_Input = {
 export type OrderPrivateVd_Order_By = {
   atmAccount?: Maybe<Order_By>;
   buyer?: Maybe<Order_By>;
+  buyerName?: Maybe<Order_By>;
   campaigns_aggregate?: Maybe<OrderCampaign_Aggregate_Order_By>;
   countryCode?: Maybe<Order_By>;
   couponRecord_aggregate?: Maybe<CouponRecord_Aggregate_Order_By>;
@@ -13232,6 +13245,7 @@ export type OrderPrivateVd_Order_By = {
   products_aggregate?: Maybe<OrderProduct_Aggregate_Order_By>;
   publicData?: Maybe<Order_Order_By>;
   recipient?: Maybe<Order_By>;
+  recipientName?: Maybe<Order_By>;
   selectedAt?: Maybe<Order_By>;
   shipmentId?: Maybe<Order_By>;
   shippedAt?: Maybe<Order_By>;
@@ -13259,6 +13273,8 @@ export enum OrderPrivateVd_Select_Column {
   AtmAccount = 'atmAccount',
   /** column name */
   Buyer = 'buyer',
+  /** column name */
+  BuyerName = 'buyerName',
   /** column name */
   CountryCode = 'countryCode',
   /** column name */
@@ -13306,6 +13322,8 @@ export enum OrderPrivateVd_Select_Column {
   /** column name */
   Recipient = 'recipient',
   /** column name */
+  RecipientName = 'recipientName',
+  /** column name */
   SelectedAt = 'selectedAt',
   /** column name */
   ShipmentId = 'shipmentId',
@@ -13329,6 +13347,7 @@ export enum OrderPrivateVd_Select_Column {
 export type OrderPrivateVd_Set_Input = {
   atmAccount?: Maybe<Scalars['String']>;
   buyer?: Maybe<Scalars['jsonb']>;
+  buyerName?: Maybe<Scalars['String']>;
   countryCode?: Maybe<Scalars['String']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   cvsName?: Maybe<Scalars['String']>;
@@ -13352,6 +13371,7 @@ export type OrderPrivateVd_Set_Input = {
   paypalData?: Maybe<Scalars['String']>;
   paypalToken?: Maybe<Scalars['String']>;
   recipient?: Maybe<Scalars['jsonb']>;
+  recipientName?: Maybe<Scalars['String']>;
   selectedAt?: Maybe<Scalars['timestamptz']>;
   shipmentId?: Maybe<Scalars['String']>;
   shippedAt?: Maybe<Scalars['timestamptz']>;
@@ -14459,6 +14479,7 @@ export type Order_Bool_Exp = {
   _or?: Maybe<Array<Order_Bool_Exp>>;
   atmAccount?: Maybe<String_Comparison_Exp>;
   buyer?: Maybe<Jsonb_Comparison_Exp>;
+  buyerName?: Maybe<String_Comparison_Exp>;
   campaigns?: Maybe<OrderCampaign_Bool_Exp>;
   countryCode?: Maybe<String_Comparison_Exp>;
   couponRecord?: Maybe<CouponRecord_Bool_Exp>;
@@ -14487,6 +14508,7 @@ export type Order_Bool_Exp = {
   privateVd?: Maybe<OrderPrivateVd_Bool_Exp>;
   products?: Maybe<OrderProduct_Bool_Exp>;
   recipient?: Maybe<Jsonb_Comparison_Exp>;
+  recipientName?: Maybe<String_Comparison_Exp>;
   selectedAt?: Maybe<Timestamptz_Comparison_Exp>;
   shipmentId?: Maybe<String_Comparison_Exp>;
   shippedAt?: Maybe<Timestamptz_Comparison_Exp>;
@@ -14558,6 +14580,7 @@ export type Order_Inc_Input = {
 export type Order_Insert_Input = {
   atmAccount?: Maybe<Scalars['String']>;
   buyer?: Maybe<Scalars['jsonb']>;
+  buyerName?: Maybe<Scalars['String']>;
   campaigns?: Maybe<OrderCampaign_Arr_Rel_Insert_Input>;
   countryCode?: Maybe<Scalars['String']>;
   couponRecord?: Maybe<CouponRecord_Arr_Rel_Insert_Input>;
@@ -14586,6 +14609,7 @@ export type Order_Insert_Input = {
   privateVd?: Maybe<OrderPrivateVd_Obj_Rel_Insert_Input>;
   products?: Maybe<OrderProduct_Arr_Rel_Insert_Input>;
   recipient?: Maybe<Scalars['jsonb']>;
+  recipientName?: Maybe<Scalars['String']>;
   selectedAt?: Maybe<Scalars['timestamptz']>;
   shipmentId?: Maybe<Scalars['String']>;
   shippedAt?: Maybe<Scalars['timestamptz']>;
@@ -14602,6 +14626,7 @@ export type Order_Insert_Input = {
 export type Order_Max_Fields = {
   __typename?: 'order_max_fields';
   atmAccount?: Maybe<Scalars['String']>;
+  buyerName?: Maybe<Scalars['String']>;
   countryCode?: Maybe<Scalars['String']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   cvsName?: Maybe<Scalars['String']>;
@@ -14620,6 +14645,7 @@ export type Order_Max_Fields = {
   payWay?: Maybe<Scalars['String']>;
   paypalData?: Maybe<Scalars['String']>;
   paypalToken?: Maybe<Scalars['String']>;
+  recipientName?: Maybe<Scalars['String']>;
   selectedAt?: Maybe<Scalars['timestamptz']>;
   shipmentId?: Maybe<Scalars['String']>;
   shippedAt?: Maybe<Scalars['timestamptz']>;
@@ -14634,6 +14660,7 @@ export type Order_Max_Fields = {
 /** order by max() on columns of table "tbl_order" */
 export type Order_Max_Order_By = {
   atmAccount?: Maybe<Order_By>;
+  buyerName?: Maybe<Order_By>;
   countryCode?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
   cvsName?: Maybe<Order_By>;
@@ -14652,6 +14679,7 @@ export type Order_Max_Order_By = {
   payWay?: Maybe<Order_By>;
   paypalData?: Maybe<Order_By>;
   paypalToken?: Maybe<Order_By>;
+  recipientName?: Maybe<Order_By>;
   selectedAt?: Maybe<Order_By>;
   shipmentId?: Maybe<Order_By>;
   shippedAt?: Maybe<Order_By>;
@@ -14667,6 +14695,7 @@ export type Order_Max_Order_By = {
 export type Order_Min_Fields = {
   __typename?: 'order_min_fields';
   atmAccount?: Maybe<Scalars['String']>;
+  buyerName?: Maybe<Scalars['String']>;
   countryCode?: Maybe<Scalars['String']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   cvsName?: Maybe<Scalars['String']>;
@@ -14685,6 +14714,7 @@ export type Order_Min_Fields = {
   payWay?: Maybe<Scalars['String']>;
   paypalData?: Maybe<Scalars['String']>;
   paypalToken?: Maybe<Scalars['String']>;
+  recipientName?: Maybe<Scalars['String']>;
   selectedAt?: Maybe<Scalars['timestamptz']>;
   shipmentId?: Maybe<Scalars['String']>;
   shippedAt?: Maybe<Scalars['timestamptz']>;
@@ -14699,6 +14729,7 @@ export type Order_Min_Fields = {
 /** order by min() on columns of table "tbl_order" */
 export type Order_Min_Order_By = {
   atmAccount?: Maybe<Order_By>;
+  buyerName?: Maybe<Order_By>;
   countryCode?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
   cvsName?: Maybe<Order_By>;
@@ -14717,6 +14748,7 @@ export type Order_Min_Order_By = {
   payWay?: Maybe<Order_By>;
   paypalData?: Maybe<Order_By>;
   paypalToken?: Maybe<Order_By>;
+  recipientName?: Maybe<Order_By>;
   selectedAt?: Maybe<Order_By>;
   shipmentId?: Maybe<Order_By>;
   shippedAt?: Maybe<Order_By>;
@@ -14755,6 +14787,7 @@ export type Order_On_Conflict = {
 export type Order_Order_By = {
   atmAccount?: Maybe<Order_By>;
   buyer?: Maybe<Order_By>;
+  buyerName?: Maybe<Order_By>;
   campaigns_aggregate?: Maybe<OrderCampaign_Aggregate_Order_By>;
   countryCode?: Maybe<Order_By>;
   couponRecord_aggregate?: Maybe<CouponRecord_Aggregate_Order_By>;
@@ -14783,6 +14816,7 @@ export type Order_Order_By = {
   privateVd?: Maybe<OrderPrivateVd_Order_By>;
   products_aggregate?: Maybe<OrderProduct_Aggregate_Order_By>;
   recipient?: Maybe<Order_By>;
+  recipientName?: Maybe<Order_By>;
   selectedAt?: Maybe<Order_By>;
   shipmentId?: Maybe<Order_By>;
   shippedAt?: Maybe<Order_By>;
@@ -14815,6 +14849,8 @@ export enum Order_Select_Column {
   AtmAccount = 'atmAccount',
   /** column name */
   Buyer = 'buyer',
+  /** column name */
+  BuyerName = 'buyerName',
   /** column name */
   CountryCode = 'countryCode',
   /** column name */
@@ -14862,6 +14898,8 @@ export enum Order_Select_Column {
   /** column name */
   Recipient = 'recipient',
   /** column name */
+  RecipientName = 'recipientName',
+  /** column name */
   SelectedAt = 'selectedAt',
   /** column name */
   ShipmentId = 'shipmentId',
@@ -14885,6 +14923,7 @@ export enum Order_Select_Column {
 export type Order_Set_Input = {
   atmAccount?: Maybe<Scalars['String']>;
   buyer?: Maybe<Scalars['jsonb']>;
+  buyerName?: Maybe<Scalars['String']>;
   countryCode?: Maybe<Scalars['String']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   cvsName?: Maybe<Scalars['String']>;
@@ -14908,6 +14947,7 @@ export type Order_Set_Input = {
   paypalData?: Maybe<Scalars['String']>;
   paypalToken?: Maybe<Scalars['String']>;
   recipient?: Maybe<Scalars['jsonb']>;
+  recipientName?: Maybe<Scalars['String']>;
   selectedAt?: Maybe<Scalars['timestamptz']>;
   shipmentId?: Maybe<Scalars['String']>;
   shippedAt?: Maybe<Scalars['timestamptz']>;
@@ -14978,6 +15018,8 @@ export enum Order_Update_Column {
   /** column name */
   Buyer = 'buyer',
   /** column name */
+  BuyerName = 'buyerName',
+  /** column name */
   CountryCode = 'countryCode',
   /** column name */
   CreatedAt = 'created_at',
@@ -15023,6 +15065,8 @@ export enum Order_Update_Column {
   PaypalToken = 'paypalToken',
   /** column name */
   Recipient = 'recipient',
+  /** column name */
+  RecipientName = 'recipientName',
   /** column name */
   SelectedAt = 'selectedAt',
   /** column name */
@@ -17310,6 +17354,8 @@ export type ProductGroup = {
   disabled?: Maybe<Scalars['Boolean']>;
   id: Scalars['bigint'];
   materials?: Maybe<Scalars['String']>;
+  modelsReference1?: Maybe<Scalars['String']>;
+  modelsReference2?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   nameEn?: Maybe<Scalars['String']>;
   pictures?: Maybe<Scalars['jsonb']>;
@@ -18085,6 +18131,8 @@ export type ProductGroupPrivateVd = {
   disabled?: Maybe<Scalars['Boolean']>;
   id?: Maybe<Scalars['bigint']>;
   materials?: Maybe<Scalars['String']>;
+  modelsReference1?: Maybe<Scalars['String']>;
+  modelsReference2?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   nameEn?: Maybe<Scalars['String']>;
   pictures?: Maybe<Scalars['jsonb']>;
@@ -18246,6 +18294,8 @@ export type ProductGroupPrivateVd_Bool_Exp = {
   disabled?: Maybe<Boolean_Comparison_Exp>;
   id?: Maybe<Bigint_Comparison_Exp>;
   materials?: Maybe<String_Comparison_Exp>;
+  modelsReference1?: Maybe<String_Comparison_Exp>;
+  modelsReference2?: Maybe<String_Comparison_Exp>;
   name?: Maybe<String_Comparison_Exp>;
   nameEn?: Maybe<String_Comparison_Exp>;
   pictures?: Maybe<Jsonb_Comparison_Exp>;
@@ -18302,6 +18352,8 @@ export type ProductGroupPrivateVd_Insert_Input = {
   disabled?: Maybe<Scalars['Boolean']>;
   id?: Maybe<Scalars['bigint']>;
   materials?: Maybe<Scalars['String']>;
+  modelsReference1?: Maybe<Scalars['String']>;
+  modelsReference2?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   nameEn?: Maybe<Scalars['String']>;
   pictures?: Maybe<Scalars['jsonb']>;
@@ -18326,6 +18378,8 @@ export type ProductGroupPrivateVd_Max_Fields = {
   description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['bigint']>;
   materials?: Maybe<Scalars['String']>;
+  modelsReference1?: Maybe<Scalars['String']>;
+  modelsReference2?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   nameEn?: Maybe<Scalars['String']>;
   price?: Maybe<Scalars['Int']>;
@@ -18345,6 +18399,8 @@ export type ProductGroupPrivateVd_Min_Fields = {
   description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['bigint']>;
   materials?: Maybe<Scalars['String']>;
+  modelsReference1?: Maybe<Scalars['String']>;
+  modelsReference2?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   nameEn?: Maybe<Scalars['String']>;
   price?: Maybe<Scalars['Int']>;
@@ -18381,6 +18437,8 @@ export type ProductGroupPrivateVd_Order_By = {
   disabled?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   materials?: Maybe<Order_By>;
+  modelsReference1?: Maybe<Order_By>;
+  modelsReference2?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
   nameEn?: Maybe<Order_By>;
   pictures?: Maybe<Order_By>;
@@ -18423,6 +18481,10 @@ export enum ProductGroupPrivateVd_Select_Column {
   /** column name */
   Materials = 'materials',
   /** column name */
+  ModelsReference1 = 'modelsReference1',
+  /** column name */
+  ModelsReference2 = 'modelsReference2',
+  /** column name */
   Name = 'name',
   /** column name */
   NameEn = 'nameEn',
@@ -18453,6 +18515,8 @@ export type ProductGroupPrivateVd_Set_Input = {
   disabled?: Maybe<Scalars['Boolean']>;
   id?: Maybe<Scalars['bigint']>;
   materials?: Maybe<Scalars['String']>;
+  modelsReference1?: Maybe<Scalars['String']>;
+  modelsReference2?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   nameEn?: Maybe<Scalars['String']>;
   pictures?: Maybe<Scalars['jsonb']>;
@@ -18619,6 +18683,8 @@ export type ProductGroup_Bool_Exp = {
   disabled?: Maybe<Boolean_Comparison_Exp>;
   id?: Maybe<Bigint_Comparison_Exp>;
   materials?: Maybe<String_Comparison_Exp>;
+  modelsReference1?: Maybe<String_Comparison_Exp>;
+  modelsReference2?: Maybe<String_Comparison_Exp>;
   name?: Maybe<String_Comparison_Exp>;
   nameEn?: Maybe<String_Comparison_Exp>;
   pictures?: Maybe<Jsonb_Comparison_Exp>;
@@ -18681,6 +18747,8 @@ export type ProductGroup_Insert_Input = {
   disabled?: Maybe<Scalars['Boolean']>;
   id?: Maybe<Scalars['bigint']>;
   materials?: Maybe<Scalars['String']>;
+  modelsReference1?: Maybe<Scalars['String']>;
+  modelsReference2?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   nameEn?: Maybe<Scalars['String']>;
   pictures?: Maybe<Scalars['jsonb']>;
@@ -18705,6 +18773,8 @@ export type ProductGroup_Max_Fields = {
   description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['bigint']>;
   materials?: Maybe<Scalars['String']>;
+  modelsReference1?: Maybe<Scalars['String']>;
+  modelsReference2?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   nameEn?: Maybe<Scalars['String']>;
   price?: Maybe<Scalars['Int']>;
@@ -18723,6 +18793,8 @@ export type ProductGroup_Max_Order_By = {
   description?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   materials?: Maybe<Order_By>;
+  modelsReference1?: Maybe<Order_By>;
+  modelsReference2?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
   nameEn?: Maybe<Order_By>;
   price?: Maybe<Order_By>;
@@ -18742,6 +18814,8 @@ export type ProductGroup_Min_Fields = {
   description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['bigint']>;
   materials?: Maybe<Scalars['String']>;
+  modelsReference1?: Maybe<Scalars['String']>;
+  modelsReference2?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   nameEn?: Maybe<Scalars['String']>;
   price?: Maybe<Scalars['Int']>;
@@ -18760,6 +18834,8 @@ export type ProductGroup_Min_Order_By = {
   description?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   materials?: Maybe<Order_By>;
+  modelsReference1?: Maybe<Order_By>;
+  modelsReference2?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
   nameEn?: Maybe<Order_By>;
   price?: Maybe<Order_By>;
@@ -18805,6 +18881,8 @@ export type ProductGroup_Order_By = {
   disabled?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   materials?: Maybe<Order_By>;
+  modelsReference1?: Maybe<Order_By>;
+  modelsReference2?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
   nameEn?: Maybe<Order_By>;
   pictures?: Maybe<Order_By>;
@@ -18852,6 +18930,10 @@ export enum ProductGroup_Select_Column {
   /** column name */
   Materials = 'materials',
   /** column name */
+  ModelsReference1 = 'modelsReference1',
+  /** column name */
+  ModelsReference2 = 'modelsReference2',
+  /** column name */
   Name = 'name',
   /** column name */
   NameEn = 'nameEn',
@@ -18882,6 +18964,8 @@ export type ProductGroup_Set_Input = {
   disabled?: Maybe<Scalars['Boolean']>;
   id?: Maybe<Scalars['bigint']>;
   materials?: Maybe<Scalars['String']>;
+  modelsReference1?: Maybe<Scalars['String']>;
+  modelsReference2?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   nameEn?: Maybe<Scalars['String']>;
   pictures?: Maybe<Scalars['jsonb']>;
@@ -18981,6 +19065,10 @@ export enum ProductGroup_Update_Column {
   Id = 'id',
   /** column name */
   Materials = 'materials',
+  /** column name */
+  ModelsReference1 = 'modelsReference1',
+  /** column name */
+  ModelsReference2 = 'modelsReference2',
   /** column name */
   Name = 'name',
   /** column name */
