@@ -85,21 +85,21 @@ const clearAuthorizationHeaderAfterClearSession = (action$, state$) => action$.o
     })
   );
 
-// const autologinAfterRegistration = (action$, state$) => action$.ofType(user.create.actionType)
-//   .pipe(
-//     switchMap(
-//       startAction => action$.ofType(user.create.creatorRefs.respond.actionType)
-//       .pipe(
-//         take(1), // don't listen forever! IMPORTANT!
-//         switchMap(() => [session.create(startAction.data.accountLinks[0])])
-//       )
-//     )
-//   );
+const autologinAfterRegistration = (action$, state$) => action$.ofType(user.create.actionType)
+  .pipe(
+    switchMap(
+      startAction => action$.ofType(user.create.creatorRefs.respond.actionType)
+      .pipe(
+        take(1), // don't listen forever! IMPORTANT!
+        switchMap(() => [session.create(startAction.data.accountLinks[0])])
+      )
+    )
+  );
 
 export default [
   dispatchSessionVerifiedAfterPostedSession,
   dispatchSessionVerifiedAfterGotSession,
   fetchDataAfterSessionVerified,
   clearAuthorizationHeaderAfterClearSession,
-  // autologinAfterRegistration,
+  autologinAfterRegistration,
 ];

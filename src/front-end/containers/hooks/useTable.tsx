@@ -69,7 +69,7 @@ export type GetColumnConfigResult = {
   },
 }
 
-export type GetColumnConfig = () => GetColumnConfigResult;
+export type GetColumnConfig = (args?: any) => GetColumnConfigResult;
 
 export type TablePropsEx<RowType extends RowTypeBase = RowTypeBase> = Overwrite<TableProps<RowType>, {
   title?: string;
@@ -112,7 +112,7 @@ export default function <RowType extends RowTypeBase = RowTypeBase> (props: Tabl
 
     return (
       <ControlledEnhancedTable<RowType>
-        {...getColumnConfig()}
+        {...getColumnConfig(api)}
         toolbarProps={(title || !rest.isSimple) ? {
           title,
           renderActions: numSelected => renderActions(numSelected, api),

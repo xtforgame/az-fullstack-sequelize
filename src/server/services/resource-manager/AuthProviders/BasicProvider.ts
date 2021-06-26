@@ -31,13 +31,13 @@ export default class BasicProvider extends BaseProvider {
     if (result) {
       return Promise.reject(result);
     }
-    const params = Promise.resolve({
+    const params = {
       provider_id: this.providerId,
       provider_user_id: alParams.username,
       provider_user_access_info: {
         password: hashPassword(alParams.password),
       },
-    });
+    };
     return addInitDataToAccountLink(params);
   }
 }

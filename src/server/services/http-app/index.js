@@ -34,6 +34,10 @@ export default class HttpApp extends ServiceBase {
     this.app.proxy = !!process.env.KOA_PROXY_ENABLED;
     // prevent any error to be sent to user
     this.app.use((ctx, next) => {
+      ctx.cookies.secure = true;
+      return next();
+    });
+    this.app.use((ctx, next) => {
       ctx.local = ctx.local || {};
       ctx.local.azIp = ctx.request.headers['x-forwarded-for'] || ctx.ip;
       return next().catch((err) => {

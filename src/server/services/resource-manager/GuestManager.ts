@@ -39,6 +39,8 @@ export class CookieManager {
       {
         // domain: 'localhost',
         // path: '/index',
+        sameSite: 'none',
+        // secure: true,
         maxAge: 1000000 * 60 * 1000,
         // expires: new Date('2017-02-15'),
         httpOnly: true,
@@ -56,6 +58,8 @@ export class CookieManager {
         // domain: 'localhost',
         // path: '/index',
         // maxAge: 1000000 * 60 * 1000,
+        sameSite: 'none',
+        // secure: true,
         expires: new Date(0),
         httpOnly: false,
         overwrite: true,

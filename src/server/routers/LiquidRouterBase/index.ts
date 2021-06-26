@@ -80,7 +80,7 @@ export default class LiquidRouterBase extends RouterBase {
 
       return {
         userSession,
-        productCategories: data.productCategories,
+        productCategories: data?.productCategories || [],
         newUser: !guestData.read,
         cart: guestData.bs,
         snackbar: guestData.snackbar,

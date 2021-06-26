@@ -16,6 +16,7 @@ import ModuleComplierRouter from '~/routers/ModuleComplierRouter';
 import ContactUsMessageRouter from '~/routers/ContactUsMessageRouter';
 import NopgRouter from '~/routers/NopgRouter';
 import LiquidRouter01 from '~/routers/LiquidRouter01';
+import LiquidRouterWp from '~/routers/LiquidRouterWp';
 import LiquidRouterLast from '~/routers/LiquidRouterLast';
 import LineBotRouter from '~/routers/LineBotRouter';
 
@@ -38,6 +39,7 @@ export default [
   ContactUsMessageRouter,
   NopgRouter,
   LiquidRouter01,
+  LiquidRouterWp,
   LiquidRouterLast,
   LineBotRouter,
 ];

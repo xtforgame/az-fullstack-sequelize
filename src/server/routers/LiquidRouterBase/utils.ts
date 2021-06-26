@@ -142,6 +142,9 @@ export const liquidFor = (options : LiquidForOptions = {}) => async (ctx, next) 
 
     this.registerFilter('azIf', (condition, y, n) => (condition ? y : n));
     this.registerFilter('dateFormat', (date, format = 'YYYY/MM/DD HH:mm:ss') => moment(date).format(format));
+    this.registerFilter('wpContent', (url) => {
+      return (url || '').replace(/http:\/\/rick.cloud:27010\//gm, `${externalUrl}/`);
+    });
     Object.keys(extraFilters).forEach(k => this.registerFilter(k, extraFilters[k]));
   });
 

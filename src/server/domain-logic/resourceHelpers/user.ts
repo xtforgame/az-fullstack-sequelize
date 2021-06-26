@@ -259,3 +259,19 @@ export const findOrCreateNonregisteredUser = async (
   }
   return findUser(resourceManager, userId, includes);
 };
+
+export const findNonregisteredUser = async (
+  resourceManager : AmmOrm, provider_user_id, includes = [],
+) => {
+  const AccountLink = resourceManager.getSqlzModel<AccountLinkI>('accountLink')!;
+  const accountLink = await AccountLink.findOne({
+    where: {
+      provider_id: 'non-registered',
+      provider_user_id,
+    },
+  });
+  if (!accountLink) {
+    return null;
+  }
+  return findUser(resourceManager, accountLink.user_id, includes);
+};
