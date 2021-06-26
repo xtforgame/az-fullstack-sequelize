@@ -43,8 +43,10 @@ const run = async (nodePath, scriptPath, program) => {
   const jsonSchemaX2 = new JsonSchemasX('public', <any>getJsonSchema());
   jsonSchemaX2.parseRawSchemas();
   jsonSchemaX2.toCoreSchemas();
-  const compareResult = jsonSchemaX2.compareDb(pgStructureDb);
+  const compareResult = jsonSchemaX2.compareDb(pgStructureDb)!;
   console.log('compareResult :', compareResult);
+  console.log('%s', compareResult.missedColumnsQuery);
+  console.log('%s', compareResult.missedIndexesQuery);
   fs.writeFileSync('compare.json', JSON.stringify({}, null, 2), { encoding: 'utf-8' });
 };
 

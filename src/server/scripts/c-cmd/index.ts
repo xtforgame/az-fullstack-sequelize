@@ -7,7 +7,10 @@ const [nodePath, scriptPath, queryName, ...args] = process.argv;
 try {
   const queryScriptPath = path.join(__dirname, queryName);
   const worker = require(queryScriptPath).default;
-  worker.run(nodePath, queryScriptPath, program);
+  worker.run(nodePath, queryScriptPath, program)
+  .catch((e) => {
+    console.log('e :', e);
+  });
 } catch (error) {
   console.error('error :', error);
 }
